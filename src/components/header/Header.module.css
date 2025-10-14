@@ -1,8 +1,4 @@
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
@@ -12,6 +8,16 @@
   backdrop-filter: blur(10px);
 }
 
+.headerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+}
+
 .logo a {
   font-size: 1.8rem;
   font-weight: 700;
@@ -19,6 +25,7 @@
   text-decoration: none;
   transition: all 0.3s ease;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  z-index: 1002;
 }
 
 .logo a:hover {
@@ -26,9 +33,11 @@
   transform: translateY(-1px);
 }
 
+/* Navigation */
 .nav {
   display: flex;
   gap: 2.5rem;
+  align-items: center;
 }
 
 .navLink {
@@ -39,6 +48,7 @@
   padding: 0.5rem 0;
   position: relative;
   font-size: 1.1rem;
+  white-space: nowrap;
 }
 
 .navLink:hover {
@@ -61,6 +71,7 @@
   width: 100%;
 }
 
+/* User Controls */
 .userControls {
   display: flex;
   gap: 1rem;
@@ -68,6 +79,7 @@
   position: relative;
 }
 
+/* Auth Buttons */
 .authButton {
   padding: 0.7rem 1.8rem;
   background: rgba(255, 255, 255, 0.15);
@@ -79,6 +91,7 @@
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   font-size: 1rem;
+  white-space: nowrap;
 }
 
 .authButton:hover {
@@ -88,7 +101,6 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Стилі для кнопки виходу */
 .logoutButton {
   padding: 0.7rem 1.8rem;
   background: rgba(239, 68, 68, 0.2);
@@ -100,6 +112,7 @@
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
   font-size: 1rem;
+  white-space: nowrap;
 }
 
 .logoutButton:hover {
@@ -109,15 +122,7 @@
   box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
-/* Стиль для стану завантаження */
-.authButton:disabled,
-.logoutButton:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Стилі для кнопки мови */
+/* Language Styles */
 .languageContainer {
   position: relative;
 }
@@ -131,25 +136,33 @@
   cursor: pointer;
   transition: all 0.3s ease;
   backdrop-filter: blur(10px);
+  border: none;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.languageButton:hover {
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .languageIcon {
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
 }
 
-/* Випадаючий список мов */
 .languageDropdown {
   position: absolute;
   top: 100%;
   right: 0;
   margin-top: 8px;
-  background: black;
+  background: rgba(0, 0, 0, 0.95);
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  min-width: 120px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+  min-width: 140px;
   z-index: 1001;
   overflow: hidden;
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .languageOption {
@@ -162,9 +175,18 @@
   color: white;
   font-weight: 500;
   transition: all 0.2s ease;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* Анімація для активної навігації */
+.languageOption:last-child {
+  border-bottom: none;
+}
+
+.languageOption:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Active Navigation */
 .navLinkActive {
   color: white !important;
 }
@@ -173,105 +195,180 @@
   width: 100% !important;
 }
 
-/* Адаптивність */
-@media (max-width: 768px) {
-  .header {
-    flex-direction: column;
-    gap: 1.2rem;
-    padding: 1.2rem;
-    text-align: center;
+/* Mobile Menu Button */
+.mobileMenuButton {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 6px;
+  transition: all 0.3s ease;
+  z-index: 1002;
+}
+
+.mobileMenuButton:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Mobile Auth Section */
+.mobileAuthSection {
+  display: none;
+}
+
+/* Overlay */
+.overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* ========== MOBILE STYLES ========== */
+@media (max-width: 968px) {
+  .headerContent {
+    padding: 1rem 1.5rem;
   }
   
   .nav {
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
+    gap: 2rem;
   }
   
   .navLink {
     font-size: 1rem;
   }
+}
+
+@media (max-width: 768px) {
+  .mobileMenuButton {
+    display: block;
+  }
   
-  .authButton,
-  .logoutButton {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 80px 2rem 2rem;
+    gap: 0;
+    transition: right 0.3s ease;
+    box-shadow: -5px 0 25px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+  }
+  
+  .navOpen {
+    right: 0;
+  }
+  
+  .navLink {
+    width: 100%;
+    padding: 1rem 0;
+    font-size: 1.1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  }
+  
+  .navLink:last-child {
+    border-bottom: none;
+  }
+  
+  .navLink::after {
+    display: none;
   }
   
   .userControls {
-    gap: 0.8rem;
+    display: none;
   }
   
-  .languageButton {
-    width: 36px;
-    height: 36px;
+  .mobileAuthSection {
+    display: block;
+    width: 100%;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
   }
   
-  .languageIcon {
-    width: 16px;
-    height: 16px;
+  .mobileAuthSection .authButton,
+  .mobileAuthSection .logoutButton {
+    width: 100%;
+    padding: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .overlay {
+    display: block;
+  }
+  
+  .logo a {
+    font-size: 1.6rem;
   }
 }
 
 @media (max-width: 480px) {
+  .headerContent {
+    padding: 0.8rem 1rem;
+  }
+  
   .nav {
-    gap: 1rem;
-    flex-direction: column;
+    width: 100%;
+    right: -100%;
+  }
+  
+  .navOpen {
+    right: 0;
   }
   
   .logo a {
-    font-size: 1.5rem;
+    font-size: 1.4rem;
   }
   
-  .authButton,
-  .logoutButton {
-    width: 100%;
-    padding: 0.75rem;
-  }
-  
-  .userControls {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  .languageContainer {
-    order: -1;
-  }
-  
-  .languageDropdown {
-    right: auto;
-    left: 0;
+  .mobileMenuButton {
+    font-size: 1.3rem;
+    padding: 6px;
   }
 }
 
-/* Додаткові медіа-запити для дуже малих екранів */
 @media (max-width: 360px) {
-  .header {
-    padding: 0.8rem;
+  .headerContent {
+    padding: 0.6rem 0.8rem;
   }
   
   .nav {
-    gap: 0.8rem;
+    padding: 70px 1.5rem 1.5rem;
   }
   
   .navLink {
-    font-size: 0.9rem;
+    font-size: 1rem;
+    padding: 0.8rem 0;
   }
   
-  .authButton,
-  .logoutButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
+  .logo a {
+    font-size: 1.3rem;
+  }
+}
+
+/* Touch device improvements */
+@media (hover: none) and (pointer: coarse) {
+  .navLink:hover {
+    transform: none;
   }
   
-  .languageButton {
-    width: 32px;
-    height: 32px;
+  .authButton:hover,
+  .logoutButton:hover {
+    transform: none;
   }
   
-  .languageIcon {
-    width: 14px;
-    height: 14px;
+  .languageButton:hover {
+    background: transparent;
   }
 }

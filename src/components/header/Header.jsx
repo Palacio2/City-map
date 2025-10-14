@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import styles from './Header.module.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
-import { FaGlobe } from 'react-icons/fa'; // Додаємо іконку глобуса
+import { FaGlobe, FaBars, FaTimes } from 'react-icons/fa';
 
 export default function Header() {
   const location = useLocation();
@@ -10,6 +10,7 @@ export default function Header() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     checkAuthStatus();
@@ -46,6 +47,7 @@ export default function Header() {
     } else {
       navigate('/login');
     }
+    setIsMobileMenuOpen(false);
   };
 
   const handleLogout = async () => {
@@ -63,20 +65,32 @@ export default function Header() {
     setShowLanguageDropdown(!showLanguageDropdown);
   };
 
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+    setShowLanguageDropdown(false);
+  };
+
   const changeLanguage = (lang) => {
     console.log('Зміна мови на:', lang);
     setShowLanguageDropdown(false);
-    // Тут буде логіка зміни мови
+    setIsMobileMenuOpen(false);
+  };
+
+  const closeAllMenus = () => {
+    setIsMobileMenuOpen(false);
+    setShowLanguageDropdown(false);
   };
 
   if (isLoading) {
     return (
       <header className={styles.header}>
-        <div className={styles.logo}>
-          <Link to="/">GeoAnalyzer</Link>
-        </div>
-        <div className={styles.userControls}>
-          <div className={styles.authButton}>Завантаження...</div>
+        <div className={styles.headerContent}>
+          <div className={styles.logo}>
+            <Link to="/" onClick={closeAllMenus}>GeoAnalyzer</Link>
+          </div>
+          <div className={styles.userControls}>
+            <div className={styles.authButton}>Завантаження...</div>
+          </div>
         </div>
       </header>
     );
@@ -84,72 +98,121 @@ export default function Header() {
 
   return (
     <header className={styles.header}>
-      <div className={styles.logo}>
-        <Link to="/">GeoAnalyzer</Link>
-      </div>
-      <nav className={styles.nav}>
-        <Link to="/" className={`${styles.navLink} ${isActive('/')}`}>
-          Головна
-        </Link>
-        <Link to="/about" className={`${styles.navLink} ${isActive('/about')}`}>
-          Про проект
-        </Link>
-        <Link to="/contacts" className={`${styles.navLink} ${isActive('/contacts')}`}>
-          Контакти
-        </Link>
-        <Link to="/subscription" className={`${styles.navLink} ${isActive('/subscription')}`}>
-          Підписка
-        </Link>
-        
-        {isAuthenticated && (
-          <Link to="/profile" className={`${styles.navLink} ${isActive('/profile')}`}>
-            Профіль
-          </Link>
-        )}
-      </nav>
-      <div className={styles.userControls}>
-        {/* Кнопка зміни мови */}
-        <div className={styles.languageContainer}>
-          <button 
-            className={styles.languageButton}
-            onClick={toggleLanguageDropdown}
-            title="Змінити мову"
-          >
-            <FaGlobe className={styles.languageIcon} />
-          </button>
-          
-          {showLanguageDropdown && (
-            <div className={styles.languageDropdown}>
-              <button 
-                className={styles.languageOption}
-                onClick={() => changeLanguage('uk')}
-              >
-                Українська
-              </button>
-              <button 
-                className={styles.languageOption}
-                onClick={() => changeLanguage('en')}
-              >
-                English
-              </button>
-              <button 
-                className={styles.languageOption}
-                onClick={() => changeLanguage('pl')}
-              >
-                Polski
-              </button>
-            </div>
-          )}
+      <div className={styles.headerContent}>
+        <div className={styles.logo}>
+          <Link to="/" onClick={closeAllMenus}>GeoAnalyzer</Link>
         </div>
 
+        {/* Mobile menu button */}
         <button 
-          className={isAuthenticated ? styles.logoutButton : styles.authButton}
-          onClick={handleAuthClick}
-          disabled={isLoading}
+          className={styles.mobileMenuButton}
+          onClick={toggleMobileMenu}
+          aria-label="Меню"
         >
-          {isAuthenticated ? 'Вийти' : 'Увійти'}
+          {isMobileMenuOpen ? <FaTimes /> : <FaBars />}
         </button>
+
+        {/* Navigation */}
+        <nav className={`${styles.nav} ${isMobileMenuOpen ? styles.navOpen : ''}`}>
+          <Link 
+            to="/" 
+            className={`${styles.navLink} ${isActive('/')}`}
+            onClick={closeAllMenus}
+          >
+            Головна
+          </Link>
+          <Link 
+            to="/about" 
+            className={`${styles.navLink} ${isActive('/about')}`}
+            onClick={closeAllMenus}
+          >
+            Про проект
+          </Link>
+          <Link 
+            to="/contacts" 
+            className={`${styles.navLink} ${isActive('/contacts')}`}
+            onClick={closeAllMenus}
+          >
+            Контакти
+          </Link>
+          <Link 
+            to="/subscription" 
+            className={`${styles.navLink} ${isActive('/subscription')}`}
+            onClick={closeAllMenus}
+          >
+            Підписка
+          </Link>
+          
+          {isAuthenticated && (
+            <Link 
+              to="/profile" 
+              className={`${styles.navLink} ${isActive('/profile')}`}
+              onClick={closeAllMenus}
+            >
+              Профіль
+            </Link>
+          )}
+
+          {/* Mobile auth button */}
+          <div className={styles.mobileAuthSection}>
+            <button 
+              className={isAuthenticated ? styles.logoutButton : styles.authButton}
+              onClick={handleAuthClick}
+            >
+              {isAuthenticated ? 'Вийти' : 'Увійти'}
+            </button>
+          </div>
+        </nav>
+
+        {/* Desktop user controls */}
+        <div className={styles.userControls}>
+          <div className={styles.languageContainer}>
+            <button 
+              className={styles.languageButton}
+              onClick={toggleLanguageDropdown}
+              title="Змінити мову"
+            >
+              <FaGlobe className={styles.languageIcon} />
+            </button>
+            
+            {showLanguageDropdown && (
+              <div className={styles.languageDropdown}>
+                <button 
+                  className={styles.languageOption}
+                  onClick={() => changeLanguage('uk')}
+                >
+                  Українська
+                </button>
+                <button 
+                  className={styles.languageOption}
+                  onClick={() => changeLanguage('en')}
+                >
+                  English
+                </button>
+                <button 
+                  className={styles.languageOption}
+                  onClick={() => changeLanguage('pl')}
+                >
+                  Polski
+                </button>
+              </div>
+            )}
+          </div>
+
+          <button 
+            className={isAuthenticated ? styles.logoutButton : styles.authButton}
+            onClick={handleAuthClick}
+            disabled={isLoading}
+          >
+            {isAuthenticated ? 'Вийти' : 'Увійти'}
+          </button>
+        </div>
       </div>
+
+      {/* Overlay for mobile menu */}
+      {isMobileMenuOpen && (
+        <div className={styles.overlay} onClick={closeAllMenus} />
+      )}
     </header>
   );
 }

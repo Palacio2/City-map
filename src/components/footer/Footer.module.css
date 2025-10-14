@@ -136,7 +136,19 @@
   background-size: cover;
 }
 
-/* Адаптивність */
+/* ========== MOBILE ADAPTATION ========== */
+@media (max-width: 968px) {
+  .footerContent {
+    gap: 2.5rem;
+    padding: 0 1.5rem;
+  }
+  
+  .footerSection {
+    flex: 0 1 250px;
+    min-width: 200px;
+  }
+}
+
 @media (max-width: 768px) {
   .footer {
     padding: 2.5rem 0 0;
@@ -167,6 +179,16 @@
     margin-top: 2.5rem;
     font-size: 0.85rem;
   }
+  
+  /* Mobile touch improvements */
+  .footerSection a {
+    padding: 0.5rem 0;
+    margin-bottom: 0.5rem;
+  }
+  
+  .footerSection a:hover {
+    transform: none;
+  }
 }
 
 @media (max-width: 480px) {
@@ -187,10 +209,73 @@
     font-size: 1.3rem;
   }
   
+  .footerSection h4 {
+    font-size: 1.1rem;
+  }
+  
+  .footerSection p,
+  .footerSection a {
+    font-size: 0.9rem;
+  }
+  
   .copyright {
     padding: 1.2rem;
     margin-top: 2rem;
     font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 360px) {
+  .footer {
+    padding: 1.5rem 0 0;
+  }
+  
+  .footerContent {
+    padding: 0 0.8rem;
+    gap: 1.5rem;
+  }
+  
+  .footerSection {
+    max-width: 260px;
+  }
+  
+  .footerSection h3 {
+    font-size: 1.2rem;
+  }
+  
+  .footerSection h4 {
+    font-size: 1rem;
+  }
+  
+  .footerSection p,
+  .footerSection a {
+    font-size: 0.85rem;
+  }
+  
+  .copyright {
+    padding: 1rem;
+    margin-top: 1.5rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Touch device optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .footerSection a:hover {
+    transform: none;
+  }
+  
+  .footerSection a:hover::before {
+    width: 0;
+  }
+  
+  .footerSection a:active {
+    color: white;
+    transform: translateX(5px);
+  }
+  
+  .footerSection a:active::before {
+    width: 80%;
   }
 }
 
