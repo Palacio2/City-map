@@ -1,0 +1,117 @@
+:root {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+  
+  /* Кольорова схема */
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --primary-light: #667eea;
+  --primary-dark: #764ba2;
+  --secondary-color: #2ecc71;
+  --accent-color: #f39c12;
+  --text-dark: #2d3748;
+  --text-medium: #4a5568;
+  --text-light: #718096;
+  --bg-light: #f8fafc;
+  --bg-white: #ffffff;
+  --border-color: #e2e8f0;
+  --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 15px 35px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 4px 6px rgba(102, 126, 234, 0.1);
+  
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  max-width: 100%;
+  color: var(--text-dark);
+  background-color: var(--bg-light);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* Скидання стилів для посилань */
+a {
+  color: var(--primary-light);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--primary-dark);
+}
+
+/* Скидання стилів для кнопок */
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: var(--primary-light);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  background-color: var(--primary-dark);
+  transform: translateY(-1px);
+}
+
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+/* Контейнер кореневого компонента */
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Утилітарні класи */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+  :root {
+    font-size: 14px;
+  }
+  
+  .container {
+    padding: 0 0.5rem;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --text-dark: rgba(255, 255, 255, 0.92);
+    --text-medium: rgba(255, 255, 255, 0.78);
+    --text-light: rgba(255, 255, 255, 0.6);
+    --bg-light: #1a202c;
+    --bg-white: #2d3748;
+    --border-color: #4a5568;
+  }
+  
+  body {
+    color: var(--text-dark);
+    background-color: var(--bg-light);
+  }
+}

@@ -1,0 +1,480 @@
+/* Оновлені стилі для фільтрів */
+.section {
+  background: var(--bg-white);
+  border-radius: 12px;
+  margin-bottom: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+  transition: all 0.3s ease;
+}
+
+.section:hover {
+  box-shadow: var(--shadow);
+  transform: translateY(-1px);
+}
+
+.sectionTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  padding: 14px 16px;
+  margin: 0;
+  background: var(--bg-light);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
+}
+
+.subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-medium);
+  margin: 1rem 0 0.5rem 0;
+  padding: 0 16px;
+}
+
+.filterGroup {
+  padding: 16px;
+}
+
+/* ===== Checkbox Items ===== */
+.filterItem {
+  display: flex;
+  align-items: center;
+  padding: 12px 0;
+  cursor: pointer;
+  color: var(--text-medium);
+  transition: all 0.3s ease;
+  border-radius: 6px;
+}
+
+.filterItem:hover {
+  color: var(--text-dark);
+  background: var(--bg-light);
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
+.filterItem input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  margin-right: 12px;
+  background: transparent;
+  appearance: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  flex-shrink: 0;
+}
+
+.filterItem input[type="checkbox"]:hover {
+  border-color: var(--primary-light);
+}
+
+.filterItem input[type="checkbox"]:checked {
+  background: var(--primary-gradient);
+  border-color: transparent;
+}
+
+.filterItem input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* ===== Select & Range Filters ===== */
+.ratingFilter, 
+.rangeFilter {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.ratingLabel, 
+.rangeLabel {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: var(--text-medium);
+  font-weight: 600;
+}
+
+.select {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-white);
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23667eea'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+/* ===== Range Inputs ===== */
+.rangeInputs {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.rangeInput {
+  flex: 1;
+  min-width: 100px;
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-white);
+  color: var(--text-dark);
+  text-align: center;
+  transition: all 0.3s ease;
+  font-family: inherit;
+}
+
+.rangeInput:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+.rangeSeparator {
+  color: var(--text-light);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ===== Range Slider Styles ===== */
+.rangeContainer {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0.5rem 0;
+}
+
+.rangeSlider {
+  flex: 1;
+  height: 6px;
+  border-radius: 3px;
+  background: #ddd;
+  outline: none;
+  opacity: 0.7;
+  transition: opacity 0.2s;
+  -webkit-appearance: none;
+}
+
+.rangeSlider:hover {
+  opacity: 1;
+}
+
+.rangeSlider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.rangeSlider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--primary-color);
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.rangeValue {
+  min-width: 40px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--primary-color);
+  background: var(--bg-light);
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+}
+
+/* ===== Filter Label Styles ===== */
+.filterLabel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.filterLabel:last-child {
+  margin-bottom: 0;
+}
+
+/* ===== Select Input Styles ===== */
+.selectInput {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  background: var(--bg-white);
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23667eea'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+}
+
+.selectInput:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+/* Checkbox Label Styles */
+.checkboxLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: background-color 0.2s ease;
+  color: var(--text-medium);
+}
+
+.checkboxLabel:hover {
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+}
+
+.checkboxLabel input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  border: 2px solid var(--border-color);
+  border-radius: 4px;
+  appearance: none;
+  background: transparent;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.checkboxLabel input[type="checkbox"]:checked {
+  background: var(--primary-gradient);
+  border-color: transparent;
+}
+
+.checkboxLabel input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Спеціальні стилі для темної теми */
+@media (prefers-color-scheme: dark) {
+  .filterItem input[type="checkbox"] {
+    border-color: var(--border-color);
+  }
+  
+  .filterItem input[type="checkbox"]:hover {
+    border-color: var(--primary-light);
+  }
+  
+  .select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23667eea'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  }
+  
+  .rangeSlider {
+    background: #555;
+  }
+  
+  .rangeSlider::-webkit-slider-thumb {
+    background: var(--primary-color);
+    border-color: #333;
+  }
+  
+  .rangeSlider::-moz-range-thumb {
+    background: var(--primary-color);
+    border-color: #333;
+  }
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 768px) {
+  .section {
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+  
+  .sectionTitle {
+    padding: 12px;
+    font-size: 1rem;
+  }
+  
+  .subtitle {
+    font-size: 0.95rem;
+    padding: 0 12px;
+  }
+  
+  .filterGroup {
+    padding: 12px;
+  }
+  
+  .filterItem {
+    padding: 10px 0;
+  }
+  
+  .filterItem:hover {
+    padding-left: 6px;
+    padding-right: 6px;
+  }
+  
+  .rangeInputs {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  
+  .rangeInput {
+    min-width: auto;
+    width: 100%;
+  }
+  
+  .rangeSeparator {
+    text-align: center;
+    margin: 4px 0;
+  }
+  
+  .rangeContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+  }
+  
+  .rangeValue {
+    text-align: center;
+    order: 2;
+  }
+  
+  .rangeSlider {
+    order: 1;
+  }
+}
+
+@media (max-width: 480px) {
+  .section {
+    border-radius: 8px;
+  }
+  
+  .sectionTitle {
+    padding: 10px;
+    font-size: 0.95rem;
+  }
+  
+  .subtitle {
+    font-size: 0.9rem;
+    padding: 0 10px;
+  }
+  
+  .filterGroup {
+    padding: 10px;
+  }
+  
+  .filterItem {
+    padding: 8px 0;
+    font-size: 0.9rem;
+  }
+  
+  .filterItem input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-right: 10px;
+  }
+  
+  .select {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .selectInput {
+    padding: 10px;
+    font-size: 0.9rem;
+  }
+  
+  .rangeInput {
+    padding: 10px;
+  }
+  
+  .checkboxLabel {
+    padding: 0.4rem;
+    font-size: 0.9rem;
+  }
+  
+  .checkboxLabel input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .checkboxLabel input[type="checkbox"]:checked::after {
+    font-size: 10px;
+  }
+}
+
+/* Анімації */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.section {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.filterItem {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.filterItem:nth-child(1) { animation-delay: 0.05s; }
+.filterItem:nth-child(2) { animation-delay: 0.1s; }
+.filterItem:nth-child(3) { animation-delay: 0.15s; }
+.filterItem:nth-child(4) { animation-delay: 0.2s; }
+.filterItem:nth-child(5) { animation-delay: 0.25s; }

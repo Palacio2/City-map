@@ -1,0 +1,277 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
+}
+
+.logo a {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.logo a:hover {
+  color: #f0f4ff;
+  transform: translateY(-1px);
+}
+
+.nav {
+  display: flex;
+  gap: 2.5rem;
+}
+
+.navLink {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  padding: 0.5rem 0;
+  position: relative;
+  font-size: 1.1rem;
+}
+
+.navLink:hover {
+  color: white;
+  transform: translateY(-1px);
+}
+
+.navLink::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background: white;
+  transition: width 0.3s ease;
+}
+
+.navLink:hover::after {
+  width: 100%;
+}
+
+.userControls {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  position: relative;
+}
+
+.authButton {
+  padding: 0.7rem 1.8rem;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  font-size: 1rem;
+}
+
+.authButton:hover {
+  background: rgba(255, 255, 255, 0.25);
+  border-color: rgba(255, 255, 255, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Стилі для кнопки виходу */
+.logoutButton {
+  padding: 0.7rem 1.8rem;
+  background: rgba(239, 68, 68, 0.2);
+  color: white;
+  border: 2px solid rgba(239, 68, 68, 0.3);
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+  font-size: 1rem;
+}
+
+.logoutButton:hover {
+  background: rgba(239, 68, 68, 0.3);
+  border-color: rgba(239, 68, 68, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* Стиль для стану завантаження */
+.authButton:disabled,
+.logoutButton:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Стилі для кнопки мови */
+.languageContainer {
+  position: relative;
+}
+
+.languageButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.languageIcon {
+  width: 24px;
+  height: 24px;
+}
+
+/* Випадаючий список мов */
+.languageDropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 8px;
+  background: black;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  min-width: 120px;
+  z-index: 1001;
+  overflow: hidden;
+}
+
+.languageOption {
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  color: white;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+/* Анімація для активної навігації */
+.navLinkActive {
+  color: white !important;
+}
+
+.navLinkActive::after {
+  width: 100% !important;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column;
+    gap: 1.2rem;
+    padding: 1.2rem;
+    text-align: center;
+  }
+  
+  .nav {
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .navLink {
+    font-size: 1rem;
+  }
+  
+  .authButton,
+  .logoutButton {
+    padding: 0.6rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .userControls {
+    gap: 0.8rem;
+  }
+  
+  .languageButton {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .languageIcon {
+    width: 16px;
+    height: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .nav {
+    gap: 1rem;
+    flex-direction: column;
+  }
+  
+  .logo a {
+    font-size: 1.5rem;
+  }
+  
+  .authButton,
+  .logoutButton {
+    width: 100%;
+    padding: 0.75rem;
+  }
+  
+  .userControls {
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+  
+  .languageContainer {
+    order: -1;
+  }
+  
+  .languageDropdown {
+    right: auto;
+    left: 0;
+  }
+}
+
+/* Додаткові медіа-запити для дуже малих екранів */
+@media (max-width: 360px) {
+  .header {
+    padding: 0.8rem;
+  }
+  
+  .nav {
+    gap: 0.8rem;
+  }
+  
+  .navLink {
+    font-size: 0.9rem;
+  }
+  
+  .authButton,
+  .logoutButton {
+    padding: 0.6rem 1rem;
+    font-size: 0.85rem;
+  }
+  
+  .languageButton {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .languageIcon {
+    width: 14px;
+    height: 14px;
+  }
+}

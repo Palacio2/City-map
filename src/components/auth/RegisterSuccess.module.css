@@ -1,0 +1,229 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: var(--bg-light);
+  padding: 20px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.card {
+  background: var(--bg-white);
+  border-radius: 20px;
+  padding: 3rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  text-align: center;
+}
+
+.successMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.successIcon {
+  width: 80px;
+  height: 80px;
+  color: var(--secondary-color);
+  animation: scaleIn 0.5s ease-out;
+}
+
+@keyframes scaleIn {
+  0% {
+    transform: scale(0);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.successMessage h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.successMessage p {
+  font-size: 1.1rem;
+  color: var(--text-medium);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.emailNote {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  background: var(--bg-light);
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0.5rem 0;
+  border: 1px solid var(--border-color);
+}
+
+.emailNote svg {
+  color: var(--primary-light);
+  flex-shrink: 0;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem 2rem;
+  background: var(--primary-gradient);
+  color: white;
+  text-decoration: none;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin-top: 1rem;
+  box-shadow: var(--shadow-card);
+  border: none;
+  cursor: pointer;
+  min-width: 200px;
+}
+
+.button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+  text-decoration: none;
+  color: white;
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .card {
+    padding: 2.5rem;
+    border-radius: 16px;
+  }
+  
+  .successIcon {
+    width: 64px;
+    height: 64px;
+  }
+  
+  .successMessage h1 {
+    font-size: 1.8rem;
+  }
+  
+  .successMessage p {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .card {
+    padding: 2rem;
+    border-radius: 12px;
+  }
+  
+  .successIcon {
+    width: 56px;
+    height: 56px;
+  }
+  
+  .successMessage h1 {
+    font-size: 1.6rem;
+  }
+  
+  .button {
+    padding: 0.875rem 1.5rem;
+    font-size: 0.95rem;
+    min-width: 180px;
+  }
+  
+  .emailNote {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.95rem;
+  }
+}
+
+/* Анімація появи */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.resendButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.875rem 1.5rem;
+  background: transparent;
+  color: var(--primary-light);
+  border: 2px solid var(--primary-light);
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.resendButton:hover:not(:disabled) {
+  background: var(--primary-light);
+  color: white;
+  transform: translateY(-1px);
+}
+
+.resendButton:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid transparent;
+  border-top: 2px solid currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.successText {
+  color: var(--secondary-color) !important;
+  font-weight: 600;
+}
+
+.errorText {
+  color: #e74c3c !important;
+  font-weight: 600;
+}

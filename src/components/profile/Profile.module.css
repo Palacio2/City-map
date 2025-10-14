@@ -1,0 +1,427 @@
+.container {
+  background: linear-gradient(135deg, #f8fafc 0%, #e6e9f0 100%);
+  padding: 1rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.subtitle {
+  font-size: 1.2rem;
+  color: #718096;
+  margin: 0;
+}
+
+.content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.section {
+  background: white;
+  border-radius: 20px;
+  padding: 2.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e2e8f0;
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.sectionHeader h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0;
+}
+
+.sectionIcon {
+  width: 28px;
+  height: 28px;
+  color: #667eea;
+}
+
+.profileGrid {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: start;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.infoLabel {
+  font-weight: 600;
+  color: #2d3748;
+  min-width: 120px;
+}
+
+.infoValue {
+  color: #4a5568;
+}
+
+.profileActions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.actionButton, .actionButtonSecondary {
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+  text-align: center;
+}
+
+.actionButton {
+  background: #667eea;
+  color: white;
+  border: none;
+}
+
+.actionButton:hover {
+  background: #5a67d8;
+  transform: translateY(-2px);
+}
+
+.actionButtonSecondary {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.actionButtonSecondary:hover {
+  background: #667eea;
+  color: white;
+}
+
+.subscriptionCard {
+  background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  border: 1px solid #e2e8f0;
+}
+
+.subscriptionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.planInfo h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2d3748;
+  margin: 0 0 0.5rem 0;
+}
+
+.status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.9rem;
+}
+
+.status.active {
+  background: #c6f6d5;
+  color: #22543d;
+}
+
+.status.inactive {
+  background: #fed7d7;
+  color: #742a2a;
+}
+
+.planPrice {
+  text-align: right;
+}
+
+.price {
+  font-size: 2rem;
+  font-weight: 800;
+  color: #667eea;
+  display: block;
+}
+
+.billingDate {
+  color: #718096;
+  font-size: 0.9rem;
+}
+
+.featuresList h4 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 1rem;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.featureItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: #4a5568;
+}
+
+.featureIcon {
+  color: #48bb78;
+  width: 16px;
+  height: 16px;
+}
+
+.subscriptionActions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.primaryButton, .secondaryButton {
+  padding: 1rem 1.5rem;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.primaryButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+}
+
+.primaryButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+}
+
+.secondaryButton {
+  background: transparent;
+  color: #667eea;
+  border: 2px solid #667eea;
+}
+
+.secondaryButton:hover {
+  background: #667eea;
+  color: white;
+}
+
+.helpSection {
+  text-align: center;
+  padding: 2rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 16px;
+  margin-top: 2rem;
+}
+
+.helpSection h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.helpSection p {
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+.helpLinks {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.helpLink {
+  padding: 0.75rem 1.5rem;
+  background: white;
+  color: #667eea;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.helpLink:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+.quickActions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.quickActionCard {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  text-align: center;
+  position: relative;
+}
+
+.quickActionCard:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+  border-color: #667eea;
+}
+
+.quickActionIcon {
+  width: 40px;
+  height: 40px;
+  color: #667eea;
+  margin-bottom: 1rem;
+}
+
+.quickActionCard h3 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 0.5rem;
+}
+
+.quickActionCard p {
+  color: #718096;
+  margin: 0;
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  font-size: 1.2rem;
+  color: #718096;
+}
+
+.lockedCard {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.lockOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  z-index: 10;
+  gap: 0.5rem;
+  color: #667eea;
+  font-weight: 600;
+}
+
+.lockIcon {
+  width: 24px;
+  height: 24px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 1rem;
+  }
+  
+  .title {
+    font-size: 2rem;
+  }
+  
+  .section {
+    padding: 1.5rem;
+  }
+  
+  .profileGrid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .subscriptionHeader {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+  
+  .planPrice {
+    text-align: center;
+  }
+  
+  .subscriptionActions {
+    flex-direction: column;
+  }
+  
+  .quickActions {
+    grid-template-columns: 1fr;
+  }
+  
+  .quickActionCard {
+    padding: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .helpLinks {
+    flex-direction: column;
+  }
+  
+  .helpLink {
+    width: 100%;
+    text-align: center;
+  }
+}

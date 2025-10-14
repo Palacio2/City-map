@@ -1,0 +1,61 @@
+.lockContainer {
+  position: relative;
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.blurredContent {
+  filter: blur(4px);
+  opacity: 0.7;
+  pointer-events: none;
+  user-select: none;
+}
+
+.lockContent {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.95);
+  padding: 2rem;
+  border-radius: 12px;
+  text-align: center;
+  z-index: 1000;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  min-width: 300px;
+}
+
+.lockIcon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.lockContent h3 {
+  margin: 0 0 0.5rem 0;
+  color: #2d3436;
+  font-weight: 600;
+}
+
+.lockContent p {
+  margin: 0 0 1.5rem 0;
+  color: #636e72;
+  line-height: 1.5;
+}
+
+.upgradeButton {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.upgradeButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
