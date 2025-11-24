@@ -1,4 +1,28 @@
 /* SelectForm.module.css */
+
+/* -------------------------------------------------- */
+/* ЗАГАЛЬНІ ЗМІННІ (Для прикладу, якщо вони не глобальні) */
+/* -------------------------------------------------- */
+:root {
+    --primary-color: #3498db;
+    --primary-dark: #2980b9;
+    --primary-gradient: linear-gradient(45deg, #3498db, #2ecc71);
+    --bg-white: #ffffff;
+    --bg-light: #f5f7fa;
+    --bg-hover: #ecf0f1;
+    --bg-hover-gray: gray;
+    --text-dark: #2c3e50;
+    --text-medium: #7f8c8d;
+    --text-light: #bdc3c7;
+    --border-color: #e0e6ed;
+    --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 15px 40px rgba(0, 0, 0, 0.15);
+    --shadow-card: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+/* -------------------------------------------------- */
+/* 1. БАЗОВА СТРУКТУРА ФОРМИ */
+/* -------------------------------------------------- */
 .container {
   display: flex;
   justify-content: center;
@@ -17,12 +41,6 @@
   max-width: 500px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
-}
-
-.card:hover {
-  box-shadow: var(--shadow-hover);
-  transform: translateY(-2px);
 }
 
 .header {
@@ -50,129 +68,182 @@
   gap: 1.5rem;
 }
 
+/* -------------------------------------------------- */
+/* 2. ПОЛЕ ВВЕДЕННЯ (COMBOBOX) */
+/* -------------------------------------------------- */
 .selectWrapper {
   position: relative;
   width: 100%;
 }
 
-.select {
-  width: 100%;
-  padding: 1rem;
-  font-size: 1rem;
-  border-radius: 10px;
-  border: 2px solid var(--border-color);
-  background-color: var(--bg-light);
-  color: var(--text-dark);
+.select,
+.searchInput {
   appearance: none;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  padding-right: 2.5rem;
-  font-family: inherit;
-}
-
-.select:focus {
-  outline: none;
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
   background-color: var(--bg-white);
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  display: block;
+  font-size: 1.1rem;
+  padding: 1rem 3rem 1rem 1rem;
+  width: 100%;
+  color: var(--text-dark);
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+  box-sizing: border-box; 
 }
 
-.select.disabled {
-  background-color: var(--border-color);
-  color: var(--text-light);
-  cursor: not-allowed;
+.select:hover,
+.searchInput:hover {
+  border-color: var(--primary-color);
+}
+
+.select:focus,
+.searchInput:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
 }
 
 .selectArrow {
+  color: var(--text-medium);
+  font-size: 1.2rem;
   position: absolute;
   right: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-medium);
-  pointer-events: none;
-  font-size: 0.8rem;
+  /* Зміни для Combobox */
+  pointer-events: all;
+  cursor: pointer;
+  z-index: 11;
+  transition: color 0.2s ease;
 }
 
-.disabledOption {
+.selectArrow:hover {
+    color: var(--primary-dark);
+}
+
+/* -------------------------------------------------- */
+/* 3. СПИСОК ПІДКАЗОК (COMBOBOX STYLES) */
+/* -------------------------------------------------- */
+.suggestionsList {
+  position: absolute;
+  top: 100%; 
+  left: 0;
+  right: 0;
+  z-index: 10;
+  margin: 4px 0 0 0;
+  padding: 0;
+  list-style: none;
+  background-color: var(--bg-white);
+  border: 2px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+.suggestionItem {
+  padding: 1rem;
+  font-size: 1rem;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  line-height: 1.2;
+}
+
+.suggestionItem:hover {
+  background-color: var(--bg-hover-gray);
+}
+
+.suggestionItem:not(:last-child) {
+  border-bottom: 1px solid var(--border-color);
+}
+
+.suggestionItem.disabledOption {
   color: var(--text-light);
   background-color: var(--bg-light);
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
+.noResults {
+  padding: 1rem;
+  color: var(--text-medium);
+  text-align: center;
+  font-style: italic;
+}
+
+/* -------------------------------------------------- */
+/* 4. КНОПКИ ТА СТАНИ */
+/* -------------------------------------------------- */
 .buttonsContainer {
   display: flex;
+  justify-content: space-between;
   gap: 1rem;
-  width: 100%;
+}
+
+.button,
+.backButton {
+  padding: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: var(--shadow-card);
 }
 
 .button {
   flex: 1;
-  padding: 1rem;
-  font-size: 1rem;
-  font-weight: 600;
   background: var(--primary-gradient);
   color: white;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  box-shadow: var(--shadow-card);
-  font-family: inherit;
+  box-shadow: 0 4px 15px rgba(52, 152, 219, 0.4);
 }
 
 .button:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-}
-
-.button:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.disabledButton {
-  background: var(--border-color);
-  color: var(--text-light);
-  cursor: not-allowed;
-  box-shadow: none;
+  box-shadow: 0 6px 20px rgba(52, 152, 219, 0.6);
 }
 
 .backButton {
-  flex: 0.5;
-  padding: 1rem;
-  font-size: 1rem;
-  font-weight: 600;
-  background: transparent;
-  color: var(--primary-light);
-  border: 2px solid var(--primary-light);
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  font-family: inherit;
+  background-color: var(--bg-light);
+  color: var(--text-medium);
+  flex: 0 0 100px; /* Фіксована ширина */
 }
 
 .backButton:hover:not(:disabled) {
-  background: var(--primary-light);
-  color: white;
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-card);
+  background-color: var(--bg-hover-gray);
+  opacity: 50%;
+  color: var(--text-dark);
 }
 
-.backButton:active:not(:disabled) {
-  transform: translateY(0);
-}
-
+.disabledButton,
+.button:disabled,
 .backButton:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+.select.disabled,
+.searchInput:disabled {
+  background-color: var(--bg-light);
+  cursor: not-allowed;
+  color: var(--text-light);
+  border-color: var(--border-color);
+}
+
+.disabledOption {
+  background-color: var(--bg-light);
+  color: var(--text-medium);
   cursor: not-allowed;
 }
 
+/* -------------------------------------------------- */
+/* 5. ОБРОБКА ПОМИЛОК */
+/* -------------------------------------------------- */
 .errorContainer {
   display: flex;
   flex-direction: column;
@@ -203,65 +274,48 @@
   box-shadow: var(--shadow-hover);
 }
 
-/* Спеціальні стилі для темної теми */
-@media (prefers-color-scheme: dark) {
-  .select {
-    background-color: var(--bg-white);
-  }
-  
-  .select:focus {
-    background-color: var(--bg-white);
-  }
-  
-  .disabledOption {
-    background-color: var(--bg-light);
-  }
-}
-
-/* Адаптивність */
+/* -------------------------------------------------- */
+/* 6. АДАПТИВНІСТЬ */
+/* -------------------------------------------------- */
 @media (max-width: 600px) {
-  .container {
-    padding: 15px;
-  }
-  
   .card {
     padding: 1.5rem;
+    margin: 1rem;
   }
   
   .title {
     font-size: 1.5rem;
   }
   
-  .buttonsContainer {
-    flex-direction: column-reverse;
+  .subtitle {
+    font-size: 0.9rem;
   }
   
+  .button, .backButton {
+    font-size: 1rem;
+  }
+  
+  .buttonsContainer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
   .backButton {
-    flex: 1;
+    flex: 1; /* Зміна фіксованої ширини на повну ширину */
     order: 2;
   }
   
   .button {
     order: 1;
   }
-}
-
-@media (max-width: 480px) {
-  .card {
-    padding: 1.25rem;
+  
+  .select, .searchInput {
+    padding: 0.8rem 3rem 0.8rem 0.8rem;
+    font-size: 1rem;
   }
   
-  .title {
-    font-size: 1.35rem;
-  }
-  
-  .select {
-    padding: 0.875rem;
-    font-size: 0.95rem;
-  }
-  
-  .button, .backButton {
-    padding: 0.875rem;
-    font-size: 0.95rem;
+  .suggestionItem {
+    padding: 0.8rem;
+    font-size: 0.9rem;
   }
 }

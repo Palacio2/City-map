@@ -28,7 +28,15 @@ export async function fetchUserBillingHistory(page = 1, limit = 10) {
       throw fetchError;
     }
 
-    return { subscriptions, count };
+    // Конвертуємо plan_name 'pro' в 'premium' для відображення
+    const formattedSubscriptions = (subscriptions || []).map(sub => ({
+      ...sub,
+      // Конвертуємо тільки для відображення, але зберігаємо оригінальні значення
+      display_plan_name: sub.plan_name === 'pro' ? 'premium' : sub.plan_name,
+      display_status: sub.status // Можна додати форматування статусу тут, якщо потрібно
+    }));
+
+    return { subscriptions: formattedSubscriptions, count };
   } catch (error) {
     console.error("Помилка при завантаженні історії платежів:", error);
     throw new Error(error.message || 'Не вдалося завантажити історію платежів.');
@@ -42,7 +50,7 @@ export async function cancelUserSubscription(subscriptionId) {
   try {
     const { error: updateError } = await supabase
       .from('user_subscriptions')
-      .update({ 
+      .update({
         status: 'cancelled',
         cancelled_at: new Date().toISOString()
       })
@@ -52,7 +60,7 @@ export async function cancelUserSubscription(subscriptionId) {
       console.error('Помилка оновлення підписки:', updateError);
       throw updateError;
     }
-    
+   
     // Оновлюємо поточний план користувача до "free" у таблиці профілів
     const { data: { user } } = await supabase.auth.getUser();
     if (user) {

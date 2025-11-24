@@ -18,11 +18,11 @@ import ProtectedRoute from "./ProtectedRoute"; // Імпорт ProtectedRoute
 // Імпортуємо нові компоненти профілю
 import StatsPage from "../components/profile/StatsPage";
 import BillingHistoryPage from "../components/profile/BillingHistoryPage";
-import AccountActionsPage from "../components/profile/AccountActionsPage";
 import ProfileEditPage from "../components/profile/ProfileEditPage";
 import PasswordChangePage from "../components/profile/PasswordChangePage";
 import PaymentSuccess from "../pages/payment/PaymentSuccess";
 import Billing from "../pages/billing/Billing";
+import FavoritesPage from '../pages/favorites/FavoritesPage'
 
 export default function AppRoutes() {
   return (
@@ -42,6 +42,8 @@ export default function AppRoutes() {
         <Route path="register-success" element={<RegisterSuccess />} />
         <Route path="auth/callback" element={<AuthCallback />} />
         <Route path="payment-success" element={<PaymentSuccess />} />
+        <Route path="/favorites" element={<FavoritesPage />} />
+        
 
         {/* Приватні маршрути */}
         <Route
@@ -67,14 +69,6 @@ export default function AppRoutes() {
           element={
             <PrivateRoute>
               <BillingHistoryPage />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="profile/account-actions"
-          element={
-            <PrivateRoute>
-              <AccountActionsPage />
             </PrivateRoute>
           }
         />

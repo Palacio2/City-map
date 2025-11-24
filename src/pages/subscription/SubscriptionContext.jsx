@@ -10,6 +10,15 @@ export const useSubscription = () => {
   return context;
 };
 
+const getFreePlan = () => ({
+  plan: 'free', 
+  features: subscriptionPlans.free.features, 
+  expiresAt: null, 
+  status: 'active',
+  isCancelled: false,
+  isExpired: false 
+});
+
 const fetchSubscriptionFromDB = async () => {
   try {
     const { data: { user } } = await supabase.auth.getUser();
@@ -25,23 +34,33 @@ const fetchSubscriptionFromDB = async () => {
     if (subscriptions?.length > 0) {
       const subscription = subscriptions[0];
       const planName = subscription.plan_name;
-      const features = subscriptionPlans[planName]?.features || subscriptionPlans.free.features;
       
       const now = new Date();
       const endsAt = new Date(subscription.ends_at);
+      
+      // Перевіряємо, чи термін дії минув
+      const isExpired = endsAt <= now; 
+
+      // Якщо підписка прострочена АБО поточний план free, використовуємо free
+      if (isExpired || planName === 'free') return getFreePlan();
+
+      const features = subscriptionPlans[planName]?.features || subscriptionPlans.free.features;
+      
+      // Підписка активна, якщо не 'cancelled' АБО 'cancelled', але не прострочена 
       const isActive = subscription.status === 'active' || 
-                      (subscription.status === 'cancelled' && endsAt > now);
+                       (subscription.status === 'cancelled' && !isExpired); 
 
       return {
-        plan: isActive ? planName : 'free',
+        plan: planName, // Фактичний платний план (premium)
         originalPlan: planName,
-        features: isActive ? features : subscriptionPlans.free.features,
+        features: features,
         expiresAt: subscription.ends_at,
         status: subscription.status,
         isCancelled: subscription.status === 'cancelled',
+        isExpired: isExpired, 
       };
     }
-    
+
     return getFreePlan();
   } catch (error) {
     console.error('Failed to fetch subscription:', error);
@@ -49,13 +68,6 @@ const fetchSubscriptionFromDB = async () => {
   }
 };
 
-const getFreePlan = () => ({
-  plan: 'free', 
-  features: subscriptionPlans.free.features, 
-  expiresAt: null, 
-  status: 'active',
-  isCancelled: false 
-});
 
 export const SubscriptionProvider = ({ children }) => {
   const [subscription, setSubscription] = useState(null);
@@ -89,19 +101,24 @@ export const SubscriptionProvider = ({ children }) => {
   const hasFeature = (feature) => {
     if (!subscription) return false;
     
-    if (subscription.isCancelled) {
-      const now = new Date();
-      const expiresAt = new Date(subscription.expiresAt);
-      if (expiresAt > now) return subscription.features.includes(feature);
-      return false;
+    // Якщо підписка прострочена, доступні лише free функції
+    if (subscription.isExpired || subscription.plan === 'free') {
+      return subscriptionPlans.free.features.includes(feature);
     }
     
+    // В іншому випадку, перевіряємо функції поточного активного плану
     return subscription.features.includes(feature);
   };
 
   const getTranslatedFeatures = () => {
     if (!subscription) return [];
-    return subscription.features.map(feature => featureTranslations[feature] || feature);
+    
+    // Якщо прострочена, використовуємо free features для відображення
+    const currentFeatures = subscription.isExpired || subscription.plan === 'free'
+      ? subscriptionPlans.free.features
+      : subscription.features;
+      
+    return currentFeatures.map(feature => featureTranslations[feature] || feature);
   };
 
   const value = {
@@ -109,9 +126,9 @@ export const SubscriptionProvider = ({ children }) => {
     isLoading,
     hasFeature,
     getTranslatedFeatures,
-    isPro: subscription?.plan === 'pro',
-    isPremium: subscription?.plan === 'premium',
-    isFree: subscription?.plan === 'free',
+    // *** ЗМІНЕНО: Видалено isPro ***
+    isPremium: subscription?.plan === 'premium' && !subscription?.isExpired,
+    isFree: subscription?.plan === 'free' || subscription?.isExpired,
     updateSubscription,
   };
 

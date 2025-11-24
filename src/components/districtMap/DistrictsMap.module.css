@@ -59,8 +59,8 @@
   grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
   gap: 16px;
   padding: 20px;
-  width: 100%;
-  height: 100%;
+  width: auto;
+  height: auto;
   align-items: start;
 }
 
@@ -340,4 +340,45 @@
   .districtsList {
     padding: 16px;
   }
+}
+
+activeFilterBadge {
+  background: var(--secondary-color);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 14px;
+  color: white;
+  border: 1px solid var(--secondary-dark);
+}
+
+.clearFiltersHint {
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  margin-top: 12px;
+  transition: background-color 0.3s ease;
+}
+
+.clearFiltersHint:hover {
+  background: var(--primary-dark);
+}
+
+.listHeader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.filteredCount {
+  background: var(--bg-light);
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  color: var(--text-medium);
+  border: 1px solid var(--border-color);
 }

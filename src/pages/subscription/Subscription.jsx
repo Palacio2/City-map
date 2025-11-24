@@ -1,15 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FaCheck, FaTimes, FaQuestionCircle } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaQuestionCircle } from 'react-icons/fa'; // Видалено FaCrown, залишено FaQuestionCircle
+import { useSubscription } from '../../pages/subscription/SubscriptionContext'; 
 import { subscriptionPlans, featureTranslations } from './subscriptionPlans';
 import styles from './Subscription.module.css';
 
 export default function Subscription() {
-  const [selectedPlan, setSelectedPlan] = useState('pro');
+  const [selectedPlan, setSelectedPlan] = useState('premium'); // *** ЗМІНЕНО: Встановлено premium за замовчуванням ***
   const navigate = useNavigate();
+  
+  const { subscription } = useSubscription(); 
 
   const currentPlan = subscriptionPlans[selectedPlan];
   const IconComponent = currentPlan.icon;
+  
+  const isCurrentPlan = subscription && subscription.plan === selectedPlan && !subscription.isExpired;
 
   const handlePlanSelection = () => {
     if (selectedPlan === 'free') {
@@ -33,8 +38,9 @@ export default function Subscription() {
       </div>
 
       <div className={styles.plansContainer}>
+        {/* *** ОНОВЛЕНО: Відображаємо тільки free та premium *** */}
         <div className={styles.planToggle}>
-          {Object.entries(subscriptionPlans).map(([key, plan]) => (
+          {Object.entries(subscriptionPlans).filter(([key]) => key === 'free' || key === 'premium').map(([key, plan]) => (
             <button
               key={key}
               className={`${styles.toggleButton} ${selectedPlan === key ? styles.active : ''}`}
@@ -42,6 +48,9 @@ export default function Subscription() {
             >
               <plan.icon />
               {plan.name}
+              {subscription && subscription.plan === key && !subscription.isExpired && (
+                  <span className={styles.currentPlanLabel}> (Поточний)</span>
+              )}
             </button>
           ))}
         </div>
@@ -50,8 +59,14 @@ export default function Subscription() {
           <div className={styles.planHeader}>
             <IconComponent />
             <h2>{currentPlan.name}</h2>
-            <div className={styles.price}>{currentPlan.price}</div>
-            {selectedPlan !== 'free' && <div className={styles.trialLabel}>7 днів безкоштовно</div>}
+            <div className={styles.price}>
+                {isCurrentPlan ? (
+                    <span className={styles.currentPriceLabel}>Даний тариф</span>
+                ) : (
+                    currentPlan.price
+                )}
+            </div>
+            {selectedPlan !== 'free' && !isCurrentPlan && <div className={styles.trialLabel}>7 днів безкоштовно</div>}
           </div>
           
           <div className={styles.features}>
@@ -64,7 +79,7 @@ export default function Subscription() {
             ))}
           </div>
 
-          {selectedPlan === 'free' && (
+          {selectedPlan === 'free' && currentPlan.disabledFeatures && (
             <div className={styles.disabledFeatures}>
               <h3>Недоступно без підписки:</h3>
               {currentPlan.disabledFeatures.map((featureKey, index) => (
@@ -79,8 +94,12 @@ export default function Subscription() {
           <button 
             className={`${styles.subscribeButton} ${styles[selectedPlan]}`}
             onClick={handlePlanSelection}
+            disabled={isCurrentPlan} 
           >
-            {selectedPlan === 'free' ? 'Почати безкоштовно' : 'Обрати тариф'}
+            {isCurrentPlan 
+                ? 'Активний' 
+                : (selectedPlan === 'free' ? 'Почати безкоштовно' : 'Обрати тариф')
+            }
           </button>
 
           <div className={styles.faqLink}>

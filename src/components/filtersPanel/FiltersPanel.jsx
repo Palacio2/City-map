@@ -12,7 +12,7 @@ import UtilitiesFilters from './sections/UtilitiesFilters';
 
 export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) {
   const navigate = useNavigate();
-  const { subscription, isPro, isPremium, isFree } = useSubscription();
+  const { isPremium, isFree } = useSubscription();
   const [filters, setFilters] = useState(selectedFilters);
 
   const handleUpgradeClick = () => {
@@ -54,11 +54,6 @@ export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) 
               </button>
             </div>
           )}
-          {isPro && (
-            <div className={styles.subscriptionInfoPro}>
-              <span className={styles.proBadge}>⭐ Pro</span>
-            </div>
-          )}
           {isPremium && (
             <div className={styles.subscriptionInfoPremium}>
               <span className={styles.premiumBadge}>💎 Premium</span>
@@ -68,55 +63,63 @@ export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) 
       </div>
       
       <div className={styles.scrollContainer}>
+        {/* Базові фільтри - доступні всім */}
         <div className={styles.section}>
           <EducationFilters 
             filters={filters}
             onFiltersChange={updateFilters}
           />
         </div>
+        
         <div className={styles.section}>
           <MedicineFilters 
             filters={filters}
             onFiltersChange={updateFilters}
           />
         </div>
-        <div className={styles.section}>
-          <TransportFilters 
-            filters={filters}
-            onFiltersChange={updateFilters}
-          />
-        </div>
-        <div className={styles.section}>
-          <SocialFilters 
-            filters={filters}
-            onFiltersChange={updateFilters}
-          />
-        </div>
-        <div className={styles.section}>
-          <SafetyFilters 
-            filters={filters}
-            onFiltersChange={updateFilters}
-          />
-        </div>
-        <div className={styles.section}>
-          <CommerceFilters 
-            filters={filters}
-            onFiltersChange={updateFilters}
-          />
-        </div>
-        <div className={styles.section}>
-          <UtilitiesFilters 
-            filters={filters}
-            onFiltersChange={updateFilters}
-          />
-        </div>
+
+        {/* Преміум фільтри - тільки для Premium */}
+        {isPremium && (
+          <>
+            <div className={styles.section}>
+              <TransportFilters 
+                filters={filters}
+                onFiltersChange={updateFilters}
+              />
+            </div>
+            <div className={styles.section}>
+              <SocialFilters 
+                filters={filters}
+                onFiltersChange={updateFilters}
+              />
+            </div>
+            <div className={styles.section}>
+              <SafetyFilters 
+                filters={filters}
+                onFiltersChange={updateFilters}
+              />
+            </div>
+            <div className={styles.section}>
+              <CommerceFilters 
+                filters={filters}
+                onFiltersChange={updateFilters}
+              />
+            </div>
+            <div className={styles.section}>
+              <UtilitiesFilters 
+                filters={filters}
+                onFiltersChange={updateFilters}
+              />
+            </div>
+          </>
+        )}
       </div>
       
       {isFree && (
         <div className={styles.upgradeBanner}>
           <div className={styles.bannerContent}>
             <h4>Отримайте більше можливостей!</h4>
-            <p>Розблокуйте всі фільтри з підпискою Pro або Premium</p>
+            <p>Розблокуйте всі фільтри з підпискою Premium</p>
             <button 
               className={styles.bannerButton}
               onClick={handleUpgradeClick}

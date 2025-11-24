@@ -1,3 +1,12 @@
+:root {
+  --color-primary: #667eea;
+  --color-primary-dark: #5a67d8;
+  --color-primary-gradient: linear-gradient(135deg, var(--color-primary) 0%, #764ba2 100%);
+  --transition-default: all 0.3s ease;
+  --shadow-default: 0 10px 40px rgba(0, 0, 0, 0.1);
+  --shadow-hover-lift: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
 .container {
   background: linear-gradient(135deg, #f8fafc 0%, #e6e9f0 100%);
   padding: 1rem;
@@ -33,7 +42,7 @@
   border-radius: 20px;
   padding: 2.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-default);
   border: 1px solid #e2e8f0;
 }
 
@@ -54,7 +63,7 @@
 .sectionIcon {
   width: 28px;
   height: 28px;
-  color: #667eea;
+  color: var(--color-primary);
 }
 
 .profileGrid {
@@ -92,36 +101,40 @@
   gap: 0.5rem;
 }
 
-.actionButton, .actionButtonSecondary {
+/* Базовий стиль для всіх кнопок-посилань */
+.baseLinkButton {
   padding: 0.75rem 1.5rem;
   border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
   text-decoration: none;
-  display: inline-block;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
   text-align: center;
 }
 
 .actionButton {
-  background: #667eea;
+  background: var(--color-primary);
   color: white;
   border: none;
 }
 
 .actionButton:hover {
-  background: #5a67d8;
+  background: var(--color-primary-dark);
   transform: translateY(-2px);
 }
 
 .actionButtonSecondary {
   background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
 }
 
 .actionButtonSecondary:hover {
-  background: #667eea;
+  background: var(--color-primary);
   color: white;
 }
 
@@ -130,6 +143,28 @@
   border-radius: 16px;
   padding: 2rem;
   border: 1px solid #e2e8f0;
+}
+
+.cancellationNotice, .expiredNotice {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 10px;
+  font-weight: 600;
+}
+
+.cancellationNotice {
+  background: #fefcbf; 
+  color: #8b5421;
+  border: 1px solid #f9e28f;
+}
+
+.expiredNotice {
+  background: #fbb6ce; 
+  color: #9b2c2c;
+  border: 1px solid #f687b3;
 }
 
 .subscriptionHeader {
@@ -163,7 +198,7 @@
   color: #22543d;
 }
 
-.status.inactive {
+.status.inactive, .status.expired {
   background: #fed7d7;
   color: #742a2a;
 }
@@ -175,7 +210,7 @@
 .price {
   font-size: 2rem;
   font-weight: 800;
-  color: #667eea;
+  color: var(--color-primary);
   display: block;
 }
 
@@ -217,20 +252,8 @@
   flex-wrap: wrap;
 }
 
-.primaryButton, .secondaryButton {
-  padding: 1rem 1.5rem;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
 .primaryButton {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-primary-gradient);
   color: white;
   border: none;
 }
@@ -242,19 +265,19 @@
 
 .secondaryButton {
   background: transparent;
-  color: #667eea;
-  border: 2px solid #667eea;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
 }
 
 .secondaryButton:hover {
-  background: #667eea;
+  background: var(--color-primary);
   color: white;
 }
 
 .helpSection {
   text-align: center;
   padding: 2rem;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--color-primary-gradient);
   color: white;
   border-radius: 16px;
   margin-top: 2rem;
@@ -281,11 +304,11 @@
 .helpLink {
   padding: 0.75rem 1.5rem;
   background: white;
-  color: #667eea;
+  color: var(--color-primary);
   text-decoration: none;
   border-radius: 8px;
   font-weight: 600;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
 }
 
 .helpLink:hover {
@@ -307,21 +330,21 @@
   text-decoration: none;
   color: inherit;
   border: 1px solid #e2e8f0;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
   text-align: center;
   position: relative;
 }
 
 .quickActionCard:hover {
   transform: translateY(-4px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
-  border-color: #667eea;
+  box-shadow: var(--shadow-hover-lift);
+  border-color: var(--color-primary);
 }
 
 .quickActionIcon {
   width: 40px;
   height: 40px;
-  color: #667eea;
+  color: var(--color-primary);
   margin-bottom: 1rem;
 }
 
@@ -365,7 +388,7 @@
   border-radius: 16px;
   z-index: 10;
   gap: 0.5rem;
-  color: #667eea;
+  color: var(--color-primary);
   font-weight: 600;
 }
 
@@ -398,6 +421,10 @@
     text-align: center;
   }
   
+  .planInfo {
+      text-align: center;
+  }
+
   .planPrice {
     text-align: center;
   }

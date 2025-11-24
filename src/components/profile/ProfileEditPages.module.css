@@ -33,10 +33,9 @@
 }
 
 .backButton:hover {
-  color: var(--primary-dark);
+  color: white;
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
-  border-color: var(--primary-light);
 }
 
 .titleSection {
@@ -155,10 +154,12 @@
   font-size: 16px;
   transition: all 0.3s ease;
   background: var(--bg-white);
+  color: gray;
   width: 100%;
 }
 
 .formInput:focus {
+  color: white;
   outline: none;
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
@@ -246,7 +247,6 @@
 }
 
 .secondaryButton:hover {
-  background: var(--bg-light);
   border-color: var(--primary-light);
   transform: translateY(-2px);
 }
@@ -313,5 +313,54 @@
   .secondaryButton {
     padding: 14px 20px;
     font-size: 14px;
+  }
+}
+
+.phoneInputContainer {
+  display: flex;
+  gap: 8px; /* Відстань між селектом та інпутом */
+  width: 100%;
+}
+
+.countryCodeSelect {
+  /* Стилі для випадаючого меню */
+  box-sizing: border-box;
+  padding: 12px 10px; /* Трохи менше padding, щоб вмістити код */
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 16px;
+  color: gray;
+  transition: all 0.3s ease;
+  background: var(--bg-white);
+  /* Обмежте ширину, щоб залишити місце для поля номера */
+  width: 150px; 
+  flex-shrink: 0;
+  appearance: none; /* Для кращого вигляду в деяких браузерах */
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23667eea" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 25px;
+}
+
+.countryCodeSelect:focus {
+  color: white;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.phoneInputContainer .formInput {
+  /* Забезпечуємо, щоб поле номера займало решту простору */
+  flex-grow: 1;
+}
+
+/* Адаптивність для мобільних пристроїв */
+@media (max-width: 480px) {
+  .phoneInputContainer {
+    flex-direction: column; /* На мобільних: перемикаємо на стовпчик */
+    gap: 12px;
+  }
+  
+  .countryCodeSelect {
+    width: 100%; /* На мобільних: на всю ширину */
   }
 }

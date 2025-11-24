@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import styles from './DistrictMap.module.css';
 import CountrySelect from '../cityCountrySelect/CountrySelect';
@@ -9,7 +9,8 @@ import { fetchDistrictsWithFilters } from '../api/districtsApi';
 
 export default function DistrictMap() {
   const { country, city } = useParams();
-  const [districts, setDistricts] = useState([]);
+  const [allDistricts, setAllDistricts] = useState([]);
+  const [filteredDistricts, setFilteredDistricts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({});
@@ -26,7 +27,8 @@ export default function DistrictMap() {
       
       const districtsData = await fetchDistrictsWithFilters(decodedCountry, decodedCity);
       console.log('Received districts data:', districtsData);
-      setDistricts(districtsData);
+      setAllDistricts(districtsData);
+      setFilteredDistricts(districtsData);
     } catch (err) {
       console.error('Error fetching districts:', err);
       setError(err.message);
@@ -46,67 +48,174 @@ export default function DistrictMap() {
     
     if (district.filterData) {
       console.log('Дані фільтрів для району:', district.filterData);
-      console.log('Рейтинг освіти:', district.filterData.education?.rating);
-      console.log('Рейтинг транспорту:', district.filterData.transport?.rating);
-      console.log('Рейтинг безпеки:', district.filterData.safety?.rating);
-      console.log('Кількість шкіл:', district.filterData.education?.schools);
-      console.log('Кількість парків:', district.filterData.social?.parks);
     }
-    
-    // Тут можна додати логіку для фільтрів або відображення додаткової інформації
+  }, []);
+
+  // Функція для фільтрації районів за критеріями
+  const filterDistrictsByCriteria = useCallback((districtsList, filters) => {
+    if (!filters || Object.keys(filters).length === 0) {
+      return districtsList;
+    }
+
+    return districtsList.filter(district => {
+      if (!district.filterData) return false;
+
+      const { 
+        education = {}, 
+        transport = {}, 
+        safety = {}, 
+        social = {}, 
+        medicine = {}, 
+        commerce = {}, 
+        utilities = {} 
+      } = district.filterData;
+
+      // Фільтрація за освітою
+      if (filters.education) {
+        const eduFilters = filters.education;
+        
+        // Чекбокси
+        if (eduFilters.kindergartens && (!education.kindergartens || education.kindergartens === 0)) return false;
+        if (eduFilters.schools && (!education.schools || education.schools === 0)) return false;
+        if (eduFilters.universities && (!education.universities || education.universities === 0)) return false;
+        
+        // Числові фільтри
+        if (eduFilters.minSchools && education.schools < eduFilters.minSchools) return false;
+        if (eduFilters.minKindergartens && education.kindergartens < eduFilters.minKindergartens) return false;
+        if (eduFilters.minRating && education.rating < eduFilters.minRating) return false;
+      }
+
+      // Фільтрація за медициною
+      if (filters.medicine) {
+        const medFilters = filters.medicine;
+        
+        // Чекбокси
+        if (medFilters.hospitals && (!medicine.hospitals || medicine.hospitals === 0)) return false;
+        if (medFilters.clinics && (!medicine.clinics || medicine.clinics === 0)) return false;
+        if (medFilters.pharmacies && (!medicine.pharmacies || medicine.pharmacies === 0)) return false;
+        if (medFilters.emergency && (!medicine.emergency || medicine.emergency === 0)) return false;
+        
+        // Числові фільтри
+        if (medFilters.minHospitals && medicine.hospitals < medFilters.minHospitals) return false;
+        if (medFilters.minClinics && medicine.clinics < medFilters.minClinics) return false;
+        if (medFilters.minRating && medicine.rating < medFilters.minRating) return false;
+      }
+
+      // Фільтрація за транспортом (тільки для Premium)
+      if (filters.transport) {
+        const transFilters = filters.transport;
+        
+        // Чекбокси
+        if (transFilters.bus_stops && (!transport.busStops || transport.busStops === 0)) return false;
+        if (transFilters.tram_stops && (!transport.tramStops || transport.tramStops === 0)) return false;
+        if (transFilters.metro && (!transport.metroStations || transport.metroStations === 0)) return false;
+        if (transFilters.bike_lanes && (!transport.bikeLanesKm || transport.bikeLanesKm === 0)) return false;
+        if (transFilters.parking && (!transport.parking || transport.parking === 0)) return false;
+        
+        // Числові фільтри
+        if (transFilters.maxDistance && transport.avgDistance > transFilters.maxDistance) return false;
+        if (transFilters.minRating && transport.rating < transFilters.minRating) return false;
+        
+        // Селект
+        if (transFilters.frequency && transFilters.frequency !== 'any') {
+          const districtFrequency = transport.frequency || 'medium';
+          if (transFilters.frequency === 'high' && districtFrequency !== 'high') return false;
+          if (transFilters.frequency === 'medium' && districtFrequency === 'low') return false;
+        }
+      }
+
+      // Фільтрація за безпекою (тільки для Premium)
+      if (filters.safety) {
+        const safetyFilters = filters.safety;
+        
+        // Чекбокси
+        if (safetyFilters.police && (!safety.policeStations || safety.policeStations === 0)) return false;
+        if (safetyFilters.cctv && (!safety.cctv || safety.cctv === 0)) return false;
+        if (safetyFilters.lighting && (!safety.lighting || safety.lighting === 0)) return false;
+        
+        // Селект рівня злочинності
+        if (safetyFilters.crimeLevel && safetyFilters.crimeLevel !== 'any') {
+          const crimeLevel = safety.crimeLevel || 5;
+          if (safetyFilters.crimeLevel === 'low' && crimeLevel > 3) return false;
+          if (safetyFilters.crimeLevel === 'medium' && (crimeLevel <= 3 || crimeLevel > 6)) return false;
+          if (safetyFilters.crimeLevel === 'high' && crimeLevel <= 6) return false;
+        }
+        
+        if (safetyFilters.minRating && safety.rating < safetyFilters.minRating) return false;
+      }
+
+      // Фільтрація за соціальною інфраструктурою (тільки для Premium)
+      if (filters.social) {
+        const socialFilters = filters.social;
+        
+        // Чекбокси
+        if (socialFilters.parks && (!social.parks || social.parks === 0)) return false;
+        if (socialFilters.cafes && (!social.cafesRestaurants || social.cafesRestaurants === 0)) return false;
+        if (socialFilters.playgrounds && (!social.playgrounds || social.playgrounds === 0)) return false;
+        if (socialFilters.sports && (!social.sports || social.sports === 0)) return false;
+        if (socialFilters.libraries && (!social.libraries || social.libraries === 0)) return false;
+        
+        // Числові фільтри
+        if (socialFilters.minParks && social.parks < socialFilters.minParks) return false;
+        if (socialFilters.minPlaygrounds && social.playgrounds < socialFilters.minPlaygrounds) return false;
+        if (socialFilters.minRating && social.rating < socialFilters.minRating) return false;
+      }
+
+      // Фільтрація за комерцією (тільки для Premium)
+      if (filters.commerce) {
+        const commerceFilters = filters.commerce;
+        
+        // Чекбокси
+        if (commerceFilters.groceries && (!commerce.groceryStores || commerce.groceryStores === 0)) return false;
+        if (commerceFilters.construction && (!commerce.construction || commerce.construction === 0)) return false;
+        if (commerceFilters.clothing && (!commerce.clothing || commerce.clothing === 0)) return false;
+        if (commerceFilters.postOffices && (!commerce.postOffices || commerce.postOffices === 0)) return false;
+        if (commerceFilters.banks && (!commerce.banksATMs || commerce.banksATMs === 0)) return false;
+        
+        // Числові фільтри
+        if (commerceFilters.minGroceryStores && commerce.groceryStores < commerceFilters.minGroceryStores) return false;
+        if (commerceFilters.minRating && commerce.rating < commerceFilters.minRating) return false;
+        
+        // Селект щільності
+        if (commerceFilters.density && commerceFilters.density !== 'any') {
+          const districtDensity = commerce.density || 'medium';
+          if (commerceFilters.density === 'high' && districtDensity !== 'high') return false;
+          if (commerceFilters.density === 'medium' && districtDensity === 'low') return false;
+        }
+      }
+
+      // Фільтрація за комунальними послугами (тільки для Premium)
+      if (filters.utilities) {
+        const utilsFilters = filters.utilities;
+        
+        // Чекбокси
+        if (utilsFilters.water && (!utilities.water || utilities.water === 0)) return false;
+        if (utilsFilters.heating && (!utilities.heating || utilities.heating === 0)) return false;
+        if (utilsFilters.electricity && (!utilities.electricity || utilities.electricity === 0)) return false;
+        if (utilsFilters.gas && (!utilities.gas || utilities.gas === 0)) return false;
+        if (utilsFilters.waste && (!utilities.waste || utilities.waste === 0)) return false;
+        
+        // Селект якості
+        if (utilsFilters.quality && utilsFilters.quality !== 'any') {
+          const districtQuality = utilities.quality || 'average';
+          if (utilsFilters.quality === 'good' && districtQuality !== 'good') return false;
+          if (utilsFilters.quality === 'average' && districtQuality === 'poor') return false;
+        }
+      }
+
+      return true;
+    });
   }, []);
 
   const handleFiltersChange = useCallback((filters) => {
     console.log('Фільтри змінено:', filters);
     setSelectedFilters(filters);
     
-    // Тут можна додати логіку фільтрації районів на основі обраних фільтрів
-    if (districts.length > 0) {
-      const filteredDistricts = filterDistrictsByCriteria(districts, filters);
-      console.log('Відфільтровані райони:', filteredDistricts.length);
-      // Якщо потрібно відразу застосовувати фільтри, розкоментуйте:
-      // setDistricts(filteredDistricts);
-    }
-  }, [districts]);
-
-  // Функція для фільтрації районів за критеріями
-  const filterDistrictsByCriteria = (districtsList, filters) => {
-    return districtsList.filter(district => {
-      if (!district.filterData) return false;
-
-      const { education, transport, safety, social, medicine, commerce, utilities } = district.filterData;
-
-      // Фільтрація за освітою
-      if (filters.education) {
-        if (filters.minSchools && education.schools < filters.minSchools) return false;
-        if (filters.minKindergartens && education.kindergartens < filters.minKindergartens) return false;
-        if (filters.minEducationRating && education.rating < filters.minEducationRating) return false;
-      }
-
-      // Фільтрація за транспортом
-      if (filters.transport) {
-        if (filters.minBusStops && transport.busStops < filters.minBusStops) return false;
-        if (filters.minTransportRating && transport.rating < filters.minTransportRating) return false;
-      }
-
-      // Фільтрація за безпекою
-      if (filters.safety) {
-        if (filters.maxCrimeLevel && safety.crimeLevel > filters.maxCrimeLevel) return false;
-        if (filters.minSafetyRating && safety.rating < filters.minSafetyRating) return false;
-      }
-
-      // Фільтрація за соціальною інфраструктурою
-      if (filters.social) {
-        if (filters.minParks && social.parks < filters.minParks) return false;
-        if (filters.minPlaygrounds && social.playgrounds < filters.minPlaygrounds) return false;
-        if (filters.minSocialRating && social.rating < filters.minSocialRating) return false;
-      }
-
-      // Додайте інші критерії фільтрації за потребою
-
-      return true;
-    });
-  };
+    // Застосовуємо фільтри до всіх районів
+    const filtered = filterDistrictsByCriteria(allDistricts, filters);
+    console.log('Відфільтровані райони:', filtered.length);
+    setFilteredDistricts(filtered);
+  }, [allDistricts, filterDistrictsByCriteria]);
 
   const handleRetry = useCallback(() => {
     fetchDistricts();
@@ -117,10 +226,7 @@ export default function DistrictMap() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>
-        Карта районів {city && `${decodeURIComponent(city)}`}
-        {country && `, ${decodeURIComponent(country)}`}
-      </h1>
+      
       
       <div className={styles.contentWrapper}>
         <FiltersPanel 
@@ -145,7 +251,7 @@ export default function DistrictMap() {
           </div>
         ) : (
           <DistrictsMap 
-            districts={districts}
+            districts={filteredDistricts}
             onDistrictClick={handleDistrictClick}
             selectedFilters={selectedFilters}
           />

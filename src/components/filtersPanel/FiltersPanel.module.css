@@ -79,18 +79,6 @@
   font-weight: 500;
 }
 
-.subscriptionInfoPro {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-}
-
-.proBadge {
-  color: #0984e3;
-  font-weight: 600;
-}
-
 .subscriptionInfoPremium {
   display: flex;
   align-items: center;
@@ -180,66 +168,7 @@
   transform: translateY(-1px);
 }
 
-.applyButton {
-  width: calc(100% - 3rem);
-  margin: 0 1.5rem 1.5rem 1.5rem;
-  padding: 1rem;
-  background: var(--primary-gradient);
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: var(--shadow-card);
-  font-family: inherit;
-}
-
-.applyButton:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-}
-
-.applyButton:active {
-  transform: translateY(0);
-}
-
-.applyButton:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-}
-
-/* Адаптивність */
-@media (max-width: 768px) {
-  .panel {
-    width: 100%;
-    height: auto;
-    max-height: 80vh;
-  }
-  
-  .panelHeader {
-    padding: 1rem 1rem 0.75rem 1rem;
-  }
-  
-  .panelTitle {
-    font-size: 1.3rem;
-  }
-  
-  .upgradeBanner {
-    margin: 0.5rem;
-    padding: 0.875rem;
-  }
-  
-  .applyButton {
-    width: calc(100% - 2rem);
-    margin: 0 1rem 1rem 1rem;
-  }
-}
-
-actions {
+.actions {
   display: flex;
   gap: 12px;
   padding: 0 1.5rem 1.5rem 1.5rem;
@@ -289,8 +218,27 @@ actions {
   transform: translateY(0);
 }
 
-/* Адаптивність для кнопок */
+/* Адаптивність */
 @media (max-width: 768px) {
+  .panel {
+    width: 100%;
+    height: auto;
+    max-height: 80vh;
+  }
+  
+  .panelHeader {
+    padding: 1rem 1rem 0.75rem 1rem;
+  }
+  
+  .panelTitle {
+    font-size: 1.3rem;
+  }
+  
+  .upgradeBanner {
+    margin: 0.5rem;
+    padding: 0.875rem;
+  }
+  
   .actions {
     padding: 0 1rem 1rem 1rem;
     flex-direction: column;

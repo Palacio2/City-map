@@ -23,15 +23,18 @@ export default function CitySelect() {
       try {
         setIsLoading(true);
         setError(null);
-        console.log('Fetching cities for country:', country);
         
         const decodedCountry = decodeURIComponent(country);
         const data = await fetchCitiesByCountry(decodedCountry);
-        console.log('Cities data received:', data);
         
-        setCities(data);
+        setCities(data.map(city => ({
+          // Припускаємо, що об'єкти міст мають поля 'value' та 'name'
+          ...city,
+          name: city.name || city.value,
+          value: city.value
+        })));
+        
       } catch (err) {
-        console.error('Error fetching cities:', err);
         setError(err.message);
       } finally {
         setIsLoading(false);
@@ -43,7 +46,6 @@ export default function CitySelect() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (selectedCity) {
-      console.log('Selected city:', selectedCity);
       navigate(`/map/${encodeURIComponent(country)}/${encodeURIComponent(selectedCity)}`);
     }
   };
@@ -93,11 +95,13 @@ export default function CitySelect() {
 
   const allOptions = [
     ...availableCities.map(city => ({
-      ...city,
+      label: city.name,
+      value: city.value,
       disabled: false
     })),
     ...unavailableCities.map(city => ({
-      ...city,
+      label: city.name,
+      value: city.value,
       disabled: true
     }))
   ];
@@ -122,6 +126,8 @@ export default function CitySelect() {
         isCityDisabled ? "Місто недоступне" : ""
       }
       isLoading={isLoading}
+      // ❗ ВМИКАЄМО РЕЖИМ ПОШУКУ ❗
+      isSearchable={true} 
     />
   );
 }

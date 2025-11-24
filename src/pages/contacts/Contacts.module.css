@@ -21,7 +21,7 @@
 
 .title {
   margin-bottom: 12px;
-  color: var(--text-dark);
+  color: white;
   font-size: 28px;
   font-weight: 700;
 }
@@ -49,7 +49,7 @@
   align-items: center;
   margin-bottom: 8px;
   font-weight: 600;
-  color: var(--text-medium);
+  color: white;
   font-size: 14px;
 }
 
@@ -148,7 +148,7 @@
 
 .contactInfo h3 {
   margin-bottom: 18px;
-  color: var(--text-medium);
+  color: white;
   font-size: 18px;
   font-weight: 600;
 }

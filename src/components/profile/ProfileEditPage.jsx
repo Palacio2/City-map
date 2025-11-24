@@ -1,11 +1,35 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaArrowLeft, FaUser, FaEnvelope, FaSave, FaTimes, FaPhone, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { profileAPI, handleApiError } from '../api/edit-profileApi';
 import styles from './ProfileEditPages.module.css';
 
+// Список кодів країн для випадаючого меню
+const countryCodes = [
+  { name: 'Україна', code: '+380' },
+  { name: 'Польща', code: '+48' },
+  { name: 'Німеччина', code: '+49' },
+  { name: 'США', code: '+1' },
+  { name: 'Інше', code: '' }, 
+];
+
+// Функція для визначення початкового коду та частини номера
+const parsePhoneNumber = (fullPhone) => {
+  if (!fullPhone) return { code: '+380', number: '' };
+  
+  const foundCode = countryCodes.find(item => fullPhone.startsWith(item.code) && item.code !== '');
+  
+  if (foundCode) {
+    const number = fullPhone.substring(foundCode.code.length).trim();
+    return { code: foundCode.code, number: number };
+  }
+  
+  return { code: '+380', number: fullPhone };
+};
+
 export default function ProfileEditPage() {
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
+  const [countryCode, setCountryCode] = useState('+380');
   const [originalEmail, setOriginalEmail] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -17,14 +41,18 @@ export default function ProfileEditPage() {
     loadUserData();
   }, []);
 
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
     try {
       const profile = await profileAPI.getProfile();
+      
+      const { code, number } = parsePhoneNumber(profile.phone);
+      
       setFormData({
         name: profile.full_name,
         email: profile.email,
-        phone: profile.phone
+        phone: number
       });
+      setCountryCode(code);
       setOriginalEmail(profile.email);
     } catch (error) {
       const errorMessage = handleApiError(error);
@@ -32,28 +60,63 @@ export default function ProfileEditPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
-  const handleInputChange = (e) => {
+  const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-  };
+    let newValue = value;
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setStatusMessage({ type: '', text: '' });
+    if (name === 'phone') {
+      newValue = value.replace(/[^0-9\s()\-]/g, '');
+    }
+
+    setFormData(prev => ({ ...prev, [name]: newValue }));
+  }, []);
+
+  const handleCodeChange = useCallback((e) => {
+    setCountryCode(e.target.value);
+  }, []);
+
+  const validateForm = useCallback(() => {
+    if (formData.name.trim().length > 30) {
+      setStatusMessage({ type: 'error', text: 'Ім\'я занадто довге (макс. 30 символів).' });
+      return false;
+    }
     
     if (!formData.name.trim() || !formData.email.trim()) {
       setStatusMessage({ type: 'error', text: !formData.name.trim() ? 'Будь ласка, введіть ім\'я.' : 'Будь ласка, введіть email.' });
-      return;
+      return false;
     }
+
+    const phoneToSave = formData.phone.trim() ? countryCode + ' ' + formData.phone.trim() : null;
+
+    if (phoneToSave && !/\d/.test(phoneToSave)) {
+      setStatusMessage({ type: 'error', text: 'Номер телефону має містити цифри.' });
+      return false;
+    }
+
+    if (phoneToSave && phoneToSave.length > 20) {
+      setStatusMessage({ type: 'error', text: 'Номер телефону занадто довгий (макс. 20 символів).' });
+      return false;
+    }
+
+    return true;
+  }, [formData, countryCode]);
+
+  const handleSubmit = useCallback(async (e) => {
+    e.preventDefault();
+    setStatusMessage({ type: '', text: '' });
+    
+    if (!validateForm()) return;
 
     setIsSaving(true);
     
     try {
+      const phoneToSave = formData.phone.trim() ? countryCode + ' ' + formData.phone.trim() : null;
+
       const updateProfileResult = await profileAPI.updateProfile({
         full_name: formData.name.trim(),
-        phone: formData.phone.trim() || null
+        phone: phoneToSave
       });
 
       if (formData.email !== originalEmail) {
@@ -70,7 +133,7 @@ export default function ProfileEditPage() {
     } finally {
       setIsSaving(false);
     }
-  };
+  }, [formData, countryCode, originalEmail, navigate, validateForm]);
 
   if (isLoading) {
     return (
@@ -126,6 +189,7 @@ export default function ProfileEditPage() {
                 placeholder="Введіть ваше ім'я"
                 required
                 disabled={isSaving}
+                maxLength={30}
               />
             </div>
 
@@ -143,6 +207,7 @@ export default function ProfileEditPage() {
                 placeholder="Введіть ваш email"
                 required
                 disabled={isSaving}
+                maxLength={54}
               />
               
               {formData.email !== originalEmail && (
@@ -160,15 +225,31 @@ export default function ProfileEditPage() {
                 <FaPhone className={styles.labelIcon} />
                 Телефон
               </label>
-              <input
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                className={styles.formInput}
-                placeholder="+380991234567"
-                disabled={isSaving}
-              />
+              <div className={styles.phoneInputContainer}>
+                <select
+                  name="countryCode"
+                  value={countryCode}
+                  onChange={handleCodeChange}
+                  className={styles.countryCodeSelect}
+                  disabled={isSaving}
+                >
+                  {countryCodes.map(item => (
+                    <option key={item.code} value={item.code}>
+                      {item.code} {item.name && `(${item.name})`}
+                    </option>
+                  ))}
+                </select>
+                <input
+                  type="tel"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className={styles.formInput}
+                  placeholder="991234567"
+                  disabled={isSaving}
+                  maxLength={20}
+                />
+              </div>
             </div>
 
             <div className={styles.buttonsContainer}>

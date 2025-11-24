@@ -43,7 +43,7 @@ a {
 }
 
 a:hover {
-  color: var(--primary-dark);
+  /* color: var(--primary-dark); */
 }
 
 /* Скидання стилів для кнопок */
@@ -61,8 +61,7 @@ button {
 }
 
 button:hover {
-  background-color: var(--primary-dark);
-  transform: translateY(-1px);
+  transform: translateY(-0.1rem);
 }
 
 button:focus,

@@ -9,7 +9,8 @@ const SubscriptionLock = ({ feature, children, message = null }) => {
 
   if (hasFeature(feature)) return children;
 
-  const defaultMessage = message || `Ця функція доступна тільки з підпискою Pro або Premium.`;
+  // *** ЗМІНЕНО: Повідомлення тепер згадує лише Premium ***
+  const defaultMessage = message || `Ця функція доступна тільки з підпискою Premium.`;
 
   return (
     <div className={styles.lockContainer}>

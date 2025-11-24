@@ -1,31 +1,125 @@
 import React from 'react';
 import styles from './Filters.module.css';
-import SubscriptionLock from '../../../pages/subscription/SubscriptionLock';
 
-export default function SafetyFilters() {
+export default function MedicineFilters({ filters = {}, onFiltersChange }) {
+  const handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    onFiltersChange?.({
+      medicine: {
+        ...filters.medicine,
+        [name]: checked
+      }
+    });
+  };
+
+  const handleMinHospitalsChange = (event) => {
+    const { value } = event.target;
+    onFiltersChange?.({
+      medicine: {
+        ...filters.medicine,
+        minHospitals: value ? parseInt(value) : undefined
+      }
+    });
+  };
+
+  const handleMinClinicsChange = (event) => {
+    const { value } = event.target;
+    onFiltersChange?.({
+      medicine: {
+        ...filters.medicine,
+        minClinics: value ? parseInt(value) : undefined
+      }
+    });
+  };
+
   return (
     <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>🛡️ Безпека</h3>
-      <SubscriptionLock 
-        feature="safety_analysis"
-        message="Фільтри безпеки доступні з підпискою Pro"
-      >
-        <div className={styles.filterGroup}>
-          <label className={styles.filterItem}>
-            <span>Рівень злочинності:</span>
-            <select className={styles.select}>
-              <option value="any">Будь-який</option>
-              <option value="low">Низький</option>
-              <option value="medium">Середній</option>
-              <option value="high">Високий</option>
-            </select>
-          </label>
-          <label className={styles.filterItem}>
-            <input type="checkbox" name="police" />
-            <span>Відділки поліції</span>
-          </label>
+      <h3 className={styles.sectionTitle}>🏥 Медицина</h3>
+      <div className={styles.filterGroup}>
+        <label className={styles.filterItem}>
+          <input 
+            type="checkbox" 
+            name="hospitals" 
+            checked={filters.medicine?.hospitals || false}
+            onChange={handleCheckboxChange}
+          />
+          <span>Лікарні</span>
+        </label>
+        <label className={styles.filterItem}>
+          <input 
+            type="checkbox" 
+            name="clinics" 
+            checked={filters.medicine?.clinics || false}
+            onChange={handleCheckboxChange}
+          />
+          <span>Поліклініки</span>
+        </label>
+        <label className={styles.filterItem}>
+          <input 
+            type="checkbox" 
+            name="pharmacies" 
+            checked={filters.medicine?.pharmacies || false}
+            onChange={handleCheckboxChange}
+          />
+          <span>Аптеки</span>
+        </label>
+        <label className={styles.filterItem}>
+          <input 
+            type="checkbox" 
+            name="emergency" 
+            checked={filters.medicine?.emergency || false}
+            onChange={handleCheckboxChange}
+          />
+          <span>Швидка допомога</span>
+        </label>
+
+        <div className={styles.rangeFilter}>
+          <span className={styles.rangeLabel}>Мін. кількість лікарень:</span>
+          <input 
+            type="number" 
+            placeholder="0"
+            value={filters.medicine?.minHospitals || ''}
+            onChange={handleMinHospitalsChange}
+            className={styles.rangeInput}
+            min="0"
+          />
         </div>
-      </SubscriptionLock>
+
+        <div className={styles.rangeFilter}>
+          <span className={styles.rangeLabel}>Мін. кількість поліклінік:</span>
+          <input 
+            type="number" 
+            placeholder="0"
+            value={filters.medicine?.minClinics || ''}
+            onChange={handleMinClinicsChange}
+            className={styles.rangeInput}
+            min="0"
+          />
+        </div>
+
+        <div className={styles.rangeFilter}>
+          <span className={styles.rangeLabel}>Мін. рейтинг медицини:</span>
+          <div className={styles.rangeContainer}>
+            <input 
+              type="range" 
+              min="0" 
+              max="10" 
+              step="0.5"
+              value={filters.medicine?.minRating || 0}
+              onChange={(e) => onFiltersChange?.({
+                medicine: {
+                  ...filters.medicine,
+                  minRating: parseFloat(e.target.value)
+                }
+              })}
+              className={styles.rangeSlider}
+            />
+            <span className={styles.rangeValue}>
+              {filters.medicine?.minRating || 0}
+            </span>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

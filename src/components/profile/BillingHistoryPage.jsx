@@ -6,14 +6,40 @@ import styles from './BillingHistoryPage.module.css';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext';
 
 const PLAN_PRICES = {
-  'pro': '149 грн/міс',
   'premium': '299 грн/міс',
   'free': '0 грн'
 };
 
+// Оновлений STATUS_CONFIG з українськими статусами
 const STATUS_CONFIG = {
-  'active': { icon: <FaCheckCircle />, color: '#48bb78' },
-  'inactive': { icon: <FaTimesCircle />, color: '#e53e3e' }
+  'active': { icon: <FaCheckCircle />, color: '#48bb78', label: 'Активна' },
+  'inactive': { icon: <FaTimesCircle />, color: '#e53e3e', label: 'Неактивна' },
+  'cancelled': { icon: <FaTimesCircle />, color: '#e53e3e', label: 'Скасована' }
+};
+
+// Функція для форматування назви плану
+const formatPlanName = (planName) => {
+  const planMap = {
+    'free': 'Безкоштовний',
+    'premium': 'Преміум',
+    'pro': 'Преміум'
+  };
+  return planMap[planName] || planMap['free'];
+};
+
+// Функція для форматування статусу
+const formatStatus = (status) => {
+  const statusMap = {
+    'active': 'Активна',
+    'inactive': 'Неактивна', 
+    'cancelled': 'Скасована'
+  };
+  return statusMap[status] || statusMap['inactive'];
+};
+
+// Функція для отримання конфігурації статусу на основі оригінального статусу
+const getStatusConfig = (originalStatus) => {
+  return STATUS_CONFIG[originalStatus] || STATUS_CONFIG.active;
 };
 
 export default function BillingHistoryPage() {
@@ -33,20 +59,31 @@ export default function BillingHistoryPage() {
     try {
       setIsLoading(true);
       const { subscriptions, count } = await fetchUserBillingHistory(currentPage, itemsPerPage);
+     
+      console.log('Отримані дані з API:', subscriptions); // Додамо лог для дебагу
+     
+      const formattedHistory = (subscriptions || []).map(sub => {
+        // Визначаємо план для відображення
+        const displayPlan = sub.plan_name === 'pro' ? 'premium' : sub.plan_name;
+        
+        return {
+          id: sub.id,
+          date: new Date(sub.created_at).toLocaleDateString('uk-UA'),
+          amount: PLAN_PRICES[displayPlan] || '---',
+          status: formatStatus(sub.status), // Український статус
+          originalStatus: sub.status, // Оригінальний статус для стилів
+          plan: formatPlanName(displayPlan), // Українська назва плану
+          originalPlan: sub.plan_name, // Оригінальна назва плану
+          method: 'Онлайн оплата',
+          invoiceId: sub.payment_id,
+          expiresAt: sub.ends_at ? new Date(sub.ends_at).toLocaleDateString('uk-UA') : 'Немає'
+        };
+      });
       
-      const formattedHistory = (subscriptions || []).map(sub => ({
-        id: sub.id,
-        date: new Date(sub.created_at).toLocaleDateString(),
-        amount: PLAN_PRICES[sub.plan_name] || '---',
-        status: sub.status,
-        plan: sub.plan_name,
-        method: 'Онлайн оплата',
-        invoiceId: sub.payment_id,
-        expiresAt: sub.ends_at ? new Date(sub.ends_at).toLocaleDateString() : 'Немає'
-      }));
       setBillingHistory(formattedHistory);
       setTotalCount(count);
     } catch (e) {
+      console.error('Помилка завантаження:', e);
       setError('Не вдалося завантажити історію платежів. Спробуйте пізніше.');
     } finally {
       setIsLoading(false);
@@ -65,7 +102,37 @@ export default function BillingHistoryPage() {
     }
   };
 
-  const currentPlan = billingHistory[0] || null;
+  const currentSubscriptionInfo = (() => {
+    if (isSubscriptionLoading) {
+      return {
+        plan: 'Завантаження',
+        amount: '---',
+        expiresAt: '---'
+      };
+    }
+   
+    // Визначаємо актуальний план
+    let actualPlanName;
+    if (subscription?.isExpired || subscription?.plan === 'free') {
+      actualPlanName = 'free';
+    } else {
+      // Конвертуємо pro в premium
+      actualPlanName = subscription?.plan === 'pro' ? 'premium' : subscription?.plan;
+    }
+   
+    const displayPlanKey = PLAN_PRICES.hasOwnProperty(actualPlanName) ? actualPlanName : 'free';
+   
+    let endsAtFormatted = 'Немає';
+    if (displayPlanKey !== 'free' && subscription?.ends_at) {
+        endsAtFormatted = new Date(subscription.ends_at).toLocaleDateString('uk-UA');
+    }
+
+    return {
+      plan: formatPlanName(displayPlanKey),
+      amount: PLAN_PRICES[displayPlanKey] || '---',
+      expiresAt: endsAtFormatted
+    };
+  })();
 
   if (isLoading || isSubscriptionLoading) {
     return (
@@ -91,7 +158,7 @@ export default function BillingHistoryPage() {
           <p className={styles.subtitle}>Перегляд усіх ваших транзакцій та рахунків</p>
         </div>
       </div>
-      
+     
       <div className={styles.content}>
         <div className={styles.billingContainer}>
           <div className={styles.billingSummary}>
@@ -127,7 +194,8 @@ export default function BillingHistoryPage() {
             <div className={styles.tableBody}>
               {billingHistory.length > 0 ? (
                 billingHistory.map((item) => {
-                  const statusConfig = STATUS_CONFIG[item.status] || STATUS_CONFIG.active;
+                  // Використовуємо оригінальний статус для визначення кольору
+                  const statusConfig = getStatusConfig(item.originalStatus);
                   return (
                     <div key={item.id} className={styles.tableRow}>
                       <div className={styles.dateCell}>
@@ -161,16 +229,16 @@ export default function BillingHistoryPage() {
           </div>
 
           <div className={styles.pagination}>
-            <button 
-              className={styles.paginationButton} 
+            <button
+              className={styles.paginationButton}
               disabled={currentPage === 1}
               onClick={() => handlePageChange(currentPage - 1)}
             >
               Попередня
             </button>
             <span className={styles.paginationInfo}>Сторінка {currentPage} з {totalPages || 1}</span>
-            <button 
-              className={styles.paginationButton} 
+            <button
+              className={styles.paginationButton}
               disabled={currentPage === totalPages || totalPages === 0}
               onClick={() => handlePageChange(currentPage + 1)}
             >
@@ -182,9 +250,9 @@ export default function BillingHistoryPage() {
             <h3>Поточна підписка</h3>
             <div className={styles.currentPlan}>
               <div className={styles.planDetails}>
-                <h4>{currentPlan?.plan || 'Немає підписки'}</h4>
-                <p>{currentPlan?.amount || '---'}</p>
-                <span className={styles.nextPayment}>Наступний платіж: {currentPlan?.expiresAt || '---'}</span>
+                <h4>{currentSubscriptionInfo.plan}</h4>
+                <p>{currentSubscriptionInfo.amount}</p>
+                <span className={styles.nextPayment}>Наступний платіж: {currentSubscriptionInfo.expiresAt}</span>
               </div>
               <button className={styles.manageButton}>
                 Керувати підпискою

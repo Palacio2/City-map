@@ -35,10 +35,9 @@
 }
 
 .backButton:hover {
-  color: var(--primary-dark);
+  color: white;
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
-  border-color: var(--primary-light);
 }
 
 .titleSection {
