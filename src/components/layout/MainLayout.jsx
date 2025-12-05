@@ -9,7 +9,9 @@ export default function MainLayout() {
     <div className={styles.layout}>
       <Header />
       <main className={styles.mainContent}>
-        <Outlet />
+        <div className="container">
+          <Outlet />
+        </div>
       </main>
       <Footer />
     </div>
