@@ -1,44 +1,45 @@
 import React from 'react';
-import styles from './Filters.module.css';
+import FilterSection from './FilterSection';
+import FilterCheckbox from './FilterCheckbox';
+import FilterSlider from './FilterSlider';
 
-export default function SocialFilters() {
+const SocialFilters = ({ filters, onFiltersChange }) => {
+  const socialFilters = filters.social || {};
+
+  const handleCheckboxChange = (field) => (e) => {
+    onFiltersChange({
+      social: { ...socialFilters, [field]: e.target.checked },
+    });
+  };
+
+  const handleSliderChange = (field) => (e) => {
+    onFiltersChange({
+      social: { ...socialFilters, [field]: Number(e.target.value) },
+    });
+  };
+
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>🌳 Соціальна інфраструктура</h3>
-      <div className={styles.filterGroup}>
-        <label className={styles.filterItem}>
-          <input type="checkbox" name="parks" />
-          <span>Парки та сквери</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input type="checkbox" name="cafes" />
-          <span>Кафе та ресторани</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input type="checkbox" name="playgrounds" />
-          <span>Дитячі майданчики</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input type="checkbox" name="sports" />
-          <span>Спортивні майданчики</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input type="checkbox" name="libraries" />
-          <span>Бібліотеки</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input type="checkbox" name="cinemas" />
-          <span>Кінотеатри</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input type="checkbox" name="theaters" />
-          <span>Театри</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input type="checkbox" name="museums" />
-          <span>Музеї</span>
-        </label>
-      </div>
-    </div>
+    <FilterSection title="Соціальна інфраструктура">
+      <FilterCheckbox
+        label="Парки"
+        checked={!!socialFilters.parks}
+        onChange={handleCheckboxChange('parks')}
+      />
+      <FilterCheckbox
+        label="Кафе та ресторани"
+        checked={!!socialFilters.cafes}
+        onChange={handleCheckboxChange('cafes')}
+      />
+      <FilterSlider
+        label="Мін. рейтинг"
+        value={socialFilters.minRating || 0}
+        onChange={handleSliderChange('minRating')}
+        min={0}
+        max={10}
+        step={1}
+      />
+    </FilterSection>
   );
-}
+};
+
+export default SocialFilters;

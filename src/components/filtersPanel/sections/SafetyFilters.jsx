@@ -1,72 +1,55 @@
 import React from 'react';
-import styles from './Filters.module.css';
+import FilterSection from './FilterSection';
+import FilterCheckbox from './FilterCheckbox';
+import FilterSlider from './FilterSlider';
 
-export default function SafetyFilters({ filters = {}, onFiltersChange }) {
-  const handleCrimeLevelChange = (event) => {
-    const { value } = event.target;
-    onFiltersChange?.({
-      safety: {
-        ...filters.safety,
-        crimeLevel: value
-      }
+const SafetyFilters = ({ filters, onFiltersChange }) => {
+  const safetyFilters = filters.safety || {};
+
+  const handleCheckboxChange = (field) => (e) => {
+    onFiltersChange({
+      safety: { ...safetyFilters, [field]: e.target.checked },
     });
   };
 
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    onFiltersChange?.({
-      safety: {
-        ...filters.safety,
-        [name]: checked
-      }
+  const handleSliderChange = (field) => (e) => {
+    onFiltersChange({
+      safety: { ...safetyFilters, [field]: Number(e.target.value) },
+    });
+  };
+
+  const handleCrimeLevelChange = (e) => {
+    onFiltersChange({
+      safety: { ...safetyFilters, crimeLevel: e.target.value },
     });
   };
 
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>🛡️ Безпека</h3>
-      <div className={styles.filterGroup}>
-        <label className={styles.filterItem}>
-          <span>Рівень злочинності:</span>
-          <select 
-            className={styles.select}
-            value={filters.safety?.crimeLevel || 'any'}
-            onChange={handleCrimeLevelChange}
-          >
-            <option value="any">Будь-який</option>
-            <option value="low">Низький</option>
-            <option value="medium">Середній</option>
-            <option value="high">Високий</option>
-          </select>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="police" 
-            checked={filters.safety?.police || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>Відділки поліції</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="cctv" 
-            checked={filters.safety?.cctv || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>Камери спостереження</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="lighting" 
-            checked={filters.safety?.lighting || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>Нічне освітлення</span>
-        </label>
+    <FilterSection title="Безпека">
+      <FilterCheckbox
+        label="Поліцейські відділки"
+        checked={!!safetyFilters.police}
+        onChange={handleCheckboxChange('police')}
+      />
+      <FilterSlider
+        label="Мін. рейтинг"
+        value={safetyFilters.minRating || 0}
+        onChange={handleSliderChange('minRating')}
+        min={0}
+        max={10}
+        step={1}
+      />
+      <div>
+        <label>Рівень злочинності</label>
+        <select value={safetyFilters.crimeLevel || 'any'} onChange={handleCrimeLevelChange}>
+          <option value="any">Будь-який</option>
+          <option value="low">Низький</option>
+          <option value="medium">Середній</option>
+          <option value="high">Високий</option>
+        </select>
       </div>
-    </div>
+    </FilterSection>
   );
-}
+};
+
+export default SafetyFilters;

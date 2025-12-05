@@ -1,24 +1,12 @@
-
 .layout {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   width: 100%;
-  overflow-x: hidden;
 }
 
 .mainContent {
   flex: 1;
-  max-width: auto;
   width: 100%;
-  margin: 0 auto;
-  height: calc(100vh - 120px); /* Враховуємо висоту header/footer */
-  overflow: hidden; /* Запобігає загальному скролу */
-}
-
-@media (max-width: 768px) {
-  .mainContent {
-    padding: 1rem 0.5rem;
-    height: calc(100vh - 100px); /* Менша висота на мобільних */
-  }
+  padding: var(--spacing-xl) 0;
 }

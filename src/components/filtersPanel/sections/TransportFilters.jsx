@@ -1,115 +1,55 @@
 import React from 'react';
-import styles from './Filters.module.css';
+import FilterSection from './FilterSection';
+import FilterCheckbox from './FilterCheckbox';
+import FilterSlider from './FilterSlider';
 
-export default function TransportFilters({ filters = {}, onFiltersChange }) {
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    onFiltersChange?.({
-      transport: {
-        ...filters.transport,
-        [name]: checked
-      }
+const TransportFilters = ({ filters, onFiltersChange }) => {
+  const transportFilters = filters.transport || {};
+
+  const handleCheckboxChange = (field) => (e) => {
+    onFiltersChange({
+      transport: { ...transportFilters, [field]: e.target.checked },
     });
   };
 
-  const handleDistanceChange = (event) => {
-    const { value } = event.target;
-    onFiltersChange?.({
-      transport: {
-        ...filters.transport,
-        maxDistance: value ? parseInt(value) : undefined
-      }
-    });
-  };
-
-  const handleFrequencyChange = (event) => {
-    const { value } = event.target;
-    onFiltersChange?.({
-      transport: {
-        ...filters.transport,
-        frequency: value
-      }
+  const handleSliderChange = (field) => (e) => {
+    onFiltersChange({
+      transport: { ...transportFilters, [field]: Number(e.target.value) },
     });
   };
 
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>🚍 Транспорт</h3>
-      <div className={styles.filterGroup}>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="bus_stops" 
-            checked={filters.transport?.bus_stops || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>Автобусні зупинки</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="tram_stops" 
-            checked={filters.transport?.tram_stops || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>Трамвайні зупинки</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="metro" 
-            checked={filters.transport?.metro || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>Станції метро</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="bike_lanes" 
-            checked={filters.transport?.bike_lanes || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>Велосипедні доріжки</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="parking" 
-            checked={filters.transport?.parking || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>Парковки</span>
-        </label>
-
-        <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>Відстань до транспорту:</span>
-          <div className={styles.rangeInputs}>
-            <input 
-              type="number" 
-              placeholder="До" 
-              className={styles.rangeInput}
-              value={filters.transport?.maxDistance || ''}
-              onChange={handleDistanceChange}
-            />
-            <span>метрів</span>
-          </div>
-        </div>
-        
-        <div className={styles.ratingFilter}>
-          <span className={styles.ratingLabel}>Частота транспорту:</span>
-          <select 
-            className={styles.select}
-            value={filters.transport?.frequency || 'any'}
-            onChange={handleFrequencyChange}
-          >
-            <option value="any">Будь-яка</option>
-            <option value="high">Висока</option>
-            <option value="medium">Середня</option>
-            <option value="low">Низька</option>
-          </select>
-        </div>
-      </div>
-    </div>
+    <FilterSection title="Транспорт">
+      <FilterCheckbox
+        label="Зупинки автобусів"
+        checked={!!transportFilters.bus_stops}
+        onChange={handleCheckboxChange('bus_stops')}
+      />
+      <FilterCheckbox
+        label="Метро"
+        checked={!!transportFilters.metro}
+        onChange={handleCheckboxChange('metro')}
+      />
+      <FilterCheckbox
+        label="Зупинки трамваїв"
+        checked={!!transportFilters.tram_stops}
+        onChange={handleCheckboxChange('tram_stops')}
+      />
+      <FilterCheckbox
+        label="Велодоріжки"
+        checked={!!transportFilters.bike_lanes}
+        onChange={handleCheckboxChange('bike_lanes')}
+      />
+      <FilterSlider
+        label="Мін. рейтинг"
+        value={transportFilters.minRating || 0}
+        onChange={handleSliderChange('minRating')}
+        min={0}
+        max={10}
+        step={1}
+      />
+    </FilterSection>
   );
-}
+};
+
+export default TransportFilters;

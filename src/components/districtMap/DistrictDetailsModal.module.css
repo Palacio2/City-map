@@ -45,7 +45,7 @@
     border-radius: 20px; /* Більший радіус */
     max-width: 950px; /* Трохи ширше */
     width: 100%;
-    max-height: 90vh;
+    max-height: calc(100vh - 40px);
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow-modal); /* Помітніша тінь */
@@ -494,6 +494,10 @@
 }
 
 @media (max-width: 480px) {
+    .modalContent {
+        max-height: 100vh;
+        border-radius: 0;
+    }
     .headerSection {
         min-height: 160px;
     }
