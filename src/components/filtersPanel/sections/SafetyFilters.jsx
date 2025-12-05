@@ -26,8 +26,8 @@ export default function SafetyFilters({ filters = {}, onFiltersChange }) {
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>🛡️ Безпека</h3>
       <div className={styles.filterGroup}>
-        <label className={styles.filterItem}>
-          <span>Рівень злочинності:</span>
+        <div className={styles.ratingFilter}>
+          <span className={styles.ratingLabel}>Рівень злочинності:</span>
           <select 
             className={styles.select}
             value={filters.safety?.crimeLevel || 'any'}
@@ -38,7 +38,8 @@ export default function SafetyFilters({ filters = {}, onFiltersChange }) {
             <option value="medium">Середній</option>
             <option value="high">Високий</option>
           </select>
-        </label>
+        </div>
+        
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 

@@ -1,4 +1,4 @@
-/* Оновлені стилі для фільтрів */
+/* ===== Основні стилі для фільтрів ===== */
 .section {
   background: var(--bg-white);
   border-radius: 12px;
@@ -44,11 +44,12 @@
 .filterItem {
   display: flex;
   align-items: center;
-  padding: 12px 0;
+  padding: 10px 0;
   cursor: pointer;
   color: var(--text-medium);
   transition: all 0.3s ease;
   border-radius: 6px;
+  min-height: 44px;
 }
 
 .filterItem:hover {
@@ -92,65 +93,43 @@
   transform: translate(-50%, -50%);
 }
 
-/* ===== Select & Range Filters ===== */
-.ratingFilter, 
+/* ===== Range Filters ===== */
 .rangeFilter {
   margin-top: 16px;
   padding-top: 16px;
   border-top: 1px solid var(--border-color);
 }
 
-.ratingLabel, 
 .rangeLabel {
   display: block;
   margin-bottom: 10px;
   font-size: 0.95rem;
   color: var(--text-medium);
   font-weight: 600;
-}
-
-.select {
   width: 100%;
-  padding: 12px;
-  border: 2px solid var(--border-color);
-  border-radius: 10px;
-  background: var(--bg-white);
-  color: var(--text-dark);
-  font-size: 0.95rem;
-  transition: all 0.3s ease;
-  font-family: inherit;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23667eea'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px;
+  line-height: 1.4;
 }
 
-.select:focus {
-  outline: none;
-  border-color: var(--primary-light);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
-}
-
-/* ===== Range Inputs ===== */
-.rangeInputs {
+.rangeInputContainer {
   display: flex;
   align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
 }
 
 .rangeInput {
   flex: 1;
-  min-width: 100px;
-  padding: 12px;
+  min-width: 0;
+  padding: 10px 12px;
   border: 2px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--bg-white);
   color: var(--text-dark);
   text-align: center;
   transition: all 0.3s ease;
   font-family: inherit;
+  font-size: 0.95rem;
+  box-sizing: border-box;
 }
 
 .rangeInput:focus {
@@ -159,25 +138,76 @@
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
 }
 
-.rangeSeparator {
+.rangeInput::placeholder {
   color: var(--text-light);
-  font-weight: 600;
-  flex-shrink: 0;
+  text-align: center;
 }
 
-/* ===== Range Slider Styles ===== */
+.rangeUnit {
+  color: var(--text-medium);
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+  min-width: fit-content;
+}
+
+/* ===== Rating Filter ===== */
+.ratingFilter {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid var(--border-color);
+}
+
+.ratingLabel {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 0.95rem;
+  color: var(--text-medium);
+  font-weight: 600;
+  width: 100%;
+  line-height: 1.4;
+}
+
+/* ===== Select Input Styles ===== */
+.select {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-white);
+  color: var(--text-dark);
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+  font-family: inherit;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23667eea'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  box-sizing: border-box;
+}
+
+.select:focus {
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+}
+
+/* ===== Range Slider Container ===== */
 .rangeContainer {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin: 0.5rem 0;
+  gap: 12px;
+  width: 100%;
 }
 
 .rangeSlider {
   flex: 1;
+  min-width: 0;
   height: 6px;
   border-radius: 3px;
-  background: #ddd;
+  background: #e0e0e0;
   outline: none;
   opacity: 0.7;
   transition: opacity 0.2s;
@@ -210,55 +240,72 @@
 }
 
 .rangeValue {
-  min-width: 40px;
+  min-width: 60px;
+  max-width: 80px;
   text-align: center;
   font-weight: 600;
   color: var(--primary-color);
   background: var(--bg-light);
-  padding: 4px 8px;
-  border-radius: 6px;
-  font-size: 0.9rem;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-/* ===== Filter Label Styles ===== */
-.filterLabel {
+/* ===== Двойной Range для UtilitiesFilters ===== */
+.doubleRangeContainer {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  font-weight: 500;
-  color: var(--text-dark);
-  margin-bottom: 1rem;
-}
-
-.filterLabel:last-child {
-  margin-bottom: 0;
-}
-
-/* ===== Select Input Styles ===== */
-.selectInput {
+  gap: 8px;
   width: 100%;
-  padding: 12px;
+}
+
+.doubleRangeInputs {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.doubleRangeInput {
+  flex: 1;
+  min-width: 0;
+  padding: 10px 12px;
   border: 2px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 8px;
   background: var(--bg-white);
   color: var(--text-dark);
+  text-align: center;
   font-size: 0.95rem;
   transition: all 0.3s ease;
   font-family: inherit;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23667eea'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 16px;
+  box-sizing: border-box;
 }
 
-.selectInput:focus {
+.doubleRangeInput:focus {
   outline: none;
   border-color: var(--primary-light);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
 }
 
-/* Checkbox Label Styles */
+.doubleRangeInput::placeholder {
+  color: var(--text-light);
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+.doubleRangeSeparator {
+  color: var(--text-medium);
+  font-weight: 600;
+  font-size: 0.95rem;
+  flex-shrink: 0;
+  padding: 0 4px;
+}
+
+/* ===== Checkbox Label Styles ===== */
 .checkboxLabel {
   display: flex;
   align-items: center;
@@ -268,6 +315,7 @@
   border-radius: 6px;
   transition: background-color 0.2s ease;
   color: var(--text-medium);
+  width: 100%;
 }
 
 .checkboxLabel:hover {
@@ -285,6 +333,7 @@
   background: transparent;
   transition: all 0.3s ease;
   position: relative;
+  flex-shrink: 0;
 }
 
 .checkboxLabel input[type="checkbox"]:checked {
@@ -303,7 +352,7 @@
   transform: translate(-50%, -50%);
 }
 
-/* Спеціальні стилі для темної теми */
+/* ===== Спеціальні стилі для темної теми ===== */
 @media (prefers-color-scheme: dark) {
   .filterItem input[type="checkbox"] {
     border-color: var(--border-color);
@@ -330,9 +379,45 @@
     background: var(--primary-color);
     border-color: #333;
   }
+  
+  .rangeInput,
+  .doubleRangeInput {
+    background: var(--bg-light);
+    border-color: var(--border-color);
+    color: var(--text-dark);
+  }
+  
+  .rangeValue {
+    background: transparent;
+    color: var(--primary-light);
+  }
 }
 
-/* ===== Responsive ===== */
+/* ===== Responsive Styles ===== */
+
+/* Планшети та маленькі ноутбуки */
+@media (max-width: 1024px) {
+  .section {
+    margin-bottom: 14px;
+  }
+  
+  .sectionTitle {
+    padding: 12px 14px;
+    font-size: 1.05rem;
+  }
+  
+  .filterGroup {
+    padding: 14px;
+  }
+  
+  .rangeValue {
+    min-width: 55px;
+    padding: 7px 9px;
+    font-size: 0.9rem;
+  }
+}
+
+/* Планшети (портретна орієнтація) */
 @media (max-width: 768px) {
   .section {
     margin-bottom: 12px;
@@ -354,7 +439,8 @@
   }
   
   .filterItem {
-    padding: 10px 0;
+    padding: 8px 0;
+    min-height: 40px;
   }
   
   .filterItem:hover {
@@ -362,41 +448,70 @@
     padding-right: 6px;
   }
   
-  .rangeInputs {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+  .rangeLabel,
+  .ratingLabel {
+    font-size: 0.9rem;
+    margin-bottom: 8px;
   }
   
   .rangeInput {
-    min-width: auto;
-    width: 100%;
+    padding: 9px 11px;
+    font-size: 0.9rem;
   }
   
-  .rangeSeparator {
-    text-align: center;
-    margin: 4px 0;
+  .rangeUnit {
+    font-size: 0.85rem;
+  }
+  
+  .select {
+    padding: 9px 11px;
+    font-size: 0.9rem;
   }
   
   .rangeContainer {
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0.5rem;
+    gap: 10px;
   }
   
   .rangeValue {
-    text-align: center;
-    order: 2;
+    min-width: 50px;
+    max-width: 70px;
+    padding: 6px 8px;
+    font-size: 0.85rem;
   }
   
   .rangeSlider {
-    order: 1;
+    height: 5px;
+  }
+  
+  .rangeSlider::-webkit-slider-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .rangeSlider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+  }
+  
+  .doubleRangeInput {
+    padding: 9px 11px;
+    font-size: 0.9rem;
+  }
+  
+  .doubleRangeInput::placeholder {
+    font-size: 0.85rem;
+  }
+  
+  .doubleRangeSeparator {
+    font-size: 0.9rem;
   }
 }
 
+/* Мобільні пристрої */
 @media (max-width: 480px) {
   .section {
     border-radius: 8px;
+    margin-bottom: 10px;
   }
   
   .sectionTitle {
@@ -407,6 +522,7 @@
   .subtitle {
     font-size: 0.9rem;
     padding: 0 10px;
+    margin: 0.75rem 0 0.5rem 0;
   }
   
   .filterGroup {
@@ -414,8 +530,9 @@
   }
   
   .filterItem {
-    padding: 8px 0;
+    padding: 7px 0;
     font-size: 0.9rem;
+    min-height: 38px;
   }
   
   .filterItem input[type="checkbox"] {
@@ -424,18 +541,90 @@
     margin-right: 10px;
   }
   
-  .select {
-    padding: 10px;
-    font-size: 0.9rem;
+  .filterItem input[type="checkbox"]:checked::after {
+    font-size: 12px;
   }
   
-  .selectInput {
-    padding: 10px;
-    font-size: 0.9rem;
+  .rangeFilter,
+  .ratingFilter {
+    margin-top: 14px;
+    padding-top: 14px;
+  }
+  
+  .rangeLabel,
+  .ratingLabel {
+    font-size: 0.85rem;
+    margin-bottom: 7px;
+    line-height: 1.3;
+  }
+  
+  .rangeInputContainer {
+    gap: 8px;
   }
   
   .rangeInput {
-    padding: 10px;
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+  
+  .rangeInput::placeholder {
+    font-size: 0.8rem;
+  }
+  
+  .rangeUnit {
+    font-size: 0.8rem;
+  }
+  
+  .select {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    background-position: right 8px center;
+    background-size: 14px;
+  }
+  
+  .rangeContainer {
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+  }
+  
+  .rangeSlider {
+    order: 1;
+    width: 100%;
+  }
+  
+  .rangeValue {
+    order: 2;
+    min-width: 100%;
+    max-width: 100%;
+    padding: 8px;
+    font-size: 0.85rem;
+    text-align: center;
+  }
+  
+  .doubleRangeContainer {
+    gap: 6px;
+  }
+  
+  .doubleRangeInputs {
+    gap: 6px;
+  }
+  
+  .doubleRangeInput {
+    padding: 8px 10px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+  }
+  
+  .doubleRangeInput::placeholder {
+    font-size: 0.8rem;
+  }
+  
+  .doubleRangeSeparator {
+    font-size: 0.85rem;
+    padding: 0 3px;
   }
   
   .checkboxLabel {
@@ -453,7 +642,67 @@
   }
 }
 
-/* Анімації */
+/* Дуже маленькі мобільні пристрої */
+@media (max-width: 360px) {
+  .sectionTitle {
+    padding: 8px 10px;
+    font-size: 0.9rem;
+  }
+  
+  .filterGroup {
+    padding: 8px;
+  }
+  
+  .filterItem {
+    padding: 6px 0;
+    font-size: 0.85rem;
+  }
+  
+  .rangeInputContainer {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+  }
+  
+  .rangeInput {
+    width: 100%;
+  }
+  
+  .rangeUnit {
+    text-align: center;
+    margin-top: 2px;
+  }
+  
+  .rangeSlider {
+    height: 4px;
+  }
+  
+  .rangeSlider::-webkit-slider-thumb {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .rangeSlider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+  }
+  
+  .doubleRangeInputs {
+    flex-direction: column;
+    gap: 6px;
+  }
+  
+  .doubleRangeInput {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .doubleRangeSeparator {
+    display: none;
+  }
+}
+
+/* ===== Анімації ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -478,3 +727,25 @@
 .filterItem:nth-child(3) { animation-delay: 0.15s; }
 .filterItem:nth-child(4) { animation-delay: 0.2s; }
 .filterItem:nth-child(5) { animation-delay: 0.25s; }
+
+/* ===== Утилітарні класи ===== */
+.fullWidth {
+  width: 100%;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.marginBottomSm {
+  margin-bottom: 8px;
+}
+
+.marginBottomMd {
+  margin-bottom: 16px;
+}

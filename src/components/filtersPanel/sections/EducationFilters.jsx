@@ -32,6 +32,16 @@ export default function EducationFilters({ filters = {}, onFiltersChange }) {
     });
   };
 
+  const handleMinUniversitiesChange = (event) => {
+    const { value } = event.target;
+    onFiltersChange?.({
+      education: {
+        ...filters.education,
+        minUniversities: value ? parseInt(value) : undefined
+      }
+    });
+  };
+
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>🎓 Освіта</h3>
@@ -65,27 +75,48 @@ export default function EducationFilters({ filters = {}, onFiltersChange }) {
         </label>
 
         <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>Мін. кількість шкіл:</span>
-          <input 
-            type="number" 
-            placeholder="0"
-            value={filters.education?.minSchools || ''}
-            onChange={handleMinSchoolsChange}
-            className={styles.rangeInput}
-            min="0"
-          />
+          <span className={styles.rangeLabel}>Мін. кількість садків:</span>
+          <div className={styles.rangeInputContainer}>
+            <input 
+              type="number" 
+              placeholder="0"
+              value={filters.education?.minKindergartens || ''}
+              onChange={handleMinKindergartensChange}
+              className={styles.rangeInput}
+              min="0"
+            />
+            <span className={styles.rangeUnit}>шт.</span>
+          </div>
         </div>
 
         <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>Мін. кількість садків:</span>
-          <input 
-            type="number" 
-            placeholder="0"
-            value={filters.education?.minKindergartens || ''}
-            onChange={handleMinKindergartensChange}
-            className={styles.rangeInput}
-            min="0"
-          />
+          <span className={styles.rangeLabel}>Мін. кількість шкіл:</span>
+          <div className={styles.rangeInputContainer}>
+            <input 
+              type="number" 
+              placeholder="0"
+              value={filters.education?.minSchools || ''}
+              onChange={handleMinSchoolsChange}
+              className={styles.rangeInput}
+              min="0"
+            />
+            <span className={styles.rangeUnit}>шт.</span>
+          </div>
+        </div>
+
+        <div className={styles.rangeFilter}>
+          <span className={styles.rangeLabel}>Мін. кількість університетів:</span>
+          <div className={styles.rangeInputContainer}>
+            <input 
+              type="number" 
+              placeholder="0"
+              value={filters.education?.minUniversities || ''}
+              onChange={handleMinUniversitiesChange}
+              className={styles.rangeInput}
+              min="0"
+            />
+            <span className={styles.rangeUnit}>шт.</span>
+          </div>
         </div>
 
         <div className={styles.rangeFilter}>

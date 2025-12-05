@@ -7,6 +7,7 @@ import FiltersPanel from '../filtersPanel/FiltersPanel';
 import DistrictsMap from './DistrictsMap';
 import { fetchDistrictsWithFilters } from '../api/districtsApi';
 import { filterDistrictsByCriteria } from '../../utils/filterUtils';
+import { transformDistrictsForDisplay } from '../../utils/dataTransformers';
 
 const LoadingIndicator = () => (
   <div className={styles.loading}>
@@ -33,23 +34,26 @@ export default function DistrictMap() {
   const [selectedFilters, setSelectedFilters] = useState({});
 
   const fetchDistricts = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      setError(null);
-      
-      const decodedCountry = decodeURIComponent(country);
-      const decodedCity = decodeURIComponent(city);
-      
-      const districtsData = await fetchDistrictsWithFilters(decodedCountry, decodedCity);
-      
-      setAllDistricts(districtsData);
-      setFilteredDistricts(districtsData);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [country, city]);
+  try {
+    setIsLoading(true);
+    setError(null);
+    
+    const decodedCountry = decodeURIComponent(country);
+    const decodedCity = decodeURIComponent(city);
+    
+    const districtsData = await fetchDistrictsWithFilters(decodedCountry, decodedCity);
+    
+    // Трансформуємо всі дані один раз
+    const transformedDistricts = transformDistrictsForDisplay(districtsData);
+    
+    setAllDistricts(transformedDistricts);
+    setFilteredDistricts(transformedDistricts);
+  } catch (err) {
+    setError(err.message);
+  } finally {
+    setIsLoading(false);
+  }
+}, [country, city]);
 
   useEffect(() => {
     if (country && city) {
