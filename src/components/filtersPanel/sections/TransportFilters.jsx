@@ -84,7 +84,7 @@ export default function TransportFilters({ filters = {}, onFiltersChange }) {
 
         <div className={styles.rangeFilter}>
           <span className={styles.rangeLabel}>Відстань до транспорту:</span>
-          <div className={styles.rangeInputs}>
+          <div className={styles.rangeInputContainer}>
             <input 
               type="number" 
               placeholder="До" 
@@ -92,7 +92,7 @@ export default function TransportFilters({ filters = {}, onFiltersChange }) {
               value={filters.transport?.maxDistance || ''}
               onChange={handleDistanceChange}
             />
-            <span>метрів</span>
+            <span className={styles.rangeUnit}>метрів</span>
           </div>
         </div>
         

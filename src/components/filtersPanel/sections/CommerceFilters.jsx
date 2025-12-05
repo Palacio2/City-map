@@ -93,14 +93,17 @@ export default function CommerceFilters({ filters = {}, onFiltersChange }) {
         
         <div className={styles.rangeFilter}>
           <span className={styles.rangeLabel}>Мін. продуктових магазинів:</span>
-          <input 
-            type="number" 
-            placeholder="0"
-            value={filters.commerce?.minGroceryStores || ''}
-            onChange={handleMinStoresChange}
-            className={styles.rangeInput}
-            min="0"
-          />
+          <div className={styles.rangeInputContainer}>
+            <input 
+              type="number" 
+              placeholder="0"
+              value={filters.commerce?.minGroceryStores || ''}
+              onChange={handleMinStoresChange}
+              className={styles.rangeInput}
+              min="0"
+            />
+            <span className={styles.rangeUnit}>шт.</span>
+          </div>
         </div>
 
         <div className={styles.ratingFilter}>

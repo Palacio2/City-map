@@ -8,10 +8,11 @@
 }
 
 .container {
-  background: linear-gradient(135deg, #f8fafc 0%, #e6e9f0 100%);
+  background: transparent;
   padding: 1rem;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
+  border-radius: 1rem;
 }
 
 .header {
@@ -22,7 +23,7 @@
 .title {
   font-size: 2.5rem;
   font-weight: 800;
-  color: #2d3748;
+  color: #e2e8f0;
   margin-bottom: 0.5rem;
 }
 

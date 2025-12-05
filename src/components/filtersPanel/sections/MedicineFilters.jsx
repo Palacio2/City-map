@@ -75,26 +75,32 @@ export default function MedicineFilters({ filters = {}, onFiltersChange }) {
 
         <div className={styles.rangeFilter}>
           <span className={styles.rangeLabel}>Мін. кількість лікарень:</span>
-          <input 
-            type="number" 
-            placeholder="0"
-            value={filters.medicine?.minHospitals || ''}
-            onChange={handleMinHospitalsChange}
-            className={styles.rangeInput}
-            min="0"
-          />
+          <div className={styles.rangeInputContainer}>
+            <input 
+              type="number" 
+              placeholder="0"
+              value={filters.medicine?.minHospitals || ''}
+              onChange={handleMinHospitalsChange}
+              className={styles.rangeInput}
+              min="0"
+            />
+            <span className={styles.rangeUnit}>шт.</span>
+          </div>
         </div>
 
         <div className={styles.rangeFilter}>
           <span className={styles.rangeLabel}>Мін. кількість поліклінік:</span>
-          <input 
-            type="number" 
-            placeholder="0"
-            value={filters.medicine?.minClinics || ''}
-            onChange={handleMinClinicsChange}
-            className={styles.rangeInput}
-            min="0"
-          />
+          <div className={styles.rangeInputContainer}>
+            <input 
+              type="number" 
+              placeholder="0"
+              value={filters.medicine?.minClinics || ''}
+              onChange={handleMinClinicsChange}
+              className={styles.rangeInput}
+              min="0"
+            />
+            <span className={styles.rangeUnit}>шт.</span>
+          </div>
         </div>
 
         <div className={styles.rangeFilter}>

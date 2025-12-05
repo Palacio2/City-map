@@ -2,6 +2,7 @@
   min-height: 100vh;
   background: linear-gradient(135deg, #f8fafc 0%, #e6e9f0 100%);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 1rem;
 }
 
 .heroSection {
@@ -9,6 +10,7 @@
   color: white;
   padding: 4rem 2rem;
   text-align: center;
+  border-radius: 1rem;
 }
 
 .heroContent {
