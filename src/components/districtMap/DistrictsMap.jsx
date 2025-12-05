@@ -19,14 +19,13 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
     setSelectedDistrict(null);
   }, []);
 
-  // Мемоізація відфільтрованих районів
-  const districtsWithSvg = useMemo(() => 
-    districts.filter(d => d.svgContent), [districts]);
+  // Фільтруємо райони з фото
+  const districtsWithPhoto = useMemo(() => 
+    districts.filter(d => d.photo_url), [districts]);
   
-  const districtsWithoutSvg = useMemo(() => 
-    districts.filter(d => !d.svgContent), [districts]);
+  const districtsWithoutPhoto = useMemo(() => 
+    districts.filter(d => !d.photo_url), [districts]);
 
-  // Перевірка чи застосовані фільтри
   const hasActiveFilters = useMemo(() => 
     Object.keys(selectedFilters).length > 0 && 
     Object.values(selectedFilters).some(filter => 
@@ -38,7 +37,7 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
       <div className={styles.noDataContainer}>
         <div className={styles.placeholder}>
           <div className={styles.placeholderIcon}>
-            {hasActiveFilters ? '🔍' : '🗺️'}
+            {hasActiveFilters ? '🔍' : '🏙️'}
           </div>
           <h3>
             {hasActiveFilters ? 'Райони не знайдені' : 'Райони не знайдені'}
@@ -49,14 +48,6 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
               : 'Для цього міста ще не додані райони'
             }
           </p>
-          {hasActiveFilters && (
-            <button 
-              className={styles.clearFiltersHint}
-              onClick={() => window.location.reload()}
-            >
-              Скинути фільтри
-            </button>
-          )}
         </div>
       </div>
     );
@@ -69,30 +60,30 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
           <h1 className={styles.title}>
             {decodeURIComponent(city)}, {decodeURIComponent(country)}
           </h1>
-          <h2>Карта районів</h2>
-          <p className={styles.mapStats}>
+          <h2>Фото районів</h2>
+          <div className={styles.mapStats}>
             <span className={styles.statItem}>
-              {districtsWithSvg.length} з {districts.length} районів з мапами
+              {districtsWithPhoto.length} з {districts.length} районів з фото
             </span>
             {hasActiveFilters && (
               <span className={styles.activeFilterBadge}>
                 🔍 Застосовані фільтри
               </span>
             )}
-            {districtsWithoutSvg.length > 0 && (
+            {districtsWithoutPhoto.length > 0 && (
               <span className={styles.statItem}>
-                {districtsWithoutSvg.length} готуються
+                {districtsWithoutPhoto.length} без фото
               </span>
             )}
-          </p>
+          </div>
         </div>
         
-        {/* Основна карта з SVG */}
-        {districtsWithSvg.length > 0 ? (
+        {/* Галерея фото */}
+        {districtsWithPhoto.length > 0 ? (
           <div className={styles.mapArea}>
             <div className={styles.mapWrapper}>
               <div className={styles.combinedMap}>
-                {districtsWithSvg.map(district => (
+                {districtsWithPhoto.map(district => (
                   <DistrictCard
                     key={district.id}
                     district={district}
@@ -106,15 +97,14 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
         ) : (
           <div className={styles.noMapContainer}>
             <div className={styles.placeholder}>
-              <div className={styles.placeholderIcon}>🗺️</div>
-              <h3>Карта районів</h3>
-              <p>Для цього міста ще не додані мапи районів</p>
+              <div className={styles.placeholderIcon}>🏙️</div>
+              <h3>Фото районів</h3>
+              <p>Для цього міста ще не додані фото районів</p>
             </div>
           </div>
         )}
       </div>
 
-      {/* Модальне вікно з деталями */}
       <DistrictDetailsModal
         district={selectedDistrict}
         isOpen={isModalOpen}
@@ -124,42 +114,34 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
   );
 }
 
-// Допоміжні компоненти
+// Компонент картки району
 const DistrictCard = React.memo(({ district, isSelected, onClick }) => (
   <div
-    className={`${styles.districtCard} ${
-      isSelected ? styles.selected : ''
-    }`}
+    className={`${styles.districtCard} ${isSelected ? styles.selected : ''}`}
     onClick={() => onClick(district)}
   >
-    <div
-      dangerouslySetInnerHTML={{ __html: district.svgContent }}
-      className={styles.svgContainer}
-    />
+    {district.photo_url ? (
+      <img 
+        src={district.photo_url} 
+        alt={district.photo_description || district.name}
+        className={styles.districtPhoto}
+        loading="lazy"
+      />
+    ) : (
+      <div className={styles.photoPlaceholder}>
+        🏙️
+      </div>
+    )}
     <div className={styles.districtName}>{district.name}</div>
     {district.filterData && (
       <div className={styles.districtStats}>
         <span className={styles.statBadge}>🏫 {district.filterData.education?.rating?.toFixed(1) || 'н/д'}</span>
         <span className={styles.statBadge}>🚍 {district.filterData.transport?.rating?.toFixed(1) || 'н/д'}</span>
         <span className={styles.statBadge}>🛡️ {district.filterData.safety?.rating?.toFixed(1) || 'н/д'}</span>
-         <span className={styles.statBadge}>
-          🌳 {district.filterData.social?.rating?.toFixed(1) || 'н/д'}
-        </span>
-        <span className={styles.statBadge}>
-          🏥 {district.filterData.medicine?.rating?.toFixed(1) || 'н/д'}
-        </span>
-        <span className={styles.statBadge}>
-          🛒 {district.filterData.commerce?.rating?.toFixed(1) || 'н/д'}
-        </span>
-        <span className={styles.statBadge}>
-            💰 {(district.filterData.general.propertyPrice / 1000).toFixed(0)}к
-          </span>
-          <span className={styles.statBadge}>
-            👥 {(district.filterData.general.populationDensity / 1000).toFixed(1)}к
-          </span>
-
+        <span className={styles.statBadge}>🌳 {district.filterData.social?.rating?.toFixed(1) || 'н/д'}</span>
+        <span className={styles.statBadge}>🏥 {district.filterData.medicine?.rating?.toFixed(1) || 'н/д'}</span>
+        <span className={styles.statBadge}>🛒 {district.filterData.commerce?.rating?.toFixed(1) || 'н/д'}</span>
       </div>
     )}
   </div>
 ));
-

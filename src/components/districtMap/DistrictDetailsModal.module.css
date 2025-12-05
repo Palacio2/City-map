@@ -1,297 +1,506 @@
+/* --- Змінні (Якщо не визначені глобально) --- */
+/*
+:root {
+    --primary-color: #007bff;
+    --primary-dark: #0056b3;
+    --primary-light: #52a3ff;
+    --secondary-color: #2ecc71;  // Зелений для High
+    --warning-color: #f39c12;    // Жовтий для Medium
+    --danger-color: #e74c3c;     // Червоний для Low
+    --text-dark: #2c3e50;
+    --text-medium: #7f8c8d;
+    --text-light: #bdc3c7;
+    --bg-white: #ffffff;
+    --bg-light: #f4f6f9;
+    --border-color: #e4e7ed;
+    --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.1);
+    --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+*/
+
+/* --- 1. Модальне вікно та Оверлей --- */
 .modalOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: 20px;
-  animation: fadeIn 0.3s ease;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.75); /* Трішки темніше */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* Плавніша анімація */
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 .modalContent {
-  background: var(--bg-white);
-  border-radius: 20px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  max-width: 900px;
-  width: 100%;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  animation: slideUp 0.3s ease;
+    background: var(--bg-white);
+    border-radius: 20px; /* Більший радіус */
+    max-width: 950px; /* Трохи ширше */
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-modal); /* Помітніша тінь */
+    border: none; /* Прибираємо стандартний бордер, покладаємося на тінь */
+    overflow: hidden; /* Важливо для скролу та заголовка */
+    animation: slideUp 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @keyframes slideUp {
-  from { 
-    opacity: 0;
-    transform: translateY(30px) scale(0.95);
-  }
-  to { 
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
+    from { 
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
-.modalHeader {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px 32px;
-  border-bottom: 1px solid var(--border-color);
-  background: var(--bg-light);
-  border-radius: 20px 20px 0 0;
+/* --- 2. Заголовок з Фотографією (Геро-секція) --- */
+.headerSection {
+    position: relative;
+    overflow: hidden;
+    background: var(--bg-light);
+    min-height: 250px; /* Високий заголовок */
+}
+
+.headerPhoto {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.headerContent {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 30px; /* Більший внутрішній відступ */
+    background: linear-gradient(to bottom, 
+        rgba(0, 0, 0, 0.0) 0%,
+        rgba(0, 0, 0, 0.85) 100%); /* Плавніший, темніший градієнт знизу */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Контент знизу */
+}
+
+.headerTop {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
 }
 
 .modalTitle {
-  margin: 0;
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--text-dark);
+    margin: 0;
+    font-size: 36px; /* Більший, помітніший заголовок */
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Виразніша тінь тексту */
+    line-height: 1.1;
 }
 
 .closeButton {
-  background: none;
-  border: none;
-  font-size: 28px;
-  color: var(--text-light);
-  cursor: pointer;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  transition: all 0.3s ease;
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px); /* М'якший блюр */
+    border: none;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%; /* Кругла кнопка */
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    flex-shrink: 0;
+    position: absolute; /* Виносимо в кут, щоб не заважала контенту */
+    top: 20px;
+    right: 20px;
+    z-index: 10;
 }
 
 .closeButton:hover {
-  background: var(--bg-hover);
-  color: var(--text-dark);
+    background: rgba(255, 255, 255, 0.35);
+    transform: rotate(90deg);
+    border-color: white;
 }
 
-.modalBody {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px 32px;
+.closeButton svg {
+    width: 24px; /* Більша іконка */
+    height: 24px;
 }
 
-.detailsGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: 20px;
+.photoDescription {
+    margin: 0 0 20px 0;
+    font-size: 16px;
+    color: rgba(255, 255, 255, 0.95);
+    font-weight: 500;
+    line-height: 1.4;
+    max-width: 70%;
 }
 
-.categoryCard {
-  background: var(--bg-light);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 20px;
-  transition: all 0.3s ease;
+.quickStats {
+    display: flex;
+    gap: 40px; /* Збільшений відступ */
+    flex-wrap: wrap;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.categoryCard:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--shadow);
-  border-color: var(--primary-light);
+.quickStat {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
 }
 
-.categoryHeader {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 16px;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--border-color);
+.quickStatLabel {
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.categoryIcon {
-  font-size: 20px;
+.quickStatValue {
+    font-size: 18px; /* Більший шрифт */
+    font-weight: 700;
+    color: white;
 }
 
-.categoryTitle {
-  margin: 0;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-dark);
+/* --- 3. Основний контент (Статистика) --- */
+.mainContent {
+    flex: 1;
+    overflow-y: auto;
+    padding: 35px;
+    background: var(--bg-light); /* Легкий фон */
 }
 
-.categoryStats {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Більша мінімальна ширина */
+    gap: 24px; /* Збільшений відступ */
+}
+
+.statCard {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px; /* Більший радіус */
+    padding: 24px;
+    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    box-shadow: var(--shadow-card);
+}
+
+.statCard:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-4px); /* Виразніший підйом */
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cardTitle {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.cardIcon {
+    font-size: 28px; /* Більша іконка */
+    width: 48px;
+    height: 48px;
+    background: var(--primary-color); /* Основний колір */
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.cardIcon > span {
+    filter: brightness(1.5); /* Трохи світліший вигляд емодзі */
+}
+
+.cardTitle h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.cardRating {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 10px;
+    min-width: 60px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Кольори для Рейтингу */
+.highRating {
+    color: var(--secondary-color);
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid var(--secondary-color);
+}
+
+.mediumRating {
+    color: var(--warning-color);
+    background: rgba(243, 156, 18, 0.15);
+    border: 1px solid var(--warning-color);
+}
+
+.lowRating {
+    color: var(--danger-color);
+    background: rgba(231, 76, 60, 0.15);
+    border: 1px solid var(--danger-color);
+}
+
+.cardStats {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Збільшений відступ */
 }
 
 .statRow {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px; /* Більший шрифт */
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--border-color); /* Пунктирна лінія */
 }
 
-.statLabel {
-  color: var(--text-medium);
-  font-weight: 500;
+.statRow:last-child {
+    border-bottom: none;
 }
 
-.statValue {
-  color: var(--text-dark);
-  font-weight: 600;
-  text-align: right;
+.statRow span {
+    color: var(--text-medium);
 }
 
-/* Рейтинги з зірочками */
+.statRow strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* Рейтинги зі зірочками */
 .ratingStars {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  color: #ffc107;
-  font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    color: #ffd700; /* Золотий колір зірок */
+    font-size: 18px; /* Більші зірки */
 }
 
 .ratingValue {
-  color: var(--text-medium);
-  font-size: 11px;
-  margin-left: 4px;
+    margin-left: 10px;
+    font-size: 14px;
+    color: var(--text-medium);
+    font-weight: 500;
 }
 
-/* Кольори для рівня злочинності */
+/* Кольори безпеки */
 .lowCrime {
-  color: #28a745;
+    color: var(--secondary-color);
 }
 
 .mediumCrime {
-  color: #ffc107;
+    color: var(--warning-color);
 }
 
 .highCrime {
-  color: #dc3545;
+    color: var(--danger-color);
 }
 
+/* Немає даних */
 .noData {
-  text-align: center;
-  padding: 60px 20px;
-  color: var(--text-light);
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-light);
 }
 
 .noDataIcon {
-  font-size: 48px;
-  margin-bottom: 16px;
-  opacity: 0.5;
+    font-size: 64px;
+    margin-bottom: 24px;
+    opacity: 0.6;
 }
 
 .noData h3 {
-  margin: 0 0 8px 0;
-  color: var(--text-dark);
-  font-size: 18px;
+    margin: 0 0 16px 0;
+    color: var(--text-dark);
+    font-size: 22px;
+    font-weight: 700;
 }
 
 .noData p {
-  margin: 0;
-  font-size: 14px;
+    margin: 0;
+    font-size: 16px;
+    color: var(--text-medium);
 }
 
+/* --- 4. Футер --- */
 .modalFooter {
-  padding: 20px 32px;
-  border-top: 1px solid var(--border-color);
-  display: flex;
-  justify-content: flex-end;
-  background: var(--bg-light);
-  border-radius: 0 0 20px 20px;
+    padding: 20px 35px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+    background: var(--bg-white);
+    /* border-radius: 0 0 20px 20px; */ /* Залишаємо без радіусу, оскільки він на .modalContent */
 }
 
-.closeModalButton {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 10px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: inherit;
+.closeButtonSecondary {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+    padding: 14px 50px; /* Більші відступи */
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 17px;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3); /* Виразна тінь кнопки */
 }
 
-.closeModalButton:hover {
-  background: var(--primary-dark);
-  transform: translateY(-1px);
+.closeButtonSecondary:hover {
+    background: var(--primary-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
 }
 
-/* Адаптивність */
+.closeButtonSecondary:active {
+    transform: translateY(0);
+}
+
+/* --- 5. Адаптивність (Mobile-First Optimization) --- */
+@media (max-width: 1024px) {
+    .statsGrid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
 @media (max-width: 768px) {
-  .modalOverlay {
-    padding: 10px;
-  }
-  
-  .modalContent {
-    max-height: 95vh;
-  }
-  
-  .modalHeader {
-    padding: 16px 20px;
-  }
-  
-  .modalTitle {
-    font-size: 20px;
-  }
-  
-  .modalBody {
-    padding: 16px 20px;
-  }
-  
-  .detailsGrid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
-  .categoryCard {
-    padding: 16px;
-  }
-  
-  .statRow {
-    font-size: 13px;
-  }
-  
-  .modalFooter {
-    padding: 16px 20px;
-  }
+    .modalOverlay {
+        padding: 0; /* На мобільному на весь екран */
+        align-items: flex-end;
+    }
+    
+    .modalContent {
+        max-height: 95vh;
+        border-radius: 20px 20px 0 0; /* Зверху радіус, знизу - ні */
+        box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+        max-width: 100%;
+        animation: slideUpMobile 0.4s ease-out;
+    }
+
+    @keyframes slideUpMobile {
+        from {
+            transform: translateY(100%);
+        }
+        to {
+            transform: translateY(0);
+        }
+    }
+    
+    .headerSection {
+        min-height: 200px;
+    }
+
+    .headerContent {
+        padding: 20px;
+    }
+
+    .closeButton {
+        top: 15px;
+        right: 15px;
+    }
+
+    .modalTitle {
+        font-size: 28px;
+    }
+    
+    .photoDescription {
+        font-size: 15px;
+        max-width: 100%;
+    }
+
+    .quickStats {
+        gap: 20px;
+        flex-direction: column; /* Вертикально на мобільних */
+        border-top: none;
+        padding-top: 0;
+    }
+
+    .quickStatValue {
+        font-size: 16px;
+    }
+    
+    .mainContent {
+        padding: 20px;
+    }
+    
+    .statsGrid {
+        grid-template-columns: 1fr; /* По одному елементу в ряд */
+        gap: 16px;
+    }
+    
+    .statCard {
+        padding: 16px;
+    }
+    
+    .cardTitle h3 {
+        font-size: 18px;
+    }
+
+    .cardIcon {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+    }
+    
+    .statRow {
+        font-size: 15px;
+    }
+
+    .modalFooter {
+        padding: 15px 20px;
+    }
+
+    .closeButtonSecondary {
+        width: 100%; /* Кнопка на всю ширину */
+        padding: 14px 0;
+    }
 }
 
 @media (max-width: 480px) {
-  .modalHeader {
-    padding: 12px 16px;
-  }
-  
-  .modalBody {
-    padding: 12px 16px;
-  }
-  
-  .categoryCard {
-    padding: 12px;
-  }
-  
-  .categoryHeader {
-    gap: 8px;
-    margin-bottom: 12px;
-  }
-  
-  .categoryIcon {
-    font-size: 18px;
-  }
-  
-  .categoryTitle {
-    font-size: 15px;
-  }
-  
-  .statRow {
-    font-size: 12px;
-  }
+    .headerSection {
+        min-height: 160px;
+    }
+    .modalTitle {
+        font-size: 24px;
+    }
+    .cardRating {
+        font-size: 14px;
+    }
 }

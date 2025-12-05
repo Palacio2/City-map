@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react';
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react';
 import styles from './SelectForm.module.css';
 
 // Допоміжна функція для нормалізації тексту
@@ -22,7 +22,6 @@ const DropdownSelect = React.memo(({ options, selectedValue, onValueChange, disa
                     key={option.value} 
                     value={option.value}
                     disabled={isOptionDisabled(option)}
-                    // Для нативних <option> клас стилів часто ігнорується, але залишаємо для прикладу
                     className={isOptionDisabled(option) ? styles.disabledOption : ''}
                 >
                     {option.label}
@@ -38,7 +37,7 @@ const DropdownSelect = React.memo(({ options, selectedValue, onValueChange, disa
 // ----------------------------------------------------------------------
 // 2. КОМПОНЕНТ ДЛЯ ПОШУКУ З АВТОЗАПОВНЕННЯМ (COMBOBOX)
 // ----------------------------------------------------------------------
-const ComboboxSelect = React.memo(({ options, selectedValue, onValueChange, disabled, isLoading, disabledMessage, isOptionDisabled }) => {
+const ComboboxSelect = React.memo(({ options, selectedValue, onValueChange, disabled, isLoading, isOptionDisabled }) => {
     
     const [searchTerm, setSearchTerm] = useState('');
     const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
@@ -68,13 +67,22 @@ const ComboboxSelect = React.memo(({ options, selectedValue, onValueChange, disa
         return () => document.removeEventListener("mousedown", handleClickOutside);
     }, []);
 
-    const filteredOptions = options.filter(option => {
-        if (!searchTerm) return false; // Не показуємо, якщо поле порожнє
-        if (isOptionDisabled(option)) return false; // Приховуємо недоступні у підказках
+    // ❗ ВИКОРИСТАННЯ useMemo ДЛЯ ОПТИМІЗАЦІЇ ФІЛЬТРАЦІЇ ❗
+    const filteredOptions = useMemo(() => {
+        const normalizedTerm = normalize(searchTerm.trim());
+        const isSearchEmpty = normalizedTerm === '';
         
-        const normalizedTerm = normalize(searchTerm);
-        return normalize(option.label).includes(normalizedTerm);
-    }).slice(0, 10);
+        return options.filter(option => {
+            // Приховуємо недоступні
+            if (isOptionDisabled(option)) return false; 
+            
+            // Якщо поле порожнє, показуємо всі доступні
+            if (isSearchEmpty) return true; 
+            
+            // Фільтрація за пошуковим терміном
+            return normalize(option.label).includes(normalizedTerm);
+        }).slice(0, 10);
+    }, [options, searchTerm, isOptionDisabled]);
 
     const handleInputChange = (e) => {
         const value = e.target.value;
@@ -92,20 +100,13 @@ const ComboboxSelect = React.memo(({ options, selectedValue, onValueChange, disa
     }, [onValueChange]);
     
     const handleArrowClick = () => {
-        // Якщо обрано фінальне значення, клік по стрілці не відкриває список
+        // Якщо обрано фінальне значення, клік по стрілці не відкриває/закриває список
         if (selectedValue) return; 
         setIsSuggestionsOpen(prev => !prev);
-        // Якщо список відкривається, оновлюємо searchTerm на порожній, 
-        // щоб відобразити всі доступні опції, якщо це потрібно.
-        if (!isSuggestionsOpen && !searchTerm) {
-             // Можна встановити searchTerm: '', щоб показати всі, але 
-             // за поточною логікою фільтрації це покаже "Нічого не знайдено". 
-             // Залишаємо його як є, щоб змусити користувача вводити текст.
-        }
     };
 
     const displayValue = selectedValue ? selectedLabel : searchTerm;
-    const placeholder = selectedValue ? selectedLabel : "-- Почніть вводити назву міста --";
+    const placeholder = "-- Почніть вводити назву міста --";
 
 
     return (
@@ -142,7 +143,7 @@ const ComboboxSelect = React.memo(({ options, selectedValue, onValueChange, disa
                   ))
                 ) : (
                   <li className={styles.noResults}>
-                    {searchTerm ? 'Не знайдено' : 'Почніть вводити назву...'}
+                    {searchTerm.trim() ? 'Не знайдено' : 'Введіть назву для пошуку...'}
                   </li>
                 )}
               </ul>
@@ -169,13 +170,11 @@ export default function SelectForm({
   disabled = false,
   disabledMessage = 'Тимчасово недоступно',
   isLoading = false,
-  // ❗ НОВИЙ PROP ДЛЯ ПЕРЕМИКАННЯ РЕЖИМУ ❗
   isSearchable = false 
 }) {
   const isOptionDisabled = useCallback((option) => option.disabled || false, []);
 
-  // Перевірка можливості сабміту. Для Combobox - selectedValue має бути не порожнім
-  // Для Dropdown - selectedValue має бути не порожнім (і не disabled, що перевіряється в опціях)
+  // Перевірка можливості сабміту.
   const canSubmit = !disabled && !isLoading && !!selectedValue;
 
   // Вибір компонента

@@ -1,8 +1,31 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import SelectForm from '@ui/selectForm/SelectForm';
-import { fetchCitiesByCountry } from '@api/cityCountrySelect';
+// ❗ ІМПОРТ НОВОЇ ФУНКЦІЇ ❗
+import { fetchCitiesByCountry, createSelectOptions } from '@api/cityCountrySelect';
 import styles from '@ui/selectForm/SelectForm.module.css';
+
+// ❗ УМОВНА ВИНОСКА КОМПОНЕНТУ СТАТУСУ ДЛЯ ЗМЕНШЕННЯ КОДУ (якби ви його створили) ❗
+const StatusView = ({ title = "Помилка", error, onBack, showRetry = false }) => (
+  <div className={styles.errorContainer}>
+    <h1>{title}</h1>
+    <p>{error}</p>
+    {showRetry && (
+      <button 
+        onClick={() => window.location.reload()}
+        className={styles.retryButton}
+      >
+        Спробувати знову
+      </button>
+    )}
+    <button 
+      onClick={onBack}
+      className={styles.backButton}
+    >
+      ← Назад
+    </button>
+  </div>
+);
 
 export default function CitySelect() {
   const { country } = useParams();
@@ -28,7 +51,6 @@ export default function CitySelect() {
         const data = await fetchCitiesByCountry(decodedCountry);
         
         setCities(data.map(city => ({
-          // Припускаємо, що об'єкти міст мають поля 'value' та 'name'
           ...city,
           name: city.name || city.value,
           value: city.value
@@ -55,57 +77,16 @@ export default function CitySelect() {
   };
 
   if (error) {
-    return (
-      <div className={styles.errorContainer}>
-        <h1>Помилка завантаження</h1>
-        <p>{error}</p>
-        <button 
-          onClick={() => window.location.reload()}
-          className={styles.retryButton}
-        >
-          Спробувати знову
-        </button>
-        <button 
-          onClick={handleBack}
-          className={styles.backButton}
-        >
-          ← Назад
-        </button>
-      </div>
-    );
+    return <StatusView title="Помилка завантаження" error={error} onBack={handleBack} showRetry={true} />;
   }
 
   if (!country) {
-    return (
-      <div className={styles.errorContainer}>
-        <h1>Помилка</h1>
-        <p>Країна не знайдена</p>
-        <button 
-          onClick={handleBack}
-          className={styles.backButton}
-        >
-          ← Назад
-        </button>
-      </div>
-    );
+    return <StatusView title="Помилка" error="Країна не знайдена" onBack={handleBack} />;
   }
 
-  const availableCities = cities.filter(city => city.available);
-  const unavailableCities = cities.filter(city => !city.available);
-
-  const allOptions = [
-    ...availableCities.map(city => ({
-      label: city.name,
-      value: city.value,
-      disabled: false
-    })),
-    ...unavailableCities.map(city => ({
-      label: city.name,
-      value: city.value,
-      disabled: true
-    }))
-  ];
-
+  // ❗ ВИКОРИСТАННЯ УНІВЕРСАЛЬНОЇ ФУНКЦІЇ ❗
+  const allOptions = createSelectOptions(cities);
+  
   const isCityDisabled = cities.find(c => c.value === selectedCity)?.available === false;
   const hasCities = cities.length > 0;
 
@@ -121,12 +102,10 @@ export default function CitySelect() {
       submitText="Перейти на мапу →"
       disabled={isCityDisabled || isLoading || !hasCities}
       disabledMessage={
-        isLoading ? "Завантаження..." :
-        !hasCities ? "Міста не знайдено" :
-        isCityDisabled ? "Місто недоступне" : ""
+        // ❗ СПРОЩЕННЯ disabledMessage ❗
+        !hasCities ? "Міста не знайдено" : "Місто недоступне"
       }
       isLoading={isLoading}
-      // ❗ ВМИКАЄМО РЕЖИМ ПОШУКУ ❗
       isSearchable={true} 
     />
   );

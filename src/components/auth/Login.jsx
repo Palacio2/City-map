@@ -3,11 +3,20 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import AuthForm from '@ui/authForm/AuthForm';
 import { supabase } from '../../supabaseClient';
 import { validateLoginForm } from './validation';
+// ❗ НОВИЙ ІМПОРТ ❗
+import useAuthRedirect from '../../hooks/useAuthRedirect'; 
 
 const ERROR_MESSAGES = {
   'Invalid login credentials': 'Невірний email або пароль',
   'Email not confirmed': 'Будь ласка, підтвердіть вашу email адресу'
 };
+
+// ❗ СПІЛЬНИЙ КОМПОНЕНТ ЗАВАНТАЖЕННЯ (якщо ви його створите) ❗
+const LoadingScreen = () => (
+    <div className="loading-container">
+        <div className="spinner">Завантаження...</div>
+    </div>
+);
 
 export default function Login() {
   const [formData, setFormData] = useState({ 
@@ -18,30 +27,16 @@ export default function Login() {
   const [passwordVisibility, setPasswordVisibility] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const [isAutoLoginAttempted, setIsAutoLoginAttempted] = useState(false);
+  // ❌ ВИДАЛЕНО: const [isAutoLoginAttempted, setIsAutoLoginAttempted] = useState(false);
   
   const navigate = useNavigate();
-  const location = useLocation();
-  const from = location.state?.from?.pathname || '/';
+  // ❌ ВИДАЛЕНО: const location = useLocation();
+  // ❌ ВИДАЛЕНО: const from = location.state?.from?.pathname || '/';
 
-  // Автоматична перевірка сесії при завантаженні
-  useEffect(() => {
-    const checkExistingSession = async () => {
-      const rememberMe = localStorage.getItem('rememberMe');
-      
-      if (rememberMe === 'true') {
-        const { data: { session }, error } = await supabase.auth.getSession();
-        
-        if (session && !error) {
-          navigate(from, { replace: true });
-        }
-      }
-      
-      setIsAutoLoginAttempted(true);
-    };
-
-    checkExistingSession();
-  }, [navigate, from]);
+  // ❗ ВИКЛИКАЄМО НОВИЙ ХУК ❗
+  const isAutoLoginAttempted = useAuthRedirect(); 
+  
+  // ❌ ВИДАЛЕНО: useEffect для checkExistingSession
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -52,62 +47,51 @@ export default function Login() {
     if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
   };
 
+  const handleTogglePassword = (fieldName) => {
+    setPasswordVisibility(prev => ({
+      ...prev,
+      [fieldName]: !prev[fieldName]
+    }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const formErrors = validateLoginForm(formData);
-    if (Object.keys(formErrors).length > 0) {
-      setErrors(formErrors);
+    setIsLoading(true);
+    setErrors({});
+
+    const validationErrors = validateLoginForm(formData);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      setIsLoading(false);
       return;
     }
-    
-    setIsLoading(true);
-    
-    try {
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: formData.email.trim(),
-        password: formData.password
-      });
-      
-      if (error) throw error;
 
-      // Обробка "Запам'ятати мене"
-      if (formData.rememberMe) {
-        // Зберігаємо в localStorage
-        localStorage.setItem('rememberMe', 'true');
-        localStorage.setItem('userEmail', formData.email);
-        
-        // Оновлюємо срок дії сесії (опційно)
-        const { error: updateError } = await supabase.auth.updateUser({
-          data: { remember_me: true }
-        });
-        
-        if (updateError) {
-          console.warn('Не вдалося оновити налаштування сесії:', updateError);
-        }
-      } else {
-        // Видаляємо з localStorage
-        localStorage.removeItem('rememberMe');
-        localStorage.removeItem('userEmail');
-        
-        // Встановлюємо коротший срок дії сесії
-        const { error: updateError } = await supabase.auth.updateUser({
-          data: { remember_me: false }
-        });
-        
-        if (updateError) {
-          console.warn('Не вдалося оновити налаштування сесії:', updateError);
-        }
+    try {
+      const { email, password, rememberMe } = formData;
+      
+      const { data: { user }, error } = await supabase.auth.signInWithPassword({ 
+        email, 
+        password 
+      });
+
+      if (error) {
+        throw error;
       }
       
-      console.log('Успішний вхід, перенаправлення...');
-      navigate(from, { replace: true });
+      // Зберігання даних (якщо функціонал "запам'ятати мене" потрібен)
+      if (rememberMe) {
+        localStorage.setItem('rememberMe', 'true');
+        localStorage.setItem('userEmail', email);
+      } else {
+        localStorage.removeItem('rememberMe');
+        localStorage.removeItem('userEmail');
+      }
+
+      navigate('/', { replace: true }); // Перенаправлення після успішного входу
       
     } catch (error) {
-      console.error('Помилка входу:', error);
-      setErrors({ 
-        submit: ERROR_MESSAGES[error.message] || 'Помилка входу. Спробуйте ще раз.' 
-      });
+      const errorMessage = ERROR_MESSAGES[error.message] || 'Помилка входу. Спробуйте пізніше.';
+      setErrors({ submit: errorMessage });
     } finally {
       setIsLoading(false);
     }
@@ -131,7 +115,7 @@ export default function Login() {
     }
   };
 
-  // Завантажуємо збережені дані при монтуванні
+  // Завантажуємо збережені дані при монтуванні (залежність від нового хука)
   useEffect(() => {
     if (isAutoLoginAttempted) {
       const rememberMe = localStorage.getItem('rememberMe');
@@ -147,13 +131,9 @@ export default function Login() {
     }
   }, [isAutoLoginAttempted]);
 
-  // Показуємо loading поки перевіряємо сесію
+  // ❗ ВИКОРИСТАННЯ НОВОГО ХУКА ❗
   if (!isAutoLoginAttempted) {
-    return (
-      <div className="loading-container">
-        <div className="spinner">Завантаження...</div>
-      </div>
-    );
+    return <LoadingScreen />;
   }
 
   return (
@@ -165,10 +145,7 @@ export default function Login() {
       passwordVisibility={passwordVisibility}
       onChange={handleChange}
       onSubmit={handleSubmit}
-      onTogglePassword={(field) => setPasswordVisibility(prev => ({
-        ...prev,
-        [field]: !prev[field]
-      }))}
+      onTogglePassword={handleTogglePassword}
       onSwitchMode={() => navigate('/register')}
       onSocialLogin={socialLogin}
     />

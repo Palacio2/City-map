@@ -33,6 +33,7 @@ export async function fetchCountries() {
   try {
     const data = await apiRequest('/cityCountrySelect/get-locations/countries');
     
+    // Мапінг на проміжний формат (value, label, available)
     return data.map(country => ({
       value: country.name,
       label: country.name,
@@ -49,6 +50,7 @@ export async function fetchCitiesByCountry(countryName) {
     const encodedCountryName = encodeURIComponent(countryName);
     const data = await apiRequest(`/cityCountrySelect/get-locations/cities/${encodedCountryName}`);
     
+    // Мапінг на проміжний формат (value, label, available)
     return data.map(city => ({
       value: city.name,
       label: city.name,
@@ -58,4 +60,29 @@ export async function fetchCitiesByCountry(countryName) {
     console.error('Error fetching cities:', error);
     throw new Error(`Не вдалося завантажити міста для ${countryName}`);
   }
+}
+
+/**
+ * Універсальна функція для створення опцій з підтримкою disabled.
+ * @param {Array<Object>} data - Масив об'єктів з полями value, label, available.
+ */
+export function createSelectOptions(data) {
+  // ❗ ВИПРАВЛЕННЯ ПОМИЛКИ: ArrayOf змінено на Array.isArray ❗
+  if (!Array.isArray(data)) return []; 
+    
+  const availableItems = data.filter(item => item.available);
+  const unavailableItems = data.filter(item => !item.available);
+
+  return [
+    ...availableItems.map(item => ({
+      label: item.label || item.name || item.value, 
+      value: item.value,
+      disabled: false
+    })),
+    ...unavailableItems.map(item => ({
+      label: item.label || item.name || item.value, 
+      value: item.value,
+      disabled: true
+    }))
+  ];
 }

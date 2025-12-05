@@ -12,6 +12,7 @@ import Profile from "../components/profile/Profile";
 import Payment from "@pages/payment/Payment";
 import RegisterSuccess from "../components/auth/RegisterSuccess";
 import AuthCallback from "../components/auth/AuthCallback";
+
 import PrivateRoute from "./PrivateRoute";
 import ProtectedRoute from "./ProtectedRoute"; // Імпорт ProtectedRoute
 
@@ -42,10 +43,17 @@ export default function AppRoutes() {
         <Route path="register-success" element={<RegisterSuccess />} />
         <Route path="auth/callback" element={<AuthCallback />} />
         <Route path="payment-success" element={<PaymentSuccess />} />
-        <Route path="/favorites" element={<FavoritesPage />} />
         
 
         {/* Приватні маршрути */}
+        <Route 
+          path="/favorites" 
+          element={
+            <PrivateRoute>
+              <FavoritesPage />
+            </PrivateRoute>
+          } 
+        />
         <Route
           path="profile"
           element={
