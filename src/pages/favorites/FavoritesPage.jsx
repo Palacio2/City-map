@@ -1,9 +1,9 @@
 // components/FavoritesPage/FavoritesPage.jsx
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { favoritesApi } from '../../components/api/favoritesApi';
+import { favoritesApi } from '../../components/api/favoritesApi'; 
 import { supabase } from '../../supabaseClient';
-import DistrictModal from './DistrictModal';
+import DistrictDetailsModal from '../../components/districtMap/DistrictDetailsModal'; // ✅ Модалка
 import styles from './FavoritesPage.module.css';
 
 export default function FavoritesPage() {
@@ -43,9 +43,9 @@ export default function FavoritesPage() {
     
     try {
       await favoritesApi.removeFavorite(districtId);
-      setFavorites(prev => prev.filter(d => d.id !== districtId));
+      setFavorites(prev => prev.filter(d => d.id !== districtId)); 
     } catch (err) {
-      alert('Помилка видалення');
+      alert('Помилка видалення: ' + err.message);
     }
   };
 
@@ -58,6 +58,16 @@ export default function FavoritesPage() {
     setIsModalOpen(false);
     setSelectedDistrict(null);
   };
+  
+  // Функція для оновлення списку, якщо видалення відбулося в модальному вікні
+  const handleToggleFavorite = (districtId, isFavorite) => {
+    if (!isFavorite) {
+      // Якщо статус змінився на "не улюблений", видаляємо його зі списку
+      setFavorites(prev => prev.filter(d => d.id !== districtId));
+    }
+    // Якщо статус змінився на "улюблений", нічого не робимо (він уже є або буде доданий пізніше)
+  };
+
 
   const formatPrice = (price) => {
     if (!price && price !== 0) return 'н/д';
@@ -74,21 +84,23 @@ export default function FavoritesPage() {
     return '★'.repeat(Math.floor(stars)) + '☆'.repeat(5 - Math.floor(stars));
   };
 
+
   if (loading) {
     return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
-        <p>Завантаження...</p>
+      <div className={styles.emptyState}>
+        <div className={styles.emptyIcon}>⏳</div>
+        <p className={styles.emptyTitle}>Завантаження...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className={styles.errorContainer}>
-        <h2>{error}</h2>
-        <button onClick={() => navigate('/login')} className={styles.loginBtn}>
-          Увійти
+      <div className={styles.emptyState}>
+        <div className={styles.emptyIcon}>⚠️</div>
+        <p className={styles.emptyTitle}>Помилка: {error}</p>
+        <button onClick={() => navigate('/login')} className={styles.detailsButton}>
+          Спробувати увійти
         </button>
       </div>
     );
@@ -96,10 +108,10 @@ export default function FavoritesPage() {
 
   if (favorites.length === 0) {
     return (
-      <div className={styles.emptyContainer}>
+      <div className={styles.emptyState}>
         <div className={styles.emptyIcon}>⭐</div>
-        <h2>Немає улюблених районів</h2>
-        <p>Додавайте райони до улюблених, натискаючи на ❤️</p>
+        <h2 className={styles.emptyTitle}>Немає улюблених районів</h2>
+        <p className={styles.emptyDescription}>Додайте райони до улюблених на карті, натискаючи на ❤️</p>
       </div>
     );
   }
@@ -108,22 +120,22 @@ export default function FavoritesPage() {
     <>
       <div className={styles.container}>
         <header className={styles.header}>
-          <h1>Улюблені райони</h1>
-          <span className={styles.count}>{favorites.length}</span>
+          <h1 className={styles.title}>Улюблені райони</h1>
+          <span className={styles.favoritesCount}>{favorites.length}</span>
         </header>
 
-        <div className={styles.grid}>
+        <div className={styles.favoritesGrid}>
           {favorites.map(district => (
             <div 
               key={district.id} 
-              className={styles.card}
+              className={styles.favoriteCard}
               onClick={() => handleCardClick(district)}
             >
               <div className={styles.cardHeader}>
-                <h3>{district.name}</h3>
+                <h3 className={styles.districtName}>{district.name}</h3>
                 <button 
-                  className={styles.removeBtn}
-                  onClick={(e) => handleRemove(district.id, e)}
+                  className={styles.removeButton}
+                  onClick={(e) => handleRemove(district.id, e)} // district.id - ID району
                   title="Видалити"
                 >
                   ❌
@@ -143,38 +155,38 @@ export default function FavoritesPage() {
                 </div>
               )}
 
-              <div className={styles.stats}>
+              <div className={styles.statsGrid}>
                 {district.filterData?.education?.rating && (
-                  <div className={styles.stat}>
-                    <span>🎓 Освіта</span>
-                    <span className={styles.rating}>
+                  <div className={styles.statItem}>
+                    <span className={styles.statLabel}>🎓 Освіта</span>
+                    <span className={styles.ratingStars}>
                       {renderStars(district.filterData.education.rating)}
-                      <small>({district.filterData.education.rating?.toFixed(1)})</small>
+                      <small className={styles.ratingValue}>({district.filterData.education.rating?.toFixed(1)})</small>
                     </span>
                   </div>
                 )}
                 {district.filterData?.transport?.rating && (
-                  <div className={styles.stat}>
-                    <span>🚍 Транспорт</span>
-                    <span className={styles.rating}>
+                  <div className={styles.statItem}>
+                    <span className={styles.statLabel}>🚍 Транспорт</span>
+                    <span className={styles.ratingStars}>
                       {renderStars(district.filterData.transport.rating)}
-                      <small>({district.filterData.transport.rating?.toFixed(1)})</small>
+                      <small className={styles.ratingValue}>({district.filterData.transport.rating?.toFixed(1)})</small>
                     </span>
                   </div>
                 )}
                 {district.filterData?.safety?.rating && (
-                  <div className={styles.stat}>
-                    <span>🛡️ Безпека</span>
-                    <span className={styles.rating}>
+                  <div className={styles.statItem}>
+                    <span className={styles.statLabel}>🛡️ Безпека</span>
+                    <span className={styles.ratingStars}>
                       {renderStars(district.filterData.safety.rating)}
-                      <small>({district.filterData.safety.rating?.toFixed(1)})</small>
+                      <small className={styles.ratingValue}>({district.filterData.safety.rating?.toFixed(1)})</small>
                     </span>
                   </div>
                 )}
               </div>
 
-              <div className={styles.footer}>
-                <button className={styles.detailsBtn} onClick={(e) => {
+              <div className={styles.cardActions}>
+                <button className={styles.detailsButton} onClick={(e) => {
                   e.stopPropagation();
                   handleCardClick(district);
                 }}>
@@ -192,11 +204,11 @@ export default function FavoritesPage() {
       </div>
 
       {isModalOpen && selectedDistrict && (
-        <DistrictModal
+        <DistrictDetailsModal
           district={selectedDistrict}
+          isOpen={isModalOpen}
           onClose={closeModal}
-          formatPrice={formatPrice}
-          renderStars={renderStars}
+          onToggleFavorite={handleToggleFavorite} 
         />
       )}
     </>

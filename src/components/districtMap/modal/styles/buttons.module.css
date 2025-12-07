@@ -1,0 +1,128 @@
+@import './index.css';
+
+/* --- Кнопка улюбленого (для хедера) --- */
+.favoriteButton {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    flex-shrink: 0;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.favoriteButton:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: scale(1.15);
+    border-color: #ff4757;
+    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.3);
+}
+
+.favoriteButton.favoriteActive {
+    background: rgba(255, 71, 87, 0.25);
+    border-color: #ff4757;
+}
+
+.favoriteButton.favoriteActive:hover {
+    background: rgba(255, 71, 87, 0.4);
+}
+
+/* Стилі для іконок улюбленого (ЗБІЛЬШЕНО та !important) */
+.favoriteButton svg {
+    color: white;
+    stroke: white;
+    stroke-width: 2px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    /* ✅ Виправлення: Збільшення та !important для перевантаження інлайн-стилів */
+    width: 30px !important; 
+    height: 30px !important;
+}
+
+.favoriteButton.favoriteActive svg {
+    color: #ff4757;
+    stroke: #ff4757;
+    fill: #ff4757;
+    filter: drop-shadow(0 2px 4px rgba(255, 71, 87, 0.4));
+}
+
+/* --- Кнопка закриття (для хедера) --- */
+.closeButton {
+    background: rgba(255, 255, 255, 0.25);
+    backdrop-filter: blur(10px);
+    border: none;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    flex-shrink: 0;
+    z-index: 100;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.closeButton:hover {
+    background: rgba(255, 255, 255, 0.4);
+    transform: rotate(90deg);
+    border-color: white;
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+}
+
+/* Стилі для іконки закриття (ЗБІЛЬШЕНО та !important) */
+.closeButton svg {
+    color: white;
+    stroke: white;
+    stroke-width: 2px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+    /* ✅ Виправлення: Збільшення та !important для перевантаження інлайн-стилів */
+    width: 32px !important; 
+    height: 32px !important;
+}
+
+/* --- Адаптивність (ОНОВЛЕНО) --- */
+@media (max-width: 768px) {
+    .favoriteButton,
+    .closeButton {
+        width: 44px;
+        height: 44px;
+    }
+    
+    .favoriteButton svg {
+        width: 28px !important;
+        height: 28px !important;
+    }
+    
+    .closeButton svg {
+        width: 30px !important;
+        height: 30px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .favoriteButton,
+    .closeButton {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .favoriteButton svg {
+        width: 26px !important;
+        height: 26px !important;
+    }
+    
+    .closeButton svg {
+        width: 28px !important;
+        height: 28px !important;
+    }
+}

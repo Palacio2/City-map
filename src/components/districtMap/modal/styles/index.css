@@ -1,0 +1,50 @@
+/* --- Загальні змінні --- */
+:root {
+    /* Кольори */
+    --primary-color: #007bff;
+    --primary-dark: #0056b3;
+    --primary-light: #52a3ff;
+    --secondary-color: #2ecc71;  /* Зелений для High */
+    --warning-color: #f39c12;    /* Жовтий для Medium */
+    --danger-color: #e74c3c;     /* Червоний для Low */
+    --text-dark: #2c3e50;
+    --text-medium: #7f8c8d;
+    --text-light: #bdc3c7;
+    --bg-white: #ffffff;
+    --bg-light: #f4f6f9;
+    --border-color: #e4e7ed;
+    --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.05);
+    --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.1);
+    --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
+    --favorite-color: #ff4757;
+    --favorite-dark: #ff2e43;
+    
+    /* Анімації */
+    --transition-default: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+/* --- Загальні анімації --- */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideUp {
+    from { 
+        opacity: 0;
+        transform: translateY(40px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideUpMobile {
+    from {
+        transform: translateY(100%);
+    }
+    to {
+        transform: translateY(0);
+    }
+}

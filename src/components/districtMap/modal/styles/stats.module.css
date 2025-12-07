@@ -1,0 +1,86 @@
+@import './index.css';
+
+/* --- Сітка статистики --- */
+.statsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+}
+
+/* --- Рядки статистики --- */
+.statRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 16px;
+    padding: 4px 0;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.statRow:last-child {
+    border-bottom: none;
+}
+
+.statRow span {
+    color: var(--text-medium);
+}
+
+.statRow strong {
+    color: var(--text-dark);
+    font-weight: 600;
+}
+
+/* --- Кольори безпеки --- */
+.lowCrime {
+    color: var(--secondary-color);
+}
+
+.mediumCrime {
+    color: var(--warning-color);
+}
+
+.highCrime {
+    color: var(--danger-color);
+}
+
+/* --- Рейтинги зі зірочками --- */
+.ratingStars {
+    display: flex;
+    align-items: center;
+    gap: 1px;
+    color: #ffd700;
+    font-size: 18px;
+}
+
+.ratingValue {
+    margin-left: 10px;
+    font-size: 14px;
+    color: var(--text-medium);
+    font-weight: 500;
+}
+
+/* --- Адаптивність --- */
+@media (max-width: 1024px) {
+    .statsGrid {
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    }
+}
+
+@media (max-width: 768px) {
+    .statsGrid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .statRow {
+        font-size: 15px;
+    }
+    
+    .ratingStars {
+        font-size: 16px;
+    }
+    
+    .ratingValue {
+        font-size: 13px;
+    }
+}

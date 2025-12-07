@@ -1,27 +1,4 @@
-/* --- Змінні (Якщо не визначені глобально) --- */
-/*
-:root {
-    --primary-color: #007bff;
-    --primary-dark: #0056b3;
-    --primary-light: #52a3ff;
-    --secondary-color: #2ecc71;  // Зелений для High
-    --warning-color: #f39c12;    // Жовтий для Medium
-    --danger-color: #e74c3c;     // Червоний для Low
-    --text-dark: #2c3e50;
-    --text-medium: #7f8c8d;
-    --text-light: #bdc3c7;
-    --bg-white: #ffffff;
-    --bg-light: #f4f6f9;
-    --border-color: #e4e7ed;
-    --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.05);
-    --shadow-hover: 0 10px 20px rgba(0, 0, 0, 0.1);
-    --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.2);
-    --favorite-color: #ff4757;
-    --favorite-dark: #ff2e43;
-}
-*/
-
-/* --- 1. Модальне вікно та Оверлей --- */
+/* --- Модальне вікно та Оверлей --- */
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -67,170 +44,7 @@
     }
 }
 
-/* --- 2. Заголовок з Фотографією (Геро-секція) --- */
-.headerSection {
-    position: relative;
-    overflow: hidden;
-    background: var(--bg-light);
-    min-height: 250px;
-}
-
-.headerPhoto {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
-
-.headerContent {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 30px;
-    background: linear-gradient(to bottom, 
-        rgba(0, 0, 0, 0.0) 0%,
-        rgba(0, 0, 0, 0.85) 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-}
-
-.headerTop {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 12px;
-    position: relative;
-}
-
-.modalTitle {
-    margin: 0;
-    font-size: 36px;
-    font-weight: 700;
-    color: white;
-    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-    line-height: 1.1;
-    padding-right: 120px; /* Місце для кнопок */
-}
-
-/* --- Дії в заголовку --- */
-.headerActions {
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    position: absolute;
-    top: 0;
-    right: 0;
-}
-
-.favoriteButton {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    border: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    flex-shrink: 0;
-    z-index: 10;
-}
-
-.favoriteButton:hover {
-    background: rgba(255, 255, 255, 0.35);
-    transform: scale(1.1);
-    border-color: var(--favorite-color, #ff4757);
-}
-
-.favoriteButton.favoriteActive {
-    background: rgba(255, 71, 87, 0.2);
-    border-color: var(--favorite-color, #ff4757);
-}
-
-.favoriteButton.favoriteActive:hover {
-    background: rgba(255, 71, 87, 0.35);
-}
-
-.favoriteButton svg {
-    width: 20px;
-    height: 20px;
-}
-
-.closeButton {
-    background: rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-    border: none;
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    border: 1px solid rgba(255, 255, 255, 0.3);
-    flex-shrink: 0;
-    z-index: 10;
-}
-
-.closeButton:hover {
-    background: rgba(255, 255, 255, 0.35);
-    transform: rotate(90deg);
-    border-color: white;
-}
-
-.closeButton svg {
-    width: 24px;
-    height: 24px;
-}
-
-.photoDescription {
-    margin: 0 0 20px 0;
-    font-size: 16px;
-    color: rgba(255, 255, 255, 0.95);
-    font-weight: 500;
-    line-height: 1.4;
-    max-width: 70%;
-}
-
-.quickStats {
-    display: flex;
-    gap: 40px;
-    flex-wrap: wrap;
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.quickStat {
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-}
-
-.quickStatLabel {
-    font-size: 14px;
-    color: rgba(255, 255, 255, 0.8);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
-
-.quickStatValue {
-    font-size: 18px;
-    font-weight: 700;
-    color: white;
-}
-
-/* --- 3. Основний контент (Статистика) --- */
+/* --- Основний контент --- */
 .mainContent {
     flex: 1;
     overflow-y: auto;
@@ -238,152 +52,7 @@
     background: var(--bg-light);
 }
 
-.statsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 24px;
-}
-
-.statCard {
-    background: var(--bg-white);
-    border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 24px;
-    transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    box-shadow: var(--shadow-card);
-}
-
-.statCard:hover {
-    border-color: var(--primary-light);
-    transform: translateY(-4px);
-    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
-}
-
-.cardHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.cardTitle {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.cardIcon {
-    font-size: 28px;
-    width: 48px;
-    height: 48px;
-    background: var(--primary-color);
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
-}
-
-.cardIcon > span {
-    filter: brightness(1.5);
-}
-
-.cardTitle h3 {
-    margin: 0;
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--text-dark);
-}
-
-.cardRating {
-    font-size: 16px;
-    font-weight: 700;
-    padding: 8px 14px;
-    border-radius: 10px;
-    min-width: 60px;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-}
-
-/* Кольори для Рейтингу */
-.highRating {
-    color: var(--secondary-color);
-    background: rgba(46, 204, 113, 0.15);
-    border: 1px solid var(--secondary-color);
-}
-
-.mediumRating {
-    color: var(--warning-color);
-    background: rgba(243, 156, 18, 0.15);
-    border: 1px solid var(--warning-color);
-}
-
-.lowRating {
-    color: var(--danger-color);
-    background: rgba(231, 76, 60, 0.15);
-    border: 1px solid var(--danger-color);
-}
-
-.cardStats {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-.statRow {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    font-size: 16px;
-    padding: 4px 0;
-    border-bottom: 1px dashed var(--border-color);
-}
-
-.statRow:last-child {
-    border-bottom: none;
-}
-
-.statRow span {
-    color: var(--text-medium);
-}
-
-.statRow strong {
-    color: var(--text-dark);
-    font-weight: 600;
-}
-
-/* Рейтинги зі зірочками */
-.ratingStars {
-    display: flex;
-    align-items: center;
-    gap: 1px;
-    color: #ffd700;
-    font-size: 18px;
-}
-
-.ratingValue {
-    margin-left: 10px;
-    font-size: 14px;
-    color: var(--text-medium);
-    font-weight: 500;
-}
-
-/* Кольори безпеки */
-.lowCrime {
-    color: var(--secondary-color);
-}
-
-.mediumCrime {
-    color: var(--warning-color);
-}
-
-.highCrime {
-    color: var(--danger-color);
-}
-
-/* Немає даних */
+/* --- Немає даних --- */
 .noData {
     text-align: center;
     padding: 80px 20px;
@@ -409,88 +78,7 @@
     color: var(--text-medium);
 }
 
-/* --- 4. Футер --- */
-.modalFooter {
-    padding: 20px 35px;
-    border-top: 1px solid var(--border-color);
-    background: var(--bg-white);
-}
-
-.footerActions {
-    display: flex;
-    gap: 16px;
-    width: 100%;
-    max-width: 500px;
-    margin: 0 auto;
-}
-
-.favoriteButtonLarge {
-    flex: 1;
-    background: transparent;
-    color: var(--primary-color);
-    border: 2px solid var(--primary-color);
-    padding: 14px 24px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 16px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-}
-
-.favoriteButtonLarge:hover {
-    background: var(--primary-color);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-}
-
-.favoriteButtonLarge.favoriteActive {
-    background: var(--favorite-color, #ff4757);
-    color: white;
-    border-color: var(--favorite-color, #ff4757);
-}
-
-.favoriteButtonLarge.favoriteActive:hover {
-    background: var(--favorite-dark, #ff2e43);
-    border-color: var(--favorite-dark, #ff2e43);
-    box-shadow: 0 4px 15px rgba(255, 71, 87, 0.3);
-}
-
-.closeButtonSecondary {
-    flex: 1;
-    background: var(--primary-color);
-    color: white;
-    border: none;
-    padding: 14px 24px;
-    border-radius: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    font-size: 16px;
-    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
-}
-
-.closeButtonSecondary:hover {
-    background: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
-}
-
-.closeButtonSecondary:active {
-    transform: translateY(0);
-}
-
-/* --- 5. Адаптивність (Mobile-First Optimization) --- */
-@media (max-width: 1024px) {
-    .statsGrid {
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    }
-}
-
+/* --- Адаптивність --- */
 @media (max-width: 768px) {
     .modalOverlay {
         padding: 0;
@@ -504,133 +92,35 @@
         max-width: 100%;
         animation: slideUpMobile 0.4s ease-out;
     }
-
-    @keyframes slideUpMobile {
-        from {
-            transform: translateY(100%);
-        }
-        to {
-            transform: translateY(0);
-        }
-    }
-    
-    .headerSection {
-        min-height: 200px;
-    }
-
-    .headerContent {
-        padding: 20px;
-    }
-
-    .modalTitle {
-        font-size: 28px;
-        padding-right: 100px;
-    }
-    
-    .headerActions {
-        gap: 8px;
-    }
-    
-    .favoriteButton,
-    .closeButton {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .favoriteButton svg {
-        width: 18px;
-        height: 18px;
-    }
-    
-    .closeButton svg {
-        width: 20px;
-        height: 20px;
-    }
-    
-    .photoDescription {
-        font-size: 15px;
-        max-width: 100%;
-    }
-
-    .quickStats {
-        gap: 20px;
-        flex-direction: column;
-        border-top: none;
-        padding-top: 0;
-    }
-
-    .quickStatValue {
-        font-size: 16px;
-    }
     
     .mainContent {
         padding: 20px;
     }
     
-    .statsGrid {
-        grid-template-columns: 1fr;
-        gap: 16px;
-    }
-    
-    .statCard {
-        padding: 16px;
-    }
-    
-    .cardTitle h3 {
-        font-size: 18px;
-    }
-
-    .cardIcon {
-        width: 40px;
-        height: 40px;
-        font-size: 24px;
-    }
-    
-    .statRow {
-        font-size: 15px;
-    }
-
-    .modalFooter {
-        padding: 15px 20px;
-    }
-    
-    .footerActions {
-        flex-direction: column;
-        gap: 12px;
-    }
-    
-    .favoriteButtonLarge,
-    .closeButtonSecondary {
-        width: 100%;
-        padding: 12px 16px;
+    .noData {
+        padding: 60px 15px;
     }
 }
 
 @media (max-width: 480px) {
-    .headerSection {
-        min-height: 160px;
+    .noDataIcon {
+        font-size: 48px;
     }
     
-    .modalTitle {
-        font-size: 24px;
-        padding-right: 80px;
+    .noData h3 {
+        font-size: 20px;
     }
     
-    .cardRating {
-        font-size: 14px;
+    .noData p {
+        font-size: 15px;
     }
-    
-    .headerActions {
-        gap: 6px;
+}
+
+@keyframes slideUpMobile {
+    from {
+        transform: translateY(100%);
     }
-    
-    .favoriteButton,
-    .closeButton {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .footerActions {
-        gap: 10px;
+    to {
+        transform: translateY(0);
     }
 }
