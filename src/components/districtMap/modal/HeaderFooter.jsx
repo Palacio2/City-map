@@ -1,5 +1,5 @@
 import React from 'react';
-import headerFooterStyles from './styles/HeaderFooter.module.css';
+import headerFooterStyles from './styles/headerFooter.module.css';
 import { CloseButton, FavoriteButton } from './Buttons';
 
 // HeaderSection компонент
