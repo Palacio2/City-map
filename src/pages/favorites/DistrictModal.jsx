@@ -1,206 +1,97 @@
-// components/DistrictModal/DistrictModal.jsx
-import React from 'react';
+// DistrictModal.jsx
+import React, { useState, useEffect } from 'react';
 import styles from './DistrictModal.module.css';
+import { HeaderSection, ModalFooter } from '../../components/districtMap/modal/HeaderFooter';
+import StatsGrid from '../../components/districtMap/modal/StatsGrid';
+import { checkIsFavorite, toggleFavorite } from '../../utils/favorites';
+import { formatNumber, formatPrice } from '../../utils/formatters';
+import { supabase } from '../../supabaseClient';
 
-export default function DistrictModal({ district, onClose, formatPrice, renderStars }) {
-  const handleOverlayClick = (e) => {
-    if (e.target === e.currentTarget) onClose();
+export default function DistrictModal({
+  district,
+  isOpen,
+  onClose,
+  onToggleFavorite
+}) {
+  if (!isOpen || !district) return null;
+
+  const [isFavorite, setIsFavorite] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+  const checkFavoriteStatus = async () => {
+    if (district) {
+      setIsLoading(true);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) {
+          setIsFavorite(false);
+          return;
+        }
+
+        const favoriteStatus = await checkIsFavorite(district.id);
+        setIsFavorite(favoriteStatus);
+      } catch (error) {
+        console.error('Помилка перевірки статусу улюбленого:', error);
+        setIsFavorite(false);
+      } finally {
+        setIsLoading(false);
+      }
+    }
   };
 
-  const getRatingColor = (rating) => {
-    if (!rating) return '#999';
-    if (rating >= 8) return '#4CAF50'; // зелений
-    if (rating >= 6) return '#FFC107'; // жовтий
-    if (rating >= 4) return '#FF9800'; // оранжевий
-    return '#F44336'; // червоний
+  checkFavoriteStatus();
+}, [district]);
+
+  const handleToggleFavorite = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      alert('Будь ласка, увійдіть в систему, щоб додавати улюблені');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const newFavoriteState = await toggleFavorite(district, isFavorite);
+
+      setIsFavorite(newFavoriteState);
+      onToggleFavorite?.(district.id, newFavoriteState);
+    } catch (error) {
+      console.error('Помилка при toggle улюбленого:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
-    <div className={styles.overlay} onClick={handleOverlayClick}>
-      <div className={styles.modal}>
-        <button className={styles.closeBtn} onClick={onClose}>✕</button>
-        
-        <div className={styles.modalHeader}>
-          <h2>{district.name}</h2>
-          <div className={styles.location}>
-            <span>{district.city}</span>
-            {district.country !== "Невідомо" && (
-              <span className={styles.country}>, {district.country}</span>
-            )}
-          </div>
-        </div>
+    <div className={styles.modalOverlay} onClick={onClose}>
+      <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <HeaderSection
+          district={district}
+          isFavorite={isFavorite}
+          onToggleFavorite={handleToggleFavorite}
+          isLoading={isLoading}
+          onClose={onClose}
+          formatPrice={formatPrice}
+          formatNumber={formatNumber}
+        />
 
-        <div className={styles.modalContent}>
-          {/* Ціна */}
-          {district.filterData?.general?.propertyPrice && (
-            <div className={styles.priceSection}>
-              <h3>💰 Середня ціна нерухомості</h3>
-              <div className={styles.priceValue}>
-                {formatPrice(district.filterData.general.propertyPrice)}
-              </div>
-            </div>
-          )}
-
-          {/* Рейтинги */}
-          {district.filterData && (
-            <div className={styles.ratingsSection}>
-              <h3>📊 Рейтинги району</h3>
-              
-              <div className={styles.ratingsGrid}>
-                {district.filterData.education?.rating && (
-                  <div className={styles.ratingItem}>
-                    <div className={styles.ratingLabel}>
-                      <span className={styles.ratingIcon}>🎓</span>
-                      <span>Освіта</span>
-                    </div>
-                    <div className={styles.ratingValue}>
-                      <div className={styles.stars}>
-                        {renderStars(district.filterData.education.rating)}
-                      </div>
-                      <div 
-                        className={styles.ratingNumber}
-                        style={{ color: getRatingColor(district.filterData.education.rating) }}
-                      >
-                        {district.filterData.education.rating.toFixed(1)}/10
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {district.filterData.transport?.rating && (
-                  <div className={styles.ratingItem}>
-                    <div className={styles.ratingLabel}>
-                      <span className={styles.ratingIcon}>🚍</span>
-                      <span>Транспорт</span>
-                    </div>
-                    <div className={styles.ratingValue}>
-                      <div className={styles.stars}>
-                        {renderStars(district.filterData.transport.rating)}
-                      </div>
-                      <div 
-                        className={styles.ratingNumber}
-                        style={{ color: getRatingColor(district.filterData.transport.rating) }}
-                      >
-                        {district.filterData.transport.rating.toFixed(1)}/10
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {district.filterData.safety?.rating && (
-                  <div className={styles.ratingItem}>
-                    <div className={styles.ratingLabel}>
-                      <span className={styles.ratingIcon}>🛡️</span>
-                      <span>Безпека</span>
-                    </div>
-                    <div className={styles.ratingValue}>
-                      <div className={styles.stars}>
-                        {renderStars(district.filterData.safety.rating)}
-                      </div>
-                      <div 
-                        className={styles.ratingNumber}
-                        style={{ color: getRatingColor(district.filterData.safety.rating) }}
-                      >
-                        {district.filterData.safety.rating.toFixed(1)}/10
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {district.filterData.social?.rating && (
-                  <div className={styles.ratingItem}>
-                    <div className={styles.ratingLabel}>
-                      <span className={styles.ratingIcon}>👥</span>
-                      <span>Соціальна сфера</span>
-                    </div>
-                    <div className={styles.ratingValue}>
-                      <div className={styles.stars}>
-                        {renderStars(district.filterData.social.rating)}
-                      </div>
-                      <div 
-                        className={styles.ratingNumber}
-                        style={{ color: getRatingColor(district.filterData.social.rating) }}
-                      >
-                        {district.filterData.social.rating.toFixed(1)}/10
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {district.filterData.medicine?.rating && (
-                  <div className={styles.ratingItem}>
-                    <div className={styles.ratingLabel}>
-                      <span className={styles.ratingIcon}>🏥</span>
-                      <span>Медицина</span>
-                    </div>
-                    <div className={styles.ratingValue}>
-                      <div className={styles.stars}>
-                        {renderStars(district.filterData.medicine.rating)}
-                      </div>
-                      <div 
-                        className={styles.ratingNumber}
-                        style={{ color: getRatingColor(district.filterData.medicine.rating) }}
-                      >
-                        {district.filterData.medicine.rating.toFixed(1)}/10
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {district.filterData.commerce?.rating && (
-                  <div className={styles.ratingItem}>
-                    <div className={styles.ratingLabel}>
-                      <span className={styles.ratingIcon}>🛒</span>
-                      <span>Торгівля</span>
-                    </div>
-                    <div className={styles.ratingValue}>
-                      <div className={styles.stars}>
-                        {renderStars(district.filterData.commerce.rating)}
-                      </div>
-                      <div 
-                        className={styles.ratingNumber}
-                        style={{ color: getRatingColor(district.filterData.commerce.rating) }}
-                      >
-                        {district.filterData.commerce.rating.toFixed(1)}/10
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Додаткова інформація */}
-          {district.filterData?.general && (
-            <div className={styles.additionalInfo}>
-              <h3>📈 Додаткова інформація</h3>
-              <div className={styles.infoGrid}>
-                {district.filterData.general.populationDensity && (
-                  <div className={styles.infoItem}>
-                    <span>👥 Густота населення:</span>
-                    <span>{district.filterData.general.populationDensity} чол./км²</span>
-                  </div>
-                )}
-                {district.addedAt && (
-                  <div className={styles.infoItem}>
-                    <span>📅 Додано:</span>
-                    <span>{new Date(district.addedAt).toLocaleDateString('uk-UA', {
-                      day: 'numeric',
-                      month: 'long',
-                      year: 'numeric'
-                    })}</span>
-                  </div>
-                )}
-              </div>
+        <div className={styles.mainContent}>
+          {district.filterData ? (
+            <StatsGrid filterData={district.filterData} />
+          ) : (
+            <div className={styles.noData}>
+              <div className={styles.noDataIcon}>📊</div>
+              <h3>Дані відсутні</h3>
+              <p>Інформація про цей район ще не додана до системи</p>
             </div>
           )}
         </div>
 
-        <div className={styles.modalFooter}>
-          <button className={styles.closeButton} onClick={onClose}>
-            Закрити
-          </button>
-        </div>
+        <ModalFooter
+          onClose={onClose}
+        />
       </div>
     </div>
   );
