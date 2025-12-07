@@ -11,7 +11,9 @@ export const favoritesApi = {
       throw new Error('Будь ласка, увійдіть в систему');
     }
 
-    const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+    const url = `${API_BASE_URL}/${endpoint}`;
+
+    const response = await fetch(url, {
       ...options,
       headers: {
         'Authorization': `Bearer ${session.access_token}`,
@@ -21,18 +23,28 @@ export const favoritesApi = {
     });
 
     if (!response.ok) {
-      const error = await response.text();
-      throw new Error(error || `Помилка ${response.status}`);
+      const errorText = await response.text();
+      try {
+        const errorJson = JSON.parse(errorText);
+        throw new Error(errorJson.error || `Помилка ${response.status}`);
+      } catch {
+        throw new Error(`Помилка ${response.status}: ${errorText}`);
+      }
+    }
+
+    if (response.status === 204 || response.headers.get('content-length') === '0') {
+        return { success: true, message: "Дія виконана" };
     }
 
     return await response.json();
   },
 
   async getFavorites() {
-    const data = await this.request('get');
+    const data = await this.request('get', { method: 'GET' });
     return data.favorites || [];
   },
 
+  // Використовує /remove, очікує districtId у тілі
   async removeFavorite(districtId) {
     return await this.request('remove', {
       method: 'POST',

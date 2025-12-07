@@ -1,0 +1,133 @@
+@import './index.css';
+
+/* --- Картки статистики --- */
+.statCard {
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    transition: var(--transition-default);
+    box-shadow: var(--shadow-card);
+}
+
+.statCard:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* --- Заголовок картки --- */
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.cardTitle {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.cardIcon {
+    font-size: 28px;
+    width: 48px;
+    height: 48px;
+    background: var(--primary-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+}
+
+.cardIcon > span {
+    filter: brightness(1.5);
+}
+
+.cardTitle h3 {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* --- Рейтинг картки --- */
+.cardRating {
+    font-size: 16px;
+    font-weight: 700;
+    padding: 8px 14px;
+    border-radius: 10px;
+    min-width: 60px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Кольори для Рейтингу */
+.highRating {
+    color: var(--secondary-color);
+    background: rgba(46, 204, 113, 0.15);
+    border: 1px solid var(--secondary-color);
+}
+
+.mediumRating {
+    color: var(--warning-color);
+    background: rgba(243, 156, 18, 0.15);
+    border: 1px solid var(--warning-color);
+}
+
+.lowRating {
+    color: var(--danger-color);
+    background: rgba(231, 76, 60, 0.15);
+    border: 1px solid var(--danger-color);
+}
+
+/* --- Статистика картки --- */
+.cardStats {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* --- Адаптивність --- */
+@media (max-width: 768px) {
+    .statCard {
+        padding: 16px;
+    }
+    
+    .cardTitle h3 {
+        font-size: 18px;
+    }
+
+    .cardIcon {
+        width: 40px;
+        height: 40px;
+        font-size: 24px;
+    }
+    
+    .cardRating {
+        font-size: 14px;
+        min-width: 50px;
+        padding: 6px 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cardTitle h3 {
+        font-size: 17px;
+    }
+    
+    .cardIcon {
+        width: 36px;
+        height: 36px;
+        font-size: 20px;
+        border-radius: 10px;
+    }
+    
+    .cardRating {
+        font-size: 13px;
+    }
+}
