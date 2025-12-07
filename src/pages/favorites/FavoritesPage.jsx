@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { favoritesApi } from '../../components/api/favoritesApi'; 
 import { supabase } from '../../supabaseClient';
-import DistrictDetailsModal from '../../components/districtMap/DistrictDetailsModal'; // ✅ Модалка
+import DistrictModal from './DistrictModal';
 import styles from './FavoritesPage.module.css';
 
 export default function FavoritesPage() {
@@ -204,7 +204,7 @@ export default function FavoritesPage() {
       </div>
 
       {isModalOpen && selectedDistrict && (
-        <DistrictDetailsModal
+        <DistrictModal
           district={selectedDistrict}
           isOpen={isModalOpen}
           onClose={closeModal}

@@ -42,8 +42,8 @@
     stroke-width: 2px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     /* ✅ Виправлення: Збільшення та !important для перевантаження інлайн-стилів */
-    width: 30px !important; 
-    height: 30px !important;
+    width: 30px;
+    height: 30px;
 }
 
 .favoriteButton.favoriteActive svg {
@@ -86,8 +86,8 @@
     stroke-width: 2px;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
     /* ✅ Виправлення: Збільшення та !important для перевантаження інлайн-стилів */
-    width: 32px !important; 
-    height: 32px !important;
+    width: 32px;
+    height: 32px;
 }
 
 /* --- Адаптивність (ОНОВЛЕНО) --- */
@@ -99,13 +99,13 @@
     }
     
     .favoriteButton svg {
-        width: 28px !important;
-        height: 28px !important;
+        width: 28px;
+        height: 28px;
     }
     
     .closeButton svg {
-        width: 30px !important;
-        height: 30px !important;
+        width: 30px;
+        height: 30px;
     }
 }
 
@@ -117,12 +117,12 @@
     }
     
     .favoriteButton svg {
-        width: 26px !important;
-        height: 26px !important;
+        width: 26px;
+        height: 26px;
     }
     
     .closeButton svg {
-        width: 28px !important;
-        height: 28px !important;
+        width: 28px;
+        height: 28px;
     }
 }
