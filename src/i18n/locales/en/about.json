@@ -1,0 +1,86 @@
+{
+  "hero": {
+    "title": "About GeoAnalyzer",
+    "subtitle": "Intelligent platform for finding the perfect neighborhood to live in",
+    "stats": {
+      "categories": "Evaluation categories",
+      "access": "Data access",
+      "convenience": "Convenience"
+    }
+  },
+  "sections": {
+    "mission": "Our Mission",
+    "features": "GeoAnalyzer Features",
+    "process": "How It Works",
+    "data": "Our Data",
+    "audience": "Who Is This For?",
+    "tech": "Technologies",
+    "team": "Team"
+  },
+  "mission": {
+    "text_1": "GeoAnalyzer is a modern tool for urban environment analysis. We believe that choosing a place to live should be based on verified facts, not guesswork.",
+    "text_2": "Our goal is to provide users with simple and convenient access to comprehensive district analytics, helping to find the perfect balance between comfort, safety, and cost of living."
+  },
+  "features": [
+    { "title": "Detailed Analytics", "text": "District evaluation by 6 key indicators: education, transport, safety, ecology, medicine, and commerce." },
+    { "title": "Up-to-date Data", "text": "We aggregate information from open sources and structure it for easy understanding." },
+    { "title": "Favorites", "text": "Save interesting districts in your personal account for quick access and comparison." },
+    { "title": "Safe Choice", "text": "Make moving decisions based on objective figures, not just emotions." },
+    { "title": "Convenience", "text": "Adaptive interface allows exploring cities from both computer and smartphone." },
+    { "title": "Scaling", "text": "We constantly add new cities and expand the district database." }
+  ],
+  "process": [
+    { "title": "Choose Location", "text": "Select the country and city you are interested in using convenient filters." },
+    { "title": "Analyze Indicators", "text": "View district ratings by criteria important to you (schools, transport, parks)." },
+    { "title": "Add to Favorites", "text": "Create your own shortlist of the best places to live." },
+    { "title": "Make Decisions", "text": "Use comprehensive data to choose the perfect place for your home." }
+  ],
+  "data_sources": [
+    {
+      "title": "Infrastructure Data:",
+      "items": [
+        "Location of educational institutions and hospitals",
+        "Transport interchanges and stops",
+        "Shopping centers and supermarkets",
+        "Parks and recreation areas"
+      ]
+    },
+    {
+      "title": "Statistics & Analysis:",
+      "items": [
+        "Safety rating calculation",
+        "Ecological situation assessment",
+        "Transport accessibility analysis",
+        "Aggregated city services data"
+      ]
+    }
+  ],
+  "audience": [
+    { "title": "For Families", "text": "Find districts with the best schools, kindergartens, and safe courtyards." },
+    { "title": "For Tenants", "text": "Evaluate location convenience before signing a lease agreement." },
+    { "title": "For Investors", "text": "Analyze district attractiveness for purchasing real estate." },
+    { "title": "For New Residents", "text": "Quickly orient yourself in a new city and find a comfortable environment." }
+  ],
+  "tech": [
+    { "title": "Frontend:", "text": "Modern React SPA for fast performance and smooth animation." },
+    { "title": "Backend & Data:", "text": "Supabase for reliable data storage and secure user authorization." },
+    { "title": "Maps & Viz:", "text": "Interactive maps and charts for visual statistics representation." },
+    { "title": "Security:", "text": "Secure data transmission protocols and safe payment processing." }
+  ],
+  "team": {
+    "intro": "GeoAnalyzer is created by a team of enthusiasts passionate about urbanism and modern technologies.",
+    "list": [
+      "We constantly work on improving evaluation algorithms.",
+      "Regularly updating city and district data.",
+      "Open to suggestions and feedback from our users."
+    ],
+    "outro": "We build a product that we use ourselves."
+  },
+  "cta": {
+    "title": "Find your perfect district today",
+    "text": "Start a free analysis and discover new opportunities",
+    "map_btn": "Go to Map",
+    "plans_btn": "Plans",
+    "support_btn": "Support"
+  }
+}

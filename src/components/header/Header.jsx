@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
 import { FaGlobe, FaHeart } from 'react-icons/fa';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext';
+import { useTranslation } from 'react-i18next';
 
 export default function Header() {
   const location = useLocation();
@@ -12,6 +13,8 @@ export default function Header() {
   const [isLoading, setIsLoading] = useState(true);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   
+  const { t, i18n } = useTranslation(); 
+
   const { isPremium } = useSubscription();
 
   useEffect(() => {
@@ -67,7 +70,7 @@ export default function Header() {
   };
 
   const changeLanguage = (lang) => {
-    console.log('Зміна мови на:', lang);
+    i18n.changeLanguage(lang);
     setShowLanguageDropdown(false);
   };
 
@@ -82,7 +85,7 @@ export default function Header() {
           <Link to="/">GeoAnalyzer</Link>
         </div>
         <div className={styles.userControls}>
-          <div className={styles.authButton}>Завантаження...</div>
+          <div className={styles.authButton}>{t('loading')}</div>
         </div>
       </header>
     );
@@ -95,42 +98,40 @@ export default function Header() {
       </div>
       <nav className={styles.nav}>
         <Link to="/" className={`${styles.navLink} ${isActive('/')}`}>
-          Головна
+          {t('home')}
         </Link>
         <Link to="/about" className={`${styles.navLink} ${isActive('/about')}`}>
-          Про проект
+          {t('about')}
         </Link>
         <Link to="/contacts" className={`${styles.navLink} ${isActive('/contacts')}`}>
-          Контакти
+          {t('contacts')}
         </Link>
         <Link to="/subscription" className={`${styles.navLink} ${isActive('/subscription')}`}>
-          Підписка
+          {t('subscription')}
         </Link>
         
         {isAuthenticated && (
           <Link to="/profile" className={`${styles.navLink} ${isActive('/profile')}`}>
-            Профіль
+            {t('profile')}
           </Link>
         )}
       </nav>
       <div className={styles.userControls}>
-        {/* Іконка Мої збереження для преміум-користувачів */}
         {isAuthenticated && isPremium && (
           <button 
             className={styles.favoritesButton}
             onClick={handleFavoritesClick}
-            title="Мої збереження"
+            title={t('favorites_title')}
           >
             <FaHeart className={styles.favoritesIcon} />
           </button>
         )}
 
-        {/* Кнопка зміни мови */}
         <div className={styles.languageContainer}>
           <button 
             className={styles.languageButton}
             onClick={toggleLanguageDropdown}
-            title="Змінити мову"
+            title={t('language_title')}
           >
             <FaGlobe className={styles.languageIcon} />
           </button>
@@ -138,19 +139,19 @@ export default function Header() {
           {showLanguageDropdown && (
             <div className={styles.languageDropdown}>
               <button 
-                className={styles.languageOption}
-                onClick={() => changeLanguage('uk')}
+                className={`${styles.languageOption} ${i18n.language === 'ua' ? styles.activeLang : ''}`}
+                onClick={() => changeLanguage('ua')}
               >
                 Українська
               </button>
               <button 
-                className={styles.languageOption}
+                className={`${styles.languageOption} ${i18n.language === 'en' ? styles.activeLang : ''}`}
                 onClick={() => changeLanguage('en')}
               >
                 English
               </button>
               <button 
-                className={styles.languageOption}
+                className={`${styles.languageOption} ${i18n.language === 'pl' ? styles.activeLang : ''}`}
                 onClick={() => changeLanguage('pl')}
               >
                 Polski
@@ -164,7 +165,7 @@ export default function Header() {
           onClick={handleAuthClick}
           disabled={isLoading}
         >
-          {isAuthenticated ? 'Вийти' : 'Увійти'}
+          {isAuthenticated ? t('logout') : t('login')}
         </button>
       </div>
     </header>

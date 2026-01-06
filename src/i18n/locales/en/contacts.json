@@ -1,0 +1,30 @@
+{
+  "title": "Contact Us",
+  "subtitle": "Fill out the form below",
+  "form": {
+    "name": {
+      "label": "Name",
+      "placeholder": "Your name"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "example@mail.com"
+    },
+    "message": {
+      "label": "Message",
+      "placeholder": "Message text..."
+    }
+  },
+  "buttons": {
+    "submit": "Send",
+    "sending": "Sending...",
+    "send_again": "Send again"
+  },
+  "success": {
+    "title": "Thank you!",
+    "text": "We have received your message."
+  },
+  "errors": {
+    "generic": "Something went wrong"
+  }
+}

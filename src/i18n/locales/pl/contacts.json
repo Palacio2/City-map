@@ -1,0 +1,30 @@
+{
+  "title": "Skontaktuj się z nami",
+  "subtitle": "Wypełnij poniższy formularz",
+  "form": {
+    "name": {
+      "label": "Imię",
+      "placeholder": "Twoje imię"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "przyklad@mail.com"
+    },
+    "message": {
+      "label": "Wiadomość",
+      "placeholder": "Treść wiadomości..."
+    }
+  },
+  "buttons": {
+    "submit": "Wyślij",
+    "sending": "Wysyłanie...",
+    "send_again": "Wyślij ponownie"
+  },
+  "success": {
+    "title": "Dziękujemy!",
+    "text": "Otrzymaliśmy Twoją wiadomość."
+  },
+  "errors": {
+    "generic": "Coś poszło nie tak"
+  }
+}

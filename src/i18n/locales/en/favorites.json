@@ -1,0 +1,18 @@
+{
+  "title": "Favorite Districts",
+  "remove_tooltip": "Remove from favorites",
+  "confirm_remove": "Remove from favorites?",
+  "na": "n/a",
+  "empty": {
+    "title": "List is empty",
+    "description": "Add districts to favorites on the map"
+  },
+  "errors": {
+    "auth_required": "Please log in",
+    "load_failed": "Loading error",
+    "delete_failed": "Delete error"
+  },
+  "buttons": {
+    "login": "Log In"
+  }
+}

@@ -1,147 +1,117 @@
-import React from 'react';
+import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './Filters.module.css';
 
-export default function EducationFilters({ filters = {}, onFiltersChange }) {
+const EducationFilters = memo(({ values = {}, onChange }) => {
+  const { t } = useTranslation('filters');
+
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    onFiltersChange?.({
-      education: {
-        ...filters.education,
-        [name]: checked
-      }
-    });
+    onChange?.({ [name]: checked });
   };
 
-  const handleMinSchoolsChange = (event) => {
+  const handleMinChange = (event, field) => {
     const { value } = event.target;
-    onFiltersChange?.({
-      education: {
-        ...filters.education,
-        minSchools: value ? parseInt(value) : undefined
-      }
-    });
-  };
-
-  const handleMinKindergartensChange = (event) => {
-    const { value } = event.target;
-    onFiltersChange?.({
-      education: {
-        ...filters.education,
-        minKindergartens: value ? parseInt(value) : undefined
-      }
-    });
-  };
-
-  const handleMinUniversitiesChange = (event) => {
-    const { value } = event.target;
-    onFiltersChange?.({
-      education: {
-        ...filters.education,
-        minUniversities: value ? parseInt(value) : undefined
-      }
-    });
+    onChange?.({ [field]: value ? parseInt(value) : undefined });
   };
 
   return (
     <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>🎓 Освіта</h3>
+      <h3 className={styles.sectionTitle}>{t('education.title')}</h3>
       <div className={styles.filterGroup}>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="kindergartens" 
-            checked={filters.education?.kindergartens || false}
+            checked={values.kindergartens || false}
             onChange={handleCheckboxChange}
           />
-          <span>Дитячі садки</span>
+          <span>{t('education.kindergartens')}</span>
         </label>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="schools" 
-            checked={filters.education?.schools || false}
+            checked={values.schools || false}
             onChange={handleCheckboxChange}
           />
-          <span>Школи</span>
+          <span>{t('education.schools')}</span>
         </label>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="universities" 
-            checked={filters.education?.universities || false}
+            checked={values.universities || false}
             onChange={handleCheckboxChange}
           />
-          <span>Університети</span>
+          <span>{t('education.universities')}</span>
         </label>
 
         <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>Мін. кількість садків:</span>
+          <span className={styles.rangeLabel}>{t('education.min_kindergartens')}</span>
           <div className={styles.rangeInputContainer}>
             <input 
               type="number" 
               placeholder="0"
-              value={filters.education?.minKindergartens || ''}
-              onChange={handleMinKindergartensChange}
+              value={values.minKindergartens || ''}
+              onChange={(e) => handleMinChange(e, 'minKindergartens')}
               className={styles.rangeInput}
               min="0"
             />
-            <span className={styles.rangeUnit}>шт.</span>
+            <span className={styles.rangeUnit}>{t('education.unit')}</span>
           </div>
         </div>
 
         <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>Мін. кількість шкіл:</span>
+          <span className={styles.rangeLabel}>{t('education.min_schools')}</span>
           <div className={styles.rangeInputContainer}>
             <input 
               type="number" 
               placeholder="0"
-              value={filters.education?.minSchools || ''}
-              onChange={handleMinSchoolsChange}
+              value={values.minSchools || ''}
+              onChange={(e) => handleMinChange(e, 'minSchools')}
               className={styles.rangeInput}
               min="0"
             />
-            <span className={styles.rangeUnit}>шт.</span>
+            <span className={styles.rangeUnit}>{t('education.unit')}</span>
           </div>
         </div>
 
         <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>Мін. кількість університетів:</span>
+          <span className={styles.rangeLabel}>{t('education.min_universities')}</span>
           <div className={styles.rangeInputContainer}>
             <input 
               type="number" 
               placeholder="0"
-              value={filters.education?.minUniversities || ''}
-              onChange={handleMinUniversitiesChange}
+              value={values.minUniversities || ''}
+              onChange={(e) => handleMinChange(e, 'minUniversities')}
               className={styles.rangeInput}
               min="0"
             />
-            <span className={styles.rangeUnit}>шт.</span>
+            <span className={styles.rangeUnit}>{t('education.unit')}</span>
           </div>
         </div>
 
         <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>Мін. рейтинг освіти:</span>
+          <span className={styles.rangeLabel}>{t('education.min_rating')}</span>
           <div className={styles.rangeContainer}>
             <input 
               type="range" 
               min="0" 
               max="10" 
               step="0.5"
-              value={filters.education?.minRating || 0}
-              onChange={(e) => onFiltersChange?.({
-                education: {
-                  ...filters.education,
-                  minRating: parseFloat(e.target.value)
-                }
-              })}
+              value={values.minRating || 0}
+              onChange={(e) => onChange?.({ minRating: parseFloat(e.target.value) })}
               className={styles.rangeSlider}
             />
             <span className={styles.rangeValue}>
-              {filters.education?.minRating || 0}
+              {values.minRating || 0}
             </span>
           </div>
         </div>
       </div>
     </div>
   );
-}
+});
+
+export default EducationFilters;

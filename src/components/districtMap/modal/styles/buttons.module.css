@@ -1,128 +1,94 @@
-@import './index.css';
-
-/* --- Кнопка улюбленого (для хедера) --- */
-.favoriteButton {
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(10px);
-    border: none;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
-    flex-shrink: 0;
-    z-index: 100;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.favoriteButton:hover {
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(1.15);
-    border-color: #ff4757;
-    box-shadow: 0 6px 20px rgba(255, 71, 87, 0.3);
-}
-
-.favoriteButton.favoriteActive {
-    background: rgba(255, 71, 87, 0.25);
-    border-color: #ff4757;
-}
-
-.favoriteButton.favoriteActive:hover {
-    background: rgba(255, 71, 87, 0.4);
-}
-
-/* Стилі для іконок улюбленого (ЗБІЛЬШЕНО та !important) */
-.favoriteButton svg {
-    color: white;
-    stroke: white;
-    stroke-width: 2px;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    /* ✅ Виправлення: Збільшення та !important для перевантаження інлайн-стилів */
-    width: 30px;
-    height: 30px;
-}
-
-.favoriteButton.favoriteActive svg {
-    color: #ff4757;
-    stroke: #ff4757;
-    fill: #ff4757;
-    filter: drop-shadow(0 2px 4px rgba(255, 71, 87, 0.4));
-}
-
-/* --- Кнопка закриття (для хедера) --- */
+/* --- Спільні стилі для кнопок улюбленого та закриття --- */
+.favoriteButton,
 .closeButton {
+    /* Білий напівпрозорий фон */
     background: rgba(255, 255, 255, 0.25);
     backdrop-filter: blur(10px);
-    border: none;
+    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    
+    /* Фіксовані розміри */
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    cursor: pointer;
+    
+    /* Центрування вмісту */
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s ease;
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
+    padding: 0;
+    
+    /* Взаємодія */
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     flex-shrink: 0;
-    z-index: 100;
+    z-index: 1100;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    outline: none; /* Прибираємо стандартну обводку */
 }
 
+.favoriteButton:hover,
 .closeButton:hover {
     background: rgba(255, 255, 255, 0.4);
-    transform: rotate(90deg);
-    border-color: white;
-    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+    border-color: #ffffff;
 }
 
-/* Стилі для іконки закриття (ЗБІЛЬШЕНО та !important) */
+/* --- Стилі для іконок (SVG) --- */
+.favoriteButton svg,
 .closeButton svg {
     color: white;
     stroke: white;
     stroke-width: 2px;
+    width: 28px;
+    height: 28px;
+    display: block;
     filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    /* ✅ Виправлення: Збільшення та !important для перевантаження інлайн-стилів */
-    width: 32px;
-    height: 32px;
+    pointer-events: none; /* Щоб клік проходив крізь іконку */
 }
 
-/* --- Адаптивність (ОНОВЛЕНО) --- */
+/* --- Специфічні стилі для активного стану (Favorite) --- */
+.favoriteButton.favoriteActive {
+    background: rgba(255, 71, 87, 0.3);
+    border-color: #ff4757;
+}
+
+.favoriteButton.favoriteActive svg {
+    color: #ff4757;
+    fill: #ff4757;
+    stroke: #ff4757;
+}
+
+/* --- Анімація завантаження --- */
+.loading {
+    cursor: wait;
+    opacity: 0.8;
+}
+
+/* --- Адаптивність (Mobile) --- */
 @media (max-width: 768px) {
-    .favoriteButton,
+    .favoriteButton, 
     .closeButton {
         width: 44px;
         height: 44px;
     }
     
-    .favoriteButton svg {
-        width: 28px;
-        height: 28px;
-    }
-    
+    .favoriteButton svg, 
     .closeButton svg {
-        width: 30px;
-        height: 30px;
+        width: 26px;
+        height: 26px;
     }
 }
 
 @media (max-width: 480px) {
-    .favoriteButton,
+    .favoriteButton, 
     .closeButton {
         width: 40px;
         height: 40px;
     }
     
-    .favoriteButton svg {
-        width: 26px;
-        height: 26px;
-    }
-    
+    .favoriteButton svg, 
     .closeButton svg {
-        width: 28px;
-        height: 28px;
+        width: 24px;
+        height: 24px;
     }
 }

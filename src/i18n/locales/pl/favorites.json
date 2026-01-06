@@ -1,0 +1,18 @@
+{
+  "title": "Ulubione dzielnice",
+  "remove_tooltip": "Usuń z ulubionych",
+  "confirm_remove": "Usunąć z ulubionych?",
+  "na": "n/d",
+  "empty": {
+    "title": "Lista jest pusta",
+    "description": "Dodaj dzielnice do ulubionych na mapie"
+  },
+  "errors": {
+    "auth_required": "Zaloguj się",
+    "load_failed": "Błąd ładowania",
+    "delete_failed": "Błąd usuwania"
+  },
+  "buttons": {
+    "login": "Zaloguj się"
+  }
+}

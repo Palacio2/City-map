@@ -1,0 +1,30 @@
+{
+  "title": "Зв'яжіться з нами",
+  "subtitle": "Заповніть форму нижче",
+  "form": {
+    "name": {
+      "label": "Ім'я",
+      "placeholder": "Ваше ім'я"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "example@mail.com"
+    },
+    "message": {
+      "label": "Повідомлення",
+      "placeholder": "Текст повідомлення..."
+    }
+  },
+  "buttons": {
+    "submit": "Відправити",
+    "sending": "Відправка...",
+    "send_again": "Надіслати ще"
+  },
+  "success": {
+    "title": "Дякуємо!",
+    "text": "Ми отримали ваше повідомлення."
+  },
+  "errors": {
+    "generic": "Щось пішло не так"
+  }
+}

@@ -1,24 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import AuthForm from '@ui/authForm/AuthForm';
 import { supabase } from '../../supabaseClient';
 import { validateLoginForm } from './validation';
-// ❗ НОВИЙ ІМПОРТ ❗
 import useAuthRedirect from '../../hooks/useAuthRedirect'; 
 
-const ERROR_MESSAGES = {
-  'Invalid login credentials': 'Невірний email або пароль',
-  'Email not confirmed': 'Будь ласка, підтвердіть вашу email адресу'
-};
-
-// ❗ СПІЛЬНИЙ КОМПОНЕНТ ЗАВАНТАЖЕННЯ (якщо ви його створите) ❗
 const LoadingScreen = () => (
     <div className="loading-container">
-        <div className="spinner">Завантаження...</div>
+        <div className="spinner">...</div>
     </div>
 );
 
 export default function Login() {
+  const { t } = useTranslation('auth');
   const [formData, setFormData] = useState({ 
     email: '', 
     password: '',
@@ -27,17 +22,9 @@ export default function Login() {
   const [passwordVisibility, setPasswordVisibility] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  // ❌ ВИДАЛЕНО: const [isAutoLoginAttempted, setIsAutoLoginAttempted] = useState(false);
-  
   const navigate = useNavigate();
-  // ❌ ВИДАЛЕНО: const location = useLocation();
-  // ❌ ВИДАЛЕНО: const from = location.state?.from?.pathname || '/';
-
-  // ❗ ВИКЛИКАЄМО НОВИЙ ХУК ❗
   const isAutoLoginAttempted = useAuthRedirect(); 
   
-  // ❌ ВИДАЛЕНО: useEffect для checkExistingSession
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({ 
@@ -59,7 +46,7 @@ export default function Login() {
     setIsLoading(true);
     setErrors({});
 
-    const validationErrors = validateLoginForm(formData);
+    const validationErrors = validateLoginForm(formData, t);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setIsLoading(false);
@@ -68,17 +55,13 @@ export default function Login() {
 
     try {
       const { email, password, rememberMe } = formData;
-      
       const { data: { user }, error } = await supabase.auth.signInWithPassword({ 
         email, 
         password 
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
       
-      // Зберігання даних (якщо функціонал "запам'ятати мене" потрібен)
       if (rememberMe) {
         localStorage.setItem('rememberMe', 'true');
         localStorage.setItem('userEmail', email);
@@ -87,11 +70,10 @@ export default function Login() {
         localStorage.removeItem('userEmail');
       }
 
-      navigate('/', { replace: true }); // Перенаправлення після успішного входу
+      navigate('/', { replace: true });
       
     } catch (error) {
-      const errorMessage = ERROR_MESSAGES[error.message] || 'Помилка входу. Спробуйте пізніше.';
-      setErrors({ submit: errorMessage });
+      setErrors({ submit: t('errors.login_failed') });
     } finally {
       setIsLoading(false);
     }
@@ -109,13 +91,12 @@ export default function Login() {
       });
       if (error) throw error;
     } catch (error) {
-      setErrors({ submit: `Помилка входу через ${provider}` });
+      setErrors({ submit: t('errors.generic') });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Завантажуємо збережені дані при монтуванні (залежність від нового хука)
   useEffect(() => {
     if (isAutoLoginAttempted) {
       const rememberMe = localStorage.getItem('rememberMe');
@@ -131,7 +112,6 @@ export default function Login() {
     }
   }, [isAutoLoginAttempted]);
 
-  // ❗ ВИКОРИСТАННЯ НОВОГО ХУКА ❗
   if (!isAutoLoginAttempted) {
     return <LoadingScreen />;
   }

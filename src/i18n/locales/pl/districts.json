@@ -1,0 +1,62 @@
+{
+  "loading": "Ładowanie analizy dzielnic...",
+  "error_prefix": "Błąd: {{error}}",
+  "retry": "Spróbuj ponownie",
+  "load_failed": "Nie udało się pobrać danych",
+  "stats_shown": "Pokazano {{shown}} z {{total}} dzielnic",
+  "no_data_title": "Brak dzielnic",
+  "no_data_text": "Dane są dodawane",
+  "not_found_title": "Nic nie znaleziono",
+  "not_found_text": "Spróbuj zmienić filtry",
+  "no_photos_text": "Brak zdjęć do wyświetlenia, ale na liście jest {{count}} dzielnic.",
+  "na": "n/d",
+  "modal": {
+    "no_data_title": "Brak danych",
+    "no_data_text": "Informacje o tej dzielnicy nie zostały jeszcze dodane",
+    "login_alert": "Zaloguj się, aby dodać do ulubionych"
+  },
+  "buttons": {
+    "close": "Zamknij",
+    "add_favorite": "Dodaj do ulubionych",
+    "remove_favorite": "Usuń z ulubionych"
+  },
+  "details": {
+    "price": "Cena nieruchomości:",
+    "density": "Gęstość:",
+    "density_unit": "os./km²"
+  },
+  "stats": {
+    "categories": {
+      "education": "Edukacja",
+      "medicine": "Medycyna",
+      "transport": "Transport",
+      "safety": "Bezpieczeństwo",
+      "social": "Społeczne",
+      "commerce": "Handel",
+      "utilities": "Media"
+    },
+    "labels": {
+      "kindergartens": "Przedszkola:",
+      "schools": "Szkoły:",
+      "universities": "Uczelnie:",
+      "hospitals": "Szpitale:",
+      "clinics": "Przychodnie:",
+      "pharmacies": "Apteki:",
+      "bus_stops": "Przystanki autobusowe:",
+      "metro_stations": "Stacje metra:",
+      "bike_lanes": "Ścieżki rowerowe (km):",
+      "transport_frequency": "Częstotliwość transportu:",
+      "crime_level": "Poziom przestępczości:",
+      "police_stations": "Posterunki policji:",
+      "lighting": "Oświetlenie:",
+      "parks": "Parki:",
+      "cafes": "Kawiarnie i restauracje:",
+      "playgrounds": "Place zabaw:",
+      "grocery": "Sklepy spożywcze:",
+      "malls": "Centra handlowe:",
+      "banks": "Banki:",
+      "cost_per_sqm": "Koszt za m²:",
+      "water_supply": "Wodociągi:"
+    }
+  }
+}

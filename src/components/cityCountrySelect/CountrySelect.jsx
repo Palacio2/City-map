@@ -1,90 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import SelectForm from '@ui/selectForm/SelectForm';
-// ❗ ІМПОРТ НОВОЇ ФУНКЦІЇ ❗
-import { fetchCountries, createSelectOptions } from '@api/cityCountrySelect'; 
-import styles from '@ui/selectForm/SelectForm.module.css';
-
-// ❗ УМОВНА ВИНОСКА КОМПОНЕНТУ СТАТУСУ ДЛЯ ЗМЕНШЕННЯ КОДУ (якби ви його створили) ❗
-const StatusView = ({ error, onBack }) => (
-  <div className={styles.errorContainer}>
-    <h1>Помилка завантаження</h1>
-    <p>{error}</p>
-    <button 
-      onClick={() => window.location.reload()}
-      className={styles.retryButton}
-    >
-      Спробувати знову
-    </button>
-    <button 
-      onClick={onBack}
-      className={styles.backButton}
-    >
-      ← Назад
-    </button>
-  </div>
-);
-
+import { useTranslation } from 'react-i18next';
+import SelectForm, { StatusView } from '@ui/selectForm/SelectForm';
+import { fetchCountries, createSelectOptions } from '@api/cityCountrySelect';
 
 export default function CountrySelect() {
-  const [selectedCountry, setSelectedCountry] = useState('');
+  const { t } = useTranslation('select');
   const [countries, setCountries] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [selected, setSelected] = useState('');
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    async function getCountries() {
-      try {
-        setIsLoading(true);
-        setError(null);
-        const data = await fetchCountries();
-        setCountries(Array.isArray(data) ? data : []);
-      } catch (err) {
-        setError(err.message);
-        setCountries([]); 
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    getCountries();
-  }, []); 
+    fetchCountries()
+      .then(data => setCountries(Array.isArray(data) ? data : []))
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (selectedCountry) {
-      navigate(`/city/${encodeURIComponent(selectedCountry)}`);
-    }
-  };
+  const handleBack = () => navigate(-1);
 
-  const handleBack = () => {
-    navigate(-1);
-  };
-
-  if (error) {
-    return <StatusView error={error} onBack={handleBack} />;
-  }
-
-  // ❗ ВИКОРИСТАННЯ УНІВЕРСАЛЬНОЇ ФУНКЦІЇ ❗
-  const allOptions = createSelectOptions(countries);
-  
-  const isCountryDisabled = countries.find(c => c.value === selectedCountry)?.available === false;
+  if (error) return <StatusView error={error} onBack={handleBack} showRetry />;
 
   return (
     <SelectForm
-      title="Оберіть країну"
-      subtitle="Доступні для бронювання напрямки"
-      options={allOptions}
-      selectedValue={selectedCountry}
-      onValueChange={setSelectedCountry}
-      onSubmit={handleSubmit}
+      title={t('country_title')}
+      subtitle={t('country_subtitle')}
+      options={createSelectOptions(countries)}
+      selectedValue={selected}
+      onValueChange={setSelected}
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (selected) navigate(`/city/${encodeURIComponent(selected)}`);
+      }}
       onBack={handleBack}
-      showBackButton={true}
-      submitText="Продовжити"
-      disabled={isCountryDisabled || isLoading}
-      disabledMessage={isCountryDisabled ? "Оберіть іншу країну" : "Завантаження..."}
-      isLoading={isLoading}
-      isSearchable={false} // За замовчуванням
+      showBackButton
+      isLoading={loading}
     />
   );
 }

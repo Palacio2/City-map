@@ -1,0 +1,50 @@
+{
+  "title": "Frequently Asked Questions",
+  "subtitle": "Find answers to common questions about GeoAnalyzer",
+  "categories": {
+    "general": "General",
+    "subscription": "Subscription & Payment",
+    "data": "Data & Accuracy",
+    "account": "Account"
+  },
+  "questions": {
+    "general": [
+      {
+        "q": "What is GeoAnalyzer?",
+        "a": "GeoAnalyzer is a tool for analyzing the quality of life in different city districts. We collect data on safety, environment, transport, and infrastructure to help you choose the perfect place to live."
+      },
+      {
+        "q": "Which cities are available?",
+        "a": "We currently support major cities in Ukraine and Poland. We are continuously working to expand our geographic coverage."
+      }
+    ],
+    "subscription": [
+      {
+        "q": "What is the difference between Premium and the free version?",
+        "a": "Premium provides access to advanced filters, detailed statistics for each criterion, district comparison, and the ability to save an unlimited number of favorite places."
+      },
+      {
+        "q": "How do I cancel my subscription?",
+        "a": "You can cancel your subscription at any time in your Profile under the 'Payment History' section. Access to Premium features will remain until the end of the paid period."
+      }
+    ],
+    "data": [
+      {
+        "q": "Where do you get the data from?",
+        "a": "We aggregate information from open government registers, Google Maps API, environmental monitoring stations, and user reviews."
+      },
+      {
+        "q": "How often is the information updated?",
+        "a": "Real estate price and environmental data are updated weekly. Infrastructure data is verified once a month."
+      }
+    ],
+    "account": [
+      {
+        "q": "How do I change my password?",
+        "a": "Go to Profile -> Change Password. You will need to enter your new password twice for confirmation."
+      }
+    ]
+  },
+  "still_have_questions": "Still have questions?",
+  "contact_support": "Contact Support"
+}

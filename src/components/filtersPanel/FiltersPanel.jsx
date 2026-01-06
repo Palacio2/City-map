@@ -1,5 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { FaStar } from 'react-icons/fa';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext';
 import styles from './FiltersPanel.module.css';
 import EducationFilters from './sections/EducationFilters';
@@ -11,6 +13,7 @@ import CommerceFilters from './sections/CommerceFilters';
 import UtilitiesFilters from './sections/UtilitiesFilters';
 
 export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) {
+  const { t } = useTranslation('filters');
   const navigate = useNavigate();
   const { isPremium, isFree } = useSubscription();
   const [filters, setFilters] = useState(selectedFilters);
@@ -19,9 +22,12 @@ export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) 
     navigate('/subscription');
   };
 
-  const updateFilters = useCallback((newFilters) => {
+  const updateFilters = useCallback((section, newSectionData) => {
     setFilters(prev => {
-      const updated = { ...prev, ...newFilters };
+      const updated = { 
+        ...prev, 
+        [section]: { ...prev[section], ...newSectionData } 
+      };
       onFiltersChange?.(updated);
       return updated;
     });
@@ -36,22 +42,25 @@ export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) 
   return (
     <div className={styles.panel}>
       <div className={styles.panelHeader}>
-        <h2 className={styles.panelTitle}>Фільтри</h2>
+        <h2 className={styles.panelTitle}>{t('panel.title')}</h2>
         <div className={styles.subscriptionStatus}>
           {isFree && (
             <div className={styles.subscriptionInfo}>
-              <span className={styles.freeBadge}>🆓 Безкоштовна версія</span>
+              <span className={styles.freeBadge}>
+                <FaStar style={{ marginRight: '6px', fontSize: '1em' , color: 'yellow' }} /> 
+                {t('panel.free_version')}
+              </span>
               <button 
                 className={styles.upgradeLink}
                 onClick={handleUpgradeClick}
               >
-                Оновити
+                {t('panel.upgrade')}
               </button>
             </div>
           )}
           {isPremium && (
             <div className={styles.subscriptionInfoPremium}>
-              <span className={styles.premiumBadge}>💎 Premium</span>
+              <span className={styles.premiumBadge}>💎 {t('panel.premium')}</span>
             </div>
           )}
         </div>
@@ -59,52 +68,50 @@ export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) 
       
       <div className={styles.panelContent}>
         <div className={styles.scrollContainer}>
-          {/* Базові фільтри - доступні всім */}
           <div className={styles.section}>
             <EducationFilters 
-              filters={filters}
-              onFiltersChange={updateFilters}
+              values={filters.education || {}} 
+              onChange={(data) => updateFilters('education', data)}
             />
           </div>
           
           <div className={styles.section}>
             <MedicineFilters 
-              filters={filters}
-              onFiltersChange={updateFilters}
+              values={filters.medicine || {}} 
+              onChange={(data) => updateFilters('medicine', data)}
             />
           </div>
 
-          {/* Преміум фільтри - тільки для Premium */}
           {isPremium && (
             <>
               <div className={styles.section}>
                 <TransportFilters 
-                  filters={filters}
-                  onFiltersChange={updateFilters}
+                  values={filters.transport || {}}
+                  onChange={(data) => updateFilters('transport', data)}
                 />
               </div>
               <div className={styles.section}>
                 <SocialFilters 
-                  filters={filters}
-                  onFiltersChange={updateFilters}
+                  values={filters.social || {}}
+                  onChange={(data) => updateFilters('social', data)}
                 />
               </div>
               <div className={styles.section}>
                 <SafetyFilters 
-                  filters={filters}
-                  onFiltersChange={updateFilters}
+                  values={filters.safety || {}}
+                  onChange={(data) => updateFilters('safety', data)}
                 />
               </div>
               <div className={styles.section}>
                 <CommerceFilters 
-                  filters={filters}
-                  onFiltersChange={updateFilters}
+                  values={filters.commerce || {}}
+                  onChange={(data) => updateFilters('commerce', data)}
                 />
               </div>
               <div className={styles.section}>
                 <UtilitiesFilters 
-                  filters={filters}
-                  onFiltersChange={updateFilters}
+                  values={filters.utilities || {}}
+                  onChange={(data) => updateFilters('utilities', data)}
                 />
               </div>
             </>
@@ -114,13 +121,13 @@ export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) 
         {isFree && (
           <div className={styles.upgradeBanner}>
             <div className={styles.bannerContent}>
-              <h4>Отримайте більше можливостей!</h4>
-              <p>Розблокуйте всі фільтри з підпискою Premium</p>
+              <h4>{t('panel.banner_title')}</h4>
+              <p>{t('panel.banner_text')}</p>
               <button 
                 className={styles.bannerButton}
                 onClick={handleUpgradeClick}
               >
-                Переглянути тарифи
+                {t('panel.view_tariffs')}
               </button>
             </div>
           </div>
@@ -132,7 +139,7 @@ export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) 
           className={styles.clearButton}
           onClick={handleClearFilters}
         >
-          Очистити
+          {t('panel.clear')}
         </button>
       </div>
     </div>

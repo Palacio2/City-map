@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FaEnvelope, FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
 import styles from './ForgotPassword.module.css';
 import { supabase } from '../../supabaseClient';
 
 export default function ForgotPassword() {
+  const { t } = useTranslation('auth');
   const [email, setEmail] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -22,9 +24,9 @@ export default function ForgotPassword() {
     const newErrors = {};
     
     if (!email) {
-      newErrors.email = 'Email обов\'язковий';
+      newErrors.email = t('errors.required');
     } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = 'Невірний формат email';
+      newErrors.email = t('errors.email_invalid');
     }
     
     setErrors(newErrors);
@@ -43,15 +45,11 @@ export default function ForgotPassword() {
         redirectTo: `${window.location.origin}/reset-password`,
       });
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
-      console.log('Password reset requested for:', email);
       setIsSubmitted(true);
     } catch (error) {
-      console.error('Password reset error:', error);
-      setErrors({ submit: 'Помилка відправки. Спробуйте ще раз.' });
+      setErrors({ submit: t('errors.generic') });
     } finally {
       setIsLoading(false);
     }
@@ -67,23 +65,23 @@ export default function ForgotPassword() {
         <div className={styles.card}>
           <div className={styles.successMessage}>
             <FaCheckCircle className={styles.successIcon} />
-            <h1 className={styles.title}>Лист відправлено!</h1>
+            <h1 className={styles.title}>{t('forgot_pass.success_title')}</h1>
             <p className={styles.subtitle}>
-              Ми відправили інструкції для відновлення пароля на вашу електронну пошту
+              {t('forgot_pass.success_text')}
             </p>
             <p className={styles.emailNote}>{email}</p>
             
             <div className={styles.successActions}>
               <button onClick={handleBack} className={styles.backButton}>
-                <FaArrowLeft /> Повернутись до входу
+                <FaArrowLeft /> {t('forgot_pass.back')}
               </button>
               <p className={styles.helpText}>
-                Не отримали лист? Перевірте папку "Спам" або{' '}
+                {t('forgot_pass.spam_note')} {t('login.or')}{' '}
                 <button 
                   onClick={() => setIsSubmitted(false)}
                   className={styles.resendLink}
                 >
-                  відправте ще раз
+                  {t('forgot_pass.resend')}
                 </button>
               </p>
             </div>
@@ -100,9 +98,9 @@ export default function ForgotPassword() {
           <button onClick={handleBack} className={styles.backButtonSmall}>
             <FaArrowLeft />
           </button>
-          <h1 className={styles.title}>Відновлення пароля</h1>
+          <h1 className={styles.title}>{t('forgot_pass.title')}</h1>
           <p className={styles.subtitle}>
-            Введіть вашу електронну пошту, ми надішлемо інструкції для відновлення пароля
+            {t('forgot_pass.subtitle')}
           </p>
         </div>
 
@@ -110,7 +108,7 @@ export default function ForgotPassword() {
           <div className={styles.formGroup}>
             <label htmlFor="email" className={styles.label}>
               <FaEnvelope className={styles.icon} />
-              Email
+              {t('fields.email')}
             </label>
             <input
               type="email"
@@ -118,7 +116,7 @@ export default function ForgotPassword() {
               value={email}
               onChange={handleChange}
               className={`${styles.input} ${errors.email ? styles.inputError : ''}`}
-              placeholder="Ваш email"
+              placeholder={t('fields.email_placeholder')}
               disabled={isLoading}
             />
             {errors.email && <span className={styles.error}>{errors.email}</span>}
@@ -134,19 +132,19 @@ export default function ForgotPassword() {
             {isLoading ? (
               <>
                 <div className={styles.spinner}></div>
-                Відправка...
+                {t('forgot_pass.sending')}
               </>
             ) : (
-              'Надіслати інструкції'
+              t('forgot_pass.submit')
             )}
           </button>
         </form>
 
         <div className={styles.footer}>
           <p>
-            Пам'ятаєте пароль?{' '}
+            {t('login.subtitle')}?{' '}
             <Link to="/login" className={styles.link}>
-              Увійти
+              {t('login.submit')}
             </Link>
           </p>
         </div>

@@ -1,0 +1,62 @@
+{
+  "loading": "Завантаження аналітики районів...",
+  "error_prefix": "Помилка: {{error}}",
+  "retry": "Спробувати знову",
+  "load_failed": "Не вдалося завантажити дані",
+  "stats_shown": "Показано {{shown}} з {{total}} районів",
+  "no_data_title": "Райони відсутні",
+  "no_data_text": "Дані ще додаються",
+  "not_found_title": "Нічого не знайдено",
+  "not_found_text": "Спробуйте змінити фільтри",
+  "no_photos_text": "Немає фото для відображення, але є {{count}} районів у списку.",
+  "na": "н/д",
+  "modal": {
+    "no_data_title": "Дані відсутні",
+    "no_data_text": "Інформація про цей район ще не додана до системи",
+    "login_alert": "Будь ласка, увійдіть в систему, щоб додавати улюблені"
+  },
+  "buttons": {
+    "close": "Закрити",
+    "add_favorite": "Додати до улюблених",
+    "remove_favorite": "Видалити з улюблених"
+  },
+  "details": {
+    "price": "Ціна нерухомості:",
+    "density": "Щільність:",
+    "density_unit": "осіб/км²"
+  },
+  "stats": {
+    "categories": {
+      "education": "Освіта",
+      "medicine": "Медицина",
+      "transport": "Транспорт",
+      "safety": "Безпека",
+      "social": "Соціальна",
+      "commerce": "Комерція",
+      "utilities": "Комунальні послуги"
+    },
+    "labels": {
+      "kindergartens": "Дитячі садки:",
+      "schools": "Школи:",
+      "universities": "Університети:",
+      "hospitals": "Лікарні:",
+      "clinics": "Клініки:",
+      "pharmacies": "Аптеки:",
+      "bus_stops": "Автобусні зупинки:",
+      "metro_stations": "Станції метро:",
+      "bike_lanes": "Велодоріжки (км):",
+      "transport_frequency": "Частота транспорту:",
+      "crime_level": "Рівень злочинності:",
+      "police_stations": "Відділки поліції:",
+      "lighting": "Освітлення:",
+      "parks": "Парки:",
+      "cafes": "Кафе та ресторани:",
+      "playgrounds": "Дитячі майданчики:",
+      "grocery": "Продуктові магазини:",
+      "malls": "Торгові центри:",
+      "banks": "Банки:",
+      "cost_per_sqm": "Вартість за м²:",
+      "water_supply": "Водопостачання:"
+    }
+  }
+}

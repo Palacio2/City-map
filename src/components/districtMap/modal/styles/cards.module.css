@@ -12,7 +12,6 @@
 
 .statCard:hover {
     border-color: var(--primary-light);
-    transform: translateY(-4px);
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
 }
 

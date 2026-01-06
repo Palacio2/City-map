@@ -1,128 +1,106 @@
-import React from 'react';
+import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './Filters.module.css';
 
-export default function UtilitiesFilters({ filters = {}, onFiltersChange }) {
+const UtilitiesFilters = memo(({ values = {}, onChange }) => {
+  const { t } = useTranslation('filters');
+
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    onFiltersChange?.({
-      utilities: {
-        ...filters.utilities,
-        [name]: checked
-      }
-    });
+    onChange?.({ [name]: checked });
   };
 
   const handleQualityChange = (event) => {
     const { value } = event.target;
-    onFiltersChange?.({
-      utilities: {
-        ...filters.utilities,
-        quality: value
-      }
-    });
+    onChange?.({ quality: value });
   };
 
-  const handleMinCostChange = (event) => {
+  const handleCostChange = (event, field) => {
     const { value } = event.target;
-    onFiltersChange?.({
-      utilities: {
-        ...filters.utilities,
-        minCost: value ? parseInt(value) : undefined
-      }
-    });
-  };
-
-  const handleMaxCostChange = (event) => {
-    const { value } = event.target;
-    onFiltersChange?.({
-      utilities: {
-        ...filters.utilities,
-        maxCost: value ? parseInt(value) : undefined
-      }
-    });
+    onChange?.({ [field]: value ? parseInt(value) : undefined });
   };
 
   return (
     <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>💡 Комунальні послуги</h3>
+      <h3 className={styles.sectionTitle}>{t('utilities.title')}</h3>
       <div className={styles.filterGroup}>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="water" 
-            checked={filters.utilities?.water || false}
+            checked={values.water || false}
             onChange={handleCheckboxChange}
           />
-          <span>Водопостачання</span>
+          <span>{t('utilities.water')}</span>
         </label>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="heating" 
-            checked={filters.utilities?.heating || false}
+            checked={values.heating || false}
             onChange={handleCheckboxChange}
           />
-          <span>Опалення</span>
+          <span>{t('utilities.heating')}</span>
         </label>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="electricity" 
-            checked={filters.utilities?.electricity || false}
+            checked={values.electricity || false}
             onChange={handleCheckboxChange}
           />
-          <span>Електропостачання</span>
+          <span>{t('utilities.electricity')}</span>
         </label>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="gas" 
-            checked={filters.utilities?.gas || false}
+            checked={values.gas || false}
             onChange={handleCheckboxChange}
           />
-          <span>Газопостачання</span>
+          <span>{t('utilities.gas')}</span>
         </label>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="waste" 
-            checked={filters.utilities?.waste || false}
+            checked={values.waste || false}
             onChange={handleCheckboxChange}
           />
-          <span>Вивіз сміття</span>
+          <span>{t('utilities.waste')}</span>
         </label>
         
         <div className={styles.ratingFilter}>
-          <span className={styles.ratingLabel}>Якість послуг:</span>
+          <span className={styles.ratingLabel}>{t('utilities.quality')}</span>
           <select 
             className={styles.select}
-            value={filters.utilities?.quality || 'any'}
+            value={values.quality || 'any'}
             onChange={handleQualityChange}
           >
-            <option value="any">Будь-яка</option>
-            <option value="good">Висока</option>
-            <option value="average">Середня</option>
-            <option value="poor">Низька</option>
+            <option value="any">{t('options.any')}</option>
+            <option value="good">{t('options.good')}</option>
+            <option value="average">{t('options.average')}</option>
+            <option value="poor">{t('options.poor')}</option>
           </select>
         </div>
         
         <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>Вартість комуналки (грн/м²):</span>
+          <span className={styles.rangeLabel}>{t('utilities.cost_label')}</span>
           <div className={styles.doubleRangeContainer}>
             <div className={styles.doubleRangeInputs}>
               <input 
                 type="number" 
-                placeholder="Від"
-                value={filters.utilities?.minCost || ''}
-                onChange={handleMinCostChange}
+                placeholder={t('utilities.from')}
+                value={values.minCost || ''}
+                onChange={(e) => handleCostChange(e, 'minCost')}
                 className={styles.doubleRangeInput}
               />
               <span className={styles.doubleRangeSeparator}>-</span>
               <input 
                 type="number" 
-                placeholder="До"
-                value={filters.utilities?.maxCost || ''}
-                onChange={handleMaxCostChange}
+                placeholder={t('utilities.to')}
+                value={values.maxCost || ''}
+                onChange={(e) => handleCostChange(e, 'maxCost')}
                 className={styles.doubleRangeInput}
               />
             </div>
@@ -131,4 +109,6 @@ export default function UtilitiesFilters({ filters = {}, onFiltersChange }) {
       </div>
     </div>
   );
-}
+});
+
+export default UtilitiesFilters;

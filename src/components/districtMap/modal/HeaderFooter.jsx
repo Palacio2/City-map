@@ -1,17 +1,17 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import headerFooterStyles from './styles/headerFooter.module.css';
 import { CloseButton, FavoriteButton } from './Buttons';
+import { formatNumber, formatPrice } from '../../../utils/formatters';
 
-// HeaderSection компонент
 export function HeaderSection({ 
   district, 
   isFavorite, 
   onToggleFavorite, 
-  isLoading, // ✅ Додано isLoading
-  onClose,
-  formatPrice,
-  formatNumber 
+  isLoading, 
+  onClose 
 }) {
+  const { t } = useTranslation('districts');
   const { name, photo_url, photo_description } = district;
   const filterData = district.filterData;
 
@@ -31,7 +31,7 @@ export function HeaderSection({
             <FavoriteButton 
               isFavorite={isFavorite}
               onToggle={onToggleFavorite}
-              isLoading={isLoading} // ✅ Передача isLoading
+              isLoading={isLoading}
             />
             <CloseButton onClose={onClose} />
           </div>
@@ -42,21 +42,15 @@ export function HeaderSection({
         {filterData?.general && (
           <div className={headerFooterStyles.quickStats}>
             <div className={headerFooterStyles.quickStat}>
-              <span className={headerFooterStyles.quickStatLabel}>Ціна нерухомості:</span>
+              <span className={headerFooterStyles.quickStatLabel}>{t('details.price')}</span>
               <span className={headerFooterStyles.quickStatValue}>
                 {formatPrice(filterData.general.propertyPrice)}
               </span>
             </div>
             <div className={headerFooterStyles.quickStat}>
-              <span className={headerFooterStyles.quickStatLabel}>Щільність населення:</span>
+              <span className={headerFooterStyles.quickStatLabel}>{t('details.density')}</span>
               <span className={headerFooterStyles.quickStatValue}>
-                {formatNumber(filterData.general.populationDensity)} осіб/км²
-              </span>
-            </div>
-            <div className={headerFooterStyles.quickStat}>
-              <span className={headerFooterStyles.quickStatLabel}>Зелені насадження:</span>
-              <span className={headerFooterStyles.quickStatValue}>
-                {filterData.general.greenSpaces?.toFixed(1) || 'н/д'}%
+                {formatNumber(filterData.general.populationDensity)} {t('details.density_unit')}
               </span>
             </div>
           </div>
@@ -66,22 +60,14 @@ export function HeaderSection({
   );
 }
 
-// ModalFooter компонент
 export function ModalFooter({ onClose }) {
+  const { t } = useTranslation('districts');
+  
   return (
     <div className={headerFooterStyles.modalFooter}>
-      <button 
-        className={headerFooterStyles.simpleCloseButton}
-        onClick={onClose}
-      >
-        Закрити
+      <button className={headerFooterStyles.simpleCloseButton} onClick={onClose}>
+        {t('buttons.close')}
       </button>
     </div>
   );
 }
-
-// Експорт об'єктом
-export default {
-  HeaderSection,
-  ModalFooter
-};

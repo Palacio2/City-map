@@ -1,16 +1,12 @@
 import { supabase } from '../../supabaseClient';
 
-// Функції для роботи з профілем напряму через Supabase Auth
 export const profileAPI = {
-  // Отримати профіль
   getProfile: async () => {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
       if (error) throw error;
       if (!user) throw new Error('User not authenticated.');
 
-      // Дані, що зберігаються в user_metadata, є частиною сесії користувача,
-      // тому немає потреби робити додатковий запит до таблиці profiles.
       return {
         id: user.id,
         email: user.email,
@@ -18,7 +14,7 @@ export const profileAPI = {
         phone: user.user_metadata?.phone || '',
         created_at: user.created_at,
         email_confirmed: !!user.email_confirmed_at,
-        new_email: user.email_change_sent_at ? user.email : null // Supabase v2 не зберігає новий email у metadata, а в email_change_sent_at
+        new_email: user.email_change_sent_at ? user.email : null 
       };
     } catch (error) {
       console.error('Error getting profile:', error);
@@ -26,7 +22,6 @@ export const profileAPI = {
     }
   },
 
-  // Оновити профіль (ім'я та телефон)
   updateProfile: async (profileData) => {
     try {
       const { data, error } = await supabase.auth.updateUser({
@@ -44,14 +39,11 @@ export const profileAPI = {
     }
   },
 
-  // Оновити email
   updateEmail: async (newEmail) => {
     try {
       const { error } = await supabase.auth.updateUser({ email: newEmail });
       if (error) throw error;
       
-      // Supabase автоматично відправляє лист підтвердження при зміні email,
-      // тому додатковий виклик `resend` не потрібен.
       return {
         success: true,
         message: 'Лист для підтвердження відправлено на нову адресу.',
@@ -63,7 +55,6 @@ export const profileAPI = {
     }
   },
 
-  // Перевірити статус email
   checkEmailConfirmation: async () => {
     try {
       const { data: { user }, error } = await supabase.auth.getUser();
@@ -79,7 +70,6 @@ export const profileAPI = {
     }
   },
 
-  // Повторно відправити лист для підтвердження
   resendConfirmationEmail: async (email) => {
     try {
       const { error } = await supabase.auth.resend({
@@ -96,7 +86,6 @@ export const profileAPI = {
   }
 };
 
-// Утиліта для обробки помилок
 export const handleApiError = (error) => {
   console.error('API Error:', error);
   

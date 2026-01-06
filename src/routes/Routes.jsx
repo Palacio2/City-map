@@ -14,7 +14,7 @@ import RegisterSuccess from "../components/auth/RegisterSuccess";
 import AuthCallback from "../components/auth/AuthCallback";
 
 import PrivateRoute from "./PrivateRoute";
-import ProtectedRoute from "./ProtectedRoute"; // Імпорт ProtectedRoute
+import ProtectedRoute from "./ProtectedRoute";
 
 // Імпортуємо нові компоненти профілю
 import StatsPage from "../components/profile/StatsPage";
@@ -22,8 +22,8 @@ import BillingHistoryPage from "../components/profile/BillingHistoryPage";
 import ProfileEditPage from "../components/profile/ProfileEditPage";
 import PasswordChangePage from "../components/profile/PasswordChangePage";
 import PaymentSuccess from "../pages/payment/PaymentSuccess";
-import Billing from "../pages/billing/Billing";
-import FavoritesPage from '../pages/favorites/FavoritesPage'
+import FavoritesPage from '../pages/favorites/FavoritesPage';
+import FaqPage from '../pages/faq/FaqPage';
 
 export default function AppRoutes() {
   return (
@@ -43,6 +43,7 @@ export default function AppRoutes() {
         <Route path="register-success" element={<RegisterSuccess />} />
         <Route path="auth/callback" element={<AuthCallback />} />
         <Route path="payment-success" element={<PaymentSuccess />} />
+        <Route path="faq" element={<FaqPage />} />
         
 
         {/* Приватні маршрути */}
@@ -102,15 +103,6 @@ export default function AppRoutes() {
           element={
             <PrivateRoute>
               <Payment />
-            </PrivateRoute>
-          }
-        />
-
-        <Route
-          path="billing"
-          element={
-            <PrivateRoute>
-              <Billing />
             </PrivateRoute>
           }
         />

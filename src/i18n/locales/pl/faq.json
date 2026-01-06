@@ -1,0 +1,50 @@
+{
+  "title": "Często zadawane pytania",
+  "subtitle": "Znajdź odpowiedzi na popularne pytania dotyczące GeoAnalyzer",
+  "categories": {
+    "general": "Ogólne",
+    "subscription": "Subskrypcja i płatności",
+    "data": "Dane i dokładność",
+    "account": "Konto użytkownika"
+  },
+  "questions": {
+    "general": [
+      {
+        "q": "Czym jest GeoAnalyzer?",
+        "a": "GeoAnalyzer to narzędzie do analizy jakości życia w różnych dzielnicach miasta. Zbieramy dane dotyczące bezpieczeństwa, środowiska, transportu i infrastruktury, aby pomóc Ci wybrać idealne miejsce do życia."
+      },
+      {
+        "q": "Jakie miasta są dostępne?",
+        "a": "Obecnie obsługujemy duże miasta Ukrainy i Polski. Stale pracujemy nad rozszerzeniem geografii."
+      }
+    ],
+    "subscription": [
+      {
+        "q": "Czym różni się Premium od wersji bezpłatnej?",
+        "a": "Premium zapewnia dostęp do zaawansowanych filtrów, szczegółowych statystyk dla każdego kryterium, porównania dzielnic oraz możliwości zapisywania nieograniczonej liczby ulubionych miejsc."
+      },
+      {
+        "q": "Jak anulować subskrypcję?",
+        "a": "Subskrypcję możesz anulować w dowolnym momencie w swoim Profilu w sekcji 'Historia płatności'. Dostęp do funkcji Premium zostanie zachowany do końca opłaconego okresu."
+      }
+    ],
+    "data": [
+      {
+        "q": "Skąd pochodzą dane?",
+        "a": "Agregujemy informacje z otwartych rejestrów państwowych, Google Maps API, stacji monitoringu środowiska oraz opinii użytkowników."
+      },
+      {
+        "q": "Jak często aktualizowane są informacje?",
+        "a": "Dane dotyczące cen nieruchomości i środowiska są aktualizowane co tydzień. Informacje o infrastrukturze są weryfikowane raz w miesiącu."
+      }
+    ],
+    "account": [
+      {
+        "q": "Jak zmienić hasło?",
+        "a": "Przejdź do Profil -> Zmień hasło. Wymagane będzie dwukrotne wprowadzenie nowego hasła w celu potwierdzenia."
+      }
+    ]
+  },
+  "still_have_questions": "Nie znalazłeś odpowiedzi?",
+  "contact_support": "Napisz do wsparcia"
+}
