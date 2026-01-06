@@ -1,0 +1,12 @@
+{
+  "home": "Home",
+  "about": "About",
+  "contacts": "Contacts",
+  "subscription": "Subscription",
+  "profile": "Profile",
+  "login": "Log In",
+  "logout": "Log Out",
+  "loading": "Loading...",
+  "favorites_title": "My favorites",
+  "language_title": "Change language"
+}

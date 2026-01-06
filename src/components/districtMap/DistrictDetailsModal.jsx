@@ -1,11 +1,11 @@
-// DistrictDetailsModal.jsx
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './DistrictDetailsModal.module.css';
 import { HeaderSection, ModalFooter } from './modal/HeaderFooter';
 import StatsGrid from './modal/StatsGrid';
 import { checkIsFavorite, toggleFavorite } from '../../utils/favorites';
 import { formatNumber, formatPrice } from '../../utils/formatters';
-import { supabase } from '../../supabaseClient'; // ✅ Додайте імпорт supabase
+import { supabase } from '../../supabaseClient';
 
 export default function DistrictDetailsModal({ 
   district, 
@@ -13,60 +13,73 @@ export default function DistrictDetailsModal({
   onClose, 
   onToggleFavorite 
 }) {
-  if (!isOpen || !district) return null;
+  const { t } = useTranslation('districts');
 
+  // 1. ВАЖЛИВО: Всі хуки (useState, useEffect) мають бути НА ПОЧАТКУ
+  // Вони повинні викликатися завжди, незалежно від того, відкрита модалка чи ні
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
-  const checkFavoriteStatus = async () => {
-    if (district) {
-      setIsLoading(true);
-      try {
-        // Спочатку перевіряємо чи авторизований користувач
-        const { data: { session } } = await supabase.auth.getSession();
-        
-        if (!session) {
-          // Користувач не авторизований - не показуємо улюблених
-          setIsFavorite(false);
-          return;
-        }
-        
-        const favoriteStatus = await checkIsFavorite(district.id);
-        setIsFavorite(favoriteStatus);
-      } catch (error) {
-        console.error('Помилка перевірки статусу улюбленого:', error);
-        setIsFavorite(false);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-  };
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUserId(session?.user?.id ?? null);
+    });
+  }, []);
 
-  checkFavoriteStatus();
-}, [district]);
+  useEffect(() => {
+    let isMounted = true;
+
+    const checkStatus = async () => {
+        // Якщо модалка закрита або немає району - нічого не робимо, але хук все одно існує
+        if (!isOpen || !district || !userId) {
+            if (isMounted) setIsFavorite(false);
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+          const favoriteStatus = await checkIsFavorite(district.id);
+          if (isMounted) setIsFavorite(favoriteStatus);
+        } catch (error) {
+          if (isMounted) setIsFavorite(false);
+        } finally {
+          if (isMounted) setIsLoading(false);
+        }
+    };
+
+    checkStatus();
+
+    return () => { isMounted = false; };
+    // Використовуємо безпечний доступ ?.id, щоб не було помилки, якщо district null
+  }, [district?.id, userId, isOpen]);
 
   const handleToggleFavorite = async () => {
-    // ⚠️ Додаткова перевірка перед початком операції
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) {
-      alert('Будь ласка, увійдіть в систему, щоб додавати улюблені');
+    if (!userId) {
+      alert(t('modal.login_alert'));
       return;
     }
 
-    setIsLoading(true);
+    const previousState = isFavorite;
+    const newState = !previousState;
+    setIsFavorite(newState); 
+
     try {
-      // Функція toggleFavorite сама обробляє API запит
-      const newFavoriteState = await toggleFavorite(district, isFavorite); 
+      const resultState = await toggleFavorite(district, newState); 
       
-      setIsFavorite(newFavoriteState);
-      onToggleFavorite?.(district.id, newFavoriteState);
+      if (resultState !== newState) {
+          setIsFavorite(resultState);
+      }
+      
+      onToggleFavorite?.(district.id, resultState);
     } catch (error) {
-      console.error('Помилка при toggle улюбленого:', error);
-    } finally {
-      setIsLoading(false);
+      console.error('Toggle error:', error);
+      setIsFavorite(previousState);
     }
   };
+
+  // 2. І тільки ТУТ, після всіх хуків, робимо перевірку на відображення
+  if (!isOpen || !district) return null;
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
@@ -75,7 +88,7 @@ export default function DistrictDetailsModal({
           district={district}
           isFavorite={isFavorite}
           onToggleFavorite={handleToggleFavorite}
-          isLoading={isLoading} // ✅ Передача isLoading
+          isLoading={isLoading}
           onClose={onClose}
           formatPrice={formatPrice}
           formatNumber={formatNumber}
@@ -87,16 +100,13 @@ export default function DistrictDetailsModal({
           ) : (
             <div className={styles.noData}>
               <div className={styles.noDataIcon}>📊</div>
-              <h3>Дані відсутні</h3>
-              <p>Інформація про цей район ще не додана до системи</p>
+              <h3>{t('modal.no_data_title')}</h3>
+              <p>{t('modal.no_data_text')}</p>
             </div>
           )}
         </div>
 
-        <ModalFooter 
-          onClose={onClose} 
-          // ❌ Видалено: isFavorite, onToggleFavorite, isLoading
-        />
+        <ModalFooter onClose={onClose} />
       </div>
     </div>
   );

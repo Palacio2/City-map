@@ -1,0 +1,38 @@
+{
+  "subscription": {
+    "title": "Обрати підписку",
+    "subtitle": "Гнучкі тарифи для пошуку житла та професіоналів",
+    "current_label": "(Поточний)",
+    "active_plan_label": "Активний план",
+    "included_title": "Що включено:",
+    "disabled_title": "Недоступно:",
+    "buttons": {
+      "active": "Активний",
+      "stay_free": "Залишитись на Free",
+      "choose": "Обрати {{plan}}",
+      "upgrade": "Оновити підписку"
+    },
+    "lock": {
+      "title": "Потрібна підписка",
+      "default_msg": "Ця функція доступна з платною підпискою."
+    },
+    "plans": {
+      "free": { "name": "Безкоштовний", "price": "0 грн" },
+      "weekly": { "name": "Тижневий", "price": "99 грн/тиждень" },
+      "premium": { "name": "Premium", "price": "299 грн/міс" },
+      "realtor": { "name": "Rieltor Pro", "price": "599 грн/міс" }
+    },
+    "features": {
+      "basic_map": "Базова інформація",
+      "limited_filters": "Обмежена фільтрація",
+      "limited_data_show": "Обмежений показ даних",
+      "full_data_access": "Повний доступ до даних",
+      "all_filters": "Всі фільтри",
+      "personal_stats_access": "Статистика",
+      "save_favorites": "Збереження районів",
+      "compare_districts": "Порівняння",
+      "export_data": "Експорт звітів (PDF/Excel)",
+      "priority_support": "Персональний менеджер"
+    }
+  }
+}

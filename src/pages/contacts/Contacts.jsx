@@ -1,66 +1,69 @@
-// src/components/Contacts.jsx
-import React, { useState } from 'react';
-import { FaUser, FaEnvelope, FaComment, FaPhone, FaMapMarkerAlt, FaPaperPlane, FaHome } from 'react-icons/fa';
+import React, { useState, useMemo } from 'react';
+import { useTranslation } from 'react-i18next';
+import { FaUser, FaEnvelope, FaComment, FaPaperPlane, FaPhone, FaCheckCircle } from 'react-icons/fa';
 import { contactsAPI } from '../../components/api/contactsAPI';
 import styles from './Contacts.module.css';
 
 export default function Contacts() {
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
-  const [errors, setErrors] = useState({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const { t } = useTranslation('contacts');
+  const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [status, setStatus] = useState('idle'); // idle | loading | success | error
+  const [errorMsg, setErrorMsg] = useState('');
 
-  const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  // Мемоізація полів для оновлення при зміні мови
+  const fields = useMemo(() => [
+    { 
+      name: 'name', 
+      label: t('form.name.label'), 
+      type: 'text', 
+      icon: FaUser, 
+      placeholder: t('form.name.placeholder') 
+    },
+    { 
+      name: 'email', 
+      label: t('form.email.label'), 
+      type: 'email', 
+      icon: FaEnvelope, 
+      placeholder: t('form.email.placeholder') 
+    },
+    { 
+      name: 'message', 
+      label: t('form.message.label'), 
+      type: 'textarea', 
+      icon: FaComment, 
+      placeholder: t('form.message.placeholder') 
+    }
+  ], [t]);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
-  };
-
-  const validateForm = () => {
-    const newErrors = {};
-    
-    if (!formData.name.trim()) newErrors.name = "Ім'я обов'язкове";
-    if (!formData.email.trim()) newErrors.email = "Електронна пошта обов'язкова";
-    else if (!validateEmail(formData.email)) newErrors.email = "Будь ласка, введіть коректну email адресу";
-    if (!formData.message.trim()) newErrors.message = "Повідомлення не може бути порожнім";
-    else if (formData.message.trim().length < 10) newErrors.message = "Повідомлення має містити принаймні 10 символів";
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) return;
+    setStatus('loading');
+    setErrorMsg('');
 
-    setIsSubmitting(true);
     try {
-      await contactsAPI.submitMessage(formData);
-      setIsSubmitted(true);
-      setFormData({ name: '', email: '', message: '' });
-    } catch (error) {
-      setErrors(prev => ({ ...prev, submit: error.message || 'Сталася невідома помилка при відправці.' }));
-    } finally {
-      setIsSubmitting(false);
+      await contactsAPI.submitMessage(form);
+      setStatus('success');
+      setForm({ name: '', email: '', message: '' });
+    } catch (err) {
+      setStatus('error');
+      setErrorMsg(err.message || t('errors.generic'));
     }
   };
 
-  if (isSubmitted) {
+  if (status === 'success') {
     return (
       <div className={styles.container}>
         <div className={styles.card}>
-          <div className={styles.successMessage}>
-            <FaPaperPlane className={styles.successIcon} />
-            <h1>Дякуємо!</h1>
-            <p>Ваше повідомлення успішно відправлено. Ми зв'яжемося з вами найближчим часом.</p>
-            <button 
-              onClick={() => window.location.href = '/'} 
-              className={styles.submitButton}
-            >
-              <FaHome className={styles.sendIcon} />
-              На головну сторінку
+          <div className={styles.successState}>
+            <FaCheckCircle className={styles.successIcon} />
+            <h2 className={styles.title} style={{color: 'var(--text-dark)'}}>
+              {t('success.title')}
+            </h2>
+            <p className={styles.subtitle}>{t('success.text')}</p>
+            <button onClick={() => setStatus('idle')} className={styles.button}>
+              {t('buttons.send_again')}
             </button>
           </div>
         </div>
@@ -71,76 +74,55 @@ export default function Contacts() {
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <h1 className={styles.title}>Зв'яжіться з нами</h1>
-        <p className={styles.subtitle}>Надішліть нам своє повідомлення, і ми відповімо якнайшвидше.</p>
-        
+        <div className={styles.header}>
+          <h1 className={styles.title}>{t('title')}</h1>
+          <p className={styles.subtitle}>{t('subtitle')}</p>
+        </div>
+
         <form onSubmit={handleSubmit} className={styles.form}>
-          {['name', 'email', 'message'].map((field) => (
-            <div key={field} className={styles.formGroup}>
-              <label htmlFor={field} className={styles.label}>
-                {field === 'name' && <FaUser className={styles.icon} />}
-                {field === 'email' && <FaEnvelope className={styles.icon} />}
-                {field === 'message' && <FaComment className={styles.icon} />}
-                {field === 'name' ? "Ім'я" : field === 'email' ? 'Електронна пошта' : 'Повідомлення'}
+          {fields.map(({ name, label, type, icon: Icon, placeholder }) => (
+            <div key={name} className={styles.fieldGroup}>
+              <label className={styles.label}>
+                <Icon className={styles.icon} /> {label}
               </label>
-              {field === 'message' ? (
+              {type === 'textarea' ? (
                 <textarea
-                  id={field}
-                  name={field}
-                  value={formData[field]}
+                  name={name}
+                  value={form[name]}
                   onChange={handleChange}
+                  placeholder={placeholder}
+                  className={styles.input}
                   required
-                  rows="5"
-                  placeholder={field === 'name' ? "Ваше ім'я" : field === 'email' ? 'Ваша електронна пошта' : 'Ваше повідомлення'}
-                  className={errors[field] ? styles.textareaError : styles.textarea}
+                  minLength={10}
+                  rows={4}
                 />
               ) : (
                 <input
-                  type={field === 'email' ? 'email' : 'text'}
-                  id={field}
-                  name={field}
-                  value={formData[field]}
+                  type={type}
+                  name={name}
+                  value={form[name]}
                   onChange={handleChange}
+                  placeholder={placeholder}
+                  className={styles.input}
                   required
-                  placeholder={field === 'name' ? "Ваше ім'я" : 'Ваша електронна пошта'}
-                  className={errors[field] ? styles.inputError : styles.input}
+                  minLength={name === 'name' ? 2 : undefined}
                 />
               )}
-              {errors[field] && <span className={styles.error}>{errors[field]}</span>}
             </div>
           ))}
-          
-          <button type="submit" className={styles.submitButton} disabled={isSubmitting}>
-            {isSubmitting ? (
-              <>
-                <span className={styles.spinner}></span>
-                Відправка...
-              </>
-            ) : (
-              <>
-                <FaPaperPlane className={styles.sendIcon} />
-                Відправити
-              </>
+
+          {status === 'error' && <div className={styles.errorMessage}>{errorMsg}</div>}
+
+          <button type="submit" className={styles.button} disabled={status === 'loading'}>
+            {status === 'loading' ? t('buttons.sending') : (
+              <>{t('buttons.submit')} <FaPaperPlane /></>
             )}
           </button>
         </form>
-        
-        <div className={styles.contactInfo}>
-          <h3>Або зв'яжіться з нами іншим способом:</h3>
-          <div className={styles.contactMethods}>
-            <div className={styles.contactItem}>
-              <FaEnvelope className={styles.contactIcon} />
-              <span>email@example.com</span>
-            </div>
-            <div className={styles.contactItem}>
-              <FaPhone className={styles.contactIcon} />
-              <span>+380 (XX) XXX-XX-XX</span>
-            </div>
-            <div className={styles.contactItem}>
-              <FaMapMarkerAlt className={styles.contactIcon} />
-              <span>м. Київ, вул. Примерна, 1</span>
-            </div>
-          </div>
+
+        <div className={styles.footer}>
+          <div className={styles.contactItem}><FaEnvelope /> email@example.com</div>
+          <div className={styles.contactItem}><FaPhone /> +380 (XX) XXX-XX-XX</div>
         </div>
       </div>
     </div>

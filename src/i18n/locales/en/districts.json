@@ -1,0 +1,62 @@
+{
+  "loading": "Loading district analytics...",
+  "error_prefix": "Error: {{error}}",
+  "retry": "Try again",
+  "load_failed": "Failed to load data",
+  "stats_shown": "Showing {{shown}} of {{total}} districts",
+  "no_data_title": "No districts available",
+  "no_data_text": "Data is being added",
+  "not_found_title": "Nothing found",
+  "not_found_text": "Try changing filters",
+  "no_photos_text": "No photos to display, but there are {{count}} districts in the list.",
+  "na": "n/a",
+  "modal": {
+    "no_data_title": "No data",
+    "no_data_text": "Information about this district has not been added yet",
+    "login_alert": "Please log in to add favorites"
+  },
+  "buttons": {
+    "close": "Close",
+    "add_favorite": "Add to favorites",
+    "remove_favorite": "Remove from favorites"
+  },
+  "details": {
+    "price": "Property price:",
+    "density": "Density:",
+    "density_unit": "ppl/km²"
+  },
+  "stats": {
+    "categories": {
+      "education": "Education",
+      "medicine": "Medicine",
+      "transport": "Transport",
+      "safety": "Safety",
+      "social": "Social",
+      "commerce": "Commerce",
+      "utilities": "Utilities"
+    },
+    "labels": {
+      "kindergartens": "Kindergartens:",
+      "schools": "Schools:",
+      "universities": "Universities:",
+      "hospitals": "Hospitals:",
+      "clinics": "Clinics:",
+      "pharmacies": "Pharmacies:",
+      "bus_stops": "Bus stops:",
+      "metro_stations": "Metro stations:",
+      "bike_lanes": "Bike lanes (km):",
+      "transport_frequency": "Transport frequency:",
+      "crime_level": "Crime level:",
+      "police_stations": "Police stations:",
+      "lighting": "Lighting:",
+      "parks": "Parks:",
+      "cafes": "Cafes & Restaurants:",
+      "playgrounds": "Playgrounds:",
+      "grocery": "Grocery stores:",
+      "malls": "Shopping malls:",
+      "banks": "Banks:",
+      "cost_per_sqm": "Cost per m²:",
+      "water_supply": "Water supply:"
+    }
+  }
+}

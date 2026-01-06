@@ -1,160 +1,135 @@
+import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import {  
+import { useTranslation } from 'react-i18next';
+import { 
   FaChartLine, FaUsers, FaRocket, FaLightbulb, FaShieldAlt,
-  FaDatabase, FaMobile, FaGlobe, FaHeart, FaClock, FaSync
+  FaDatabase, FaMobile, FaMapMarkedAlt, FaHeart, FaCity, FaLaptopCode
 } from 'react-icons/fa';
 import styles from './About.module.css';
 
-const SECTION_CONFIG = {
-  mission: { icon: FaRocket, title: 'Наша місія та візія' },
-  features: { icon: FaLightbulb, title: 'Чому саме GeoAnalyzer?' },
-  process: { icon: FaRocket, title: 'Детальний процес роботи' },
-  data: { icon: FaDatabase, title: 'Джерела наших даних' },
-  audience: { icon: FaUsers, title: 'Для кого створений наш сервіс?' },
-  tech: { icon: FaLightbulb, title: 'Технологічний стек та інновації' },
-  team: { icon: FaUsers, title: 'Наша команда' }
-};
-
-const FEATURES = [
-  { icon: FaDatabase, title: 'База даних', text: 'Найбільша база даних про райони міст України з регулярними оновленнями' },
-  { icon: FaChartLine, title: 'Глибокий аналіз', text: 'Понад 50 параметрів для оцінки: від екології до інфраструктури' },
-  { icon: FaUsers, title: 'Спільнота', text: 'Реальні відгуки та рекомендації від мешканців кожного району' },
-  { icon: FaShieldAlt, title: 'Надійність', text: 'Перевірені дані з офіційних джерел та модерація контенту' },
-  { icon: FaMobile, title: 'Доступність', text: 'Зручний інтерфейс та мобільний додаток для будь-якого пристрою' },
-  { icon: FaSync, title: 'Актуальність', text: 'Щоденне оновлення даних та моніторинг змін в містах' }
-];
-
-const STEPS = [
-  { number: 1, title: 'Вибір міста та критеріїв', text: 'Оберіть місто та вкажіть ваші пріоритети: бюджет, транспортна доступність, наявність шкіл та дитячих садків, екологічна ситуація, інфраструктура' },
-  { number: 2, title: 'Збір та аналіз даних', text: 'Наша система автоматично збирає дані з офіційних джерел, соціальних мереж та відгуків користувачів, аналізує їх за допомогою AI' },
-  { number: 3, title: 'Візуалізація результатів', text: 'Отримайте інтерактивні карти, детальні звіти та порівняльні таблиці з оцінкою кожного району за вашими критеріями' },
-  { number: 4, title: 'Прийняття рішення', text: 'Використовуйте наші рекомендації, відгуки спільноти та детальну аналітику для обґрунтованого вибору ідеального району' }
-];
-
-const DATA_SOURCES = [
-  {
-    title: 'Офіційні джерела:',
-    items: [
-      'Державна служба статистики України',
-      'Міністерство розвитку громад та територій',
-      'Місцеві органи влади та адміністрації',
-      'Дані про нерухомість та ринкові ціни'
-    ]
-  },
-  {
-    title: 'Соціальні дані:',
-    items: [
-      'Відгуки та рейтинги від реальних мешканців',
-      'Соціальні мережі та форуми',
-      'Експертні оцінки урбаністів та соціологів'
-    ]
-  },
-  {
-    title: 'Технічні дані:',
-    items: [
-      'GIS системи та геospatial дані',
-      'Дані про транспортну доступність',
-      'Екологічний моніторинг',
-      'Дані про інфраструктурні проекти'
-    ]
-  }
-];
-
-const AUDIENCE = [
-  { icon: FaHeart, title: 'Для сімей', text: 'Знайдіть район з хорошими школами, дитячими майданчиками та безпечним середовищем' },
-  { icon: FaClock, title: 'Для комутерів', text: 'Оберіть район з зручним транспортним сполученням до роботи' },
-  { icon: FaChartLine, title: 'Для інвесторів', text: 'Аналізуйте перспективи розвитку районів та інвестиційний потенціал' },
-  { icon: FaGlobe, title: 'Для урбаністів', text: 'Досліджуйте міський простір та тенденції розвитку міст' }
-];
-
-const TECHNOLOGIES = [
-  { title: 'Frontend:', text: 'React.js, TypeScript, Mapbox GL JS, D3.js для візуалізації' },
-  { title: 'Backend:', text: 'Node.js, Python для data science, PostgreSQL з PostGIS' },
-  { title: 'AI та аналітика:', text: 'Machine Learning для прогнозування розвитку районів, NLP для аналізу відгуків' },
-  { title: 'Інфраструктура:', text: 'AWS, Docker, Kubernetes, CI/CD пайплайни' }
-];
-
 export default function About() {
+  const { t } = useTranslation('about');
+
+  // Використовуємо useMemo для конфігурацій, щоб вони оновлювались при зміні мови
+  const sectionConfig = useMemo(() => ({
+    mission: { icon: FaRocket, title: t('sections.mission') },
+    features: { icon: FaLightbulb, title: t('sections.features') },
+    process: { icon: FaMapMarkedAlt, title: t('sections.process') },
+    data: { icon: FaDatabase, title: t('sections.data') },
+    audience: { icon: FaUsers, title: t('sections.audience') },
+    tech: { icon: FaLaptopCode, title: t('sections.tech') },
+    team: { icon: FaUsers, title: t('sections.team') }
+  }), [t]);
+
+  // Мапимо дані з JSON на іконки
+  const featuresList = useMemo(() => {
+    const data = t('features', { returnObjects: true });
+    const icons = [FaChartLine, FaDatabase, FaHeart, FaShieldAlt, FaMobile, FaCity];
+    return Array.isArray(data) ? data.map((item, i) => ({ ...item, icon: icons[i] || FaLightbulb })) : [];
+  }, [t]);
+
+  const stepsList = useMemo(() => {
+    const data = t('process', { returnObjects: true });
+    return Array.isArray(data) ? data.map((item, i) => ({ ...item, number: i + 1 })) : [];
+  }, [t]);
+
+  const dataSourcesList = useMemo(() => {
+    const data = t('data_sources', { returnObjects: true });
+    return Array.isArray(data) ? data : [];
+  }, [t]);
+
+  const audienceList = useMemo(() => {
+    const data = t('audience', { returnObjects: true });
+    const icons = [FaHeart, FaCity, FaChartLine, FaMapMarkedAlt];
+    return Array.isArray(data) ? data.map((item, i) => ({ ...item, icon: icons[i] || FaUsers })) : [];
+  }, [t]);
+
+  const technologiesList = useMemo(() => {
+    const data = t('tech', { returnObjects: true });
+    return Array.isArray(data) ? data : [];
+  }, [t]);
+
+  const teamData = useMemo(() => t('team', { returnObjects: true }), [t]);
+
   return (
     <div className={styles.container}>
-      <HeroSection />
+      <HeroSection t={t} />
       <div className={styles.content}>
-        <Section type="mission">
-          <p><strong>GeoAnalyzer</strong> народився з ідеї створення інструменту, який би допоміг кожному знайти ідеальне місце для життя. Ми віримо, що вибір району - це не просто про географію, а про якість життя, комфорт та безпеку.</p>
-          <p>Наша візія - стати найповнішим джерелом інформації про міський простір України, об'єднавши дані з офіційних джерел, відгуки мешканців та експертні оцінки в єдину зрозумілу систему.</p>
+        
+        <Section config={sectionConfig.mission}>
+          <p><strong>GeoAnalyzer</strong> — {t('mission.text_1')}</p>
+          <p>{t('mission.text_2')}</p>
         </Section>
 
-        <Section type="features">
+        <Section config={sectionConfig.features}>
           <div className={styles.featuresGrid}>
-            {FEATURES.map((feature, index) => (
+            {featuresList.map((feature, index) => (
               <FeatureCard key={index} {...feature} />
             ))}
           </div>
         </Section>
 
-        <Section type="process">
+        <Section config={sectionConfig.process}>
           <div className={styles.howItWorks}>
-            {STEPS.map((step, index) => (
+            {stepsList.map((step, index) => (
               <Step key={index} {...step} />
             ))}
           </div>
         </Section>
 
-        <Section type="data">
+        <Section config={sectionConfig.data}>
           <div className={styles.dataSources}>
-            {DATA_SOURCES.map((source, index) => (
+            {dataSourcesList.map((source, index) => (
               <SourceCategory key={index} {...source} />
             ))}
           </div>
         </Section>
 
-        <Section type="audience">
+        <Section config={sectionConfig.audience}>
           <div className={styles.targetAudience}>
-            {AUDIENCE.map((group, index) => (
+            {audienceList.map((group, index) => (
               <AudienceGroup key={index} {...group} />
             ))}
           </div>
         </Section>
 
-        <Section type="tech">
+        <Section config={sectionConfig.tech}>
           <div className={styles.technologies}>
-            {TECHNOLOGIES.map((tech, index) => (
+            {technologiesList.map((tech, index) => (
               <TechCategory key={index} {...tech} />
             ))}
           </div>
         </Section>
 
-        <Section type="team">
+        <Section config={sectionConfig.team}>
           <div className={styles.team}>
-            <p>Ми - міждисциплінарна команда з 15+ фахівців, що об'єднує:</p>
+            <p>{teamData.intro}</p>
             <ul>
-              <li><strong>Розробників ПЗ</strong> з досвідом роботи у великих tech компаніях</li>
-              <li><strong>Data scientist</strong> з фахом у урбаністиці та соціології</li>
-              <li><strong>Географів та картографів</strong> з знанням GIS систем</li>
-              <li><strong>Дизайнерів</strong> що створюють зручний користувацький досвід</li>
-              <li><strong>Експертів</strong> з нерухомості та міського планування</li>
+              {Array.isArray(teamData.list) && teamData.list.map((item, i) => (
+                <li key={i}>{item}</li>
+              ))}
             </ul>
-            <p>Наша місія - робити міста України зрозумілішими та доступнішими для кожного.</p>
+            <p>{teamData.outro}</p>
           </div>
         </Section>
 
-        <CTASection />
+        <CTASection t={t} />
       </div>
     </div>
   );
 }
 
 // Допоміжні компоненти
-const HeroSection = () => (
+const HeroSection = ({ t }) => (
   <div className={styles.heroSection}>
     <div className={styles.heroContent}>
-      <h1 className={styles.heroTitle}>Про проект GeoAnalyzer</h1>
-      <p className={styles.heroSubtitle}>Інноваційна платформа для комплексного аналізу та порівняння районів міст</p>
+      <h1 className={styles.heroTitle}>{t('hero.title')}</h1>
+      <p className={styles.heroSubtitle}>{t('hero.subtitle')}</p>
       <div className={styles.heroStats}>
         {[
-          { number: '50+', label: 'міст України' },
-          { number: '1000+', label: 'районів' },
-          { number: '25k+', label: 'користувачів' }
+          { number: '6', label: t('hero.stats.categories') },
+          { number: '24/7', label: t('hero.stats.access') },
+          { number: '100%', label: t('hero.stats.convenience') }
         ].map((stat, index) => (
           <div key={index} className={styles.stat}>
             <span className={styles.statNumber}>{stat.number}</span>
@@ -166,8 +141,8 @@ const HeroSection = () => (
   </div>
 );
 
-const Section = ({ type, children }) => {
-  const { icon: Icon, title } = SECTION_CONFIG[type];
+const Section = ({ config, children }) => {
+  const { icon: Icon, title } = config;
   return (
     <section className={styles.section}>
       <div className={styles.sectionHeader}>
@@ -219,15 +194,15 @@ const TechCategory = ({ title, text }) => (
   </div>
 );
 
-const CTASection = () => (
+const CTASection = ({ t }) => (
   <section className={styles.ctaSection}>
-    <h2>Готові відкрити нові можливости?</h2>
-    <p>Приєднуйтесь до тисяч користувачів, які вже знайшли свій ідеальний район</p>
+    <h2>{t('cta.title')}</h2>
+    <p>{t('cta.text')}</p>
     <div className={styles.ctaButtons}>
       {[
-        { to: "/", label: "Почати аналіз", type: "primary" },
-        { to: "/subscription", label: "Дізнатись про підписку", type: "secondary" },
-        { to: "/contacts", label: "Зв'язатись з нами", type: "tertiary" }
+        { to: "/", label: t('cta.map_btn'), type: "primary" },
+        { to: "/subscription", label: t('cta.plans_btn'), type: "secondary" },
+        { to: "/contacts", label: t('cta.support_btn'), type: "tertiary" }
       ].map((button, index) => (
         <Link key={index} to={button.to} className={styles[`ctaButton${button.type.charAt(0).toUpperCase() + button.type.slice(1)}`]}>
           {button.label}

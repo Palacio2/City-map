@@ -1,0 +1,182 @@
+{
+  "title": "My Account",
+  "subtitle": "Manage your subscription and settings",
+  "user_profile": "User Profile",
+  "labels": {
+    "name": "Name:",
+    "email": "Email:",
+    "phone": "Phone:",
+    "join_date": "Registration Date:",
+    "full_name": "Full Name"
+  },
+  "actions": {
+    "edit": "Edit Profile",
+    "change_password": "Change Password",
+    "manage_subscription": "Manage Subscription",
+    "choose_plan": "Choose Plan",
+    "manage_billing": "Manage Billing",
+    "save": "Save Changes",
+    "saving": "Saving...",
+    "cancel": "Cancel",
+    "back_to_profile": "Back to Profile",
+    "download": "Download Receipt",
+    "view_details": "View Details",
+    "retry": "Try Again",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "plan": "Plan: {{plan}}",
+    "price": "{{price}}",
+    "expires": "Expires: {{date}}",
+    "cancelled_notice": "Subscription cancelled, valid until {{date}}",
+    "expired_notice": "Subscription expired on {{date}}",
+    "features_title": "Available features:",
+    "more_features": "and {{count}} more features...",
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "cancelled": "Cancelled",
+      "expired": "Expired",
+      "free": "Free"
+    },
+    "plans": {
+      "free": "Free",
+      "premium": "Premium",
+      "pro": "Premium"
+    }
+  },
+  "quick_actions": {
+    "stats_title": "Usage Statistics",
+    "stats_desc": "View your activity",
+    "billing_title": "Billing History",
+    "billing_desc": "View all transactions",
+    "locked": "Premium Subscription Required"
+  },
+  "help": {
+    "title": "Need Help?",
+    "desc": "Contact our support team",
+    "contact_btn": "Contacts",
+    "faq_btn": "FAQ",
+    "email_btn": "Email Us"
+  },
+  "edit_page": {
+    "title": "Edit Profile",
+    "subtitle": "Update your personal information",
+    "main_info": "Main Information",
+    "enter_data": "Enter your personal details",
+    "placeholders": {
+      "name": "Enter your name",
+      "email": "Enter your email",
+      "phone": "991234567"
+    },
+    "email_warning": "A confirmation email will be sent to this address after saving",
+    "errors": {
+      "load_failed": "Failed to load profile data",
+      "name_long": "Name is too long (max 30 characters)",
+      "name_required": "Please enter your name",
+      "email_required": "Please enter your email",
+      "save_error": "Error saving data"
+    },
+    "success": "Profile updated successfully"
+  },
+  "password_page": {
+    "title": "Change Password",
+    "subtitle": "Update your password to improve account security",
+    "form_title": "Account Security",
+    "form_subtitle": "Enter a new password to update",
+    "new_pass": "New Password",
+    "confirm_pass": "Confirm New Password",
+    "tips_title": "Tips for a secure password",
+    "tips": [
+      "Use at least 8 characters",
+      "Include uppercase letters, numbers, and special characters",
+      "Avoid personal information",
+      "Do not use the same password for different services",
+      "Avoid sequences (123456, qwerty)",
+      "Using a password manager is recommended",
+      "Update your passwords periodically",
+      "Enable two-factor authentication"
+    ],
+    "placeholders": {
+      "new": "Enter new password (min 8 characters)",
+      "confirm": "Repeat new password"
+    },
+    "errors": {
+      "length": "New password must be at least 8 characters long",
+      "mismatch": "New passwords do not match",
+      "regex": "Password must contain uppercase/lowercase letters, numbers, and special characters",
+      "unknown": "An unknown error occurred"
+    },
+    "success": "Password changed successfully!"
+  },
+  "billing_page": {
+    "title": "Subscription & Billing",
+    "subtitle": "Manage transactions history",
+    "your_plan": "Your Plan",
+    "current_sub": "Current Subscription",
+    "active_features": "Active Features",
+    "history_title": "Payment History",
+    "summary_success": "Successful Transactions",
+    "per_month": "/ mo",
+    "next_payment": "Next payment: {{date}}",
+    "valid_until": "Valid until: {{date}}",
+    "next_billing": "Next billing:",
+    "expires_label": "Expires:",
+    "renew_subscription": "Renew Subscription",
+    "upgrade_to_premium": "Upgrade to Premium",
+    "cancel_sub": "Cancel Subscription",
+    "update_plan": "Change Plan",
+    "cancel_btn": "Cancel Subscription",
+    "processing": "Processing...",
+    "cancelled_alert": "Subscription cancelled. Access valid until {{date}}.",
+    "cancel_confirm": "Are you sure you want to cancel your subscription? You will lose access to Premium features after the current billing period ends.",
+    "cancel_success": "Subscription cancelled successfully. Access remains until the end of the period.",
+    "error_cancel": "Cancellation failed. Please try again later.",
+    "method_online": "Online",
+    "table": {
+      "date": "Date",
+      "plan": "Plan",
+      "amount": "Amount",
+      "method": "Method",
+      "transaction_id": "Transaction ID",
+      "status": "Status",
+      "actions": "Actions"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "cancelled": "Cancelled"
+    },
+    "pagination": "Page {{current}} of {{total}}",
+    "prev": "Previous",
+    "next": "Next",
+    "no_history": "No payment history",
+    "loading": "Loading data...",
+    "error_load": "Failed to load payment history"
+  },
+  "stats_page": {
+    "title": "Usage Statistics",
+    "subtitle": "Analytics of your activity in the system",
+    "general_stats": "General Statistics",
+    "searches": "property searches",
+    "saved": "saved districts",
+    "comparisons": "price comparisons",
+    "time": "time in system",
+    "weekly_activity": "Weekly Activity",
+    "legend_searches": "Searches",
+    "legend_comparisons": "Comparisons",
+    "no_weekly_data": "No weekly activity data yet",
+    "popular_districts": "Popular Districts",
+    "views": "views",
+    "no_popular_data": "No popular districts data yet",
+    "last_activity": "Last Activity",
+    "online": "Online",
+    "last_active_at": "Last activity: {{time}}",
+    "fav_district": "Favorite District:",
+    "not_defined": "Not defined",
+    "never": "never",
+    "error_load": "Error loading statistics"
+  }
+}

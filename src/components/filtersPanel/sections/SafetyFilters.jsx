@@ -1,42 +1,35 @@
-import React from 'react';
+import React, { memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import styles from './Filters.module.css';
 
-export default function SafetyFilters({ filters = {}, onFiltersChange }) {
+const SafetyFilters = memo(({ values = {}, onChange }) => {
+  const { t } = useTranslation('filters');
+
   const handleCrimeLevelChange = (event) => {
     const { value } = event.target;
-    onFiltersChange?.({
-      safety: {
-        ...filters.safety,
-        crimeLevel: value
-      }
-    });
+    onChange?.({ crimeLevel: value });
   };
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
-    onFiltersChange?.({
-      safety: {
-        ...filters.safety,
-        [name]: checked
-      }
-    });
+    onChange?.({ [name]: checked });
   };
 
   return (
     <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>🛡️ Безпека</h3>
+      <h3 className={styles.sectionTitle}>{t('safety.title')}</h3>
       <div className={styles.filterGroup}>
         <div className={styles.ratingFilter}>
-          <span className={styles.ratingLabel}>Рівень злочинності:</span>
+          <span className={styles.ratingLabel}>{t('safety.crime_level')}</span>
           <select 
             className={styles.select}
-            value={filters.safety?.crimeLevel || 'any'}
+            value={values.crimeLevel || 'any'}
             onChange={handleCrimeLevelChange}
           >
-            <option value="any">Будь-який</option>
-            <option value="low">Низький</option>
-            <option value="medium">Середній</option>
-            <option value="high">Високий</option>
+            <option value="any">{t('safety.level_any')}</option>
+            <option value="low">{t('safety.level_low')}</option>
+            <option value="medium">{t('safety.level_medium')}</option>
+            <option value="high">{t('safety.level_high')}</option>
           </select>
         </div>
         
@@ -44,30 +37,32 @@ export default function SafetyFilters({ filters = {}, onFiltersChange }) {
           <input 
             type="checkbox" 
             name="police" 
-            checked={filters.safety?.police || false}
+            checked={values.police || false}
             onChange={handleCheckboxChange}
           />
-          <span>Відділки поліції</span>
+          <span>{t('safety.police')}</span>
         </label>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="cctv" 
-            checked={filters.safety?.cctv || false}
+            checked={values.cctv || false}
             onChange={handleCheckboxChange}
           />
-          <span>Камери спостереження</span>
+          <span>{t('safety.cctv')}</span>
         </label>
         <label className={styles.filterItem}>
           <input 
             type="checkbox" 
             name="lighting" 
-            checked={filters.safety?.lighting || false}
+            checked={values.lighting || false}
             onChange={handleCheckboxChange}
           />
-          <span>Нічне освітлення</span>
+          <span>{t('safety.lighting')}</span>
         </label>
       </div>
     </div>
   );
-}
+});
+
+export default SafetyFilters;

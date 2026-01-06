@@ -1,36 +1,43 @@
-// useAuthRedirect.js (Створіть цей файл у відповідній директорії)
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-// ❗ Вкажіть правильний шлях до вашого клієнта Supabase ❗
-import { supabase } from '../supabaseClient'; 
+import { supabase } from '../supabaseClient'; // ❗ Перевірте, чи правильний шлях до клієнта
 
 /**
- * Хук для перевірки поточної сесії та перенаправлення авторизованого користувача.
- * @returns {boolean} - true, якщо спроба автоматичного входу завершена (можна показувати форму).
+ * Хук для автоматичної перевірки сесії на сторінках входу/реєстрації.
+ * * Логіка:
+ * 1. Перевіряє, чи є активна сесія.
+ * 2. Якщо Є -> перенаправляє користувача на головну (або на сторінку, з якої він прийшов).
+ * 3. Якщо НЕМАЄ -> дозволяє відобразити форму входу/реєстрації.
+ * * @returns {boolean} isAutoLoginAttempted - true, коли перевірка завершена і можна показувати форму.
  */
 export default function useAuthRedirect() {
   const [isAutoLoginAttempted, setIsAutoLoginAttempted] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
-  // Отримуємо початковий шлях для перенаправлення
-  const from = location.state?.from?.pathname || '/'; 
 
   useEffect(() => {
-    const checkExistingSession = async () => {
-      // Одноразова перевірка сесії
-      const { data: { session }, error } = await supabase.auth.getSession();
-      
-      if (session && !error) {
-        // Якщо сесія є, перенаправляємо
-        navigate(from, { replace: true });
-      } else {
-        // Якщо сесії немає, дозволяємо відображення форми
+    const checkSession = async () => {
+      try {
+        const { data: { session }, error } = await supabase.auth.getSession();
+
+        if (session && !error) {
+          // Якщо користувач вже залогінений — перекидаємо його
+          // "from" — це сторінка, куди юзер хотів потрапити до редіректу на логін
+          const from = location.state?.from?.pathname || '/';
+          navigate(from, { replace: true });
+        } else {
+          // Якщо сесії немає — дозволяємо показати форму
+          setIsAutoLoginAttempted(true);
+        }
+      } catch (error) {
+        console.error('Session check error:', error);
+        // У разі помилки все одно показуємо форму, щоб користувач міг спробувати увійти
         setIsAutoLoginAttempted(true);
       }
     };
-    
-    checkExistingSession();
-  }, [navigate, from]);
 
-  return isAutoLoginAttempted; 
+    checkSession();
+  }, [navigate, location]);
+
+  return isAutoLoginAttempted;
 }

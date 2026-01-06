@@ -1,33 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FaArrowLeft, FaUser, FaEnvelope, FaSave, FaTimes, FaPhone, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import { profileAPI, handleApiError } from '../api/edit-profileApi';
+import { parsePhoneNumber, countryCodes, cleanPhoneNumberForSave, validatePhoneNumber } from '../../utils/phoneUtils';
 import styles from './ProfileEditPages.module.css';
 
-// Список кодів країн для випадаючого меню
-const countryCodes = [
-  { name: 'Україна', code: '+380' },
-  { name: 'Польща', code: '+48' },
-  { name: 'Німеччина', code: '+49' },
-  { name: 'США', code: '+1' },
-  { name: 'Інше', code: '' }, 
-];
-
-// Функція для визначення початкового коду та частини номера
-const parsePhoneNumber = (fullPhone) => {
-  if (!fullPhone) return { code: '+380', number: '' };
-  
-  const foundCode = countryCodes.find(item => fullPhone.startsWith(item.code) && item.code !== '');
-  
-  if (foundCode) {
-    const number = fullPhone.substring(foundCode.code.length).trim();
-    return { code: foundCode.code, number: number };
-  }
-  
-  return { code: '+380', number: fullPhone };
-};
-
 export default function ProfileEditPage() {
+  const { t } = useTranslation('profile');
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
   const [countryCode, setCountryCode] = useState('+380');
   const [originalEmail, setOriginalEmail] = useState('');
@@ -56,18 +36,18 @@ export default function ProfileEditPage() {
       setOriginalEmail(profile.email);
     } catch (error) {
       const errorMessage = handleApiError(error);
-      setStatusMessage({ type: 'error', text: 'Не вдалося завантажити дані профілю: ' + errorMessage });
+      setStatusMessage({ type: 'error', text: `${t('edit_page.errors.load_failed')}: ${errorMessage}` });
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [t]);
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     let newValue = value;
 
     if (name === 'phone') {
-      newValue = value.replace(/[^0-9\s()\-]/g, '');
+      newValue = value.replace(/[^0-9]/g, '');
     }
 
     setFormData(prev => ({ ...prev, [name]: newValue }));
@@ -79,29 +59,28 @@ export default function ProfileEditPage() {
 
   const validateForm = useCallback(() => {
     if (formData.name.trim().length > 30) {
-      setStatusMessage({ type: 'error', text: 'Ім\'я занадто довге (макс. 30 символів).' });
+      setStatusMessage({ type: 'error', text: t('edit_page.errors.name_long') });
       return false;
     }
     
     if (!formData.name.trim() || !formData.email.trim()) {
-      setStatusMessage({ type: 'error', text: !formData.name.trim() ? 'Будь ласка, введіть ім\'я.' : 'Будь ласка, введіть email.' });
+      setStatusMessage({ 
+          type: 'error', 
+          text: !formData.name.trim() ? t('edit_page.errors.name_required') : t('edit_page.errors.email_required') 
+      });
       return false;
     }
 
-    const phoneToSave = formData.phone.trim() ? countryCode + ' ' + formData.phone.trim() : null;
-
-    if (phoneToSave && !/\d/.test(phoneToSave)) {
-      setStatusMessage({ type: 'error', text: 'Номер телефону має містити цифри.' });
-      return false;
-    }
-
-    if (phoneToSave && phoneToSave.length > 20) {
-      setStatusMessage({ type: 'error', text: 'Номер телефону занадто довгий (макс. 20 символів).' });
-      return false;
+    if (formData.phone.trim()) {
+        const phoneError = validatePhoneNumber(countryCode, formData.phone);
+        if (phoneError) {
+            setStatusMessage({ type: 'error', text: phoneError }); // Тут помилка валідатора може бути локалізована окремо, якщо треба
+            return false;
+        }
     }
 
     return true;
-  }, [formData, countryCode]);
+  }, [formData, countryCode, t]);
 
   const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
@@ -112,7 +91,7 @@ export default function ProfileEditPage() {
     setIsSaving(true);
     
     try {
-      const phoneToSave = formData.phone.trim() ? countryCode + ' ' + formData.phone.trim() : null;
+      const phoneToSave = cleanPhoneNumberForSave(countryCode, formData.phone);
 
       const updateProfileResult = await profileAPI.updateProfile({
         full_name: formData.name.trim(),
@@ -124,21 +103,21 @@ export default function ProfileEditPage() {
         setStatusMessage({ type: 'success', text: updateEmailResult.message });
         setOriginalEmail(formData.email);
       } else {
-        setStatusMessage({ type: 'success', text: updateProfileResult.message });
+        setStatusMessage({ type: 'success', text: t('edit_page.success') });
         setTimeout(() => navigate('/profile'), 1500);
       }
     } catch (error) {
       const errorMessage = handleApiError(error);
-      setStatusMessage({ type: 'error', text: 'Помилка при збереженні: ' + errorMessage });
+      setStatusMessage({ type: 'error', text: `${t('edit_page.errors.save_error')}: ${errorMessage}` });
     } finally {
       setIsSaving(false);
     }
-  }, [formData, countryCode, originalEmail, navigate, validateForm]);
+  }, [formData, countryCode, originalEmail, navigate, validateForm, t]);
 
   if (isLoading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>Завантаження даних...</div>
+        <div className={styles.loading}>{t('billing_page.loading')}</div>
       </div>
     );
   }
@@ -147,11 +126,11 @@ export default function ProfileEditPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <Link to="/profile" className={styles.backButton}>
-          <FaArrowLeft /> Назад до профілю
+          <FaArrowLeft /> {t('actions.back_to_profile')}
         </Link>
         <div className={styles.titleSection}>
-          <h1 className={styles.title}>Редагування профілю</h1>
-          <p className={styles.subtitle}>Оновіть вашу особисту інформацію</p>
+          <h1 className={styles.title}>{t('edit_page.title')}</h1>
+          <p className={styles.subtitle}>{t('edit_page.subtitle')}</p>
         </div>
       </div>
       
@@ -159,8 +138,8 @@ export default function ProfileEditPage() {
         <div className={styles.section}>
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.formHeader}>
-              <h2 className={styles.formTitle}>Основна інформація</h2>
-              <p className={styles.formSubtitle}>Введіть ваші особисті дані</p>
+              <h2 className={styles.formTitle}>{t('edit_page.main_info')}</h2>
+              <p className={styles.formSubtitle}>{t('edit_page.enter_data')}</p>
             </div>
             
             {statusMessage.text && (
@@ -178,7 +157,7 @@ export default function ProfileEditPage() {
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>
                 <FaUser className={styles.labelIcon} />
-                Ім'я та прізвище *
+                {t('labels.full_name')} *
               </label>
               <input
                 type="text"
@@ -186,7 +165,7 @@ export default function ProfileEditPage() {
                 value={formData.name}
                 onChange={handleInputChange}
                 className={styles.formInput}
-                placeholder="Введіть ваше ім'я"
+                placeholder={t('edit_page.placeholders.name')}
                 required
                 disabled={isSaving}
                 maxLength={30}
@@ -196,7 +175,7 @@ export default function ProfileEditPage() {
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>
                 <FaEnvelope className={styles.labelIcon} />
-                Email адреса *
+                {t('labels.email')} *
               </label>
               <input
                 type="email"
@@ -204,7 +183,7 @@ export default function ProfileEditPage() {
                 value={formData.email}
                 onChange={handleInputChange}
                 className={styles.formInput}
-                placeholder="Введіть ваш email"
+                placeholder={t('edit_page.placeholders.email')}
                 required
                 disabled={isSaving}
                 maxLength={54}
@@ -214,7 +193,7 @@ export default function ProfileEditPage() {
                 <div className={styles.emailWarning}>
                   <FaExclamationTriangle className={styles.warningIcon} />
                   <span className={styles.warningText}>
-                    Після збереження на цю адресу буде відправлено лист для підтвердження
+                    {t('edit_page.email_warning')}
                   </span>
                 </div>
               )}
@@ -223,7 +202,7 @@ export default function ProfileEditPage() {
             <div className={styles.formGroup}>
               <label className={styles.formLabel}>
                 <FaPhone className={styles.labelIcon} />
-                Телефон
+                {t('labels.phone')}
               </label>
               <div className={styles.phoneInputContainer}>
                 <select
@@ -245,9 +224,8 @@ export default function ProfileEditPage() {
                   value={formData.phone}
                   onChange={handleInputChange}
                   className={styles.formInput}
-                  placeholder="991234567"
+                  placeholder={t('edit_page.placeholders.phone')}
                   disabled={isSaving}
-                  maxLength={20}
                 />
               </div>
             </div>
@@ -259,12 +237,12 @@ export default function ProfileEditPage() {
                 disabled={isSaving}
               >
                 <FaSave className={styles.buttonIcon} />
-                {isSaving ? 'Збереження...' : 'Зберегти зміни'}
+                {isSaving ? t('actions.saving') : t('actions.save')}
               </button>
               
               <Link to="/profile" className={styles.secondaryButton}>
                 <FaTimes className={styles.buttonIcon} />
-                Скасувати
+                {t('actions.cancel')}
               </Link>
             </div>
           </form>

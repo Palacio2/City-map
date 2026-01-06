@@ -1,0 +1,38 @@
+{
+  "subscription": {
+    "title": "Wybierz subskrypcję",
+    "subtitle": "Elastyczne plany dla poszukiwania nieruchomości i profesjonalistów",
+    "current_label": "(Obecny)",
+    "active_plan_label": "Aktywny plan",
+    "included_title": "Co zawiera:",
+    "disabled_title": "Niedostępne:",
+    "buttons": {
+      "active": "Aktywny",
+      "stay_free": "Pozostań przy Free",
+      "choose": "Wybierz {{plan}}",
+      "upgrade": "Ulepsz subskrypcję"
+    },
+    "lock": {
+      "title": "Wymagana subskrypcja",
+      "default_msg": "Ta funkcja jest dostępna z płatną subskrypcją."
+    },
+    "plans": {
+      "free": { "name": "Darmowy", "price": "0 UAH" },
+      "weekly": { "name": "Tygodniowy", "price": "99 UAH/tydzień" },
+      "premium": { "name": "Premium", "price": "299 UAH/mies" },
+      "realtor": { "name": "Realtor Pro", "price": "599 UAH/mies" }
+    },
+    "features": {
+      "basic_map": "Podstawowe informacje",
+      "limited_filters": "Ograniczone filtry",
+      "limited_data_show": "Ograniczone wyświetlanie danych",
+      "full_data_access": "Pełny dostęp do danych",
+      "all_filters": "Wszystkie filtry",
+      "personal_stats_access": "Statystyki",
+      "save_favorites": "Zapisywanie dzielnic",
+      "compare_districts": "Porównywanie",
+      "export_data": "Eksport raportów (PDF/Excel)",
+      "priority_support": "Osobisty menedżer"
+    }
+  }
+}

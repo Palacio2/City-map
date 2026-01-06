@@ -1,6 +1,6 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '../../supabaseClient';
-import { subscriptionPlans, featureTranslations } from './subscriptionPlans';
+import { subscriptionPlans } from './subscriptionPlans'; // Прибрав featureTranslations
 
 const SubscriptionContext = createContext();
 
@@ -10,131 +10,95 @@ export const useSubscription = () => {
   return context;
 };
 
-const getFreePlan = () => ({
-  plan: 'free', 
-  features: subscriptionPlans.free.features, 
-  expiresAt: null, 
-  status: 'active',
-  isCancelled: false,
-  isExpired: false 
-});
+const getFreeFeatures = () => subscriptionPlans?.free?.features || [];
 
-const fetchSubscriptionFromDB = async () => {
-  try {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return getFreePlan();
-
-    const { data: subscriptions } = await supabase
-      .from('user_subscriptions')
-      .select('*')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false })
-      .limit(1);
-
-    if (subscriptions?.length > 0) {
-      const subscription = subscriptions[0];
-      const planName = subscription.plan_name;
-      
-      const now = new Date();
-      const endsAt = new Date(subscription.ends_at);
-      
-      // Перевіряємо, чи термін дії минув
-      const isExpired = endsAt <= now; 
-
-      // Якщо підписка прострочена АБО поточний план free, використовуємо free
-      if (isExpired || planName === 'free') return getFreePlan();
-
-      const features = subscriptionPlans[planName]?.features || subscriptionPlans.free.features;
-      
-      // Підписка активна, якщо не 'cancelled' АБО 'cancelled', але не прострочена 
-      const isActive = subscription.status === 'active' || 
-                       (subscription.status === 'cancelled' && !isExpired); 
-
-      return {
-        plan: planName, // Фактичний платний план (premium)
-        originalPlan: planName,
-        features: features,
-        expiresAt: subscription.ends_at,
-        status: subscription.status,
-        isCancelled: subscription.status === 'cancelled',
-        isExpired: isExpired, 
-      };
-    }
-
-    return getFreePlan();
-  } catch (error) {
-    console.error('Failed to fetch subscription:', error);
-    return getFreePlan();
-  }
+const FREE_PLAN = {
+  id: null, plan: 'free', features: [], expiresAt: null, status: 'active', isExpired: false
 };
 
-
 export const SubscriptionProvider = ({ children }) => {
-  const [subscription, setSubscription] = useState(null);
+  const [subscription, setSubscription] = useState({ ...FREE_PLAN, features: getFreeFeatures() });
   const [isLoading, setIsLoading] = useState(true);
 
-  const updateSubscription = async () => {
-    setIsLoading(true);
-    const sub = await fetchSubscriptionFromDB();
-    setSubscription(sub);
-    setIsLoading(false);
-  };
+  const fetchSubscriptionData = useCallback(async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) return { ...FREE_PLAN, features: getFreeFeatures() };
 
-  useEffect(() => {
-    const loadSubscription = async () => {
-      setIsLoading(true);
-      const sub = await fetchSubscriptionFromDB();
-      setSubscription(sub);
-      setIsLoading(false);
-    };
+      const { data, error } = await supabase
+        .from('user_subscriptions')
+        .select('*')
+        .eq('user_id', session.user.id)
+        .in('status', ['active', 'trialing'])
+        .gt('ends_at', new Date().toISOString())
+        .order('ends_at', { ascending: false })
+        .maybeSingle();
 
-    loadSubscription();
+      if (error || !data) return { ...FREE_PLAN, features: getFreeFeatures() };
 
-    const { data: authListener } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) loadSubscription();
-      else setSubscription(getFreePlan());
-    });
+      let planName = data.plan_name === 'pro' ? 'premium' : data.plan_name;
+      if (!subscriptionPlans[planName]) planName = 'free';
 
-    return () => authListener.subscription.unsubscribe();
+      return {
+        id: data.id,
+        plan: planName,
+        features: subscriptionPlans[planName]?.features || getFreeFeatures(),
+        expiresAt: data.ends_at,
+        status: data.status,
+        isExpired: false
+      };
+    } catch (err) {
+      console.error("Subscription fetch error:", err);
+      return { ...FREE_PLAN, features: getFreeFeatures() };
+    }
   }, []);
 
-  const hasFeature = (feature) => {
-    if (!subscription) return false;
-    
-    // Якщо підписка прострочена, доступні лише free функції
-    if (subscription.isExpired || subscription.plan === 'free') {
-      return subscriptionPlans.free.features.includes(feature);
+  const updateSubscription = useCallback(async (waitForPlan = null) => {
+    setIsLoading(true);
+    try {
+      let sub = await fetchSubscriptionData();
+      if (waitForPlan && waitForPlan !== 'free') {
+        let attempts = 0;
+        while (attempts < 5 && sub.plan !== waitForPlan) {
+          await new Promise(r => setTimeout(r, 1000));
+          sub = await fetchSubscriptionData();
+          attempts++;
+        }
+      }
+      setSubscription(sub);
+    } catch (e) {
+      console.error("Critical update error:", e);
+      setSubscription({ ...FREE_PLAN, features: getFreeFeatures() });
+    } finally {
+      setIsLoading(false);
     }
-    
-    // В іншому випадку, перевіряємо функції поточного активного плану
-    return subscription.features.includes(feature);
-  };
+  }, [fetchSubscriptionData]);
 
-  const getTranslatedFeatures = () => {
-    if (!subscription) return [];
-    
-    // Якщо прострочена, використовуємо free features для відображення
-    const currentFeatures = subscription.isExpired || subscription.plan === 'free'
-      ? subscriptionPlans.free.features
-      : subscription.features;
-      
-    return currentFeatures.map(feature => featureTranslations[feature] || feature);
-  };
+  useEffect(() => {
+    let mounted = true;
+    const init = async () => { if (mounted) await updateSubscription(); };
+    init();
 
-  const value = {
+    const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((event) => {
+       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') updateSubscription();
+       else if (event === 'SIGNED_OUT') {
+          setSubscription({ ...FREE_PLAN, features: getFreeFeatures() });
+          setIsLoading(false);
+       }
+    });
+    return () => { mounted = false; authSub.unsubscribe(); };
+  }, [updateSubscription]);
+
+  const value = useMemo(() => ({
     subscription,
     isLoading,
-    hasFeature,
-    getTranslatedFeatures,
-    // *** ЗМІНЕНО: Видалено isPro ***
-    isPremium: subscription?.plan === 'premium' && !subscription?.isExpired,
-    isFree: subscription?.plan === 'free' || subscription?.isExpired,
+    hasFeature: (feature) => subscription.features?.includes(feature) || false,
+    isPremium: subscription.plan !== 'free' && !subscription.isExpired,
+    isFree: subscription.plan === 'free',
     updateSubscription,
-  };
+    // Тепер повертає просто список ключів (strings), переклад робимо в компоненті
+    getFeatureKeys: () => subscription.features || [] 
+  }), [subscription, isLoading, updateSubscription]);
 
-  return (
-    <SubscriptionContext.Provider value={value}>
-      {children}
-    </SubscriptionContext.Provider>
-  );
+  return <SubscriptionContext.Provider value={value}>{children}</SubscriptionContext.Provider>;
 };

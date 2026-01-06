@@ -1,82 +1,51 @@
 import { supabase } from '../../supabaseClient';
 
-/**
- * Отримує історію підписок користувача з пагінацією.
- * @param {number} page - Номер поточної сторінки (за замовчуванням 1).
- * @param {number} limit - Кількість записів на сторінці (за замовчуванням 10).
- * @returns {Promise<{ subscriptions: Array, count: number }>} Масив підписок і загальна кількість.
- */
+const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+
 export async function fetchUserBillingHistory(page = 1, limit = 10) {
   try {
-    const { data: { user }, error: userError } = await supabase.auth.getUser();
-
-    if (userError || !user) {
-      throw new Error('Користувач не авторизований. Будь ласка, увійдіть.');
-    }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Необхідна авторизація');
 
     const start = (page - 1) * limit;
     const end = start + limit - 1;
 
-    const { data: subscriptions, error: fetchError, count } = await supabase
+    const { data: subscriptions, error, count } = await supabase
       .from('user_subscriptions')
-      .select('id, plan_name, status, starts_at, ends_at, payment_id, created_at, cancelled_at', { count: 'exact' })
+      .select('id, plan_name, status, starts_at, ends_at, payment_id, created_at, cancelled_at, amount', { count: 'exact' })
       .eq('user_id', user.id)
       .order('created_at', { ascending: false })
       .range(start, end);
 
-    if (fetchError) {
-      throw fetchError;
-    }
+    if (error) throw error;
 
-    // Конвертуємо plan_name 'pro' в 'premium' для відображення
-    const formattedSubscriptions = (subscriptions || []).map(sub => ({
-      ...sub,
-      // Конвертуємо тільки для відображення, але зберігаємо оригінальні значення
-      display_plan_name: sub.plan_name === 'pro' ? 'premium' : sub.plan_name,
-      display_status: sub.status // Можна додати форматування статусу тут, якщо потрібно
-    }));
-
-    return { subscriptions: formattedSubscriptions, count };
+    return { 
+      subscriptions: subscriptions.map(sub => ({
+        ...sub,
+        amount: sub.amount !== null ? Number(sub.amount) : null
+      })), 
+      count 
+    };
   } catch (error) {
-    console.error("Помилка при завантаженні історії платежів:", error);
-    throw new Error(error.message || 'Не вдалося завантажити історію платежів.');
+    console.error("API Error:", error);
+    throw error;
   }
 }
 
-/**
- * Скасовує підписку користувача
- */
 export async function cancelUserSubscription(subscriptionId) {
-  try {
-    const { error: updateError } = await supabase
-      .from('user_subscriptions')
-      .update({
-        status: 'cancelled',
-        cancelled_at: new Date().toISOString()
-      })
-      .eq('id', subscriptionId);
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) throw new Error('Необхідна авторизація');
 
-    if (updateError) {
-      console.error('Помилка оновлення підписки:', updateError);
-      throw updateError;
-    }
-   
-    // Оновлюємо поточний план користувача до "free" у таблиці профілів
-    const { data: { user } } = await supabase.auth.getUser();
-    if (user) {
-      const { error: profileError } = await supabase
-        .from('profiles')
-        .update({ current_plan: 'free' })
-        .eq('id', user.id);
+  const response = await fetch(`${FUNCTION_URL}/cancel-subscription`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify({ subscriptionId })
+  });
 
-      if (profileError) {
-        console.error('Помилка оновлення плану користувача:', profileError);
-      }
-    }
-
-    return { success: true };
-  } catch (error) {
-    console.error("Помилка при скасуванні підписки:", error);
-    throw new Error(error.message || 'Не вдалося скасувати підписку.');
-  }
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || 'Не вдалося скасувати підписку');
+  return result;
 }

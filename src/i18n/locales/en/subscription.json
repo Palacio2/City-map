@@ -1,0 +1,38 @@
+{
+  "subscription": {
+    "title": "Choose Subscription",
+    "subtitle": "Flexible plans for finding housing and professionals",
+    "current_label": "(Current)",
+    "active_plan_label": "Active Plan",
+    "included_title": "What's included:",
+    "disabled_title": "Not available:",
+    "buttons": {
+      "active": "Active",
+      "stay_free": "Stay on Free",
+      "choose": "Choose {{plan}}",
+      "upgrade": "Upgrade Subscription"
+    },
+    "lock": {
+      "title": "Subscription Required",
+      "default_msg": "This feature is available with a paid subscription."
+    },
+    "plans": {
+      "free": { "name": "Free", "price": "0 UAH" },
+      "weekly": { "name": "Weekly", "price": "99 UAH/week" },
+      "premium": { "name": "Premium", "price": "299 UAH/mo" },
+      "realtor": { "name": "Realtor Pro", "price": "599 UAH/mo" }
+    },
+    "features": {
+      "basic_map": "Basic Information",
+      "limited_filters": "Limited Filters",
+      "limited_data_show": "Limited Data Display",
+      "full_data_access": "Full Data Access",
+      "all_filters": "All Filters",
+      "personal_stats_access": "Statistics",
+      "save_favorites": "Save Districts",
+      "compare_districts": "Comparison",
+      "export_data": "Export Reports (PDF/Excel)",
+      "priority_support": "Personal Manager"
+    }
+  }
+}

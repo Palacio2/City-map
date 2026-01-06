@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styles from './DistrictMap.module.css';
 import CountrySelect from '../cityCountrySelect/CountrySelect';
 import CitySelect from '../cityCountrySelect/CitySelect';
@@ -9,61 +10,62 @@ import { fetchDistrictsWithFilters } from '../api/districtsApi';
 import { filterDistrictsByCriteria } from '../../utils/filterUtils';
 import { transformDistrictsForDisplay } from '../../utils/dataTransformers';
 
-const LoadingIndicator = () => (
-  <div className={styles.loading}>
-    <div className={styles.spinner}></div>
-    <p>Завантаження районів...</p>
-  </div>
-);
+const LoadingIndicator = () => {
+  const { t } = useTranslation('districts');
+  return (
+    <div className={styles.loading}>
+      <div className={styles.spinner}></div>
+      <p>{t('loading')}</p>
+    </div>
+  );
+};
 
-const ErrorDisplay = ({ error, onRetry }) => (
-  <div className={styles.error}>
-    <p>Помилка завантаження районів: {error}</p>
-    <button onClick={onRetry} className={styles.retryButton}>
-      Спробувати знову
-    </button>
-  </div>
-);
+const ErrorDisplay = ({ error, onRetry }) => {
+  const { t } = useTranslation('districts');
+  return (
+    <div className={styles.error}>
+      <p>{t('error_prefix', { error })}</p>
+      <button onClick={onRetry} className={styles.retryButton}>{t('retry')}</button>
+    </div>
+  );
+};
 
 export default function DistrictMap() {
+  const { t } = useTranslation('districts');
   const { country, city } = useParams();
+  
   const [allDistricts, setAllDistricts] = useState([]);
   const [filteredDistricts, setFilteredDistricts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({});
 
-  const fetchDistricts = useCallback(async () => {
-  try {
-    setIsLoading(true);
-    setError(null);
-    
-    const decodedCountry = decodeURIComponent(country);
-    const decodedCity = decodeURIComponent(city);
-    
-    const districtsData = await fetchDistrictsWithFilters(decodedCountry, decodedCity);
-    
-    // Трансформуємо всі дані один раз
-    const transformedDistricts = transformDistrictsForDisplay(districtsData);
-    
-    setAllDistricts(transformedDistricts);
-    setFilteredDistricts(transformedDistricts);
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setIsLoading(false);
-  }
-}, [country, city]);
+  const loadData = useCallback(async () => {
+    if (!country || !city) return;
+
+    try {
+      setIsLoading(true);
+      setError(null);
+      
+      const decodedCountry = decodeURIComponent(country);
+      const decodedCity = decodeURIComponent(city);
+      
+      const rawData = await fetchDistrictsWithFilters(decodedCountry, decodedCity);
+      const transformedData = transformDistrictsForDisplay(rawData);
+      
+      setAllDistricts(transformedData);
+      setFilteredDistricts(transformedData);
+    } catch (err) {
+      console.error(err);
+      setError(err.message || t('load_failed'));
+    } finally {
+      setIsLoading(false);
+    }
+  }, [country, city, t]);
 
   useEffect(() => {
-    if (country && city) {
-      fetchDistricts();
-    }
-  }, [country, city, fetchDistricts]);
-
-  const handleDistrictClick = useCallback((district) => {
-    console.log('Обраний район:', district.name);
-  }, []);
+    loadData();
+  }, [loadData]);
 
   const handleFiltersChange = useCallback((filters) => {
     setSelectedFilters(filters);
@@ -71,9 +73,9 @@ export default function DistrictMap() {
     setFilteredDistricts(filtered);
   }, [allDistricts]);
 
-  const handleRetry = useCallback(() => {
-    fetchDistricts();
-  }, [fetchDistricts]);
+  const handleDistrictClick = useCallback((district) => {
+    console.log('Обраний район:', district.name);
+  }, []);
 
   if (!country) return <CountrySelect />;
   if (!city) return <CitySelect country={country} />;
@@ -89,7 +91,7 @@ export default function DistrictMap() {
         {isLoading ? (
           <LoadingIndicator />
         ) : error ? (
-          <ErrorDisplay error={error} onRetry={handleRetry} />
+          <ErrorDisplay error={error} onRetry={loadData} />
         ) : (
           <DistrictsMap 
             districts={filteredDistricts}

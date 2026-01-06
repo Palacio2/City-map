@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /profile
+Disallow: /payment
+Disallow: /payment-success
+
+Sitemap: https://city-map-alpha.vercel.app/sitemap.xml

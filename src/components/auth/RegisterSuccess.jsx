@@ -1,17 +1,19 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FaCheckCircle, FaEnvelope, FaRedo } from 'react-icons/fa';
 import { supabase } from '../../supabaseClient';
 import styles from './RegisterSuccess.module.css';
 
 export default function RegisterSuccess() {
+  const { t } = useTranslation('auth');
   const location = useLocation();
-  const email = location.state?.email || 'вашу електронну пошту';
+  const email = location.state?.email || 'email';
   const [isResending, setIsResending] = useState(false);
   const [resendStatus, setResendStatus] = useState('');
 
   const handleResendEmail = async () => {
-    if (!email || email === 'вашу електронну пошту') return;
+    if (!email || email === 'email') return;
     
     setIsResending(true);
     setResendStatus('');
@@ -26,10 +28,8 @@ export default function RegisterSuccess() {
       });
 
       if (error) throw error;
-      
       setResendStatus('success');
     } catch (error) {
-      console.error('Помилка повторної відправки:', error);
       setResendStatus('error');
     } finally {
       setIsResending(false);
@@ -41,30 +41,30 @@ export default function RegisterSuccess() {
       <div className={styles.card}>
         <div className={styles.successMessage}>
           <FaCheckCircle className={styles.successIcon} />
-          <h1>Реєстрація успішна!</h1>
-          <p>Ми відправили лист для підтвердження на вашу електронну пошту</p>
+          <h1>{t('success_reg.title')}</h1>
+          <p>{t('success_reg.text')}</p>
           
           <div className={styles.emailNote}>
             <FaEnvelope /> 
             <span>{email}</span>
           </div>
           
-          <p>Будь ласка, перевірте вашу пошту та підтвердіть email адресу.</p>
+          <p>{t('success_reg.check_email')}</p>
 
           {resendStatus === 'success' && (
-            <p className={styles.successText}>Лист успішно відправлено повторно!</p>
+            <p className={styles.successText}>{t('forgot_pass.success_title')}</p>
           )}
           
           {resendStatus === 'error' && (
-            <p className={styles.errorText}>Помилка відправки. Спробуйте пізніше.</p>
+            <p className={styles.errorText}>{t('errors.generic')}</p>
           )}
 
           <div className={styles.actions}>
             <Link to="/login" className={styles.button}>
-              Перейти до входу
+              {t('success_reg.goto_login')}
             </Link>
             
-            {email && email !== 'вашу електронну пошту' && (
+            {email && email !== 'email' && (
               <button 
                 onClick={handleResendEmail}
                 disabled={isResending}
@@ -73,12 +73,12 @@ export default function RegisterSuccess() {
                 {isResending ? (
                   <>
                     <div className={styles.spinner}></div>
-                    Відправка...
+                    {t('forgot_pass.sending')}
                   </>
                 ) : (
                   <>
                     <FaRedo />
-                    Надіслати лист ще раз
+                    {t('success_reg.resend_btn')}
                   </>
                 )}
               </button>

@@ -1,0 +1,104 @@
+{
+  "panel": {
+    "title": "Filtry",
+    "free_version": "Wersja darmowa",
+    "premium": "Premium",
+    "upgrade": "Ulepsz",
+    "banner_title": "Zyskaj więcej!",
+    "banner_text": "Odblokuj wszystkie filtry z subskrypcją Premium",
+    "view_tariffs": "Zobacz plany",
+    "clear": "Wyczyść"
+  },
+  "options": {
+    "any": "Dowolna",
+    "high": "Wysoka",
+    "medium": "Średnia",
+    "low": "Niska",
+    "good": "Dobra",
+    "average": "Średnia",
+    "poor": "Słaba"
+  },
+  "education": {
+    "title": "🎓 Edukacja",
+    "kindergartens": "Przedszkola",
+    "schools": "Szkoły",
+    "universities": "Uczelnie",
+    "min_kindergartens": "Min. liczba przedszkoli:",
+    "min_schools": "Min. liczba szkół:",
+    "min_universities": "Min. liczba uczelni:",
+    "min_rating": "Min. ocena edukacji:",
+    "unit": "szt."
+  },
+  "medicine": {
+    "title": "🏥 Medycyna",
+    "hospitals": "Szpitale",
+    "clinics": "Przychodnie",
+    "pharmacies": "Apteki",
+    "emergency": "Pogotowie",
+    "min_hospitals": "Min. liczba szpitali:",
+    "min_clinics": "Min. liczba przychodni:",
+    "min_rating": "Min. ocena medycyny:"
+  },
+  "commerce": {
+    "title": "🛒 Handel i usługi",
+    "groceries": "Sklepy spożywcze",
+    "construction": "Sklepy budowlane",
+    "clothing": "Sklepy odzieżowe",
+    "post": "Poczta",
+    "banks": "Banki i bankomaty",
+    "beauty": "Salony urody",
+    "min_groceries": "Min. sklepów spożywczych:",
+    "density": "Gęstość sklepów:",
+    "min_rating": "Min. ocena handlu:"
+  },
+  "safety": {
+    "title": "🛡️ Bezpieczeństwo",
+    "crime_level": "Poziom przestępczości:",
+    "police": "Posterunki policji",
+    "cctv": "Kamery monitoringu",
+    "lighting": "Oświetlenie nocne",
+    "level_low": "Niski",
+    "level_medium": "Średni",
+    "level_high": "Wysoki",
+    "level_any": "Dowolny"
+  },
+  "utilities": {
+    "title": "💡 Media",
+    "water": "Wodociągi",
+    "heating": "Ogrzewanie",
+    "electricity": "Elektryczność",
+    "gas": "Gaz",
+    "waste": "Wywóz śmieci",
+    "quality": "Jakość usług:",
+    "cost_label": "Koszt mediów (UAH/m²):",
+    "from": "Od",
+    "to": "Do"
+  },
+  "social": {
+    "title": "🌳 Infrastruktura społeczna",
+    "parks": "Parki i skwery",
+    "cafes": "Kawiarnie i restauracje",
+    "playgrounds": "Place zabaw",
+    "sports": "Boiska sportowe",
+    "libraries": "Biblioteki",
+    "cinemas": "Kina",
+    "theaters": "Teatry",
+    "museums": "Muzea",
+    "min_parks": "Min. liczba parków:",
+    "min_park_size": "Min. wielkość parku:",
+    "min_rating": "Min. ocena infrastruktury:",
+    "unit_size": "m²"
+  },
+  "transport": {
+    "title": "🚍 Transport",
+    "bus_stops": "Przystanki autobusowe",
+    "tram_stops": "Przystanki tramwajowe",
+    "metro": "Stacje metra",
+    "bike_lanes": "Ścieżki rowerowe",
+    "parking": "Parkingi",
+    "distance": "Odległość do transportu:",
+    "frequency": "Częstotliwość transportu:",
+    "unit_dist": "metrów",
+    "placeholder_dist": "Do"
+  }
+}

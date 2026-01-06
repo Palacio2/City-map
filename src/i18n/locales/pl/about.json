@@ -1,0 +1,86 @@
+{
+  "hero": {
+    "title": "O GeoAnalyzer",
+    "subtitle": "Inteligentna platforma do znalezienia idealnej dzielnicy do życia",
+    "stats": {
+      "categories": "Kategorii oceny",
+      "access": "Dostęp do danych",
+      "convenience": "Wygoda"
+    }
+  },
+  "sections": {
+    "mission": "Nasza misja",
+    "features": "Możliwości GeoAnalyzer",
+    "process": "Jak to działa",
+    "data": "Nasze dane",
+    "audience": "Dla kogo?",
+    "tech": "Technologie",
+    "team": "Zespół"
+  },
+  "mission": {
+    "text_1": "GeoAnalyzer to nowoczesne narzędzie do analizy środowiska miejskiego. Uważamy, że wybór miejsca do życia powinien opierać się na sprawdzonych faktach, a nie na domysłach.",
+    "text_2": "Naszym celem jest zapewnienie użytkownikom prostego i wygodnego dostępu do kompleksowej analityki dzielnic, pomagając znaleźć idealną równowagę między komfortem, bezpieczeństwem a kosztami życia."
+  },
+  "features": [
+    { "title": "Szczegółowa analityka", "text": "Ocena dzielnic według 6 kluczowych wskaźników: edukacja, transport, bezpieczeństwo, ekologia, medycyna i handel." },
+    { "title": "Aktualne dane", "text": "Agregujemy informacje z otwartych źródeł i strukturujemy je dla łatwego odbioru." },
+    { "title": "Ulubione", "text": "Zapisuj ciekawe dzielnice w koncie osobistym dla szybkiego dostępu i porównania." },
+    { "title": "Bezpieczny wybór", "text": "Podejmuj decyzje o przeprowadzce na podstawie obiektywnych liczb, a nie tylko emocji." },
+    { "title": "Wygoda", "text": "Responsywny interfejs pozwala na badanie miast zarówno z komputera, jak i ze smartfona." },
+    { "title": "Skalowanie", "text": "Stale dodajemy nowe miasta i rozszerzamy bazę danych dzielnic." }
+  ],
+  "process": [
+    { "title": "Wybierz lokalizację", "text": "Wybierz kraj i miasto, które Cię interesuje, za pomocą wygodnych filtrów." },
+    { "title": "Analizuj wskaźniki", "text": "Przeglądaj oceny dzielnic według ważnych dla Ciebie kryteriów (szkoły, transport, parki)." },
+    { "title": "Dodaj do ulubionych", "text": "Stwórz własną krótką listę najlepszych miejsc do życia." },
+    { "title": "Podejmuj decyzje", "text": "Wykorzystaj kompleksowe dane do wyboru idealnego miejsca dla swojego domu." }
+  ],
+  "data_sources": [
+    {
+      "title": "Dane infrastrukturalne:",
+      "items": [
+        "Lokalizacja placówek edukacyjnych i szpitali",
+        "Węzły komunikacyjne i przystanki",
+        "Centra handlowe i supermarkety",
+        "Tereny parkowe i miejsca rekreacji"
+      ]
+    },
+    {
+      "title": "Statystyka i analiza:",
+      "items": [
+        "Obliczanie wskaźników bezpieczeństwa",
+        "Ocena sytuacji ekologicznej",
+        "Analiza dostępności transportowej",
+        "Zagregowane dane służb miejskich"
+      ]
+    }
+  ],
+  "audience": [
+    { "title": "Dla rodzin", "text": "Znajdź dzielnice z najlepszymi szkołami, przedszkolami i bezpiecznymi podwórkami." },
+    { "title": "Dla najemców", "text": "Oceń wygodę lokalizacji przed podpisaniem umowy najmu." },
+    { "title": "Dla inwestorów", "text": "Analizuj atrakcyjność dzielnicy pod kątem zakupu nieruchomości." },
+    { "title": "Dla nowych mieszkańców", "text": "Szybko zorientuj się w nowym mieście i znajdź komfortowe otoczenie." }
+  ],
+  "tech": [
+    { "title": "Frontend:", "text": "Nowoczesne React SPA dla szybkiej pracy i płynnej animacji." },
+    { "title": "Backend & Data:", "text": "Supabase do niezawodnego przechowywania danych i bezpiecznej autoryzacji użytkowników." },
+    { "title": "Maps & Viz:", "text": "Interaktywne mapy i wykresy do wizualnej prezentacji statystyk." },
+    { "title": "Security:", "text": "Bezpieczne protokoły transmisji danych i bezpieczne przetwarzanie płatności." }
+  ],
+  "team": {
+    "intro": "GeoAnalyzer jest tworzony przez zespół entuzjastów pasjonujących się urbanistyką i nowoczesnymi technologiami.",
+    "list": [
+      "Stale pracujemy nad ulepszaniem algorytmów oceny.",
+      "Regularnie aktualizujemy dane o miastach i dzielnicach.",
+      "Jesteśmy otwarci na sugestie i opinie naszych użytkowników."
+    ],
+    "outro": "Budujemy produkt, z którego sami korzystamy."
+  },
+  "cta": {
+    "title": "Znajdź swoją idealną dzielnicę już dziś",
+    "text": "Rozpocznij bezpłatną analizę i odkryj nowe możliwości",
+    "map_btn": "Przejdź do mapy",
+    "plans_btn": "Plany",
+    "support_btn": "Wsparcie"
+  }
+}

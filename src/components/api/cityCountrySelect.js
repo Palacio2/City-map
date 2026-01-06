@@ -1,88 +1,62 @@
-const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cityCountrySelect`;
+
+// Універсальний мапер для відповіді Supabase
+const mapLocationData = (item) => ({
+  value: item.name,
+  label: item.name,
+  available: item.is_available,
+});
 
 async function apiRequest(endpoint) {
-  try {
-    const url = `${API_BASE_URL}${endpoint}`;
-    console.log('API Request:', url);
-    
-    const response = await fetch(url, {
-      headers: {
-        'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-        'Content-Type': 'application/json'
-      }
-    });
-
-    console.log('API Response status:', response.status);
-    
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API Error response:', errorText);
-      throw new Error(`Помилка API: ${response.status}`);
+  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+    headers: {
+      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+      'Content-Type': 'application/json'
     }
+  });
 
-    const data = await response.json();
-    console.log('API Response data:', data);
-    return data;
-  } catch (error) {
-    console.error('API Request failed:', error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`API Error: ${response.statusText}`);
   }
+
+  return response.json();
 }
 
 export async function fetchCountries() {
-  try {
-    const data = await apiRequest('/cityCountrySelect/get-locations/countries');
-    
-    // Мапінг на проміжний формат (value, label, available)
-    return data.map(country => ({
-      value: country.name,
-      label: country.name,
-      available: country.is_available,
-    }));
-  } catch (error) {
-    console.error('Error fetching countries:', error);
-    throw error;
-  }
+  const data = await apiRequest('/get-locations/countries');
+  return Array.isArray(data) ? data.map(mapLocationData) : [];
 }
 
 export async function fetchCitiesByCountry(countryName) {
-  try {
-    const encodedCountryName = encodeURIComponent(countryName);
-    const data = await apiRequest(`/cityCountrySelect/get-locations/cities/${encodedCountryName}`);
-    
-    // Мапінг на проміжний формат (value, label, available)
-    return data.map(city => ({
-      value: city.name,
-      label: city.name,
-      available: city.is_available,
-    }));
-  } catch (error) {
-    console.error('Error fetching cities:', error);
-    throw new Error(`Не вдалося завантажити міста для ${countryName}`);
-  }
+  if (!countryName) return [];
+  const encodedName = encodeURIComponent(countryName);
+  const data = await apiRequest(`/get-locations/cities/${encodedName}`);
+  return Array.isArray(data) ? data.map(mapLocationData) : [];
 }
 
 /**
- * Універсальна функція для створення опцій з підтримкою disabled.
- * @param {Array<Object>} data - Масив об'єктів з полями value, label, available.
+ * Створює опції для селекта.
+ * Доступні елементи йдуть першими, недоступні (disabled) - в кінці.
  */
 export function createSelectOptions(data) {
-  // ❗ ВИПРАВЛЕННЯ ПОМИЛКИ: ArrayOf змінено на Array.isArray ❗
-  if (!Array.isArray(data)) return []; 
-    
-  const availableItems = data.filter(item => item.available);
-  const unavailableItems = data.filter(item => !item.available);
+  if (!Array.isArray(data)) return [];
 
-  return [
-    ...availableItems.map(item => ({
-      label: item.label || item.name || item.value, 
+  const available = [];
+  const unavailable = [];
+
+  data.forEach(item => {
+    const option = {
+      label: item.label || item.name || item.value,
       value: item.value,
-      disabled: false
-    })),
-    ...unavailableItems.map(item => ({
-      label: item.label || item.name || item.value, 
-      value: item.value,
-      disabled: true
-    }))
-  ];
+      disabled: !item.available // Інвертуємо available
+    };
+
+    if (item.available) {
+      available.push(option);
+    } else {
+      unavailable.push(option);
+    }
+  });
+
+  return [...available, ...unavailable];
 }

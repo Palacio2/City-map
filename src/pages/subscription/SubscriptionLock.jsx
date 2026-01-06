@@ -1,30 +1,27 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useSubscription } from './SubscriptionContext';
 import styles from './SubscriptionLock.module.css';
 
-const SubscriptionLock = ({ feature, children, message = null }) => {
+const SubscriptionLock = ({ feature, children, message }) => {
   const { hasFeature } = useSubscription();
+  const { t } = useTranslation('subscription'); // Вказуємо файл subscription.json
   const navigate = useNavigate();
 
   if (hasFeature(feature)) return children;
-
-  // *** ЗМІНЕНО: Повідомлення тепер згадує лише Premium ***
-  const defaultMessage = message || `Ця функція доступна тільки з підпискою Premium.`;
 
   return (
     <div className={styles.lockContainer}>
       <div className={styles.lockContent}>
         <div className={styles.lockIcon}>🔒</div>
-        <h3>Потрібна підписка</h3>
-        <p>{defaultMessage}</p>
+        <h3>{t('subscription.lock.title')}</h3>
+        <p>{message || t('subscription.lock.default_msg')}</p>
         <button onClick={() => navigate('/subscription')} className={styles.upgradeButton}>
-          Оновити підписку
+          {t('subscription.buttons.upgrade')}
         </button>
       </div>
-      <div className={styles.blurredContent}>
-        {children}
-      </div>
+      <div className={styles.blurredContent}>{children}</div>
     </div>
   );
 };

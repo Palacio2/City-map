@@ -1,0 +1,18 @@
+{
+  "city_title": "Оберіть місто у {{country}}",
+  "country_missing": "Країна не вказана",
+  "country_not_found": "Країна не знайдена",
+  "cities_not_found": "Міста не знайдено",
+  "error": "Помилка",
+  "go_to_map": "Перейти на мапу →",
+  "unavailable": "Недоступно",
+  "loading": "Завантаження...",
+  "retry": "Спробувати знову",
+  "back": "← Назад",
+  "continue": "Продовжити",
+  "select_placeholder": "-- Оберіть зі списку --",
+  "type_placeholder": "-- Почніть вводити назву --",
+  "no_results": "Не знайдено",
+  "country_title": "Оберіть країну",
+  "country_subtitle": "Доступні для бронювання напрямки"
+}

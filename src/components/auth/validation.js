@@ -1,50 +1,53 @@
-export const validateEmail = (email) => {
-  if (!email) return 'Email обов\'язковий';
-  if (!/\S+@\S+\.\S+/.test(email)) return 'Невірний формат email';
+// validation.js
+export const validateEmail = (email, t) => {
+  if (!email) return t('errors.required');
+  if (!/\S+@\S+\.\S+/.test(email)) return t('errors.email_invalid');
   return '';
 };
 
-export const validatePassword = (password, isLogin = false) => {
-  if (!password) return 'Пароль обов\'язковий';
-  if (!isLogin && password.length < 6) return 'Пароль має містити принаймні 6 символів';
+export const validatePassword = (password, t, isLogin = false) => {
+  if (!password) return t('errors.required');
+  if (!isLogin && password.length < 6) return t('errors.password_short');
   return '';
 };
 
-export const validateName = (name) => {
-  if (!name) return "Ім'я обов'язкове";
-  if (name.length < 2) return "Ім'я має містити принаймні 2 символи";
-  if (name.length > 50) return "Ім'я занадто довге";
+export const validateName = (name, t) => {
+  if (!name) return t('errors.required');
+  if (name.length < 2) return t('errors.name_short');
+  if (name.length > 50) return t('errors.name_long');
   return '';
 };
 
-export const validateConfirmPassword = (password, confirmPassword) => {
-  if (!confirmPassword) return 'Підтвердження пароля обов\'язкове';
-  if (password !== confirmPassword) return 'Паролі не співпадають';
+export const validateConfirmPassword = (password, confirmPassword, t) => {
+  if (!confirmPassword) return t('errors.required');
+  if (password !== confirmPassword) return t('errors.password_mismatch');
   return '';
 };
 
-export const validateLoginForm = (formData) => {
+// Приймаємо t як аргумент
+export const validateLoginForm = (formData, t) => {
   const errors = {};
-  const emailError = validateEmail(formData.email);
-  const passwordError = validatePassword(formData.password, true);
+  const emailError = validateEmail(formData.email, t);
+  const passwordError = validatePassword(formData.password, t, true);
   if (emailError) errors.email = emailError;
   if (passwordError) errors.password = passwordError;
   return errors;
 };
 
-export const validateRegisterForm = (formData) => {
+export const validateRegisterForm = (formData, t) => {
   const errors = {};
-  const validations = [
-    { field: 'name', validator: validateName },
-    { field: 'email', validator: validateEmail },
-    { field: 'password', validator: (val) => validatePassword(val, false) },
-    { field: 'confirmPassword', validator: (val) => validateConfirmPassword(formData.password, val) }
-  ];
+  // Оновлена логіка виклику валідаторів з t
+  const emailError = validateEmail(formData.email, t);
+  if (emailError) errors.email = emailError;
 
-  validations.forEach(({ field, validator }) => {
-    const error = validator(formData[field]);
-    if (error) errors[field] = error;
-  });
+  const nameError = validateName(formData.name, t);
+  if (nameError) errors.name = nameError;
+
+  const passError = validatePassword(formData.password, t, false);
+  if (passError) errors.password = passError;
+
+  const confirmError = validateConfirmPassword(formData.password, formData.confirmPassword, t);
+  if (confirmError) errors.confirmPassword = confirmError;
 
   return errors;
 };

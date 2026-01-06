@@ -1,8 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './TermsOfService.module.css';
 
+const LAST_UPDATED = '20.06.2025'; 
+
 export default function TermsOfService() {
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   const sections = [
     {
       title: '1. Загальні положення',
@@ -30,7 +36,7 @@ export default function TermsOfService() {
     {
       title: '4. Інтелектуальна власність',
       content: [
-        '4.1. Усі права на інтелектуальну власність, пов\'язані з Сервісом, належать GeoAnalyzer або наших ліцензіарів.',
+        '4.1. Усі права на інтелектуальну власність, пов\'язані з Сервісом, належать GeoAnalyzer або нашим ліцензіарам.',
         '4.2. Ви можете використовувати Сервіс лише для особистих, некомерційних цілей.'
       ]
     },
@@ -78,7 +84,7 @@ export default function TermsOfService() {
       <div className={styles.card}>
         <div className={styles.header}>
           <h1>Умови використання сервісу</h1>
-          <p>Останнє оновлення: {new Date().toLocaleDateString('uk-UA')}</p>
+          <p>Останнє оновлення: {LAST_UPDATED}</p>
         </div>
 
         <div className={styles.content}>
