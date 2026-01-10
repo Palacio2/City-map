@@ -125,3 +125,10 @@ dist
 # Vite build output
 dist/
 dist-ssr/
+
+# Local backend and scripts
+server/
+scripts/
+
+# Admin panel (Frontend)
+src/pages/admin/

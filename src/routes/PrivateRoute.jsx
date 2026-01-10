@@ -10,7 +10,6 @@ const PrivateRoute = ({ children }) => {
   const [isLoading, setIsLoading] = useState(true);
   const location = useLocation();
   
-  // Вказуємо '404', щоб брати переклади саме з 404.json
   const { t } = useTranslation('notFound'); 
 
   useEffect(() => {
@@ -39,7 +38,6 @@ const PrivateRoute = ({ children }) => {
               <div className={styles.spinnerContainer}>
                 <FaSpinner className={styles.spinnerLarge} />
               </div>
-              {/* Звертаємось до вкладеного об'єкта loader у файлі 404.json */}
               <h2 className={styles.statusTitle}>{t('loader.checking_access')}</h2>
               <p className={styles.statusText}>{t('loader.wait')}</p>
             </div>
