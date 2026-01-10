@@ -15,6 +15,12 @@ const EducationFilters = memo(({ values = {}, onChange }) => {
     onChange?.({ [field]: value ? parseInt(value) : undefined });
   };
 
+  const preventInvalidInput = (e) => {
+    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{t('education.title')}</h3>
@@ -55,6 +61,7 @@ const EducationFilters = memo(({ values = {}, onChange }) => {
               placeholder="0"
               value={values.minKindergartens || ''}
               onChange={(e) => handleMinChange(e, 'minKindergartens')}
+              onKeyDown={preventInvalidInput}
               className={styles.rangeInput}
               min="0"
             />
@@ -70,6 +77,7 @@ const EducationFilters = memo(({ values = {}, onChange }) => {
               placeholder="0"
               value={values.minSchools || ''}
               onChange={(e) => handleMinChange(e, 'minSchools')}
+              onKeyDown={preventInvalidInput}
               className={styles.rangeInput}
               min="0"
             />
@@ -85,6 +93,7 @@ const EducationFilters = memo(({ values = {}, onChange }) => {
               placeholder="0"
               value={values.minUniversities || ''}
               onChange={(e) => handleMinChange(e, 'minUniversities')}
+              onKeyDown={preventInvalidInput}
               className={styles.rangeInput}
               min="0"
             />

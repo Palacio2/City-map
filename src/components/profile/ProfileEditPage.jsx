@@ -2,45 +2,54 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft, FaUser, FaEnvelope, FaSave, FaTimes, FaPhone, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
-import { profileAPI, handleApiError } from '../api/edit-profileApi';
+import { profileAPI } from '../api/edit-profileApi';
 import { parsePhoneNumber, countryCodes, cleanPhoneNumberForSave, validatePhoneNumber } from '../../utils/phoneUtils';
 import styles from './ProfileEditPages.module.css';
 
 export default function ProfileEditPage() {
   const { t } = useTranslation('profile');
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
-  const [countryCode, setCountryCode] = useState('+380');
-  const [originalEmail, setOriginalEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
-  const [isSaving, setIsSaving] = useState(false);
+  const navigate = useNavigate();
+
+  const [state, setState] = useState({
+    name: '',
+    email: '',
+    phone: '',
+    countryCode: '+380',
+    originalEmail: '',
+    isLoading: true,
+    isSaving: false
+  });
+
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
 
-  const navigate = useNavigate();
+  const updateState = (key, value) => setState(prev => ({ ...prev, [key]: value }));
 
   useEffect(() => {
     loadUserData();
   }, []);
 
-  const loadUserData = useCallback(async () => {
+  const loadUserData = async () => {
     try {
       const profile = await profileAPI.getProfile();
-      
       const { code, number } = parsePhoneNumber(profile.phone);
       
-      setFormData({
-        name: profile.full_name,
-        email: profile.email,
-        phone: number
-      });
-      setCountryCode(code);
-      setOriginalEmail(profile.email);
+      setState(prev => ({
+        ...prev,
+        name: profile.full_name || '',
+        email: profile.email || '',
+        phone: number || '',
+        countryCode: code || '+380',
+        originalEmail: profile.email || '',
+        isLoading: false
+      }));
     } catch (error) {
-      const errorMessage = handleApiError(error);
-      setStatusMessage({ type: 'error', text: `${t('edit_page.errors.load_failed')}: ${errorMessage}` });
-    } finally {
-      setIsLoading(false);
+      setStatusMessage({ 
+        type: 'error', 
+        text: t('edit_page.errors.load_failed') 
+      });
+      updateState('isLoading', false);
     }
-  }, [t]);
+  };
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
@@ -50,74 +59,77 @@ export default function ProfileEditPage() {
       newValue = value.replace(/[^0-9]/g, '');
     }
 
-    setFormData(prev => ({ ...prev, [name]: newValue }));
-  }, []);
-
-  const handleCodeChange = useCallback((e) => {
-    setCountryCode(e.target.value);
+    updateState(name, newValue);
   }, []);
 
   const validateForm = useCallback(() => {
-    if (formData.name.trim().length > 30) {
+    const { name, email, phone, countryCode } = state;
+
+    if (name.trim().length > 30) {
       setStatusMessage({ type: 'error', text: t('edit_page.errors.name_long') });
       return false;
     }
     
-    if (!formData.name.trim() || !formData.email.trim()) {
+    if (!name.trim() || !email.trim()) {
       setStatusMessage({ 
           type: 'error', 
-          text: !formData.name.trim() ? t('edit_page.errors.name_required') : t('edit_page.errors.email_required') 
+          text: !name.trim() ? t('edit_page.errors.name_required') : t('edit_page.errors.email_required') 
       });
       return false;
     }
 
-    if (formData.phone.trim()) {
-        const phoneError = validatePhoneNumber(countryCode, formData.phone);
+    if (phone.trim()) {
+        const phoneError = validatePhoneNumber(countryCode, phone, t);
         if (phoneError) {
-            setStatusMessage({ type: 'error', text: phoneError }); // Тут помилка валідатора може бути локалізована окремо, якщо треба
+            setStatusMessage({ type: 'error', text: phoneError });
             return false;
         }
     }
 
     return true;
-  }, [formData, countryCode, t]);
+  }, [state, t]);
 
-  const handleSubmit = useCallback(async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setStatusMessage({ type: '', text: '' });
     
     if (!validateForm()) return;
 
-    setIsSaving(true);
+    updateState('isSaving', true);
     
     try {
-      const phoneToSave = cleanPhoneNumberForSave(countryCode, formData.phone);
+      const phoneToSave = cleanPhoneNumberForSave(state.countryCode, state.phone);
 
-      const updateProfileResult = await profileAPI.updateProfile({
-        full_name: formData.name.trim(),
+      await profileAPI.updateProfile({
+        full_name: state.name.trim(),
         phone: phoneToSave
       });
 
-      if (formData.email !== originalEmail) {
-        const updateEmailResult = await profileAPI.updateEmail(formData.email.trim());
+      if (state.email !== state.originalEmail) {
+        const updateEmailResult = await profileAPI.updateEmail(state.email.trim());
         setStatusMessage({ type: 'success', text: updateEmailResult.message });
-        setOriginalEmail(formData.email);
+        updateState('originalEmail', state.email);
       } else {
         setStatusMessage({ type: 'success', text: t('edit_page.success') });
         setTimeout(() => navigate('/profile'), 1500);
       }
     } catch (error) {
-      const errorMessage = handleApiError(error);
-      setStatusMessage({ type: 'error', text: `${t('edit_page.errors.save_error')}: ${errorMessage}` });
+      setStatusMessage({ 
+        type: 'error', 
+        text: error.message || t('edit_page.errors.save_error') 
+      });
     } finally {
-      setIsSaving(false);
+      updateState('isSaving', false);
     }
-  }, [formData, countryCode, originalEmail, navigate, validateForm, t]);
+  };
 
-  if (isLoading) {
+  if (state.isLoading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>{t('billing_page.loading')}</div>
+        <div className={styles.loading}>
+            <div className={styles.spinner}></div>
+            {t('billing_page.loading')}
+        </div>
       </div>
     );
   }
@@ -143,9 +155,12 @@ export default function ProfileEditPage() {
             </div>
             
             {statusMessage.text && (
-              <div className={`${styles.messageContainer} ${
-                statusMessage.type === 'success' ? styles.successMessage : styles.errorMessage
-              }`}>
+              <div 
+                className={`${styles.messageContainer} ${
+                  statusMessage.type === 'success' ? styles.successMessage : styles.errorMessage
+                }`}
+                role="alert"
+              >
                 {statusMessage.type === 'success' ? 
                   <FaCheckCircle className={styles.statusIcon} /> : 
                   <FaExclamationTriangle className={styles.statusIcon} />
@@ -155,42 +170,46 @@ export default function ProfileEditPage() {
             )}
             
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
+              <label htmlFor="name" className={styles.formLabel}>
                 <FaUser className={styles.labelIcon} />
                 {t('labels.full_name')} *
               </label>
               <input
+                id="name"
                 type="text"
                 name="name"
-                value={formData.name}
+                value={state.name}
                 onChange={handleInputChange}
                 className={styles.formInput}
                 placeholder={t('edit_page.placeholders.name')}
                 required
-                disabled={isSaving}
+                disabled={state.isSaving}
                 maxLength={30}
+                autoComplete="name"
               />
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
+              <label htmlFor="email" className={styles.formLabel}>
                 <FaEnvelope className={styles.labelIcon} />
                 {t('labels.email')} *
               </label>
               <input
+                id="email"
                 type="email"
                 name="email"
-                value={formData.email}
+                value={state.email}
                 onChange={handleInputChange}
                 className={styles.formInput}
                 placeholder={t('edit_page.placeholders.email')}
                 required
-                disabled={isSaving}
+                disabled={state.isSaving}
                 maxLength={54}
+                autoComplete="email"
               />
               
-              {formData.email !== originalEmail && (
-                <div className={styles.emailWarning}>
+              {state.email !== state.originalEmail && (
+                <div className={styles.emailWarning} role="note">
                   <FaExclamationTriangle className={styles.warningIcon} />
                   <span className={styles.warningText}>
                     {t('edit_page.email_warning')}
@@ -200,17 +219,18 @@ export default function ProfileEditPage() {
             </div>
 
             <div className={styles.formGroup}>
-              <label className={styles.formLabel}>
+              <label htmlFor="phone" className={styles.formLabel}>
                 <FaPhone className={styles.labelIcon} />
                 {t('labels.phone')}
               </label>
               <div className={styles.phoneInputContainer}>
                 <select
                   name="countryCode"
-                  value={countryCode}
-                  onChange={handleCodeChange}
+                  value={state.countryCode}
+                  onChange={(e) => updateState('countryCode', e.target.value)}
                   className={styles.countryCodeSelect}
-                  disabled={isSaving}
+                  disabled={state.isSaving}
+                  aria-label={t('labels.country_code')}
                 >
                   {countryCodes.map(item => (
                     <option key={item.code} value={item.code}>
@@ -219,13 +239,15 @@ export default function ProfileEditPage() {
                   ))}
                 </select>
                 <input
+                  id="phone"
                   type="tel"
                   name="phone"
-                  value={formData.phone}
+                  value={state.phone}
                   onChange={handleInputChange}
                   className={styles.formInput}
                   placeholder={t('edit_page.placeholders.phone')}
-                  disabled={isSaving}
+                  disabled={state.isSaving}
+                  autoComplete="tel-national"
                 />
               </div>
             </div>
@@ -234,10 +256,10 @@ export default function ProfileEditPage() {
               <button 
                 type="submit" 
                 className={styles.primaryButton}
-                disabled={isSaving}
+                disabled={state.isSaving}
               >
                 <FaSave className={styles.buttonIcon} />
-                {isSaving ? t('actions.saving') : t('actions.save')}
+                {state.isSaving ? t('actions.saving') : t('actions.save')}
               </button>
               
               <Link to="/profile" className={styles.secondaryButton}>

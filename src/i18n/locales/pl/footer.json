@@ -6,5 +6,9 @@
   "home": "Strona główna",
   "about": "O projekcie",
   "contacts": "Kontakt",
-  "terms": "Polityka prywatności"
+  "faq" : "FAQ",
+  "terms": "Polityka prywatności",
+  "email": "youworkday@gmail.com",
+  "phone": "tel: +48 698 991 398",
+  "phone_raw": "+48698991398"
 }

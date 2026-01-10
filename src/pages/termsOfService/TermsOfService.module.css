@@ -4,24 +4,24 @@
   align-items: flex-start;
   min-height: 100vh;
   background: var(--bg-light);
-  padding: 40px 20px;
+  padding: var(--spacing-md);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .card {
   background: var(--bg-white);
-  border-radius: 20px;
-  padding: 3rem;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
   width: 100%;
   max-width: 800px;
-  box-shadow: var(--shadow-default);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color);
 }
 
 .header {
   text-align: center;
-  margin-bottom: 2.5rem;
-  padding-bottom: 1.5rem;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-md);
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -29,7 +29,7 @@
   font-size: 2.2rem;
   font-weight: 800;
   color: var(--text-dark);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-xs);
 }
 
 .header p {
@@ -44,7 +44,7 @@
 }
 
 .section {
-  margin-bottom: 2.5rem;
+  margin-bottom: var(--spacing-lg);
 }
 
 .section:last-of-type {
@@ -55,22 +55,22 @@
   font-size: 1.4rem;
   font-weight: 700;
   color: var(--text-dark);
-  margin-bottom: 1rem;
-  padding-left: 1rem;
+  margin-bottom: var(--spacing-sm);
+  padding-left: var(--spacing-sm);
   border-left: 4px solid var(--primary-light);
 }
 
 .section p {
-  margin-bottom: 0.8rem;
+  margin-bottom: var(--spacing-sm);
   font-size: 1rem;
   text-align: justify;
 }
 
 .footer {
   text-align: center;
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border-light);
+  margin-top: var(--spacing-xl);
+  padding-top: var(--spacing-lg);
+  border-top: 1px solid var(--border-color);
   color: var(--text-medium);
 }
 
@@ -88,12 +88,12 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 20px 15px;
+    padding: var(--spacing-sm);
   }
   
   .card {
-    padding: 2rem;
-    border-radius: 16px;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-md);
   }
   
   .header h1 {
@@ -102,14 +102,14 @@
   
   .section h2 {
     font-size: 1.2rem;
-    padding-left: 0.8rem;
+    padding-left: var(--spacing-xs);
   }
 }
 
 @media (max-width: 480px) {
   .card {
-    padding: 1.5rem;
-    border-radius: 12px;
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-sm);
   }
   
   .header h1 {
@@ -117,7 +117,7 @@
   }
   
   .section {
-    margin-bottom: 2rem;
+    margin-bottom: var(--spacing-md);
   }
   
   .section h2 {

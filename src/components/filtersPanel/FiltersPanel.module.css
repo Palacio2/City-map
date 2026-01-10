@@ -1,7 +1,7 @@
 .panel {
   width: 360px; 
   min-width: 360px;
-  height: 100%;
+  height: calc(100vh - 120px); 
   display: flex;
   flex-direction: column;
   background: var(--bg-white);
@@ -12,6 +12,9 @@
   overflow: hidden;
   border: 1px solid var(--border-color);
   transition: all 0.3s ease;
+  
+  position: sticky;
+  top: 20px;
 }
 
 .panel:hover {
@@ -86,7 +89,7 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  min-height: 0;
+  min-height: 0; 
 }
 
 .scrollContainer {
@@ -207,12 +210,12 @@
   transform: translateY(-1px);
 }
 
-/* Адаптивність */
 @media (max-width: 768px) {
   .panel {
     width: 100%;
     height: auto;
-    max-height: 70vh;
+    max-height: 80vh; 
+    position: static; 
   }
   
   .panelHeader {

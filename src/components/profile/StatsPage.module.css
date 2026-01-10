@@ -1,3 +1,20 @@
+:root {
+  --transition-default: all 0.3s ease;
+  --shadow-default: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.12);
+  
+  /* Palette */
+  --color-purple: #667eea;
+  --color-purple-dark: #764ba2;
+  --color-green: #48bb78;
+  --color-green-dark: #38a169;
+  --color-orange: #ed8936;
+  --color-orange-dark: #dd6b20;
+  --color-light-purple: #9f7aea;
+  --color-light-purple-dark: #805ad5;
+}
+
 .container {
   min-height: 100vh;
   background: var(--bg-light);
@@ -25,17 +42,18 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
   padding: 10px 20px;
   border-radius: 8px;
   border: 2px solid var(--border-color);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-default);
   width: fit-content;
-  margin-right: auto; /* Вирівнюємо по лівому краю */
+  margin-right: auto;
 }
 
 .backButton:hover {
-  color: white;
+  color: var(--bg-white);
+  background-color: var(--primary-light);
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
@@ -66,31 +84,15 @@
   background-color: var(--bg-white);
   padding: 28px;
   border-radius: 16px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-default);
   margin-bottom: 28px;
   border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
-  overflow: hidden; /* Додаємо, щоб ніщо не виходило за межі */
+  transition: var(--transition-default);
+  overflow: hidden;
 }
 
 .section:hover {
   box-shadow: var(--shadow-hover);
-}
-
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px;
-  font-size: 18px;
-  color: var(--text-light);
-}
-
-.emptyState {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text-light);
-  font-style: italic;
 }
 
 .sectionHeader {
@@ -115,6 +117,45 @@
   margin: 0;
 }
 
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px;
+  font-size: 18px;
+  color: var(--text-light);
+}
+
+.errorState {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-dark);
+}
+
+.retryButton {
+  margin-top: 16px;
+  padding: 10px 20px;
+  background-color: var(--primary-light);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: var(--transition-default);
+}
+
+.retryButton:hover {
+  filter: brightness(110%);
+}
+
+.emptyState {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-light);
+  font-style: italic;
+}
+
+/* Stats Cards */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -128,7 +169,7 @@
   padding: 20px;
   background-color: var(--bg-light);
   border-radius: 12px;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
 }
 
 .statCard:hover {
@@ -145,7 +186,14 @@
   border-radius: 12px;
   color: white;
   font-size: 18px;
+  flex-shrink: 0;
 }
+
+/* Icon Gradients */
+.iconPurple { background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-purple-dark) 100%); }
+.iconGreen { background: linear-gradient(135deg, var(--color-green) 0%, var(--color-green-dark) 100%); }
+.iconOrange { background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-orange-dark) 100%); }
+.iconLightPurple { background: linear-gradient(135deg, var(--color-light-purple) 0%, var(--color-light-purple-dark) 100%); }
 
 .statContent {
   display: flex;
@@ -172,13 +220,14 @@
   margin-top: 4px;
 }
 
+/* Weekly Activity */
 .weeklyActivity {
   display: flex;
   justify-content: space-between;
   gap: 12px;
   margin-bottom: 20px;
-  height: 150px; /* Фіксована висота контейнера */
-  align-items: flex-end; /* Вирівнюємо бари по низу */
+  height: 150px;
+  align-items: flex-end;
 }
 
 .activityDay {
@@ -200,22 +249,26 @@
   display: flex;
   align-items: flex-end;
   gap: 4px;
-  height: 120px; /* Фіксована висота для контейнера барів */
+  height: 120px;
   width: 100%;
+  justify-content: center;
 }
 
 .activityBar {
   position: relative;
   width: 24px;
   border-radius: 6px 6px 0 0;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
   display: flex;
   justify-content: center;
-  max-height: 110px; /* Максимальна висота бару */
+  max-height: 110px;
 }
 
+.barPurple { background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-purple-dark) 100%); }
+.barOrange { background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-orange-dark) 100%); }
+
 .activityBar:hover {
-  transform: scale(1.05);
+  transform: scaleY(1.05);
   opacity: 0.9;
 }
 
@@ -225,12 +278,19 @@
   font-size: 12px;
   font-weight: 600;
   color: var(--text-dark);
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.activityBar:hover .barLabel {
+  opacity: 1;
 }
 
 .legend {
   display: flex;
   gap: 20px;
   justify-content: center;
+  flex-wrap: wrap;
 }
 
 .legendItem {
@@ -247,6 +307,10 @@
   border-radius: 4px;
 }
 
+.bgPurple { background: var(--color-purple); }
+.bgOrange { background: var(--color-orange); }
+
+/* Popular Districts */
 .popularList {
   display: flex;
   flex-direction: column;
@@ -260,11 +324,11 @@
   padding: 12px 16px;
   background-color: var(--bg-light);
   border-radius: 10px;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
 }
 
 .popularItem:hover {
-  background-color: var(--bg-hover);
+  background-color: var(--bg-hover, #edf2f7);
   transform: translateX(4px);
 }
 
@@ -300,13 +364,22 @@
   color: var(--text-light);
 }
 
-.popularityBar {
+.popularityBarContainer {
+  width: 100%;
+  background: rgba(0,0,0,0.05);
   height: 6px;
-  background: linear-gradient(90deg, var(--primary-light), var(--primary-dark));
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.popularityBar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--primary-light), var(--primary-dark, #5a67d8));
   border-radius: 3px;
   transition: width 0.5s ease;
 }
 
+/* Last Activity */
 .lastActivity {
   display: flex;
   flex-direction: column;
@@ -323,7 +396,7 @@
   width: 12px;
   height: 12px;
   border-radius: 50%;
-  background-color: #48bb78;
+  background-color: var(--color-green);
   position: relative;
 }
 
@@ -340,18 +413,9 @@
 }
 
 @keyframes pulse {
-  0% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
-  50% {
-    transform: scale(1.5);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 0.7;
-  }
+  0% { transform: scale(1); opacity: 0.7; }
+  50% { transform: scale(1.5); opacity: 0; }
+  100% { transform: scale(1); opacity: 0.7; }
 }
 
 .statusInfo {
@@ -390,7 +454,7 @@
   color: var(--primary-light);
 }
 
-/* Адаптивність */
+/* Responsive */
 @media (max-width: 768px) {
   .statsGrid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -399,10 +463,12 @@
   .weeklyActivity {
     overflow-x: auto;
     padding-bottom: 10px;
+    justify-content: flex-start;
   }
   
   .activityDay {
     min-width: 60px;
+    flex-shrink: 0;
   }
 }
 
@@ -419,11 +485,6 @@
     font-size: 28px;
   }
   
-  .statsGrid {
-    grid-template-columns: 1fr;
-    gap: 16px;
-  }
-  
   .popularItem {
     flex-direction: column;
     align-items: flex-start;
@@ -432,10 +493,6 @@
   
   .districtStats {
     align-items: flex-start;
-    width: 100%;
-  }
-  
-  .popularityBar {
     width: 100%;
   }
 }
@@ -458,7 +515,7 @@
   }
   
   .activityBar {
-    width: 20px;
+    width: 18px;
   }
   
   .backButton {

@@ -5,7 +5,7 @@ import { FaArrowLeft, FaCheckCircle, FaTimesCircle, FaLock, FaSave, FaTimes, FaS
 import { supabase } from '../../supabaseClient';
 import styles from './PasswordChangePage.module.css';
 
-const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z\d\s]).{8,}$/;
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 const MIN_PASSWORD_LENGTH = 8;
 
 const StatusMessage = ({ type, text, styles }) => {
@@ -14,7 +14,7 @@ const StatusMessage = ({ type, text, styles }) => {
     const className = type === 'success' ? styles.successMessage : styles.errorMessage;
     
     return (
-        <div className={`${styles.messageContainer} ${className}`}>
+        <div className={`${styles.messageContainer} ${className}`} role="alert">
             <Icon className={styles.statusIcon} />
             <span>{text}</span>
         </div>
@@ -56,18 +56,16 @@ export default function PasswordChangePage() {
         }
 
         try {
-            const { error: updateUserError } = await supabase.auth.updateUser({ 
+            const { error } = await supabase.auth.updateUser({ 
                 password: formData.newPassword 
             });
 
-            if (updateUserError) {
-                setStatusMessage({ type: 'error', text: `${t('password_page.errors.unknown')}: ${updateUserError.message}` });
-            } else {
-                setStatusMessage({ type: 'success', text: t('password_page.success') });
-                setFormData({ newPassword: '', confirmPassword: '' });
-            }
-        } catch {
-            setStatusMessage({ type: 'error', text: t('password_page.errors.unknown') });
+            if (error) throw error;
+
+            setStatusMessage({ type: 'success', text: t('password_page.success') });
+            setFormData({ newPassword: '', confirmPassword: '' });
+        } catch (error) {
+            setStatusMessage({ type: 'error', text: error.message || t('password_page.errors.unknown') });
         } finally {
             setIsLoading(false);
         }
@@ -110,12 +108,14 @@ export default function PasswordChangePage() {
                         />
                         
                         <div className={styles.formGroup}>
-                            <label className={styles.formLabel}>
+                            <label htmlFor="newPassword" className={styles.formLabel}>
                                 <FaLock className={styles.labelIcon} />
                                 {t('password_page.new_pass')}
                             </label>
                             <div className={styles.passwordInputContainer}>
                                 <input
+                                    id="newPassword"
+                                    name="newPassword"
                                     type={showPasswords.new ? "text" : "password"}
                                     className={styles.formInput}
                                     value={formData.newPassword}
@@ -123,11 +123,13 @@ export default function PasswordChangePage() {
                                     placeholder={t('password_page.placeholders.new')}
                                     required
                                     disabled={isLoading}
+                                    autoComplete="new-password"
                                 />
                                 <button
                                     type="button"
                                     className={styles.passwordToggle}
                                     onClick={() => togglePasswordVisibility('new')}
+                                    aria-label={showPasswords.new ? t('actions.hide_password') : t('actions.show_password')}
                                 >
                                     {showPasswords.new ? <FaEyeSlash /> : <FaEye />}
                                 </button>
@@ -135,12 +137,14 @@ export default function PasswordChangePage() {
                         </div>
 
                         <div className={styles.formGroup}>
-                            <label className={styles.formLabel}>
+                            <label htmlFor="confirmPassword" className={styles.formLabel}>
                                 <FaLock className={styles.labelIcon} />
                                 {t('password_page.confirm_pass')}
                             </label>
                             <div className={styles.passwordInputContainer}>
                                 <input
+                                    id="confirmPassword"
+                                    name="confirmPassword"
                                     type={showPasswords.confirm ? "text" : "password"}
                                     className={styles.formInput}
                                     value={formData.confirmPassword}
@@ -148,11 +152,13 @@ export default function PasswordChangePage() {
                                     placeholder={t('password_page.placeholders.confirm')}
                                     required
                                     disabled={isLoading}
+                                    autoComplete="new-password"
                                 />
                                 <button
                                     type="button"
                                     className={styles.passwordToggle}
                                     onClick={() => togglePasswordVisibility('confirm')}
+                                    aria-label={showPasswords.confirm ? t('actions.hide_password') : t('actions.show_password')}
                                 >
                                     {showPasswords.confirm ? <FaEyeSlash /> : <FaEye />}
                                 </button>
@@ -176,21 +182,20 @@ export default function PasswordChangePage() {
                         </div>
 
                         <div className={styles.securityTipsDropdown}>
-                            <div 
+                            <button 
+                                type="button"
                                 className={styles.dropdownHeader}
                                 onClick={() => setIsTipsOpen(!isTipsOpen)}
-                                role="button"
-                                tabIndex={0}
-                                onKeyPress={(e) => e.key === 'Enter' && setIsTipsOpen(!isTipsOpen)}
+                                aria-expanded={isTipsOpen}
                             >
-                                <h3 className={styles.dropdownTitle}>
+                                <span className={styles.dropdownTitle}>
                                     <FaShieldAlt />
                                     {t('password_page.tips_title')}
-                                </h3>
+                                </span>
                                 <FaChevronDown 
                                     className={`${styles.dropdownIcon} ${isTipsOpen ? styles.open : ''}`} 
                                 />
-                            </div>
+                            </button>
 
                             {isTipsOpen && (
                                 <div className={styles.dropdownContent}>

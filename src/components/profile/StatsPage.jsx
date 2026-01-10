@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaSearch, FaMap, FaChartLine, FaClock, FaArrowLeft, FaEye, FaHistory } from 'react-icons/fa';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext';
-import { fetchUserStats, fetchWeeklyActivity, fetchPopularDistricts } from '../api/statsApi';
+import { fetchDashboardData } from '../api/statsApi';
 import styles from './StatsPage.module.css';
 
 export default function StatsPage() {
@@ -26,22 +26,37 @@ export default function StatsPage() {
       setStatsLoading(true);
       setError(null);
       
-      const [userStats, weeklyData, popularData] = await Promise.all([
-        fetchUserStats(),
-        fetchWeeklyActivity(),
-        fetchPopularDistricts()
-      ]);
+      const data = await fetchDashboardData();
       
-      setStats(userStats);
-      setWeeklyActivity(Array.isArray(weeklyData) ? weeklyData : []);
-      setPopularDistricts(Array.isArray(popularData) ? popularData : []);
+      setStats(data.stats);
+      setWeeklyActivity(Array.isArray(data.weeklyActivity) ? data.weeklyActivity : []);
+      setPopularDistricts(Array.isArray(data.popularDistricts) ? data.popularDistricts : []);
     } catch (err) {
-      console.error(err);
-      setError(err.message);
+      setError(err.message || t('stats_page.error_unknown'));
     } finally {
       setStatsLoading(false);
     }
   };
+
+  const usageStats = useMemo(() => stats || {
+    searches: 0,
+    savedDistricts: 0,
+    comparisons: 0,
+    lastActive: t('stats_page.never'),
+    totalTime: '0 год 0 хв',
+    favoriteDistrict: t('stats_page.not_defined')
+  }, [stats, t]);
+
+  const safeWeeklyActivity = useMemo(() => 
+    Array.isArray(weeklyActivity) ? weeklyActivity : [], 
+  [weeklyActivity]);
+  
+  const scale = useMemo(() => {
+    const maxSearches = Math.max(...safeWeeklyActivity.map(day => day.searches || 0));
+    const maxComparisons = Math.max(...safeWeeklyActivity.map(day => day.comparisons || 0));
+    const maxValue = Math.max(maxSearches, maxComparisons, 1);
+    return 110 / maxValue;
+  }, [safeWeeklyActivity]);
 
   if (subscriptionLoading || statsLoading) {
     return (
@@ -54,22 +69,6 @@ export default function StatsPage() {
   if (!isPremium) {
     return <Navigate to="/subscription" replace />;
   }
-
-  const usageStats = stats || {
-    searches: 0,
-    savedDistricts: 0,
-    comparisons: 0,
-    lastActive: t('stats_page.never'),
-    totalTime: '0 год 0 хв',
-    favoriteDistrict: t('stats_page.not_defined')
-  };
-
-  const safeWeeklyActivity = Array.isArray(weeklyActivity) ? weeklyActivity : [];
-  
-  const maxSearches = Math.max(...safeWeeklyActivity.map(day => day.searches || 0));
-  const maxComparisons = Math.max(...safeWeeklyActivity.map(day => day.comparisons || 0));
-  const maxValue = Math.max(maxSearches, maxComparisons, 1);
-  const scale = 110 / maxValue;
 
   if (error) {
     return (
@@ -120,7 +119,7 @@ export default function StatsPage() {
           
           <div className={styles.statsGrid}>
             <div className={styles.statCard}>
-              <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)' }}>
+              <div className={`${styles.statIcon} ${styles.iconPurple}`}>
                 <FaSearch />
               </div>
               <div className={styles.statContent}>
@@ -130,7 +129,7 @@ export default function StatsPage() {
             </div>
 
             <div className={styles.statCard}>
-              <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' }}>
+              <div className={`${styles.statIcon} ${styles.iconGreen}`}>
                 <FaMap />
               </div>
               <div className={styles.statContent}>
@@ -140,7 +139,7 @@ export default function StatsPage() {
             </div>
 
             <div className={styles.statCard}>
-              <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)' }}>
+              <div className={`${styles.statIcon} ${styles.iconOrange}`}>
                 <FaChartLine />
               </div>
               <div className={styles.statContent}>
@@ -150,7 +149,7 @@ export default function StatsPage() {
             </div>
 
             <div className={styles.statCard}>
-              <div className={styles.statIcon} style={{ background: 'linear-gradient(135deg, #9f7aea 0%, #805ad5 100%)' }}>
+              <div className={`${styles.statIcon} ${styles.iconLightPurple}`}>
                 <FaClock />
               </div>
               <div className={styles.statContent}>
@@ -174,22 +173,16 @@ export default function StatsPage() {
                   <div className={styles.dayName}>{day.day || '...'}</div>
                   <div className={styles.activityBars}>
                     <div 
-                      className={styles.activityBar} 
-                      style={{ 
-                        height: `${(day.searches || 0) * scale}px`,
-                        background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
-                      }}
-                      title={`${day.searches || 0}`}
+                      className={`${styles.activityBar} ${styles.barPurple}`} 
+                      style={{ height: `${(day.searches || 0) * scale}px` }}
+                      title={`${t('stats_page.searches')}: ${day.searches || 0}`}
                     >
                       <span className={styles.barLabel}>{day.searches || 0}</span>
                     </div>
                     <div 
-                      className={styles.activityBar} 
-                      style={{ 
-                        height: `${(day.comparisons || 0) * scale}px`,
-                        background: 'linear-gradient(135deg, #ed8936 0%, #dd6b20 100%)'
-                      }}
-                      title={`${day.comparisons || 0}`}
+                      className={`${styles.activityBar} ${styles.barOrange}`} 
+                      style={{ height: `${(day.comparisons || 0) * scale}px` }}
+                      title={`${t('stats_page.comparisons')}: ${day.comparisons || 0}`}
                     >
                       <span className={styles.barLabel}>{day.comparisons || 0}</span>
                     </div>
@@ -205,11 +198,11 @@ export default function StatsPage() {
           
           <div className={styles.legend}>
             <div className={styles.legendItem}>
-              <div className={styles.legendColor} style={{ background: '#667eea' }}></div>
+              <div className={`${styles.legendColor} ${styles.bgPurple}`}></div>
               <span>{t('stats_page.legend_searches')}</span>
             </div>
             <div className={styles.legendItem}>
-              <div className={styles.legendColor} style={{ background: '#ed8936' }}></div>
+              <div className={`${styles.legendColor} ${styles.bgOrange}`}></div>
               <span>{t('stats_page.legend_comparisons')}</span>
             </div>
           </div>
@@ -227,16 +220,18 @@ export default function StatsPage() {
                 <div key={index} className={styles.popularItem}>
                   <div className={styles.districtInfo}>
                     <span className={styles.districtRank}>#{index + 1}</span>
-                    <span className={styles.districtName}>{district.name || district.district || 'Unknown'}</span>
+                    <span className={styles.districtName}>{district.name || district.district || t('stats_page.unknown')}</span>
                   </div>
                   <div className={styles.districtStats}>
                     <span className={styles.searchCount}>{district.count || 0} {t('stats_page.views')}</span>
-                    <div 
-                      className={styles.popularityBar}
-                      style={{ 
-                        width: `${((district.count || 0) / (popularDistricts[0]?.count || 1)) * 100}%` 
-                      }}
-                    ></div>
+                    <div className={styles.popularityBarContainer}>
+                      <div 
+                        className={styles.popularityBar}
+                        style={{ 
+                          width: `${((district.count || 0) / (popularDistricts[0]?.count || 1)) * 100}%` 
+                        }}
+                      ></div>
+                    </div>
                   </div>
                 </div>
               ))

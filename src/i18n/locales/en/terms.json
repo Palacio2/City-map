@@ -1,0 +1,80 @@
+{
+  "title": "Terms of Service",
+  "last_updated": "Last updated: {{date}}",
+  "footer": {
+    "return": "Return to",
+    "register": "registration",
+    "or": "or",
+    "home": "home page"
+  },
+  "sections": [
+    {
+      "title": "1. General Provisions",
+      "content": [
+        "1.1. These Terms of Service govern the relationship between You (the user) and GeoAnalyzer regarding the use of our service.",
+        "1.2. By using our service, you agree to these Terms and our Privacy Policy."
+      ]
+    },
+    {
+      "title": "2. Definitions",
+      "content": [
+        "2.1. \"Service\" - the GeoAnalyzer website and all related services.",
+        "2.2. \"User\" - any person who uses our Service.",
+        "2.3. \"Content\" - any information, data, text, images, and other materials available through the Service."
+      ]
+    },
+    {
+      "title": "3. Account Registration",
+      "content": [
+        "3.1. Access to certain features of the Service may require account creation.",
+        "3.2. You are responsible for the security of your account and password.",
+        "3.3. You agree to provide accurate, current, and complete information during registration."
+      ]
+    },
+    {
+      "title": "4. Intellectual Property",
+      "content": [
+        "4.1. All intellectual property rights related to the Service belong to GeoAnalyzer or our licensors.",
+        "4.2. You may use the Service only for personal, non-commercial purposes."
+      ]
+    },
+    {
+      "title": "5. Limitation of Liability",
+      "content": [
+        "5.1. The Service is provided \"as is\" without any warranties.",
+        "5.2. We are not responsible for the accuracy, completeness, or reliability of the data provided.",
+        "5.3. We are not liable for any damages related to the use of the Service."
+      ]
+    },
+    {
+      "title": "6. Changes to Terms",
+      "content": [
+        "6.1. We reserve the right to modify these Terms at any time.",
+        "6.2. Changes will be notified via the Service or email.",
+        "6.3. By continuing to use the Service after changes, you agree to the updated Terms."
+      ]
+    },
+    {
+      "title": "7. Termination",
+      "content": [
+        "7.1. We may terminate or suspend your access to the Service in case of violation of these Terms.",
+        "7.2. You may stop using the Service at any time."
+      ]
+    },
+    {
+      "title": "8. Acceptable Use",
+      "content": [
+        "8.1. You agree to use the Service in accordance with applicable laws.",
+        "8.2. It is prohibited to use the Service for illegal or harmful purposes."
+      ]
+    },
+    {
+      "title": "9. Contact Information",
+      "content": [
+        "9.1. If you have any questions about these Terms, please contact us:",
+        "Email: youworkday@gmail.com",
+        "Phone: +48 698 991 398"
+      ]
+    }
+  ]
+}

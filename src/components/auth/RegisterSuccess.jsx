@@ -8,12 +8,13 @@ import styles from './RegisterSuccess.module.css';
 export default function RegisterSuccess() {
   const { t } = useTranslation('auth');
   const location = useLocation();
-  const email = location.state?.email || 'email';
+  // Прибрав "або 'email'", щоб не показувати технічний текст користувачу
+  const email = location.state?.email; 
   const [isResending, setIsResending] = useState(false);
   const [resendStatus, setResendStatus] = useState('');
 
   const handleResendEmail = async () => {
-    if (!email || email === 'email') return;
+    if (!email) return;
     
     setIsResending(true);
     setResendStatus('');
@@ -44,10 +45,12 @@ export default function RegisterSuccess() {
           <h1>{t('success_reg.title')}</h1>
           <p>{t('success_reg.text')}</p>
           
-          <div className={styles.emailNote}>
-            <FaEnvelope /> 
-            <span>{email}</span>
-          </div>
+          {email && (
+            <div className={styles.emailNote}>
+              <FaEnvelope /> 
+              <span>{email}</span>
+            </div>
+          )}
           
           <p>{t('success_reg.check_email')}</p>
 
@@ -64,7 +67,7 @@ export default function RegisterSuccess() {
               {t('success_reg.goto_login')}
             </Link>
             
-            {email && email !== 'email' && (
+            {email && (
               <button 
                 onClick={handleResendEmail}
                 disabled={isResending}

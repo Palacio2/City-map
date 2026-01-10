@@ -12,7 +12,7 @@ import SafetyFilters from './sections/SafetyFilters';
 import CommerceFilters from './sections/CommerceFilters';
 import UtilitiesFilters from './sections/UtilitiesFilters';
 
-export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) {
+const FiltersPanel = React.memo(({ onFiltersChange, selectedFilters = {} }) => {
   const { t } = useTranslation('filters');
   const navigate = useNavigate();
   const { isPremium, isFree } = useSubscription();
@@ -144,4 +144,6 @@ export default function FiltersPanel({ onFiltersChange, selectedFilters = {} }) 
       </div>
     </div>
   );
-}
+});
+
+export default FiltersPanel;

@@ -54,6 +54,14 @@ import subscriptionUK from './locales/uk/subscription.json';
 import subscriptionEN from './locales/en/subscription.json';
 import subscriptionPL from './locales/pl/subscription.json';
 
+import termsEN from './locales/en/terms.json';
+import termsPl from './locales/pl/terms.json';
+import termsUK from './locales/uk/terms.json';
+
+import NotFoundPageEN from './locales/en/404.json';
+import NotFoundPagePL from './locales/pl/404.json';
+import NotFoundPageUK from './locales/uk/404.json';
+
 const resources = {
   ua: { 
     header: headerUK,
@@ -69,6 +77,8 @@ const resources = {
     favorites: favoritesUK,
     payment: paymentUK,
     subscription: subscriptionUK,
+    terms: termsUK,
+    notFound: NotFoundPageUK,
   },
   en: { 
     header: headerEN,
@@ -84,6 +94,8 @@ const resources = {
     favorites: favoritesEN,
     payment: paymentEN,
     subscription: subscriptionEN,
+    terms: termsEN,
+    notFound: NotFoundPageEN,
   },
   pl: { 
     header: headerPL,
@@ -99,6 +111,8 @@ const resources = {
     favorites: favoritesPL,
     payment: paymentPL,
     subscription: subscriptionPL,
+    terms: termsPl,
+    notFound: NotFoundPagePL,
   },
 };
 
@@ -107,12 +121,16 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'en', 
     fallbackLng: 'en',
+
+    detection: {
+      order: ['localStorage', 'cookie', 'navigator'],
+      caches: ['localStorage', 'cookie'],
+    },
     
     ns: ['header', 'footer', 'faq', 'auth', 'select',
        'districts', 'filters', 'profile', 'about',
-        'contacts', 'favorites', 'payment', 'subscription'], 
+        'contacts', 'favorites', 'payment', 'subscription', 'terms', 'notFound'], 
     defaultNS: 'header',
 
     debug: true,

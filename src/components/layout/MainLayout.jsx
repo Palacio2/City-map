@@ -9,7 +9,7 @@ export default function MainLayout() {
     <div className={styles.layout}>
       <Header />
       <main className={styles.mainContent}>
-        <div className="container">
+        <div className={styles.contentWrapper}>
           <Outlet />
         </div>
       </main>

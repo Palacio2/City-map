@@ -6,5 +6,9 @@
   "home": "Home",
   "about": "About",
   "contacts": "Contacts",
-  "terms": "Policies"
+  "faq" : "FAQ",
+  "terms": "Policies",
+  "email": "youworkday@gmail.com",
+  "phone": "tel: +48 698 991 398",
+  "phone_raw": "+48698991398"
 }

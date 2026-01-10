@@ -1,94 +1,94 @@
-/* --- Спільні стилі для кнопок улюбленого та закриття --- */
 .favoriteButton,
 .closeButton {
-    /* Білий напівпрозорий фон */
-    background: rgba(255, 255, 255, 0.25);
-    backdrop-filter: blur(10px);
-    border: 1.5px solid rgba(255, 255, 255, 0.4);
-    
-    /* Фіксовані розміри */
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    
-    /* Центрування вмісту */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    
-    /* Взаємодія */
-    cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    flex-shrink: 0;
-    z-index: 1100;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    outline: none; /* Прибираємо стандартну обводку */
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px); 
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  flex-shrink: 0;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  
+  outline: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
-.favoriteButton:hover,
-.closeButton:hover {
-    background: rgba(255, 255, 255, 0.4);
-    transform: scale(1.1);
-    border-color: #ffffff;
+@media (hover: hover) {
+  .favoriteButton:hover,
+  .closeButton:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.05);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  }
 }
 
-/* --- Стилі для іконок (SVG) --- */
+.favoriteButton:active,
+.closeButton:active {
+  transform: scale(0.95);
+  background: rgba(255, 255, 255, 0.5);
+}
+
 .favoriteButton svg,
 .closeButton svg {
-    color: white;
-    stroke: white;
-    stroke-width: 2px;
-    width: 28px;
-    height: 28px;
-    display: block;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-    pointer-events: none; /* Щоб клік проходив крізь іконку */
+  color: white;
+  stroke: white;
+  stroke-width: 2px;
+  width: 22px;
+  height: 22px;
+  display: block;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
+  pointer-events: none;
 }
 
-/* --- Специфічні стилі для активного стану (Favorite) --- */
-.favoriteButton.favoriteActive {
-    background: rgba(255, 71, 87, 0.3);
-    border-color: #ff4757;
+.favoriteActive {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: white;
 }
 
-.favoriteButton.favoriteActive svg {
-    color: #ff4757;
-    fill: #ff4757;
-    stroke: #ff4757;
+.favoriteActive svg {
+  color: var(--favorite-color);
+  fill: var(--favorite-color);
+  stroke: var(--favorite-color);
+  filter: none;
 }
 
-/* --- Анімація завантаження --- */
 .loading {
-    cursor: wait;
-    opacity: 0.8;
+  cursor: wait;
+  opacity: 0.7;
 }
 
-/* --- Адаптивність (Mobile) --- */
-@media (max-width: 768px) {
-    .favoriteButton, 
-    .closeButton {
-        width: 44px;
-        height: 44px;
-    }
-    
-    .favoriteButton svg, 
-    .closeButton svg {
-        width: 26px;
-        height: 26px;
-    }
+.loading svg {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 @media (max-width: 480px) {
-    .favoriteButton, 
-    .closeButton {
-        width: 40px;
-        height: 40px;
-    }
-    
-    .favoriteButton svg, 
-    .closeButton svg {
-        width: 24px;
-        height: 24px;
-    }
+  .favoriteButton,
+  .closeButton {
+    width: 40px;
+    height: 40px;
+  }
+
+  .favoriteButton svg,
+  .closeButton svg {
+    width: 20px;
+    height: 20px;
+  }
 }

@@ -3,20 +3,18 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { FaCheckCircle, FaArrowLeft, FaShieldAlt, FaSync, FaTag } from 'react-icons/fa';
-// 1. Імпортуємо хук
 import { useTranslation } from 'react-i18next'; 
 import { useSubscription } from '../subscription/SubscriptionContext';
-// 2. featureTranslations прибираємо, бо беремо їх з JSON
 import { subscriptionPlans } from '../subscription/subscriptionPlans';
 import { supabase } from '../../supabaseClient';
 import styles from './Payment.module.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-const CheckoutForm = ({ price }) => {
+// CheckoutForm тепер приймає mode
+const CheckoutForm = ({ price, mode }) => {
   const stripe = useStripe();
   const elements = useElements();
-  // 3. Вказуємо конкретний файл 'payment' для цього компонента
   const { t } = useTranslation('payment'); 
   const [message, setMessage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -26,23 +24,45 @@ const CheckoutForm = ({ price }) => {
     if (!stripe || !elements) return;
     setIsProcessing(true);
 
-    const { error } = await stripe.confirmPayment({
-      elements,
-      confirmParams: { return_url: `${window.location.origin}/payment-success` },
-    });
+    let result;
 
-    if (error) setMessage(error.message);
-    setIsProcessing(false);
+    // === РІЗНА ЛОГІКА ДЛЯ ОПЛАТИ ТА ПРИВ'ЯЗКИ ===
+    if (mode === 'setup') {
+        // Якщо ціна 0, ми робимо confirmSetup (прив'язка)
+        result = await stripe.confirmSetup({
+            elements,
+            confirmParams: { return_url: `${window.location.origin}/payment-success` },
+        });
+    } else {
+        // Стандартна оплата
+        result = await stripe.confirmPayment({
+            elements,
+            confirmParams: { return_url: `${window.location.origin}/payment-success` },
+        });
+    }
+
+    if (result.error) {
+        setMessage(result.error.message);
+        setIsProcessing(false);
+    }
+    // Якщо успіх, Stripe сам зробить редірект, setIsProcessing(false) не потрібен
+  };
+
+  const getButtonText = () => {
+      if (isProcessing) return t('processing');
+      if (mode === 'setup') return t('activate_btn'); // "Активувати" для 0 грн
+      return t('pay_btn', { amount: price });
   };
 
   return (
     <form onSubmit={handleSubmit} className={styles.form}>
       <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
       {message && <div className={styles.serverError}>{message}</div>}
+      
       <button disabled={isProcessing || !stripe || !elements} className={styles.payBtn}>
-        {/* Використовуємо ключі напряму з payment.json */}
-        {isProcessing ? t('processing') : t('pay_btn', { amount: price })}
+        {getButtonText()}
       </button>
+      
       <div className={styles.security}><FaShieldAlt /> {t('security')}</div>
     </form>
   );
@@ -51,16 +71,12 @@ const CheckoutForm = ({ price }) => {
 export default function Payment() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { updateSubscription } = useSubscription();
-  
-  // 4. ВАЖЛИВО: Завантажуємо ДВА неймспейси: 
-  // 'payment' (для заголовків) і 'subscription' (для назв фіч)
   const { t } = useTranslation(['payment', 'subscription']);
 
   const [clientSecret, setClientSecret] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const [finalAmount, setFinalAmount] = useState(null);
-  const [isActivating, setIsActivating] = useState(false);
+  const [paymentMode, setPaymentMode] = useState('payment'); // Новий стейт для режиму
 
   const planKey = state?.planKey;
   const planConfig = subscriptionPlans[planKey];
@@ -77,11 +93,12 @@ export default function Payment() {
       });
 
       const data = await res.json();
-      // Звертаємось до payment.json через префікс 'payment:'
       if (!res.ok) throw new Error(data.error || t('payment:errors.payment_create'));
       
       setClientSecret(data.clientSecret);
       setFinalAmount(data.amount);
+      setPaymentMode(data.mode); // Зберігаємо режим ('payment' або 'setup')
+      
     } catch (error) {
       console.error(error);
       alert(error.message);
@@ -92,19 +109,11 @@ export default function Payment() {
   useEffect(() => {
     if (!planKey || !planConfig) navigate('/subscription');
     else fetchPaymentIntent();
-    // eslint-disable-next-line
   }, [planKey]);
-
-  const handleFreeActivation = async () => {
-    setIsActivating(true);
-    await updateSubscription(planKey);
-    navigate('/payment-success', { state: { plan: planConfig.name, amount: 0 } });
-    setIsActivating(false);
-  };
 
   const options = useMemo(() => ({
     clientSecret,
-    appearance: { theme: 'stripe', variables: { colorPrimary: '#3182ce' } },
+    appearance: { theme: 'stripe', variables: { colorPrimary: '#667eea' } },
   }), [clientSecret]);
 
   if (!planConfig) return null;
@@ -115,13 +124,15 @@ export default function Payment() {
         <button onClick={() => navigate(-1)} className={styles.backLink}>
             <FaArrowLeft /> {t('payment:back')}
         </button>
-        {/* 'payment:' вказує на payment.json */}
         <h1 className={styles.title}>{t('payment:title', { plan: planConfig.name })}</h1>
 
         <div className={styles.grid}>
           <div className={styles.infoCard}>
             <div className={styles.headerRow}><FaCheckCircle /> {t('payment:tariff_label')}</div>
-            <div className={styles.priceTag}>{finalAmount === 0 ? '0 грн' : planConfig.price}</div>
+            <div className={styles.priceTag}>
+                {/* Показуємо актуальну ціну (0 якщо промокод спрацював) */}
+                {finalAmount !== null ? `${finalAmount} грн` : planConfig.price}
+            </div>
             
             <div className={styles.promoSection}>
                 <label className={styles.promoLabel}><FaTag /> {t('payment:promo_label')}</label>
@@ -130,9 +141,14 @@ export default function Payment() {
                         type="text" 
                         value={promoCode} 
                         onChange={(e) => setPromoCode(e.target.value)} 
-                        placeholder={t('payment:promo_placeholder')} 
+                        placeholder={t('payment:promo_placeholder')}
+                        className={styles.promoInput}
                     />
-                    <button onClick={() => fetchPaymentIntent(promoCode)} disabled={!promoCode}>
+                    <button 
+                        onClick={() => fetchPaymentIntent(promoCode)} 
+                        disabled={!promoCode}
+                        className={styles.promoButton}
+                    >
                         {t('payment:promo_apply')}
                     </button>
                 </div>
@@ -142,25 +158,22 @@ export default function Payment() {
               {planConfig.features.map((f, i) => (
                 <div key={i} className={styles.feature}>
                     <FaCheckCircle size={14} color="#48bb78"/> 
-                    {/* ТУТ ГОЛОВНЕ: беремо переклад фічі з subscription.json */}
-                    {t(`subscription:features.${f}`)}
+                    {t(`subscription:subscription.features.${f}`)}
                 </div>
               ))}
             </div>
           </div>
 
           <div className={styles.paymentCard}>
-            {finalAmount === 0 ? (
-                <div className={styles.successContainer}>
-                    <FaCheckCircle size={50} color="#38a169" />
-                    <h3>{t('payment:promo_success')}</h3>
-                    <button onClick={handleFreeActivation} className={styles.activateButton} disabled={isActivating}>
-                        {isActivating ? t('payment:activating') : t('payment:activate_btn')}
-                    </button>
-                </div>
-            ) : clientSecret ? (
+            {/* ЗМІНА: Ми більше не ховаємо форму, якщо finalAmount === 0.
+               Ми завжди рендеримо Elements, якщо є clientSecret.
+            */}
+            {clientSecret ? (
               <Elements key={clientSecret} options={options} stripe={stripePromise}>
-                <CheckoutForm price={planConfig.price} />
+                <CheckoutForm 
+                    price={finalAmount !== null ? `${finalAmount} грн` : planConfig.price} 
+                    mode={paymentMode} 
+                />
               </Elements>
             ) : (
               <div className={styles.loadingState}><FaSync className={styles.spin} /></div>

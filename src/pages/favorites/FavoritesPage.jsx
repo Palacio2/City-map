@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from 'react-i18next'; // ✅ Імпорт
+import { useTranslation } from 'react-i18next';
 import { favoritesApi } from '../../components/api/favoritesApi'; 
 import { supabase } from '../../supabaseClient';
 import { transformDistrictsForDisplay } from '../../utils/dataTransformers'; 
@@ -9,9 +9,8 @@ import mapStyles from '../../components/districtMap/DistrictsMap.module.css';
 import styles from './FavoritesPage.module.css';
 import { formatPrice } from '../../utils/formatters'; 
 
-// === 🛠️ OPTIMIZATION: Винесено назовні ===
 const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
-    const { t } = useTranslation('favorites'); // ✅ Хук всередині картки
+    const { t } = useTranslation('favorites');
     const filterData = district.filterData;
     const na = t('na');
     
@@ -59,7 +58,7 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
 });
 
 export default function FavoritesPage() {
-    const { t } = useTranslation('favorites'); // ✅ Хук в основному компоненті
+    const { t } = useTranslation('favorites');
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
@@ -152,7 +151,8 @@ export default function FavoritesPage() {
                     <span className={styles.favoritesCount}>{favorites.length}</span>
                 </header>
 
-                <div className={mapStyles.combinedMap}>
+                {/* ВИПРАВЛЕНО: Використовуємо власний клас сітки замість імпортованого */}
+                <div className={styles.favoritesGrid}>
                     {favorites.map(district => (
                         <FavoriteDistrictCard
                             key={district.id}

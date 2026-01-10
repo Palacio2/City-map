@@ -15,6 +15,12 @@ const MedicineFilters = memo(({ values = {}, onChange }) => {
     onChange?.({ [field]: value ? parseInt(value) : undefined });
   };
 
+  const preventInvalidInput = (e) => {
+    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{t('medicine.title')}</h3>
@@ -64,6 +70,7 @@ const MedicineFilters = memo(({ values = {}, onChange }) => {
               placeholder="0"
               value={values.minHospitals || ''}
               onChange={(e) => handleMinChange(e, 'minHospitals')}
+              onKeyDown={preventInvalidInput}
               className={styles.rangeInput}
               min="0"
             />
@@ -79,6 +86,7 @@ const MedicineFilters = memo(({ values = {}, onChange }) => {
               placeholder="0"
               value={values.minClinics || ''}
               onChange={(e) => handleMinChange(e, 'minClinics')}
+              onKeyDown={preventInvalidInput}
               className={styles.rangeInput}
               min="0"
             />

@@ -1,10 +1,10 @@
 {
   "subscription": {
     "title": "Choose Subscription",
-    "subtitle": "Flexible plans for finding housing and professionals",
+    "subtitle": "Flexible plans for real estate search and professionals",
     "current_label": "(Current)",
     "active_plan_label": "Active Plan",
-    "included_title": "What's included:",
+    "included_title": "Included:",
     "disabled_title": "Not available:",
     "buttons": {
       "active": "Active",
@@ -17,15 +17,15 @@
       "default_msg": "This feature is available with a paid subscription."
     },
     "plans": {
-      "free": { "name": "Free", "price": "0 UAH" },
-      "weekly": { "name": "Weekly", "price": "99 UAH/week" },
-      "premium": { "name": "Premium", "price": "299 UAH/mo" },
-      "realtor": { "name": "Realtor Pro", "price": "599 UAH/mo" }
+      "free": { "name": "Free", "price": "0 $" },
+      "weekly": { "name": "Weekly", "price": "$3 / week" },
+      "premium": { "name": "Premium", "price": "$7 / mo" },
+      "realtor": { "name": "Realtor Pro", "price": "$14 / mo" }
     },
     "features": {
       "basic_map": "Basic Information",
       "limited_filters": "Limited Filters",
-      "limited_data_show": "Limited Data Display",
+      "limited_data_show": "Limited Data View",
       "full_data_access": "Full Data Access",
       "all_filters": "All Filters",
       "personal_stats_access": "Statistics",

@@ -1,20 +1,15 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaArrowLeft, FaDownload, FaReceipt, FaCheckCircle, FaTimesCircle, FaSync } from 'react-icons/fa';
+import { FaArrowLeft, FaDownload, FaReceipt, FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
 import { fetchUserBillingHistory, cancelUserSubscription } from '../api/billingApi';
-import styles from './BillingHistoryPage.module.css';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext';
-
-const STATUS_ICONS = {
-  'active': { icon: <FaCheckCircle />, color: '#48bb78' },
-  'inactive': { icon: <FaTimesCircle />, color: '#e53e3e' },
-  'cancelled': { icon: <FaTimesCircle />, color: '#e53e3e' }
-};
+import { PLAN_KEY_MAP, ITEMS_PER_PAGE } from '../../utils/billing'; 
+import styles from './BillingHistoryPage.module.css';
 
 export default function BillingHistoryPage() {
-  // 1. Завантажуємо 'profile' (для сторінки) та 'subscription' (для фіч і планів)
   const { t } = useTranslation(['profile', 'subscription']);
+  const navigate = useNavigate();
   
   const { subscription, updateSubscription, isLoading: isSubscriptionLoading, getFeatureKeys } = useSubscription();
   const [billingHistory, setBillingHistory] = useState([]);
@@ -23,67 +18,12 @@ export default function BillingHistoryPage() {
   const [currentPage, setCurrentPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [isCancelling, setIsCancelling] = useState(false);
-  
-  const navigate = useNavigate();
-  const itemsPerPage = 10;
-
-  const handleActionClick = (action) => {
-    console.warn(`Function ${action} in development`);
-  };
-
-  const getStatusConfig = (status) => {
-      const config = STATUS_ICONS[status] || STATUS_ICONS.active;
-      return {
-          ...config,
-          // Статуси беремо з profile.json (subscription.status)
-          label: t(`profile:subscription.status.${status}`) || status
-      };
-  };
-
-  const getPlanName = (plan) => {
-      const keyMap = {
-          'pro': 'premium',
-          'premium': 'premium',
-          'weekly': 'weekly',
-          'realtor': 'realtor',
-          'free': 'free'
-      };
-      const key = keyMap[plan] || 'free';
-      // Беремо назву плану з subscription.json (subscription.plans.key.name)
-      return t(`subscription:subscription.plans.${key}.name`);
-  };
-
-  const getPlanPrice = (plan) => {
-      const prices = {
-          'weekly': '99 грн',
-          'premium': '299 грн',
-          'realtor': '599 грн',
-          'free': '0 грн'
-      };
-      return prices[plan] || prices.free;
-  };
 
   const loadBillingData = useCallback(async () => {
     try {
       setIsLoading(true);
-      const { subscriptions, count } = await fetchUserBillingHistory(currentPage, itemsPerPage);
-     
-      const formattedHistory = (subscriptions || []).map(sub => {
-        const displayPlan = sub.plan_name === 'pro' ? 'premium' : sub.plan_name;
-        
-        return {
-          id: sub.id,
-          date: new Date(sub.created_at).toLocaleDateString('uk-UA'),
-          amount: getPlanPrice(displayPlan),
-          status: sub.status,
-          plan: displayPlan, // Передаємо ключ, а не переклад, щоб getPlanName спрацював у render
-          method: t('profile:billing_page.method_online') || 'Онлайн',
-          invoiceId: sub.payment_id,
-          expiresAt: sub.ends_at ? new Date(sub.ends_at).toLocaleDateString('uk-UA') : t('profile:stats_page.never')
-        };
-      });
-      
-      setBillingHistory(formattedHistory);
+      const { subscriptions, count } = await fetchUserBillingHistory(currentPage, ITEMS_PER_PAGE);
+      setBillingHistory(subscriptions || []);
       setTotalCount(count);
     } catch (e) {
       setError(t('profile:billing_page.error_load'));
@@ -102,61 +42,75 @@ export default function BillingHistoryPage() {
       return;
     }
 
-    const confirmed = window.confirm(t('profile:billing_page.cancel_confirm'));
-    
-    if (!confirmed) return;
+    if (!window.confirm(t('profile:billing_page.cancel_confirm'))) return;
 
     setIsCancelling(true);
     try {
       if (!subscription.id) throw new Error('No subscription ID found');
-
       await cancelUserSubscription(subscription.id);
-      
       await updateSubscription(); 
-      alert(t('profile:billing_page.cancel_success'));
-      
       loadBillingData();
-      
     } catch (error) {
-      alert(`Error: ${error.message}`);
+      console.error(error);
     } finally {
       setIsCancelling(false);
     }
   };
 
-  const totalPages = Math.ceil(totalCount / itemsPerPage);
-
   const handlePageChange = (newPage) => {
+    const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
 
-  const currentSubscriptionInfo = (() => {
-    if (isSubscriptionLoading) {
-      return { plan: '...', amount: '---', expiresAt: '---' };
-    }
-   
-    let actualPlanName = (subscription?.isExpired || subscription?.plan === 'free') 
+  const tableData = useMemo(() => {
+    return billingHistory.map(sub => {
+      const displayPlanKey = PLAN_KEY_MAP[sub.plan_name] || 'free';
+      
+      return {
+        id: sub.id,
+        date: new Date(sub.created_at).toLocaleDateString('uk-UA'),
+        // Беремо ціну з перекладів
+        amount: t(`subscription:subscription.plans.${displayPlanKey}.price`), 
+        status: sub.status,
+        planName: t(`subscription:subscription.plans.${displayPlanKey}.name`),
+        method: t('profile:billing_page.method_online'),
+        invoiceId: sub.payment_id,
+        expiresAt: sub.ends_at ? new Date(sub.ends_at).toLocaleDateString('uk-UA') : t('profile:stats_page.never')
+      };
+    });
+  }, [billingHistory, t]);
+
+  const subscriptionInfo = useMemo(() => {
+    if (isSubscriptionLoading) return null;
+
+    const actualPlanKey = (subscription?.isExpired || subscription?.plan === 'free') 
         ? 'free' 
         : subscription?.plan;
-   
-    let endsAtFormatted = t('profile:stats_page.never');
-    if (actualPlanName !== 'free' && subscription?.ends_at) {
-        endsAtFormatted = new Date(subscription.ends_at).toLocaleDateString('uk-UA');
-    }
+    
+    const mappedKey = PLAN_KEY_MAP[actualPlanKey] || 'free';
 
     return {
-      plan: getPlanName(actualPlanName),
-      amount: getPlanPrice(actualPlanName),
-      expiresAt: endsAtFormatted
+      planName: t(`subscription:subscription.plans.${mappedKey}.name`),
+      // Беремо ціну з перекладів
+      amount: t(`subscription:subscription.plans.${mappedKey}.price`),
+      expiresAt: (mappedKey !== 'free' && subscription?.ends_at)
+        ? new Date(subscription.ends_at).toLocaleDateString('uk-UA')
+        : t('profile:stats_page.never'),
+      isActive: subscription?.status === 'active' && mappedKey !== 'free',
+      isFree: mappedKey === 'free'
     };
-  })();
+  }, [subscription, isSubscriptionLoading, t]);
+
+  const featureKeys = useMemo(() => {
+    return getFeatureKeys ? getFeatureKeys() : (subscription?.features || []);
+  }, [getFeatureKeys, subscription]);
 
   if (isLoading || isSubscriptionLoading) {
     return (
       <div className={styles.loadingContainer}>
-        <FaSync className={styles.loadingSpinner} />
+        <div className={styles.spinner}></div>
         <p>{t('profile:billing_page.loading')}</p>
       </div>
     );
@@ -166,7 +120,7 @@ export default function BillingHistoryPage() {
     return <div className={styles.errorContainer}>{error}</div>;
   }
 
-  const featureKeys = getFeatureKeys ? getFeatureKeys() : (subscription?.features || []);
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
     <div className={styles.container}>
@@ -184,7 +138,7 @@ export default function BillingHistoryPage() {
         <div className={styles.billingContainer}>
           <div className={styles.billingSummary}>
             <div className={styles.summaryCard}>
-              <div className={styles.summaryIcon} style={{ background: 'linear-gradient(135deg, #48bb78 0%, #38a169 100%)' }}>
+              <div className={`${styles.summaryIcon} ${styles.iconSuccess}`}>
                 <FaCheckCircle />
               </div>
               <div className={styles.summaryContent}>
@@ -201,40 +155,41 @@ export default function BillingHistoryPage() {
               <span>{t('profile:billing_page.table.amount')}</span>
               <span>{t('profile:billing_page.table.method')}</span>
               <span>{t('profile:billing_page.table.status')}</span>
-              <span>{t('profile:billing_page.table.actions')}</span>
+              <span className={styles.alignRight}>{t('profile:billing_page.table.actions')}</span>
             </div>
+            
             <div className={styles.tableBody}>
-              {billingHistory.length > 0 ? (
-                billingHistory.map((item) => {
-                  const statusConfig = getStatusConfig(item.status);
+              {tableData.length > 0 ? (
+                tableData.map((item) => {
+                  const isErrorStatus = item.status === 'cancelled' || item.status === 'inactive';
+                  const StatusIcon = isErrorStatus ? FaTimesCircle : FaCheckCircle;
+                  const statusClass = isErrorStatus ? styles.statusError : styles.statusSuccess;
+
                   return (
                     <div key={item.id} className={styles.tableRow}>
                       <div className={styles.dateCell}>
                         <span className={styles.date}>{item.date}</span>
                         <span className={styles.invoiceId}>{item.invoiceId || '---'}</span>
                       </div>
-                      {/* Викликаємо getPlanName для перекладу назви плану */}
-                      <span className={styles.plan}>{getPlanName(item.plan)}</span>
+                      <span className={styles.plan}>{item.planName}</span>
                       <span className={styles.amount}>{item.amount}</span>
                       <span className={styles.method}>{item.method}</span>
                       <div className={styles.statusCell}>
-                        <span className={styles.status} style={{ color: statusConfig.color }}>
-                          {statusConfig.icon}
-                          {statusConfig.label}
+                        <span className={`${styles.status} ${statusClass}`}>
+                          <StatusIcon />
+                          {t(`profile:subscription.status.${item.status}`) || item.status}
                         </span>
                       </div>
                       <div className={styles.actions}>
                         <button 
-                            className={styles.downloadButton} 
-                            onClick={() => handleActionClick('download')}
-                            title={t('profile:actions.download')}
+                            className={styles.actionButton} 
+                            aria-label={t('profile:actions.download')}
                         >
                           <FaDownload />
                         </button>
                         <button 
-                            className={styles.viewButton} 
-                            onClick={() => handleActionClick('view')}
-                            title={t('profile:actions.view_details')}
+                            className={styles.actionButton} 
+                            aria-label={t('profile:actions.view_details')}
                         >
                           <FaReceipt />
                         </button>
@@ -243,7 +198,7 @@ export default function BillingHistoryPage() {
                   );
                 })
               ) : (
-                <div className={styles.noData} style={{padding: '20px', textAlign: 'center', color: '#718096'}}>
+                <div className={styles.noData}>
                     {t('profile:billing_page.no_history')}
                 </div>
               )}
@@ -259,7 +214,9 @@ export default function BillingHistoryPage() {
               >
                 {t('profile:actions.prev')}
               </button>
-              <span className={styles.paginationInfo}>{t('profile:billing_page.pagination', { current: currentPage, total: totalPages })}</span>
+              <span className={styles.paginationInfo}>
+                {t('profile:billing_page.pagination', { current: currentPage, total: totalPages })}
+              </span>
               <button
                 className={styles.paginationButton}
                 disabled={currentPage === totalPages}
@@ -270,45 +227,45 @@ export default function BillingHistoryPage() {
             </div>
           )}
 
-          <div className={styles.subscriptionInfo}>
-            <h3>{t('profile:billing_page.current_sub')}</h3>
-            <div className={styles.currentPlan}>
-              <div className={styles.planDetails}>
-                <h4>{currentSubscriptionInfo.plan}</h4>
-                <p>{currentSubscriptionInfo.amount}</p>
-                <span className={styles.nextPayment}>
-                   {subscription?.status === 'active' && subscription?.plan !== 'free' 
-                      ? t('profile:billing_page.next_payment', { date: currentSubscriptionInfo.expiresAt })
-                      : subscription?.plan !== 'free' 
-                        ? t('profile:billing_page.valid_until', { date: currentSubscriptionInfo.expiresAt })
-                        : ''
-                   }
-                </span>
+          {subscriptionInfo && (
+            <div className={styles.subscriptionInfo}>
+              <h3>{t('profile:billing_page.current_sub')}</h3>
+              <div className={styles.currentPlan}>
+                <div className={styles.planDetails}>
+                  <h4>{subscriptionInfo.planName}</h4>
+                  <p>{subscriptionInfo.amount}</p>
+                  <span className={styles.nextPayment}>
+                     {subscriptionInfo.isActive 
+                        ? t('profile:billing_page.next_payment', { date: subscriptionInfo.expiresAt })
+                        : !subscriptionInfo.isFree 
+                          ? t('profile:billing_page.valid_until', { date: subscriptionInfo.expiresAt })
+                          : ''
+                     }
+                  </span>
+                </div>
+                
+                <button 
+                  className={`${styles.manageButton} ${subscriptionInfo.isActive ? styles.cancelButton : ''}`} 
+                  onClick={handleManageSubscription}
+                  disabled={isCancelling}
+                >
+                  {isCancelling ? t('profile:billing_page.processing') : (
+                    subscriptionInfo.isActive 
+                      ? t('profile:billing_page.cancel_sub')
+                      : t('profile:billing_page.update_plan')
+                  )}
+                </button>
               </div>
-              
-              <button 
-                className={`${styles.manageButton} ${subscription?.status === 'active' && subscription?.plan !== 'free' ? styles.cancelButton : ''}`} 
-                onClick={handleManageSubscription}
-                disabled={isCancelling}
-              >
-                {isCancelling ? t('profile:billing_page.processing') : (
-                  subscription?.status === 'active' && subscription?.plan !== 'free' 
-                    ? t('profile:billing_page.cancel_sub')
-                    : t('profile:billing_page.update_plan')
-                )}
-              </button>
             </div>
-          </div>
+          )}
 
-          {subscription && (
+          {featureKeys.length > 0 && (
             <div className={styles.subscriptionFeatures}>
-              {/* Виправлено ключ на active_features, який є в JSON */}
               <h3>{t('profile:billing_page.active_features')}</h3>
               <ul>
                 {featureKeys.map((featureKey, index) => (
-                  <li key={index}>
+                  <li key={`${featureKey}-${index}`}>
                     <FaCheckCircle className={styles.featureIcon} />
-                    {/* Переклад фіч беремо з subscription.json */}
                     {t(`subscription:subscription.features.${featureKey}`)}
                   </li>
                 ))}

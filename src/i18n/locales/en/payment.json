@@ -1,27 +1,27 @@
 {
-  "title": "Payment for {{plan}} subscription",
+  "title": "Pay for {{plan}} Subscription",
   "back": "Back",
-  "tariff_label": "Tariff",
+  "tariff_label": "Plan",
   "promo_label": "Promo Code",
   "promo_placeholder": "Code...",
-  "promo_apply": "OK",
+  "promo_apply": "Apply",
   "promo_success": "Promo code applied!",
   "activate_btn": "Activate",
   "activating": "Activating...",
   "pay_btn": "Pay {{amount}}",
   "processing": "Processing...",
-  "security": "Data secured with Stripe SSL encryption",
+  "security": "Secured by Stripe SSL encryption",
   "loading": "Loading...",
   "errors": {
     "payment_create": "Error creating payment",
-    "card_length": "Card number must be 16 digits",
-    "expiry_format": "Invalid expiry format (MM/YY)",
-    "cvv_length": "CVV must be 3 digits",
+    "card_length": "Card number must contain 16 digits",
+    "expiry_format": "Invalid date format (MM/YY)",
+    "cvv_length": "CVV must contain 3 digits",
     "holder_required": "Enter cardholder name"
   },
   "success": {
     "title": "Payment Successful!",
-    "back_to_profile": "Profile",
+    "back_to_profile": "Dashboard",
     "access_granted": "Access Granted",
     "subscription_active": "Your subscription has been successfully activated.",
     "status_label": "Status",
@@ -30,9 +30,8 @@
     "tx_label": "Transaction",
     "to_map": "To Map",
     "details_title": "Order Details",
-    "plan_label": "Subscription plan:",
-    "date_label": "Payment date:",
-    "period_label": "Period:",
-    "one_month": "1 month"
+    "plan_label": "Plan:",
+    "date_label": "Payment Date:",
+    "period_label": "Period:"
   }
 }

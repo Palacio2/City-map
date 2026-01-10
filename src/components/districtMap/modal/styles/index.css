@@ -1,12 +1,10 @@
-/* --- Загальні змінні --- */
 :root {
-    /* Кольори */
     --primary-color: #007bff;
     --primary-dark: #0056b3;
     --primary-light: #52a3ff;
-    --secondary-color: #2ecc71;  /* Зелений для High */
-    --warning-color: #f39c12;    /* Жовтий для Medium */
-    --danger-color: #e74c3c;     /* Червоний для Low */
+    --secondary-color: #2ecc71;
+    --warning-color: #f39c12;
+    --danger-color: #e74c3c;
     --text-dark: #2c3e50;
     --text-medium: #7f8c8d;
     --text-light: #bdc3c7;
@@ -19,11 +17,9 @@
     --favorite-color: #ff4757;
     --favorite-dark: #ff2e43;
     
-    /* Анімації */
     --transition-default: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
-/* --- Загальні анімації --- */
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }

@@ -29,32 +29,36 @@
   padding: 2rem;
   box-shadow: var(--shadow);
   border: 1px solid var(--border-color);
-  max-width: 600px;
+  max-width: 800px; 
   margin: 0 auto;
 }
 
 .planToggle {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
   margin-bottom: 2rem;
   background: var(--bg-light);
   border-radius: 12px;
-  padding: 0.5rem;
-  gap: 0.5rem;
+  padding: 6px;
 }
 
 .toggleButton {
   display: flex;
   align-items: center;
+  justify-content: center; 
   gap: 0.5rem;
-  padding: 1rem 1.5rem;
+  padding: 12px 16px; 
   border: none;
   background: transparent;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
+  font-size: 0.95rem; 
   transition: all 0.3s ease;
   color: var(--text-medium);
+  white-space: nowrap; 
+  width: 100%;
 }
 
 .toggleButton.active {
@@ -66,10 +70,26 @@
 .toggleButton svg {
   width: 16px;
   height: 16px;
+  flex-shrink: 0; 
+}
+
+.currentPlanLabel {
+  font-size: 0.75rem;
+  background: rgba(72, 187, 120, 0.2);
+  color: #2f855a;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
 }
 
 .planCard {
   text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .planHeader {
@@ -97,21 +117,19 @@
   margin-bottom: 0.5rem;
 }
 
-.trialLabel {
-  color: var(--secondary-color);
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
 .features {
   margin-bottom: 2rem;
   text-align: left;
+  max-width: 500px; 
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .features h3 {
   color: var(--text-dark);
   margin-bottom: 1rem;
   font-size: 1.1rem;
+  text-align: center;
 }
 
 .featureItem {
@@ -127,7 +145,7 @@
 }
 
 .featureItem svg {
-  color: var(--secondary-color);
+  color: #48bb78; 
   width: 18px;
   height: 18px;
   flex-shrink: 0;
@@ -136,12 +154,17 @@
 .disabledFeatures {
   margin-bottom: 2rem;
   text-align: left;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+  opacity: 0.8;
 }
 
 .disabledFeatures h3 {
-  color: var(--danger-color);
+  color: var(--text-medium);
   margin-bottom: 1rem;
   font-size: 1.1rem;
+  text-align: center;
 }
 
 .disabledFeature {
@@ -158,7 +181,7 @@
 }
 
 .disabledFeature svg {
-  color: var(--danger-color);
+  color: #e53e3e; 
   width: 16px;
   height: 16px;
   flex-shrink: 0;
@@ -166,6 +189,7 @@
 
 .subscribeButton {
   width: 100%;
+  max-width: 400px; 
   padding: 1.2rem;
   background: var(--primary-gradient);
   color: white;
@@ -178,9 +202,15 @@
   margin-bottom: 1rem;
 }
 
-.subscribeButton:hover {
+.subscribeButton:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
+}
+
+.subscribeButton:disabled {
+  opacity: 0.7;
+  cursor: default;
+  background: #a0aec0;
 }
 
 .subscribeButton.free {
@@ -191,6 +221,7 @@
 
 .subscribeButton.free:hover {
   background: var(--border-color);
+  transform: translateY(-2px);
 }
 
 .faqLink {
@@ -229,13 +260,12 @@
     font-size: 2rem;
   }
   
-  .planToggle {
-    flex-direction: column;
+  .plansContainer {
+    padding: 1.5rem;
   }
-  
-  .faqLink {
-    flex-direction: column;
-    gap: 0.8rem;
+
+  .planToggle {
+    grid-template-columns: 1fr 1fr;
   }
 }
 
@@ -254,5 +284,9 @@
   
   .plansContainer {
     padding: 1rem;
+  }
+
+  .planToggle {
+    grid-template-columns: 1fr;
   }
 }

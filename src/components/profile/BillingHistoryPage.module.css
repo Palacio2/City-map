@@ -1,3 +1,12 @@
+:root {
+  --transition-default: all 0.3s ease;
+  --shadow-default: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --status-success: #48bb78;
+  --status-error: #e53e3e;
+  --bg-hover: #f7fafc;
+}
+
 .container {
   min-height: 100vh;
   background: var(--bg-light);
@@ -24,17 +33,18 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
   padding: 10px 20px;
   border-radius: 8px;
   border: 2px solid var(--border-color);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-default);
   width: fit-content;
   margin-right: auto;
 }
 
 .backButton:hover {
-  color: white;
+  color: var(--bg-white);
+  background-color: var(--primary-light);
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
 }
@@ -65,7 +75,7 @@
 .billingContainer {
   background: var(--bg-white);
   border-radius: 16px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-default);
   border: 1px solid var(--border-color);
   padding: 32px;
   margin: 0 auto;
@@ -97,6 +107,10 @@
   border-radius: 12px;
   color: white;
   font-size: 18px;
+}
+
+.iconSuccess {
+  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
 }
 
 .summaryContent {
@@ -202,29 +216,39 @@
   font-size: 14px;
 }
 
+.statusSuccess {
+  color: var(--status-success);
+}
+
+.statusError {
+  color: var(--status-error);
+}
+
+.alignRight {
+  text-align: right;
+}
+
 .actions {
   display: flex;
   gap: 8px;
   justify-content: flex-end;
 }
 
-.downloadButton, .viewButton {
+.actionButton {
   padding: 8px;
   border: none;
   border-radius: 6px;
   background: var(--bg-light);
   color: var(--text-medium);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-default);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.downloadButton:hover {
+.actionButton:hover {
   background: var(--primary-light);
-  color: white;
-}
-
-.viewButton:hover {
-  background: var(--primary-dark);
   color: white;
 }
 
@@ -243,7 +267,8 @@
   background: var(--bg-white);
   color: var(--text-dark);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-default);
+  box-sizing: border-box;
 }
 
 .paginationButton:hover:not(:disabled) {
@@ -279,12 +304,14 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 20px;
 }
 
 .planDetails h4 {
   margin-bottom: 8px;
   color: var(--text-dark);
   font-size: 16px;
+  font-weight: 600;
 }
 
 .planDetails p {
@@ -314,7 +341,8 @@
 }
 
 .featureIcon {
-  color: #48bb78;
+  color: var(--status-success);
+  flex-shrink: 0;
 }
 
 .manageButton {
@@ -325,7 +353,9 @@
   color: var(--primary-light);
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition-default);
+  white-space: nowrap;
+  box-sizing: border-box;
 }
 
 .manageButton:hover {
@@ -339,28 +369,35 @@
 }
 
 .cancelButton {
-  border-color: #e53e3e;
-  color: #e53e3e;
+  border-color: var(--status-error);
+  color: var(--status-error);
 }
 
 .cancelButton:hover {
-  background: #e53e3e;
+  background: var(--status-error);
   color: white;
-  border-color: #e53e3e;
+  border-color: var(--status-error);
 }
 
-.loadingContainer, .errorContainer {
+.loadingContainer, .errorContainer, .noData {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   min-height: 200px;
-  font-size: 18px;
-  color: var(--text-dark);
+  font-size: 16px;
+  color: var(--text-medium);
+  text-align: center;
+  gap: 16px;
 }
 
-.loadingSpinner {
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--bg-light);
+  border-top: 4px solid var(--primary-light);
+  border-radius: 50%;
   animation: spin 1s linear infinite;
-  margin-right: 10px;
 }
 
 @keyframes spin {
@@ -370,20 +407,15 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 15px;
+    padding: 16px 12px;
   }
   
   .billingContainer {
-    padding: 20px;
+    padding: 24px 16px;
   }
   
   .billingSummary {
     grid-template-columns: 1fr;
-  }
-  
-  .tableHeader, .tableRow {
-    grid-template-columns: 1fr;
-    gap: 12px;
   }
   
   .tableHeader {
@@ -391,16 +423,34 @@
   }
   
   .tableRow {
+    grid-template-columns: 1fr;
+    gap: 12px;
     padding: 16px;
     border: 1px solid var(--border-color);
     border-radius: 8px;
     margin-bottom: 12px;
+    background: var(--bg-white);
+  }
+
+  .tableRow:hover {
+    background: var(--bg-white);
+    box-shadow: var(--shadow-default);
+  }
+  
+  .actions {
+    justify-content: flex-start;
+    margin-top: 8px;
   }
   
   .currentPlan {
     flex-direction: column;
-    gap: 16px;
     align-items: flex-start;
+  }
+
+  .manageButton {
+    width: 100%;
+    display: flex;
+    justify-content: center;
   }
   
   .title {
@@ -413,6 +463,10 @@
 }
 
 @media (max-width: 480px) {
+  .header {
+    margin-bottom: 24px;
+  }
+  
   .billingContainer {
     padding: 16px;
   }
@@ -422,7 +476,7 @@
   }
   
   .backButton {
-    padding: 8px 16px;
+    padding: 8px 12px;
     font-size: 13px;
   }
 }

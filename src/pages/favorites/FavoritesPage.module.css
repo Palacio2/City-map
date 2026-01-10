@@ -1,5 +1,8 @@
-/* FavoritesPage.module.css */
 .container {
+    /* --- КРИТИЧНЕ ВИПРАВЛЕННЯ --- */
+    width: 100%; /* Змушує блок зайняти весь простір у Flex-батьку */
+    box-sizing: border-box; 
+    
     max-width: 1200px;
     margin: 0 auto;
     padding: 20px;
@@ -14,6 +17,7 @@
     margin-bottom: 32px;
     padding-bottom: 16px;
     border-bottom: 2px solid var(--border-color);
+    width: 100%; /* Гарантуємо ширину */
 }
 
 .title {
@@ -37,17 +41,98 @@
     border: 1px solid var(--border-color);
 }
 
-/* === УНІКАЛЬНІ СТИЛІ КАРТКИ УЛЮБЛЕНОГО === */
+/* === СІТКА === */
+.favoritesGrid {
+    display: grid;
+    /* width: 100% вже є, але для певності */
+    width: 100%; 
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+    box-sizing: border-box;
+    padding-bottom: 40px;
+}
+
+/* === СТИЛІ КАРТКИ === */
+.card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: var(--bg-white);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 16px; 
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: var(--shadow-card);
+    height: fit-content;
+    overflow: hidden;
+}
+
+.card:hover {
+    border-color: var(--primary-light);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-hover);
+}
+
+.cardPhoto {
+    width: 100%;
+    height: 140px; 
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 12px;
+    background: var(--bg-light);
+}
+
+.photoPlaceholder {
+    width: 100%;
+    height: 140px;
+    background: var(--bg-light);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    margin-bottom: 12px;
+    color: var(--text-light);
+}
+
+.cardName {
+    text-align: center;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+    line-height: 1.3;
+}
+
+.cardStats {
+    display: flex;
+    gap: 6px;
+    margin-top: 8px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.statBadge {
+    background: var(--bg-light);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-medium);
+    border: 1px solid var(--border-color);
+}
 
 .removeButton {
-    position: absolute; /* Позиціонуємо поверх картки */
-    top: 10px;
-    right: 10px;
-
-    
-
-    width: 30px;
-    height: 30px;
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 32px;
+    height: 32px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -57,27 +142,27 @@
     opacity: 0;
     z-index: 10;
     visibility: hidden;
-
-    background-color: transparent;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 
 .removeButton:hover {
     transform: scale(1.1);
+    background: #fff0f0;
+    color: #e74c3c;
+    border-color: #e74c3c;
 }
 
 .priceTag {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 600;
     color: var(--primary-color);
-    background: var(--bg-light);
-    padding: 4px 10px;
-    border-radius: 8px;
-    margin-top: 8px;
-    border: 1px solid var(--border-color);
+    background: rgba(0, 123, 255, 0.05);
+    padding: 6px 12px;
+    border-radius: 20px;
+    margin-top: 4px;
+    border: 1px solid rgba(0, 123, 255, 0.1);
     text-align: center;
 }
-
-/* === СТИЛІ ПУСТОГО СТАНУ (Empty State) === */
 
 .emptyState {
     text-align: center;
@@ -85,6 +170,8 @@
     background: var(--bg-light);
     border-radius: 20px;
     border: 2px dashed var(--border-color);
+    margin-top: 20px;
+    width: 100%; /* Теж важливо */
 }
 
 .emptyIcon {
@@ -109,7 +196,7 @@
     line-height: 1.5;
 }
 
-.detailsButton { /* Кнопка "Спробувати увійти" */
+.detailsButton {
     background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
     color: white;
     border: none;
@@ -130,8 +217,6 @@
     box-shadow: 0 6px 20px rgba(74, 144, 226, 0.4);
 }
 
-
-/* Адаптивність */
 @media (max-width: 768px) {
     .container {
         padding: 16px;
@@ -144,17 +229,35 @@
         text-align: center;
     }
 
+    .favoritesGrid {
+        gap: 16px;
+        grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    }
+
+    .cardPhoto, .photoPlaceholder {
+        height: 120px;
+    }
+
     .removeButton {
         width: 28px;
         height: 28px;
-        font-size: 12px;
-        top: 8px;
-        right: 8px;
+        opacity: 1;
+        visibility: visible;
+        background: white;
     }
 }
 
-div:hover > .removeButton {
-    opacity: 1;
-    visibility: visible;
-    transform: scale(1);
+@media (max-width: 480px) {
+    .favoritesGrid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+@media (hover: hover) {
+    .card:hover .removeButton {
+        opacity: 1;
+        visibility: visible;
+        transform: scale(1);
+    }
 }

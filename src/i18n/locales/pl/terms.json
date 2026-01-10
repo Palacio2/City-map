@@ -1,0 +1,80 @@
+{
+  "title": "Regulamin Serwisu",
+  "last_updated": "Ostatnia aktualizacja: {{date}}",
+  "footer": {
+    "return": "Wróć do",
+    "register": "rejestracji",
+    "or": "lub",
+    "home": "strony głównej"
+  },
+  "sections": [
+    {
+      "title": "1. Postanowienia ogólne",
+      "content": [
+        "1.1. Niniejszy Regulamin określa zasady współpracy między Tobą (użytkownikiem) a GeoAnalyzer w zakresie korzystania z naszego serwisu.",
+        "1.2. Korzystając z naszego serwisu, zgadzasz się na niniejszy Regulamin oraz naszą Politykę Prywatności."
+      ]
+    },
+    {
+      "title": "2. Definicje",
+      "content": [
+        "2.1. \"Serwis\" - strona internetowa GeoAnalyzer oraz wszystkie powiązane usługi.",
+        "2.2. \"Użytkownik\" - każda osoba korzystająca z naszego Serwisu.",
+        "2.3. \"Treść\" - wszelkie informacje, dane, tekst, obrazy i inne materiały dostępne za pośrednictwem Serwisu."
+      ]
+    },
+    {
+      "title": "3. Rejestracja konta",
+      "content": [
+        "3.1. Dostęp do niektórych funkcji Serwisu może wymagać utworzenia konta.",
+        "3.2. Jesteś odpowiedzialny za bezpieczeństwo swojego konta i hasła.",
+        "3.3. Zgadzasz się podać dokładne, aktualne i pełne informacje podczas rejestracji."
+      ]
+    },
+    {
+      "title": "4. Własność intelektualna",
+      "content": [
+        "4.1. Wszelkie prawa własności intelektualnej związane z Serwisem należą do GeoAnalyzer lub naszych licencjodawców.",
+        "4.2. Możesz korzystać z Serwisu wyłącznie do celów osobistych, niekomercyjnych."
+      ]
+    },
+    {
+      "title": "5. Ograniczenie odpowiedzialności",
+      "content": [
+        "5.1. Serwis jest dostarczany w stanie \"takim, jaki jest\" (as is), bez jakichkolwiek gwarancji.",
+        "5.2. Nie ponosimy odpowiedzialności za dokładność, kompletność ani wiarygodność dostarczonych danych.",
+        "5.3. Nie ponosimy odpowiedzialności za jakiekolwiek szkody związane z korzystaniem z Serwisu."
+      ]
+    },
+    {
+      "title": "6. Zmiany regulaminu",
+      "content": [
+        "6.1. Zastrzegamy sobie prawo do zmiany niniejszego Regulaminu w dowolnym momencie.",
+        "6.2. O zmianach poinformujemy za pośrednictwem Serwisu lub poczty elektronicznej.",
+        "6.3. Kontynuując korzystanie z Serwisu po wprowadzeniu zmian, zgadzasz się na zaktualizowany Regulamin."
+      ]
+    },
+    {
+      "title": "7. Rozwiązanie umowy",
+      "content": [
+        "7.1. Możemy zakończyć lub zawiesić Twój dostęp do Serwisu w przypadku naruszenia niniejszego Regulaminu.",
+        "7.2. Możesz zaprzestać korzystania z Serwisu w dowolnym momencie."
+      ]
+    },
+    {
+      "title": "8. Dozwolony użytek",
+      "content": [
+        "8.1. Zgadzasz się korzystać z Serwisu zgodnie z obowiązującym prawem.",
+        "8.2. Zabrania się wykorzystywania Serwisu do celów nielegalnych lub szkodliwych."
+      ]
+    },
+    {
+      "title": "9. Dane kontaktowe",
+      "content": [
+        "9.1. Jeśli masz pytania dotyczące niniejszego Regulaminu, skontaktuj się z nami:",
+        "Email: youworkday@gmail.com",
+        "Telefon: +48 698 991 398"
+      ]
+    }
+  ]
+}

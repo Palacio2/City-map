@@ -20,6 +20,12 @@ const CommerceFilters = memo(({ values = {}, onChange }) => {
     onChange?.({ minGroceryStores: value ? parseInt(value) : undefined });
   };
 
+  const preventInvalidInput = (e) => {
+    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{t('commerce.title')}</h3>
@@ -87,6 +93,7 @@ const CommerceFilters = memo(({ values = {}, onChange }) => {
               placeholder="0"
               value={values.minGroceryStores || ''}
               onChange={handleMinStoresChange}
+              onKeyDown={preventInvalidInput}
               className={styles.rangeInput}
               min="0"
             />

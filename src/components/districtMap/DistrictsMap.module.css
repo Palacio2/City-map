@@ -1,12 +1,13 @@
 .mapContainer {
-  /* 🛠️ БУЛО: width: auto; */
-  
-  /* ✅ СТАЛО: Змушуємо мапу займати весь вільний простір */
   flex: 1;
-  width: 100%; 
-  min-width: 0; /* Важливо для Flexbox, щоб контент не розпирав контейнер */
+  width: 100%;
+  min-width: 0;
   
-  min-height: 600px;
+  height: calc(100vh - 120px); 
+  
+  position: sticky;
+  top: 20px;
+
   background: var(--bg-white);
   border-radius: 16px;
   padding: 24px;
@@ -24,7 +25,7 @@
 
 .mapHeader {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 20px;
   flex-shrink: 0;
 }
 
@@ -37,23 +38,23 @@
 
 .districtPhoto {
   width: 100%;
-  height: 120px;
+  height: 100px; 
   object-fit: cover;
   border-radius: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   background: var(--bg-light);
 }
 
 .photoPlaceholder {
   width: 100%;
-  height: 120px;
+  height: 100px;
   background: var(--bg-light);
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
-  margin-bottom: 12px;
+  font-size: 40px;
+  margin-bottom: 8px;
   color: var(--text-light);
 }
 
@@ -69,7 +70,7 @@
   background: var(--bg-light);
   padding: 4px 12px;
   border-radius: 20px;
-  font-size: 14px;
+  font-size: 13px;
   color: var(--text-medium);
   border: 1px solid var(--border-color);
 }
@@ -79,6 +80,7 @@
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden; 
 }
 
 .mapWrapper {
@@ -95,18 +97,33 @@
 
 .mapContent {
   flex: 1;
-  overflow-y: auto;
-  padding: 20px;
+  overflow-y: auto; 
+  padding: 16px;
+  
+  scrollbar-width: thin;
+  scrollbar-color: var(--primary-light) var(--bg-light);
+}
+
+.mapContent::-webkit-scrollbar {
+  width: 6px;
+}
+
+.mapContent::-webkit-scrollbar-track {
+  background: var(--bg-light);
+  border-radius: 3px;
+}
+
+.mapContent::-webkit-scrollbar-thumb {
+  background: var(--primary-light);
+  border-radius: 3px;
 }
 
 .combinedMap {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
-  grid-auto-rows: auto;
 }
 
 .districtCard {
@@ -115,8 +132,8 @@
   flex-direction: column;
   align-items: center;
   border: 2px solid var(--border-color);
-  border-radius: 12px;
-  padding: 16px;
+  border-radius: 10px;
+  padding: 10px; 
   background: var(--bg-white);
   cursor: pointer;
   transition: all 0.3s ease;
@@ -136,226 +153,28 @@
   box-shadow: 0 8px 25px rgba(46, 204, 113, 0.2);
 }
 
-.svgContainer {
-  width: 120px;
-  height: 100px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 12px;
-}
-
-.svgContainer svg {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
 .districtName {
   text-align: center;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-dark);
-  margin-bottom: 4px;
-}
-
-.districtsList {
-  background: var(--bg-white);
-  padding: 20px;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow);
-}
-
-.districtsList h4 {
-  margin: 0 0 16px 0;
-  color: var(--text-dark);
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.listGrid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 12px;
-}
-
-.listItem {
-  padding: 12px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: 2px solid var(--border-color);
-  font-weight: 500;
-  display: flex;
-  flex-direction: column;
-}
-
-.listItem.hasMap {
-  background: var(--bg-light);
-  border-color: var(--secondary-color);
-  color: var(--text-dark);
-}
-
-.listItem.hasMap:hover {
-  background: var(--bg-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow);
-}
-
-.listItem.noMap {
-  background: var(--bg-light);
-  color: var(--text-light);
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.listItem.selected {
-  background: var(--primary-light);
-  color: white;
-  border-color: var(--primary-dark);
-  box-shadow: var(--shadow-hover);
-}
-
-.listItemName {
-  font-weight: 600;
-}
-
-.comingSoon {
-  font-size: 12px;
-  opacity: 0.8;
-  margin-top: 4px;
-}
-
-.noDataContainer,
-.noMapContainer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 400px;
-  background: var(--bg-white);
-  border-radius: 16px;
-  border: 2px dashed var(--border-color);
-}
-
-.placeholder {
-  text-align: center;
-  color: var(--text-light);
-  max-width: 400px;
-  padding: 20px;
-}
-
-.placeholderIcon {
-  font-size: 48px;
-  margin-bottom: 20px;
-}
-
-.placeholder h3 {
-  color: var(--text-dark);
-  margin-bottom: 12px;
-  font-size: 20px;
-  font-weight: 600;
-}
-
-.placeholder p {
-  font-size: 16px;
-  margin: 0 0 16px 0;
-}
-
-.availableDistricts {
-  margin-top: 20px;
-}
-
-.availableDistricts h4 {
-  color: var(--text-dark);
-  margin-bottom: 12px;
-  font-size: 16px;
-}
-
-.districtsNameList {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-
-.districtNameTag {
-  background: var(--bg-light);
-  padding: 4px 12px;
-  border-radius: 16px;
-  font-size: 12px;
-  color: var(--text-medium);
-  border: 1px solid var(--border-color);
+  margin-bottom: 6px;
+  line-height: 1.3;
 }
 
 .districtStats {
   display: flex;
   gap: 4px;
-  margin-top: 8px;
+  margin-top: 4px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
 .statBadge {
   background: var(--bg-light);
-  padding: 2px 6px;
-  border-radius: 8px;
+  padding: 2px 5px;
+  border-radius: 6px;
   font-size: 10px;
-  color: var(--text-medium);
-  border: 1px solid var(--border-color);
-}
-
-.listItemStats {
-  display: flex;
-  gap: 8px;
-  margin-top: 4px;
-  font-size: 11px;
-  color: var(--text-medium);
-}
-
-.listItemStats span {
-  background: var(--bg-light);
-  padding: 1px 4px;
-  border-radius: 4px;
-}
-
-.activeFilterBadge {
-  background: var(--secondary-color);
-  padding: 4px 12px;
-  border-radius: 20px;
-  font-size: 14px;
-  color: white;
-  border: 1px solid var(--secondary-dark);
-}
-
-.clearFiltersHint {
-  background: var(--primary-color);
-  color: white;
-  border: none;
-  padding: 8px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  margin-top: 12px;
-  transition: background-color 0.3s ease;
-}
-
-.clearFiltersHint:hover {
-  background: var(--primary-dark);
-}
-
-.listHeader {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.filteredCount {
-  background: var(--bg-light);
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
   color: var(--text-medium);
   border: 1px solid var(--border-color);
 }
@@ -365,7 +184,7 @@
   justify-content: center;
   align-items: center;
   gap: 16px;
-  padding: 15px;
+  padding: 12px;
   border-top: 1px solid var(--border-color);
   background: var(--bg-white);
   flex-shrink: 0;
@@ -376,10 +195,11 @@
   color: white;
   border: none;
   border-radius: 8px;
-  padding: 8px 16px;
+  padding: 6px 14px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  min-width: 40px;
+  min-width: 36px;
+  font-size: 14px;
 }
 
 .pagination button:hover:not(:disabled) {
@@ -394,128 +214,7 @@
 
 .pagination span {
   color: var(--text-medium);
-  font-size: 14px;
-}
-
-.mapContent::-webkit-scrollbar {
-  width: 6px;
-}
-
-.mapContent::-webkit-scrollbar-track {
-  background: var(--bg-light);
-  border-radius: 3px;
-}
-
-.mapContent::-webkit-scrollbar-thumb {
-  background: var(--border-color);
-  border-radius: 3px;
-}
-
-@media (max-width: 1200px) {
-  .combinedMap {
-    grid-template-columns: repeat(4, 1fr);
-  }
-}
-
-@media (max-width: 992px) {
-  .combinedMap {
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
-
-@media (max-width: 768px) {
-  .mapContainer {
-    padding: 16px;
-  }
-  
-  .combinedMap {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 12px;
-  }
-  
-  .districtCard {
-    padding: 12px;
-  }
-  
-  .svgContainer {
-    width: 100px;
-    height: 80px;
-  }
-  
-  .listGrid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-  
-  .mapStats {
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-  }
-  
-  .districtPhoto,
-  .photoPlaceholder {
-    height: 100px;
-  }
-  
-  .pagination {
-    padding: 12px;
-    gap: 12px;
-  }
-  
-  .pagination button {
-    padding: 6px 12px;
-    font-size: 14px;
-  }
-}
-
-@media (max-width: 480px) {
-  .mapContainer {
-    padding: 12px;
-  }
-  
-  .combinedMap {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-  
-  .districtCard {
-    padding: 8px;
-  }
-  
-  .svgContainer {
-    width: 80px;
-    height: 60px;
-  }
-  
-  .districtName {
-    font-size: 12px;
-  }
-  
-  .listGrid {
-    grid-template-columns: 1fr;
-  }
-  
-  .districtsList {
-    padding: 16px;
-  }
-  
-  .districtPhoto,
-  .photoPlaceholder {
-    height: 80px;
-  }
-  
-  .pagination {
-    padding: 10px;
-    gap: 10px;
-    flex-wrap: wrap;
-  }
-  
-  .pagination span {
-    order: -1;
-    width: 100%;
-    text-align: center;
-    margin-bottom: 8px;
-  }
+  font-size: 13px;
 }
 
 .fullSizeNoData {
@@ -528,10 +227,11 @@
   border: 2px solid var(--border-color);
   margin: 0;
   padding: 20px;
-  min-height: 400px;
+  height: 100%;
 }
 
 .fullSizeNoData .placeholder {
+  text-align: center;
   max-width: 500px;
   padding: 40px;
 }
@@ -546,77 +246,45 @@
   margin-bottom: 16px;
 }
 
-.fullSizeNoData .placeholder p {
-  font-size: 18px;
-  margin-bottom: 24px;
-}
-
-.fullSizeNoData .availableDistricts {
-  margin-top: 30px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-color);
-}
-
-.fullSizeNoData .availableDistricts h4 {
-  font-size: 18px;
-  margin-bottom: 16px;
-}
-
-.fullSizeNoData .districtsNameList {
-  gap: 10px;
-}
-
-.fullSizeNoData .districtNameTag {
-  font-size: 14px;
-  padding: 6px 14px;
-  border-radius: 20px;
-}
-
-/* Адаптивність для повнорозмірних повідомлень */
 @media (max-width: 768px) {
-  .fullSizeNoData {
-    min-height: 300px;
+  .mapContainer {
+    height: auto;
+    min-height: 500px;
+    position: static;
     padding: 16px;
   }
   
-  .fullSizeNoData .placeholder {
-    padding: 20px;
+  .combinedMap {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 10px;
   }
   
-  .fullSizeNoData .placeholderIcon {
-    font-size: 56px;
-    margin-bottom: 20px;
+  .districtCard {
+    padding: 10px;
   }
   
-  .fullSizeNoData .placeholder h3 {
-    font-size: 20px;
-  }
-  
-  .fullSizeNoData .placeholder p {
-    font-size: 16px;
+  .pagination {
+    padding: 12px;
+    gap: 12px;
   }
 }
 
 @media (max-width: 480px) {
-  .fullSizeNoData {
-    min-height: 250px;
+  .mapContainer {
     padding: 12px;
+    min-height: 400px;
+  }
+
+  .combinedMap {
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 8px;
   }
   
-  .fullSizeNoData .placeholder {
-    padding: 16px;
+  .districtCard {
+    padding: 8px;
   }
   
-  .fullSizeNoData .placeholderIcon {
-    font-size: 48px;
-    margin-bottom: 16px;
-  }
-  
-  .fullSizeNoData .placeholder h3 {
-    font-size: 18px;
-  }
-  
-  .fullSizeNoData .placeholder p {
-    font-size: 14px;
+  .districtName {
+    font-size: 12px;
   }
 }

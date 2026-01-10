@@ -1,3 +1,19 @@
+:root {
+  --transition-default: all 0.3s ease;
+  --shadow-default: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --shadow-hover-lift: 0 6px 16px rgba(0, 0, 0, 0.12);
+  --success-bg: #f0fff4;
+  --success-text: #22543d;
+  --success-border: #9ae6b4;
+  --error-bg: #fed7d7;
+  --error-text: #742a2a;
+  --error-border: #feb2b2;
+  --warning-bg: #fff3cd;
+  --warning-text: #856404;
+  --warning-border: #ffeaa7;
+  --focus-ring: rgba(102, 126, 234, 0.4);
+}
+
 .container {
   min-height: 100vh;
   background: var(--bg-light);
@@ -23,19 +39,20 @@
   text-decoration: none;
   font-weight: 600;
   font-size: 14px;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
   padding: 10px 20px;
   border-radius: 8px;
   border: 2px solid var(--border-color);
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-default);
   width: fit-content;
   margin-right: auto;
 }
 
 .backButton:hover {
-  color: white;
+  color: var(--bg-white);
+  background-color: var(--primary-light);
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: var(--shadow-hover-lift);
 }
 
 .titleSection {
@@ -58,19 +75,20 @@
 .content {
   max-width: 600px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .section {
   background-color: var(--bg-white);
   padding: 28px;
   border-radius: 16px;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-default);
   border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
 }
 
 .section:hover {
-  box-shadow: var(--shadow-hover);
+  box-shadow: var(--shadow-hover-lift);
 }
 
 .form {
@@ -108,15 +126,15 @@
 }
 
 .successMessage {
-  background-color: #f0fff4;
-  color: #22543d;
-  border: 1px solid #9ae6b4;
+  background-color: var(--success-bg);
+  color: var(--success-text);
+  border: 1px solid var(--success-border);
 }
 
 .errorMessage {
-  background-color: #fed7d7;
-  color: #742a2a;
-  border: 1px solid #feb2b2;
+  background-color: var(--error-bg);
+  color: var(--error-text);
+  border: 1px solid var(--error-border);
 }
 
 .statusIcon {
@@ -138,6 +156,7 @@
   font-weight: 600;
   color: var(--text-dark);
   font-size: 14px;
+  cursor: pointer;
 }
 
 .labelIcon {
@@ -152,35 +171,38 @@
   border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 16px;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
   background: var(--bg-white);
-  color: gray;
+  color: var(--text-medium);
   width: 100%;
+  height: 48px;
 }
 
 .formInput:focus {
-  color: white;
+  color: var(--text-dark);
   outline: none;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
 .formInput:disabled {
-  color: #a1a1aa;
+  color: var(--text-light);
   cursor: not-allowed;
   opacity: 0.7;
+  background-color: var(--bg-light);
 }
 
 .emailWarning {
-  background: #fff3cd;
-  border: 1px solid #ffeaa7;
+  background: var(--warning-bg);
+  border: 1px solid var(--warning-border);
   border-radius: 8px;
-  padding: 8px 12px;
+  padding: 10px 12px;
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-top: 8px;
+  margin-top: 4px;
   font-size: 13px;
-  color: #856404;
+  color: var(--warning-text);
 }
 
 .warningIcon {
@@ -195,6 +217,7 @@
   gap: 16px;
   margin-top: 24px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .primaryButton {
@@ -210,15 +233,17 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
   text-decoration: none;
   flex: 1;
   min-width: 160px;
+  box-sizing: border-box;
 }
 
 .primaryButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: var(--shadow-hover-lift);
+  filter: brightness(110%);
 }
 
 .primaryButton:disabled {
@@ -240,14 +265,16 @@
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: var(--transition-default);
   text-decoration: none;
   flex: 1;
   min-width: 120px;
+  box-sizing: border-box;
 }
 
 .secondaryButton:hover {
   border-color: var(--primary-light);
+  color: var(--primary-light);
   transform: translateY(-2px);
 }
 
@@ -258,25 +285,78 @@
 
 .loading {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 200px;
+  height: 300px;
   color: var(--text-dark);
   font-size: 18px;
   font-weight: 600;
+  gap: 16px;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--bg-light);
+  border-top: 4px solid var(--primary-light);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.phoneInputContainer {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+}
+
+.countryCodeSelect {
+  box-sizing: border-box;
+  padding: 12px 10px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 16px;
+  color: var(--text-medium);
+  transition: var(--transition-default);
+  background: var(--bg-white);
+  width: 140px; 
+  flex-shrink: 0;
+  height: 48px;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23667eea' viewBox='0 0 16 16'%3E%3Cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  padding-right: 32px;
+  cursor: pointer;
+}
+
+.countryCodeSelect:focus {
+  color: var(--text-dark);
+  outline: none;
+  border-color: var(--primary-light);
+  box-shadow: 0 0 0 4px var(--focus-ring);
+}
+
+.phoneInputContainer .formInput {
+  flex-grow: 1;
 }
 
 @media (max-width: 768px) {
   .container {
-    padding: 15px;
+    padding: 16px 12px;
   }
   
   .section {
-    padding: 20px;
+    padding: 24px 16px;
   }
   
   .title {
-    font-size: 28px;
+    font-size: 26px;
   }
   
   .buttonsContainer {
@@ -291,76 +371,39 @@
 }
 
 @media (max-width: 480px) {
-  .section {
-    padding: 16px;
+  .header {
+    margin-bottom: 24px;
   }
-  
-  .title {
-    font-size: 24px;
-  }
-  
+
   .backButton {
-    padding: 8px 16px;
+    padding: 8px 12px;
     font-size: 13px;
   }
-  
-  .formInput {
+
+  .formTitle {
+    font-size: 20px;
+  }
+
+  .formInput,
+  .countryCodeSelect {
     padding: 10px 12px;
     font-size: 14px;
+    height: 44px;
+    background-position: right 10px center;
+  }
+
+  .phoneInputContainer {
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .countryCodeSelect {
+    width: 100%;
   }
   
   .primaryButton,
   .secondaryButton {
     padding: 14px 20px;
     font-size: 14px;
-  }
-}
-
-.phoneInputContainer {
-  display: flex;
-  gap: 8px; /* Відстань між селектом та інпутом */
-  width: 100%;
-}
-
-.countryCodeSelect {
-  /* Стилі для випадаючого меню */
-  box-sizing: border-box;
-  padding: 12px 10px; /* Трохи менше padding, щоб вмістити код */
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 16px;
-  color: gray;
-  transition: all 0.3s ease;
-  background: var(--bg-white);
-  /* Обмежте ширину, щоб залишити місце для поля номера */
-  width: 150px; 
-  flex-shrink: 0;
-  appearance: none; /* Для кращого вигляду в деяких браузерах */
-  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%23667eea" class="bi bi-chevron-down" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z"/></svg>');
-  background-repeat: no-repeat;
-  background-position: right 8px center;
-  padding-right: 25px;
-}
-
-.countryCodeSelect:focus {
-  color: white;
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-}
-
-.phoneInputContainer .formInput {
-  /* Забезпечуємо, щоб поле номера займало решту простору */
-  flex-grow: 1;
-}
-
-/* Адаптивність для мобільних пристроїв */
-@media (max-width: 480px) {
-  .phoneInputContainer {
-    flex-direction: column; /* На мобільних: перемикаємо на стовпчик */
-    gap: 12px;
-  }
-  
-  .countryCodeSelect {
-    width: 100%; /* На мобільних: на всю ширину */
   }
 }

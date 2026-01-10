@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  background: var(--bg-light); /* Використовуємо ваші глобальні змінні */
+  background: var(--bg-light);
   padding: 40px 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
@@ -14,7 +14,7 @@
 
 .iconWrapper {
   font-size: 3rem;
-  color: #667eea; /* Ваш основний колір */
+  color: #667eea;
   margin-bottom: 1rem;
 }
 
@@ -38,7 +38,6 @@
   margin: 0 auto;
 }
 
-/* Категорії */
 .categories {
   display: flex;
   flex-direction: column;
@@ -75,9 +74,10 @@
 
 .categoryIcon {
   font-size: 1.2rem;
+  display: flex;
+  align-items: center;
 }
 
-/* Список питань */
 .questionsList {
   display: flex;
   flex-direction: column;
@@ -133,7 +133,15 @@
   line-height: 1.6;
 }
 
-/* Footer */
+.emptyState {
+  text-align: center;
+  color: #718096;
+  padding: 2rem;
+  background: white;
+  border-radius: 12px;
+  border: 1px dashed #e2e8f0;
+}
+
 .footer {
   text-align: center;
   margin-top: 4rem;
@@ -169,7 +177,6 @@
   box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
 }
 
-/* Адаптивність */
 @media (max-width: 768px) {
   .content {
     grid-template-columns: 1fr;
@@ -180,6 +187,12 @@
     overflow-x: auto;
     padding-bottom: 10px;
     gap: 10px;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .categories::-webkit-scrollbar {
+    display: none;
   }
 
   .categoryButton {
@@ -188,6 +201,7 @@
     border-left: none;
     border-bottom: 3px solid transparent;
     border-radius: 8px;
+    flex-shrink: 0;
   }
 
   .categoryButton.active {

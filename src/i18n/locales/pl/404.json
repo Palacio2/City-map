@@ -1,0 +1,10 @@
+{
+  "title": "Strona nie znaleziona",
+  "desc": "Wygląda na to, że się zgubiłeś. Ta lokalizacja nie istnieje na naszej mapie.",
+  "button": "Strona główna",
+  "loader": {
+    "checking_access": "Sprawdzanie dostępu",
+    "checking_subscription": "Sprawdzanie subskrypcji",
+    "wait": "Proszę czekać..."
+  }
+}

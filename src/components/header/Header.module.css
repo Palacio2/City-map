@@ -1,15 +1,22 @@
 .header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 100;
   backdrop-filter: blur(10px);
+  width: 100%;
+}
+
+.container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  gap: 2rem;
 }
 
 .logo a {
@@ -19,6 +26,7 @@
   text-decoration: none;
   transition: all 0.3s ease;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  white-space: nowrap;
 }
 
 .logo a:hover {
@@ -26,9 +34,16 @@
   transform: translateY(-1px);
 }
 
+.navWrapper {
+  display: flex;
+  align-items: center;
+  flex: 1;
+}
+
 .nav {
   display: flex;
-  gap: 2.5rem;
+  gap: 2rem;
+  margin: 0 auto;
 }
 
 .navLink {
@@ -38,12 +53,17 @@
   transition: all 0.3s ease;
   padding: 0.5rem 0;
   position: relative;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
+  white-space: nowrap;
 }
 
 .navLink:hover {
   color: white;
   transform: translateY(-1px);
+}
+
+.navLinkActive {
+  color: white !important;
 }
 
 .navLink::after {
@@ -57,7 +77,8 @@
   transition: width 0.3s ease;
 }
 
-.navLink:hover::after {
+.navLink:hover::after,
+.navLinkActive::after {
   width: 100%;
 }
 
@@ -65,11 +86,10 @@
   display: flex;
   gap: 1rem;
   align-items: center;
-  position: relative;
+  flex-shrink: 0;
 }
 
-/* Стилі для кнопки Мої збереження */
-.favoritesButton {
+.navButton {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -85,242 +105,252 @@
   padding: 0;
 }
 
-.favoritesButton:hover {
+.navButton:hover {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-.favoritesIcon {
+.buttonText, .chevron {
+  display: none;
+}
+
+.icon {
   width: 20px;
   height: 20px;
 }
 
-.authButton {
+.authButton, .logoutButton {
   padding: 0.7rem 1.8rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-size: 1rem;
+  white-space: nowrap;
+  backdrop-filter: blur(10px);
+}
+
+.authButton {
   background: rgba(255, 255, 255, 0.15);
   color: white;
   border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  font-size: 1rem;
+}
+
+.logoutButton {
+  background: rgba(239, 68, 68, 0.2);
+  color: white;
+  border: 2px solid rgba(239, 68, 68, 0.3);
 }
 
 .authButton:hover {
   background: rgba(255, 255, 255, 0.25);
   border-color: rgba(255, 255, 255, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-/* Стилі для кнопки виходу */
-.logoutButton {
-  padding: 0.7rem 1.8rem;
-  background: rgba(239, 68, 68, 0.2);
-  color: white;
-  border: 2px solid rgba(239, 68, 68, 0.3);
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  font-size: 1rem;
 }
 
 .logoutButton:hover {
   background: rgba(239, 68, 68, 0.3);
   border-color: rgba(239, 68, 68, 0.5);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
 }
 
-/* Стиль для стану завантаження */
-.authButton:disabled,
-.logoutButton:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Стилі для кнопки мови */
 .languageContainer {
   position: relative;
 }
 
-.languageButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.15);
-  color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-  width: 44px;
-  height: 44px;
-  padding: 0;
-}
-
-.languageButton:hover {
-  background: rgba(255, 255, 255, 0.25);
-  border-color: rgba(255, 255, 255, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-}
-
-.languageIcon {
-  width: 20px;
-  height: 20px;
-}
-
-/* Випадаючий список мов */
 .languageDropdown {
   position: absolute;
-  top: 100%;
+  top: 120%;
   right: 0;
-  margin-top: 8px;
-  background: black;
+  background: #1a1a1a;
   border-radius: 8px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  min-width: 120px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  min-width: 140px;
   z-index: 1001;
   overflow: hidden;
+  padding: 5px;
+  border: 1px solid rgba(255,255,255,0.1);
+  animation: fadeIn 0.2s ease;
 }
 
 .languageOption {
   width: 100%;
-  padding: 12px 16px;
+  padding: 10px 16px;
   background: none;
   border: none;
   text-align: left;
   cursor: pointer;
-  color: white;
+  color: rgba(255,255,255,0.8);
   font-weight: 500;
   transition: all 0.2s ease;
+  border-radius: 4px;
 }
 
 .languageOption:hover {
   background: rgba(255, 255, 255, 0.1);
+  color: white;
 }
 
-/* Анімація для активної навігації */
-.navLinkActive {
-  color: white !important;
+.burgerButton {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.8rem;
+  cursor: pointer;
+  z-index: 1002;
 }
 
-.navLinkActive::after {
-  width: 100% !important;
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* Адаптивність */
-@media (max-width: 768px) {
-  .header {
+@media (max-width: 968px) {
+  .container {
+    padding: 1rem;
+    gap: 0;
+  }
+
+  .burgerButton {
+    display: block;
+    z-index: 1102; 
+  }
+
+  .navWrapper {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100dvh;
+    width: 280px;
+    background: rgba(15, 15, 25, 0.98);
+    backdrop-filter: blur(20px);
+    display: flex;
     flex-direction: column;
-    gap: 1.2rem;
-    padding: 1.2rem;
-    text-align: center;
+    align-items: flex-start;
+    padding: 5rem 1.5rem 2rem;
+    gap: 0.5rem;
+    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+    z-index: 1101; 
+    overflow-y: auto;
+    
+    transform: translateX(100%);
+    visibility: hidden;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s;
   }
-  
+
+  .navOpen {
+    transform: translateX(0);
+    visibility: visible;
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
+  }
+
   .nav {
-    gap: 1.5rem;
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    margin: 0;
   }
-  
+
   .navLink {
-    font-size: 1rem;
+    font-size: 1.1rem;
+    display: block;
+    width: 100%;
+    padding: 1rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
   
-  .authButton,
-  .logoutButton {
-    padding: 0.6rem 1.5rem;
-    font-size: 0.9rem;
+  .navLink::after {
+    display: none;
   }
-  
+
   .userControls {
-    gap: 0.8rem;
+    flex-direction: column;
+    width: 100%;
+    gap: 0;
+    align-items: stretch;
+  }
+
+  .navButton {
+    width: 100%;
+    height: auto;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem 0;
+    justify-content: flex-start;
+    gap: 10px;
+    font-size: 1.1rem;
+    font-weight: 500;
+  }
+
+  .navButton:hover {
+    background: transparent;
+    border-color: rgba(255, 255, 255, 0.1);
+    transform: none;
+    box-shadow: none;
+    color: #a0aec0;
+  }
+
+  .buttonText {
+    display: inline-block;
   }
   
-  .favoritesButton,
-  .languageButton {
-    width: 40px;
-    height: 40px;
+  .chevron {
+    display: inline-block;
+    margin-left: auto;
+    font-size: 0.8rem;
+    opacity: 0.7;
   }
-  
-  .favoritesIcon,
-  .languageIcon {
-    width: 18px;
-    height: 18px;
+
+  .languageContainer {
+    width: 100%;
+  }
+
+  .languageDropdown {
+    position: static;
+    background: rgba(255, 255, 255, 0.05);
+    width: 100%;
+    border: none;
+    border-radius: 0;
+    padding: 0;
+    margin-top: 0;
+    box-shadow: none;
+    animation: none;
+  }
+
+  .languageOption {
+    padding: 12px 0 12px 34px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .authButton, .logoutButton {
+    width: 100%;
+    text-align: center;
+    margin-top: 2rem;
+    padding: 0.9rem;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1050; 
+    backdrop-filter: blur(4px);
   }
 }
 
 @media (max-width: 480px) {
-  .nav {
-    gap: 1rem;
-    flex-direction: column;
-  }
-  
   .logo a {
     font-size: 1.5rem;
   }
-  
-  .authButton,
-  .logoutButton {
-    width: 100%;
-    padding: 0.75rem;
-  }
-  
-  .userControls {
-    width: 100%;
-    justify-content: center;
-    flex-wrap: wrap;
-  }
-  
-  .favoritesButton,
-  .languageContainer {
-    order: -1;
-  }
-  
-  .languageDropdown {
-    right: auto;
-    left: 0;
-  }
-}
-
-@media (max-width: 360px) {
-  .header {
-    padding: 0.8rem;
-  }
-  
-  .nav {
-    gap: 0.8rem;
-  }
-  
-  .navLink {
-    font-size: 0.9rem;
-  }
-  
-  .authButton,
-  .logoutButton {
-    padding: 0.6rem 1rem;
-    font-size: 0.85rem;
-  }
-  
-  .favoritesButton,
-  .languageButton {
-    width: 36px;
-    height: 36px;
-  }
-  
-  .favoritesIcon,
-  .languageIcon {
-    width: 16px;
-    height: 16px;
+  .navWrapper {
+    width: 85%;
   }
 }

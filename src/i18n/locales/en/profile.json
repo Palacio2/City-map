@@ -61,7 +61,7 @@
     "faq_btn": "FAQ",
     "email_btn": "Email Us"
   },
-  "edit_page": {
+ "edit_page": {
     "title": "Edit Profile",
     "subtitle": "Update your personal information",
     "main_info": "Main Information",
@@ -77,7 +77,9 @@
       "name_long": "Name is too long (max 30 characters)",
       "name_required": "Please enter your name",
       "email_required": "Please enter your email",
-      "save_error": "Error saving data"
+      "save_error": "Error saving data",
+      "phone_length": "Number must contain {{count}} digits after code",
+      "phone_too_long": "Number is too long"
     },
     "success": "Profile updated successfully"
   },
