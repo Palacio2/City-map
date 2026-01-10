@@ -14,63 +14,70 @@ export default function DistrictDetailsModal({
   onToggleFavorite 
 }) {
   const { t } = useTranslation('districts');
-
-  // 1. ВАЖЛИВО: Всі хуки (useState, useEffect) мають бути НА ПОЧАТКУ
-  // Вони повинні викликатися завжди, незалежно від того, відкрита модалка чи ні
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState(null);
 
   useEffect(() => {
+    let mounted = true;
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUserId(session?.user?.id ?? null);
+      if (mounted) setUserId(session?.user?.id ?? null);
     });
+    return () => { mounted = false; };
   }, []);
 
   useEffect(() => {
     let isMounted = true;
-
     const checkStatus = async () => {
-        // Якщо модалка закрита або немає району - нічого не робимо, але хук все одно існує
         if (!isOpen || !district || !userId) {
             if (isMounted) setIsFavorite(false);
             return;
         }
-
         setIsLoading(true);
         try {
           const favoriteStatus = await checkIsFavorite(district.id);
           if (isMounted) setIsFavorite(favoriteStatus);
         } catch (error) {
+          console.warn('Favorite check failed:', error);
           if (isMounted) setIsFavorite(false);
         } finally {
           if (isMounted) setIsLoading(false);
         }
     };
-
     checkStatus();
-
     return () => { isMounted = false; };
-    // Використовуємо безпечний доступ ?.id, щоб не було помилки, якщо district null
   }, [district?.id, userId, isOpen]);
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
+    } else {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+    };
+  }, [isOpen]);
 
   const handleToggleFavorite = async () => {
     if (!userId) {
       alert(t('modal.login_alert'));
       return;
     }
-
     const previousState = isFavorite;
     const newState = !previousState;
     setIsFavorite(newState); 
 
     try {
       const resultState = await toggleFavorite(district, newState); 
-      
-      if (resultState !== newState) {
-          setIsFavorite(resultState);
-      }
-      
+      if (resultState !== newState) setIsFavorite(resultState);
       onToggleFavorite?.(district.id, resultState);
     } catch (error) {
       console.error('Toggle error:', error);
@@ -78,12 +85,13 @@ export default function DistrictDetailsModal({
     }
   };
 
-  // 2. І тільки ТУТ, після всіх хуків, робимо перевірку на відображення
   if (!isOpen || !district) return null;
 
   return (
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.mobileHandle} /> 
+
         <HeaderSection 
           district={district}
           isFavorite={isFavorite}

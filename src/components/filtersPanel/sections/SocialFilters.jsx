@@ -15,6 +15,12 @@ const SocialFilters = memo(({ values = {}, onChange }) => {
     onChange?.({ [field]: value ? parseInt(value) : undefined });
   };
 
+  const preventInvalidInput = (e) => {
+    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{t('social.title')}</h3>
@@ -100,6 +106,7 @@ const SocialFilters = memo(({ values = {}, onChange }) => {
               placeholder="0"
               value={values.minParks || ''}
               onChange={(e) => handleMinChange(e, 'minParks')}
+              onKeyDown={preventInvalidInput}
               className={styles.rangeInput}
               min="0"
             />
@@ -115,6 +122,7 @@ const SocialFilters = memo(({ values = {}, onChange }) => {
               placeholder="0"
               value={values.minParkSize || ''}
               onChange={(e) => handleMinChange(e, 'minParkSize')}
+              onKeyDown={preventInvalidInput}
               className={styles.rangeInput}
               min="0"
             />

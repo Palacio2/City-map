@@ -17,10 +17,10 @@
       "default_msg": "Ta funkcja jest dostępna z płatną subskrypcją."
     },
     "plans": {
-      "free": { "name": "Darmowy", "price": "0 UAH" },
-      "weekly": { "name": "Tygodniowy", "price": "99 UAH/tydzień" },
-      "premium": { "name": "Premium", "price": "299 UAH/mies" },
-      "realtor": { "name": "Realtor Pro", "price": "599 UAH/mies" }
+      "free": { "name": "Darmowy", "price": "0 zł" },
+      "weekly": { "name": "Tygodniowy", "price": "11 zł / tydzień" },
+      "premium": { "name": "Premium", "price": "25 zł / mies" },
+      "realtor": { "name": "Realtor Pro", "price": "50 zł / mies" }
     },
     "features": {
       "basic_map": "Podstawowe informacje",

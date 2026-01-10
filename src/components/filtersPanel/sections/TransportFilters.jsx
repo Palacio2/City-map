@@ -20,6 +20,12 @@ const TransportFilters = memo(({ values = {}, onChange }) => {
     onChange?.({ frequency: value });
   };
 
+  const preventInvalidInput = (e) => {
+    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{t('transport.title')}</h3>
@@ -79,6 +85,8 @@ const TransportFilters = memo(({ values = {}, onChange }) => {
               className={styles.rangeInput}
               value={values.maxDistance || ''}
               onChange={handleDistanceChange}
+              onKeyDown={preventInvalidInput}
+              min="0"
             />
             <span className={styles.rangeUnit}>{t('transport.unit_dist')}</span>
           </div>

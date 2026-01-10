@@ -6,5 +6,9 @@
   "home": "Головна",
   "about": "Про проект",
   "contacts": "Контакти",
-  "terms": "Політики"
+  "faq" : "Відповіді на питання",
+  "terms": "Політики",
+  "email": "youworkday@gmail.com",
+  "phone": "tel: +48 698 991 398",
+  "phone_raw": "+48698991398"
 }

@@ -1,11 +1,11 @@
 {
-  "title": "Płatność za subskrypcję {{plan}}",
+  "title": "Opłata za subskrypcję {{plan}}",
   "back": "Wstecz",
   "tariff_label": "Taryfa",
   "promo_label": "Kod promocyjny",
   "promo_placeholder": "Kod...",
   "promo_apply": "OK",
-  "promo_success": "Kod promocyjny zastosowany!",
+  "promo_success": "Kod zastosowany!",
   "activate_btn": "Aktywuj",
   "activating": "Aktywacja...",
   "pay_btn": "Zapłać {{amount}}",
@@ -13,14 +13,14 @@
   "security": "Dane zabezpieczone szyfrowaniem Stripe SSL",
   "loading": "Ładowanie...",
   "errors": {
-    "payment_create": "Błąd podczas tworzenia płatności",
-    "card_length": "Numer karty musi mieć 16 cyfr",
+    "payment_create": "Błąd tworzenia płatności",
+    "card_length": "Numer karty musi zawierać 16 cyfr",
     "expiry_format": "Nieprawidłowy format daty (MM/RR)",
-    "cvv_length": "CVV musi mieć 3 cyfry",
-    "holder_required": "Wpisz imię i nazwisko posiadacza karty"
+    "cvv_length": "CVV musi zawierać 3 cyfry",
+    "holder_required": "Wprowadź imię posiadacza karty"
   },
   "success": {
-    "title": "Płatność pomyślna!",
+    "title": "Płatność udana!",
     "back_to_profile": "Profil",
     "access_granted": "Dostęp przyznany",
     "subscription_active": "Twoja subskrypcja została pomyślnie aktywowana.",
@@ -30,9 +30,8 @@
     "tx_label": "Transakcja",
     "to_map": "Do mapy",
     "details_title": "Szczegóły zamówienia",
-    "plan_label": "Plan subskrypcji:",
+    "plan_label": "Plan taryfowy:",
     "date_label": "Data płatności:",
-    "period_label": "Okres:",
-    "one_month": "1 miesiąc"
+    "period_label": "Okres:"
   }
 }

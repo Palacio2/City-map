@@ -10,7 +10,6 @@ import styles from './About.module.css';
 export default function About() {
   const { t } = useTranslation('about');
 
-  // Використовуємо useMemo для конфігурацій, щоб вони оновлювались при зміні мови
   const sectionConfig = useMemo(() => ({
     mission: { icon: FaRocket, title: t('sections.mission') },
     features: { icon: FaLightbulb, title: t('sections.features') },
@@ -21,7 +20,6 @@ export default function About() {
     team: { icon: FaUsers, title: t('sections.team') }
   }), [t]);
 
-  // Мапимо дані з JSON на іконки
   const featuresList = useMemo(() => {
     const data = t('features', { returnObjects: true });
     const icons = [FaChartLine, FaDatabase, FaHeart, FaShieldAlt, FaMobile, FaCity];
@@ -119,7 +117,7 @@ export default function About() {
   );
 }
 
-// Допоміжні компоненти
+/* Sub-components */
 const HeroSection = ({ t }) => (
   <div className={styles.heroSection}>
     <div className={styles.heroContent}>
@@ -204,7 +202,11 @@ const CTASection = ({ t }) => (
         { to: "/subscription", label: t('cta.plans_btn'), type: "secondary" },
         { to: "/contacts", label: t('cta.support_btn'), type: "tertiary" }
       ].map((button, index) => (
-        <Link key={index} to={button.to} className={styles[`ctaButton${button.type.charAt(0).toUpperCase() + button.type.slice(1)}`]}>
+        <Link 
+            key={index} 
+            to={button.to} 
+            className={`${styles.ctaButton} ${styles[button.type]}`}
+        >
           {button.label}
         </Link>
       ))}

@@ -1,6 +1,5 @@
 @import './index.css';
 
-/* --- Картки статистики --- */
 .statCard {
     background: var(--bg-white);
     border: 1px solid var(--border-color);
@@ -8,6 +7,10 @@
     padding: 24px;
     transition: var(--transition-default);
     box-shadow: var(--shadow-card);
+    
+    width: 100%; 
+    box-sizing: border-box;
+    overflow: hidden;
 }
 
 .statCard:hover {
@@ -15,7 +18,6 @@
     box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
 }
 
-/* --- Заголовок картки --- */
 .cardHeader {
     display: flex;
     justify-content: space-between;
@@ -23,102 +25,90 @@
     margin-bottom: 20px;
     padding-bottom: 16px;
     border-bottom: 1px solid var(--border-color);
+    gap: 10px;
 }
 
 .cardTitle {
     display: flex;
     align-items: center;
     gap: 15px;
+    min-width: 0;
+    flex: 1;
 }
 
 .cardIcon {
-    font-size: 28px;
-    width: 48px;
-    height: 48px;
+    font-size: 24px;
+    width: 42px; 
+    height: 42px;
     background: var(--primary-color);
     border-radius: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
+    color: white;
     box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
-}
-
-.cardIcon > span {
-    filter: brightness(1.5);
 }
 
 .cardTitle h3 {
     margin: 0;
-    font-size: 20px;
+    font-size: 18px;
     font-weight: 700;
     color: var(--text-dark);
+    
+    white-space: normal;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    line-height: 1.3;
 }
 
-/* --- Рейтинг картки --- */
 .cardRating {
     font-size: 16px;
     font-weight: 700;
-    padding: 8px 14px;
+    padding: 6px 10px;
     border-radius: 10px;
-    min-width: 60px;
+    min-width: 40px;
     text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    flex-shrink: 0;
 }
 
-/* Кольори для Рейтингу */
 .highRating {
     color: var(--secondary-color);
     background: rgba(46, 204, 113, 0.15);
     border: 1px solid var(--secondary-color);
 }
-
 .mediumRating {
     color: var(--warning-color);
     background: rgba(243, 156, 18, 0.15);
     border: 1px solid var(--warning-color);
 }
-
 .lowRating {
     color: var(--danger-color);
     background: rgba(231, 76, 60, 0.15);
     border: 1px solid var(--danger-color);
 }
 
-/* --- Статистика картки --- */
 .cardStats {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 12px;
 }
 
-/* --- Адаптивність --- */
 @media (max-width: 768px) {
     .statCard {
         padding: 16px;
+        border-radius: 12px;
     }
     
-    .cardTitle h3 {
-        font-size: 18px;
+    .cardHeader {
+        margin-bottom: 16px;
+        padding-bottom: 12px;
     }
 
-    .cardIcon {
-        width: 40px;
-        height: 40px;
-        font-size: 24px;
-    }
-    
-    .cardRating {
-        font-size: 14px;
-        min-width: 50px;
-        padding: 6px 12px;
-    }
-}
-
-@media (max-width: 480px) {
     .cardTitle h3 {
-        font-size: 17px;
+        font-size: 16px;
     }
-    
+
     .cardIcon {
         width: 36px;
         height: 36px;
@@ -127,6 +117,7 @@
     }
     
     .cardRating {
-        font-size: 13px;
+        font-size: 14px;
+        padding: 4px 8px;
     }
 }

@@ -20,6 +20,12 @@ const UtilitiesFilters = memo(({ values = {}, onChange }) => {
     onChange?.({ [field]: value ? parseInt(value) : undefined });
   };
 
+  const preventInvalidInput = (e) => {
+    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{t('utilities.title')}</h3>
@@ -93,7 +99,9 @@ const UtilitiesFilters = memo(({ values = {}, onChange }) => {
                 placeholder={t('utilities.from')}
                 value={values.minCost || ''}
                 onChange={(e) => handleCostChange(e, 'minCost')}
+                onKeyDown={preventInvalidInput}
                 className={styles.doubleRangeInput}
+                min="0"
               />
               <span className={styles.doubleRangeSeparator}>-</span>
               <input 
@@ -101,7 +109,9 @@ const UtilitiesFilters = memo(({ values = {}, onChange }) => {
                 placeholder={t('utilities.to')}
                 value={values.maxCost || ''}
                 onChange={(e) => handleCostChange(e, 'maxCost')}
+                onKeyDown={preventInvalidInput}
                 className={styles.doubleRangeInput}
+                min="0"
               />
             </div>
           </div>

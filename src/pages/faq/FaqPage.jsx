@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaChevronDown, FaChevronUp, FaQuestionCircle, FaEnvelope } from 'react-icons/fa';
+import { 
+  FaChevronDown, FaChevronUp, FaQuestionCircle, FaEnvelope,
+  FaLayerGroup, FaCreditCard, FaDatabase, FaUser // Додані іконки
+} from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import styles from './FaqPage.module.css';
 
@@ -9,18 +12,20 @@ export default function FaqPage() {
   const [activeCategory, setActiveCategory] = useState('general');
   const [openIndex, setOpenIndex] = useState(null);
 
+  // Використовуємо компоненти замість битих символів
   const categories = [
-    { id: 'general', icon: '🌍' },
-    { id: 'subscription', icon: '💎' },
-    { id: 'data', icon: '📊' },
-    { id: 'account', icon: '👤' }
+    { id: 'general', icon: <FaLayerGroup /> },
+    { id: 'subscription', icon: <FaCreditCard /> },
+    { id: 'data', icon: <FaDatabase /> },
+    { id: 'account', icon: <FaUser /> }
   ];
 
   const toggleQuestion = (index) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  const questions = t(`questions.${activeCategory}`, { returnObjects: true });
+  // Фолбек на порожній масив для безпеки
+  const questions = t(`questions.${activeCategory}`, { returnObjects: true }) || [];
 
   return (
     <div className={styles.container}>
@@ -33,10 +38,12 @@ export default function FaqPage() {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.categories}>
+        <div className={styles.categories} role="tablist">
           {categories.map((cat) => (
             <button
               key={cat.id}
+              role="tab"
+              aria-selected={activeCategory === cat.id}
               className={`${styles.categoryButton} ${activeCategory === cat.id ? styles.active : ''}`}
               onClick={() => {
                 setActiveCategory(cat.id);
@@ -50,31 +57,37 @@ export default function FaqPage() {
         </div>
 
         <div className={styles.questionsList}>
-          {Array.isArray(questions) && questions.map((item, index) => (
-            <div 
-              key={index} 
-              className={`${styles.questionItem} ${openIndex === index ? styles.open : ''}`}
-            >
-              <button 
-                className={styles.questionHeader} 
-                onClick={() => toggleQuestion(index)}
-              >
-                <span className={styles.questionTitle}>{item.q}</span>
-                <span className={styles.toggleIcon}>
-                  {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
-                </span>
-              </button>
-              
+          {Array.isArray(questions) && questions.length > 0 ? (
+            questions.map((item, index) => (
               <div 
-                className={styles.answerWrapper}
-                style={{ maxHeight: openIndex === index ? '500px' : '0' }}
+                key={index} 
+                className={`${styles.questionItem} ${openIndex === index ? styles.open : ''}`}
               >
-                <div className={styles.answerContent}>
-                  {item.a}
+                <button 
+                  className={styles.questionHeader} 
+                  onClick={() => toggleQuestion(index)}
+                  aria-expanded={openIndex === index}
+                >
+                  <span className={styles.questionTitle}>{item.q}</span>
+                  <span className={styles.toggleIcon}>
+                    {openIndex === index ? <FaChevronUp /> : <FaChevronDown />}
+                  </span>
+                </button>
+                
+                <div 
+                  className={styles.answerWrapper}
+                  style={{ maxHeight: openIndex === index ? '500px' : '0' }}
+                  aria-hidden={openIndex !== index}
+                >
+                  <div className={styles.answerContent}>
+                    {item.a}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))
+          ) : (
+            <div className={styles.emptyState}>{t('no_questions_found')}</div>
+          )}
         </div>
       </div>
 

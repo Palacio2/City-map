@@ -2,12 +2,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh; /* FIX */
   background: var(--bg-light);
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Решта CSS без змін, він хороший */
 .card {
   background: var(--bg-white);
   border-radius: 20px;
@@ -132,7 +133,6 @@
   margin: -0.5rem 0;
 }
 
-/* Уніфіковані стилі для чекбоксів */
 .checkboxLabel {
   display: flex;
   align-items: center;
@@ -192,20 +192,6 @@
 
 .forgotLink:hover {
   color: var(--primary-dark);
-  text-decoration: underline;
-}
-
-.terms {
-  margin: -0.5rem 0;
-}
-
-.termsLink {
-  color: var(--primary-light);
-  text-decoration: none;
-  font-weight: 500;
-}
-
-.termsLink:hover {
   text-decoration: underline;
 }
 

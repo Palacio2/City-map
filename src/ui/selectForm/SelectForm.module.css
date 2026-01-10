@@ -1,12 +1,11 @@
-/* --- 1. Layout & Card --- */
 .container,
 .errorContainer {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  width: 100%;
   padding: var(--spacing-md);
-  background: var(--bg-light); 
+  box-sizing: border-box; 
 }
 
 .errorContainer {
@@ -24,6 +23,7 @@
   border: 1px solid var(--border-color);
   position: relative;
   transition: var(--transition-default);
+  box-sizing: border-box; 
 }
 
 .card:hover {
@@ -55,7 +55,6 @@
   gap: var(--spacing-lg);
 }
 
-/* --- 2. Inputs & Selects --- */
 .selectWrapper {
   position: relative;
   width: 100%;
@@ -102,11 +101,11 @@
   pointer-events: auto;
   cursor: pointer;
 }
+
 .searchInput + .selectArrow:hover {
   color: var(--primary-dark);
 }
 
-/* --- 3. Suggestions Dropdown (Combobox) --- */
 .suggestionsList {
   position: absolute;
   top: calc(100% + var(--spacing-xs));
@@ -122,6 +121,7 @@
   list-style: none;
   padding: 0;
   margin: 0;
+  box-sizing: border-box;
 }
 
 .suggestionItem {
@@ -149,7 +149,6 @@
   font-style: italic;
 }
 
-/* --- 4. Buttons --- */
 .buttonsContainer {
   display: flex;
   justify-content: space-between;
@@ -171,7 +170,6 @@
   justify-content: center;
 }
 
-/* Primary Button */
 .button {
   flex: 1;
   background: var(--primary-gradient);
@@ -184,7 +182,6 @@
   box-shadow: var(--shadow-hover);
 }
 
-/* Back Button */
 .backButton {
   background-color: var(--bg-light);
   color: var(--text-medium);
@@ -199,7 +196,6 @@
   transform: translateY(-2px);
 }
 
-/* Disabled States (Button & Input only) */
 .button:disabled,
 .backButton:disabled,
 .select:disabled {
@@ -215,11 +211,9 @@
   color: var(--text-light);
 }
 
-/* --- 5. Mobile Responsiveness --- */
 @media (max-width: 600px) {
   .card {
     padding: var(--spacing-lg);
-    margin: var(--spacing-xs);
   }
   
   .title {

@@ -2,7 +2,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
+  min-height: 100dvh;
   background: var(--bg-light);
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -17,6 +17,7 @@
   box-shadow: var(--shadow);
   border: 1px solid var(--border-color);
   text-align: center;
+  animation: fadeInUp 0.6s ease-out;
 }
 
 .successMessage {
@@ -34,14 +35,8 @@
 }
 
 @keyframes scaleIn {
-  0% {
-    transform: scale(0);
-    opacity: 0;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .successMessage h1 {
@@ -103,74 +98,6 @@
   color: white;
 }
 
-/* Адаптивність */
-@media (max-width: 768px) {
-  .container {
-    padding: 1rem;
-  }
-  
-  .card {
-    padding: 2.5rem;
-    border-radius: 16px;
-  }
-  
-  .successIcon {
-    width: 64px;
-    height: 64px;
-  }
-  
-  .successMessage h1 {
-    font-size: 1.8rem;
-  }
-  
-  .successMessage p {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 480px) {
-  .card {
-    padding: 2rem;
-    border-radius: 12px;
-  }
-  
-  .successIcon {
-    width: 56px;
-    height: 56px;
-  }
-  
-  .successMessage h1 {
-    font-size: 1.6rem;
-  }
-  
-  .button {
-    padding: 0.875rem 1.5rem;
-    font-size: 0.95rem;
-    min-width: 180px;
-  }
-  
-  .emailNote {
-    padding: 0.875rem 1.25rem;
-    font-size: 0.95rem;
-  }
-}
-
-/* Анімація появи */
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.card {
-  animation: fadeInUp 0.6s ease-out;
-}
-
 .actions {
   display: flex;
   flex-direction: column;
@@ -226,4 +153,25 @@
 .errorText {
   color: #e74c3c !important;
   font-weight: 600;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 768px) {
+  .container { padding: 1rem; }
+  .card { padding: 2.5rem; border-radius: 16px; }
+  .successIcon { width: 64px; height: 64px; }
+  .successMessage h1 { font-size: 1.8rem; }
+  .successMessage p { font-size: 1rem; }
+}
+
+@media (max-width: 480px) {
+  .card { padding: 2rem; border-radius: 12px; }
+  .successIcon { width: 56px; height: 56px; }
+  .successMessage h1 { font-size: 1.6rem; }
+  .button { padding: 0.875rem 1.5rem; font-size: 0.95rem; min-width: 180px; }
+  .emailNote { padding: 0.875rem 1.25rem; font-size: 0.95rem; }
 }
