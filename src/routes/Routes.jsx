@@ -28,6 +28,7 @@ import BillingHistoryPage from "../components/profile/BillingHistoryPage";
 import ProfileEditPage from "../components/profile/ProfileEditPage";
 import PasswordChangePage from "../components/profile/PasswordChangePage";
 
+
 export default function AppRoutes() {
   return (
     <Routes>
@@ -51,7 +52,7 @@ export default function AppRoutes() {
         <Route path="register-success" element={<RegisterSuccess />} />
         <Route path="auth/callback" element={<AuthCallback />} />
 
-        {/* --- Protected / Private Routes --- */}
+
         <Route 
           path="/favorites" 
           element={
