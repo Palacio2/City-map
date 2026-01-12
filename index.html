@@ -1,37 +1,70 @@
 <!doctype html>
 <html lang="uk">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
-    <title>City Maps — Аналітика районів та пошук нерухомості</title>
-    <meta name="description" content="Зручна мапа районів з детальною аналітикою: безпека, інфраструктура, ціни та транспорт. Знайдіть ідеальне місце для життя." />
-    <meta name="keywords" content="мапа районів, нерухомість, аналітика міста, безпека районів, ціни на житло, City Maps" />
-    <meta name="author" content="City Maps Team" />
+<head>
+<meta charset="UTF-8" />
+<link rel="icon" type="image/svg+xml" href="/" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://city-map-alpha.vercel.app/" />
-    <meta property="og:title" content="City Maps — Аналітика районів" />
-    <meta property="og:description" content="Знайдіть ідеальний район для життя за допомогою детальної статистики та мапи." />
-    <!-- <meta property="og:image" content="https://your-domain.vercel.app/og-image.jpg" /> -->
+<!-- Canonical & Languages -->
+<link rel="canonical" href="https://city-map-alpha.vercel.app/" />
+<link rel="alternate" hreflang="uk" href="https://city-map-alpha.vercel.app/" />
+<link rel="alternate" hreflang="en" href="https://city-map-alpha.vercel.app/en" />
 
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="City Maps — Аналітика районів" />
-    <meta property="twitter:description" content="Знайдіть ідеальний район для життя за допомогою детальної статистики та мапи." />
+<title>City Maps — аналітика районів, ціни на житло, безпека та інфраструктура</title>
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+<meta name="description" content="City Maps — інтерактивна карта районів з аналітикою цін, безпеки, екології, транспорту та інфраструктури. Оберіть найкращий район для життя та інвестицій." />
+<meta name="keywords" content="карта районів, аналітика районів, нерухомість, ціни на квартири, безпека районів, екологія міста, інфраструктура, купити квартиру, оренда житла" />
+<meta name="author" content="City Maps Team" />
+<meta name="robots" content="index, follow" />
 
-      gtag('config', 'G-XXXXXXXXXX');
-    </script>
+<!-- Open Graph -->
+<meta property="og:type" content="website" />
+<meta property="og:locale" content="uk_UA" />
+<meta property="og:url" content="https://city-map-alpha.vercel.app/" />
+<meta property="og:title" content="City Maps — інтерактивна аналітика районів" />
+<meta property="og:description" content="Порівнюйте райони міста за безпекою, цінами, транспортом, школами та екологією. Інтерактивна карта для розумного вибору житла." />
+<meta property="og:image" content="https://city-map-alpha.vercel.app/preview.jpg" />
 
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="City Maps — аналітика районів" />
+<meta name="twitter:description" content="Розумний вибір житла за допомогою міської аналітики та інтерактивної карти." />
+<meta name="twitter:image" content="https://city-map-alpha.vercel.app/preview.jpg" />
+
+<!-- English SEO -->
+<meta property="og:locale:alternate" content="en_US" />
+<meta name="description" lang="en" content="City Maps is an interactive platform for analyzing neighborhoods by housing prices, safety, ecology, transport access and infrastructure." />
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  "name": "City Maps",
+  "url": "https://city-map-alpha.vercel.app/",
+  "applicationCategory": "RealEstateApplication",
+  "operatingSystem": "All",
+  "description": "Інтерактивна веб-платформа для аналізу районів міста, цін на житло, безпеки та інфраструктури.",
+  "offers": {
+    "@type": "Offer",
+    "price": "0",
+    "priceCurrency": "EUR"
+  }
+}
+</script>
+
+<!-- Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+<script>
+window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-XXXXXXXXXX');
+</script>
+</head>
+
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.jsx"></script>
+</body>
 </html>

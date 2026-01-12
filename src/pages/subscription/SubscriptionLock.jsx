@@ -6,7 +6,7 @@ import styles from './SubscriptionLock.module.css';
 
 const SubscriptionLock = ({ feature, children, message }) => {
   const { hasFeature } = useSubscription();
-  const { t } = useTranslation('subscription'); // Вказуємо файл subscription.json
+  const { t } = useTranslation('subscription');
   const navigate = useNavigate();
 
   if (hasFeature(feature)) return children;

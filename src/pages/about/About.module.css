@@ -97,7 +97,6 @@
   color: #4a5568;
 }
 
-/* Grid Components */
 .featuresGrid,
 .targetAudience {
   display: grid;
@@ -121,7 +120,6 @@
   margin-top: 2rem;
 }
 
-/* Card Components */
 .featureCard,
 .audienceGroup {
   background: #f8fafc;
@@ -161,7 +159,6 @@
   line-height: 1.6;
 }
 
-/* Step Component */
 .step {
   display: flex;
   align-items: flex-start;
@@ -195,7 +192,6 @@
   margin: 0;
 }
 
-/* List Components */
 .sourceCategory h3,
 .techCategory h3 {
   font-size: 1.3rem;
@@ -228,7 +224,6 @@
   line-height: 1.6;
 }
 
-/* Team Section */
 .team {
   text-align: center;
 }
@@ -252,7 +247,6 @@
   margin-bottom: 0.5rem;
 }
 
-/* CTA Section */
 .ctaSection {
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
@@ -320,7 +314,6 @@
   color: #667eea;
 }
 
-/* Адаптивність */
 @media (max-width: 768px) {
   .heroTitle { font-size: 2.2rem; }
   .heroSubtitle { font-size: 1.1rem; }
@@ -365,7 +358,6 @@
   .ctaSection p { font-size: 1.1rem; }
 }
 
-/* Темна тема */
 @media (prefers-color-scheme: dark) {
   .container { background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%); }
   .section { background: #2d3748; border-color: #4a5568; }

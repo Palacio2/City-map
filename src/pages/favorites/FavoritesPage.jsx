@@ -7,12 +7,15 @@ import { transformDistrictsForDisplay } from '../../utils/dataTransformers';
 import DistrictDetailsModal from '../../components/districtMap/DistrictDetailsModal';
 import mapStyles from '../../components/districtMap/DistrictsMap.module.css'; 
 import styles from './FavoritesPage.module.css';
-import { formatPrice } from '../../utils/formatters'; 
+import { formatPrice, getCurrencyInfo } from '../../utils/formatters'; // Додано getCurrencyInfo
 
 const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
     const { t } = useTranslation('favorites');
     const filterData = district.filterData;
     const na = t('na');
+    
+    // Визначаємо валюту для конкретного району
+    const currencyInfo = getCurrencyInfo(district.country);
     
     return (
         <div className={mapStyles.districtCard} onClick={() => onClick(district)}>
@@ -39,7 +42,8 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
             
             {filterData?.general?.propertyPrice && (
                 <div className={styles.priceTag}>
-                    {formatPrice(filterData.general.propertyPrice)}
+                    {/* Передаємо код валюти та локаль */}
+                    {formatPrice(filterData.general.propertyPrice, currencyInfo.code, currencyInfo.locale)}
                 </div>
             )}
 
@@ -151,7 +155,6 @@ export default function FavoritesPage() {
                     <span className={styles.favoritesCount}>{favorites.length}</span>
                 </header>
 
-                {/* ВИПРАВЛЕНО: Використовуємо власний клас сітки замість імпортованого */}
                 <div className={styles.favoritesGrid}>
                     {favorites.map(district => (
                         <FavoriteDistrictCard

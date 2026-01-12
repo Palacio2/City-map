@@ -1,6 +1,5 @@
 .container {
-    /* --- КРИТИЧНЕ ВИПРАВЛЕННЯ --- */
-    width: 100%; /* Змушує блок зайняти весь простір у Flex-батьку */
+    width: 100%;
     box-sizing: border-box; 
     
     max-width: 1200px;
@@ -17,7 +16,7 @@
     margin-bottom: 32px;
     padding-bottom: 16px;
     border-bottom: 2px solid var(--border-color);
-    width: 100%; /* Гарантуємо ширину */
+    width: 100%;
 }
 
 .title {
@@ -41,10 +40,8 @@
     border: 1px solid var(--border-color);
 }
 
-/* === СІТКА === */
 .favoritesGrid {
     display: grid;
-    /* width: 100% вже є, але для певності */
     width: 100%; 
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 24px;
@@ -52,7 +49,6 @@
     padding-bottom: 40px;
 }
 
-/* === СТИЛІ КАРТКИ === */
 .card {
     position: relative;
     display: flex;
@@ -171,7 +167,7 @@
     border-radius: 20px;
     border: 2px dashed var(--border-color);
     margin-top: 20px;
-    width: 100%; /* Теж важливо */
+
 }
 
 .emptyIcon {

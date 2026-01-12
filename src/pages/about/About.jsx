@@ -117,7 +117,6 @@ export default function About() {
   );
 }
 
-/* Sub-components */
 const HeroSection = ({ t }) => (
   <div className={styles.heroSection}>
     <div className={styles.heroContent}>

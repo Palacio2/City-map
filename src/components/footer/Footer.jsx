@@ -11,13 +11,11 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={styles.footerContent}>
         
-        {/* Секція опису */}
         <div className={styles.footerSection}>
           <h3>GeoAnalyzer</h3>
           <p>{t('description')}</p>
         </div>
 
-        {/* Навігація */}
         <div className={styles.footerSection}>
           <h4>{t('nav_title')}</h4>
           <nav className={styles.navLinks}>
@@ -29,10 +27,8 @@ export default function Footer() {
           </nav>
         </div>
 
-        {/* Контакти */}
         <div className={styles.footerSection}>
           <h4>{t('contacts_title')}</h4>
-          {/* Використовуємо t() щоб дані були динамічні */}
           <a href={`mailto:${t('email')}`} className={styles.contactLink}>
             {t('email')}
           </a>

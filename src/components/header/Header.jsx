@@ -20,7 +20,7 @@ export default function Header() {
   useEffect(() => {
     checkAuthStatus();
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+      (_, session) => {
         setIsAuthenticated(!!session);
         setIsLoading(false);
       }
@@ -33,19 +33,36 @@ export default function Header() {
     setShowLanguageDropdown(false);
   }, [location]);
 
-  const checkAuthStatus = async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      setIsAuthenticated(!!session);
-    } catch (error) {
-      console.error('Помилка:', error);
-      setIsAuthenticated(false);
-    } finally {
-      setIsLoading(false);
+  useEffect(() => {
+    if (isMenuOpen) {
+      document.documentElement.style.overflow = 'hidden';
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
     }
+    return () => {
+      document.documentElement.style.overflow = '';
+      document.body.style.overflow = '';
+    };
+  }, [isMenuOpen]);
+
+  const checkAuthStatus = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setIsAuthenticated(!!session);
+    setIsLoading(false);
   };
 
   const isActive = (path) => location.pathname === path ? styles.navLinkActive : '';
+
+  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+  const toggleLanguageDropdown = () => setShowLanguageDropdown(!showLanguageDropdown);
+
+  const changeLanguage = (lang) => {
+    i18n.changeLanguage(lang);
+    setShowLanguageDropdown(false);
+    setIsMenuOpen(false);
+  };
 
   const handleAuthClick = () => {
     if (isAuthenticated) handleLogout();
@@ -55,19 +72,8 @@ export default function Header() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setIsAuthenticated(false);
     navigate('/');
   };
-
-  const toggleLanguageDropdown = () => setShowLanguageDropdown(!showLanguageDropdown);
-
-  const changeLanguage = (lang) => {
-    i18n.changeLanguage(lang);
-    setShowLanguageDropdown(false);
-    setIsMenuOpen(false);
-  };
-
-  const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
   if (isLoading) return <div className={styles.header}></div>;
 
@@ -94,31 +100,20 @@ export default function Header() {
           </nav>
 
           <div className={styles.userControls}>
-            {/* Кнопка Улюблені */}
             {isAuthenticated && isPremium && (
-              <button 
-                className={`${styles.navButton} ${styles.favoritesButton}`}
-                onClick={() => navigate('/favorites')}
-                title={t('favorites_title')}
-              >
+              <button className={`${styles.navButton} ${styles.favoritesButton}`} onClick={() => navigate('/favorites')}>
                 <FaHeart className={styles.icon} />
                 <span className={styles.buttonText}>{t('favorites_title')}</span>
               </button>
             )}
 
-            {/* Блок Мови */}
             <div className={styles.languageContainer}>
-              <button 
-                className={`${styles.navButton} ${styles.languageButton}`}
-                onClick={toggleLanguageDropdown}
-                title={t('language_title')}
-              >
+              <button className={`${styles.navButton} ${styles.languageButton}`} onClick={toggleLanguageDropdown}>
                 <FaGlobe className={styles.icon} />
                 <span className={styles.buttonText}>{t('language_title')}</span>
-                {/* Стрілочка тільки для мобільного */}
                 <FaChevronDown className={styles.chevron} />
               </button>
-              
+
               {showLanguageDropdown && (
                 <div className={styles.languageDropdown}>
                   <button onClick={() => changeLanguage('ua')} className={styles.languageOption}>Українська</button>
@@ -128,11 +123,7 @@ export default function Header() {
               )}
             </div>
 
-            {/* Вхід / Вихід */}
-            <button 
-              className={isAuthenticated ? styles.logoutButton : styles.authButton}
-              onClick={handleAuthClick}
-            >
+            <button className={isAuthenticated ? styles.logoutButton : styles.authButton} onClick={handleAuthClick}>
               {isAuthenticated ? t('logout') : t('login')}
             </button>
           </div>

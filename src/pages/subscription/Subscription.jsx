@@ -9,7 +9,6 @@ import styles from './Subscription.module.css';
 export default function Subscription() {
   const [selectedPlan, setSelectedPlan] = useState('premium'); 
   const navigate = useNavigate();
-  // ВАЖЛИВО: Вказуємо файл перекладу 'subscription'
   const { t } = useTranslation('subscription');
   const { subscription } = useSubscription(); 
 

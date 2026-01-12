@@ -11,7 +11,6 @@ import styles from './Payment.module.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-// CheckoutForm тепер приймає mode
 const CheckoutForm = ({ price, mode }) => {
   const stripe = useStripe();
   const elements = useElements();
@@ -26,15 +25,12 @@ const CheckoutForm = ({ price, mode }) => {
 
     let result;
 
-    // === РІЗНА ЛОГІКА ДЛЯ ОПЛАТИ ТА ПРИВ'ЯЗКИ ===
     if (mode === 'setup') {
-        // Якщо ціна 0, ми робимо confirmSetup (прив'язка)
         result = await stripe.confirmSetup({
             elements,
             confirmParams: { return_url: `${window.location.origin}/payment-success` },
         });
     } else {
-        // Стандартна оплата
         result = await stripe.confirmPayment({
             elements,
             confirmParams: { return_url: `${window.location.origin}/payment-success` },
@@ -45,12 +41,11 @@ const CheckoutForm = ({ price, mode }) => {
         setMessage(result.error.message);
         setIsProcessing(false);
     }
-    // Якщо успіх, Stripe сам зробить редірект, setIsProcessing(false) не потрібен
   };
 
   const getButtonText = () => {
       if (isProcessing) return t('processing');
-      if (mode === 'setup') return t('activate_btn'); // "Активувати" для 0 грн
+      if (mode === 'setup') return t('activate_btn');
       return t('pay_btn', { amount: price });
   };
 
@@ -76,7 +71,7 @@ export default function Payment() {
   const [clientSecret, setClientSecret] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const [finalAmount, setFinalAmount] = useState(null);
-  const [paymentMode, setPaymentMode] = useState('payment'); // Новий стейт для режиму
+  const [paymentMode, setPaymentMode] = useState('payment');
 
   const planKey = state?.planKey;
   const planConfig = subscriptionPlans[planKey];
@@ -97,7 +92,7 @@ export default function Payment() {
       
       setClientSecret(data.clientSecret);
       setFinalAmount(data.amount);
-      setPaymentMode(data.mode); // Зберігаємо режим ('payment' або 'setup')
+      setPaymentMode(data.mode);
       
     } catch (error) {
       console.error(error);
@@ -130,7 +125,6 @@ export default function Payment() {
           <div className={styles.infoCard}>
             <div className={styles.headerRow}><FaCheckCircle /> {t('payment:tariff_label')}</div>
             <div className={styles.priceTag}>
-                {/* Показуємо актуальну ціну (0 якщо промокод спрацював) */}
                 {finalAmount !== null ? `${finalAmount} грн` : planConfig.price}
             </div>
             
@@ -165,9 +159,6 @@ export default function Payment() {
           </div>
 
           <div className={styles.paymentCard}>
-            {/* ЗМІНА: Ми більше не ховаємо форму, якщо finalAmount === 0.
-               Ми завжди рендеримо Elements, якщо є clientSecret.
-            */}
             {clientSecret ? (
               <Elements key={clientSecret} options={options} stripe={stripePromise}>
                 <CheckoutForm 

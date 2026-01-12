@@ -209,6 +209,7 @@
 }
 
 @media (max-width: 968px) {
+
   .container {
     padding: 1rem;
     gap: 0;
@@ -216,35 +217,41 @@
 
   .burgerButton {
     display: block;
-    z-index: 1102; 
+    z-index: 1202;
   }
 
+  /* MOBILE DRAWER */
   .navWrapper {
     position: fixed;
     top: 0;
     right: 0;
-    height: 100dvh;
-    width: 280px;
-    background: rgba(15, 15, 25, 0.98);
-    backdrop-filter: blur(20px);
+    height: 100dvh;        /* 🔥 реальна висота екрана */
+    min-height: 100svh;
+    width: 320px;
+    background: rgba(10, 10, 18, 0.98);
+    backdrop-filter: blur(22px);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     padding: 5rem 1.5rem 2rem;
     gap: 0.5rem;
-    box-shadow: -5px 0 25px rgba(0,0,0,0.5);
-    z-index: 1101; 
+    box-shadow: -10px 0 40px rgba(0,0,0,0.65);
+    z-index: 1201;
     overflow-y: auto;
-    
+
     transform: translateX(100%);
     visibility: hidden;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.3s;
+    transition:
+      transform 0.35s cubic-bezier(0.4,0,0.2,1),
+      visibility 0s linear 0.35s;
   }
 
   .navOpen {
     transform: translateX(0);
     visibility: visible;
-    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0s;
+    transition:
+      transform 0.35s cubic-bezier(0.4,0,0.2,1),
+      visibility 0s linear 0s;
   }
 
   .nav {
@@ -259,12 +266,10 @@
     display: block;
     width: 100%;
     padding: 1rem 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
-  
-  .navLink::after {
-    display: none;
-  }
+
+  .navLink::after { display: none; }
 
   .userControls {
     flex-direction: column;
@@ -275,82 +280,69 @@
 
   .navButton {
     width: 100%;
-    height: auto;
     background: transparent;
     border: none;
-    border-radius: 0;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255,255,255,0.08);
     padding: 1rem 0;
     justify-content: flex-start;
-    gap: 10px;
-    font-size: 1.1rem;
-    font-weight: 500;
+    gap: 12px;
+    font-size: 1.05rem;
   }
 
   .navButton:hover {
     background: transparent;
-    border-color: rgba(255, 255, 255, 0.1);
-    transform: none;
     box-shadow: none;
+    transform: none;
     color: #a0aec0;
   }
 
-  .buttonText {
-    display: inline-block;
-  }
-  
+  .buttonText { display: inline-block; }
+
   .chevron {
     display: inline-block;
     margin-left: auto;
-    font-size: 0.8rem;
-    opacity: 0.7;
+    font-size: 0.75rem;
+    opacity: 0.6;
   }
 
-  .languageContainer {
-    width: 100%;
-  }
+  .languageContainer { width: 100%; }
 
   .languageDropdown {
     position: static;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255,255,255,0.05);
     width: 100%;
     border: none;
     border-radius: 0;
-    padding: 0;
-    margin-top: 0;
     box-shadow: none;
     animation: none;
   }
 
   .languageOption {
-    padding: 12px 0 12px 34px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 0 12px 36px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
   }
 
   .authButton, .logoutButton {
     width: 100%;
-    text-align: center;
     margin-top: 2rem;
-    padding: 0.9rem;
+    padding: 1rem;
+    text-align: center;
   }
 
+  /* FULLSCREEN OVERLAY */
   .overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 1050; 
+    inset: 0;          /* 🔥 реально покриває весь екран */
+    width: 100vw;
+    height: 100dvh;
+    background: rgba(0,0,0,0.6);
     backdrop-filter: blur(4px);
+    z-index: 1190;
+    touch-action: none;
   }
 }
 
 @media (max-width: 480px) {
-  .logo a {
-    font-size: 1.5rem;
-  }
-  .navWrapper {
-    width: 85%;
-  }
+  .logo a { font-size: 1.5rem; }
+  .navWrapper { width: 85vw; }
 }

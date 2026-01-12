@@ -13,18 +13,15 @@ export default function PaymentSuccess() {
   
   const { t } = useTranslation('payment');
 
-  // Визначаємо ID транзакції: це може бути payment_intent (оплата) або setup_intent (прив'язка)
   const paymentIntent = searchParams.get('payment_intent');
   const setupIntent = searchParams.get('setup_intent');
   const realTxId = paymentIntent || setupIntent;
 
-  // Визначаємо суму: якщо це прив'язка (setup_intent), то сума 0
   const initialAmount = location.state?.amount ?? (setupIntent ? 0 : undefined);
 
   const [displayData] = useState({
     plan: location.state?.plan || 'Premium', 
     amount: initialAmount,
-    // Якщо ID є від Stripe - показуємо його, інакше (раптом) генеруємо
     txId: realTxId || `TX-${Date.now().toString().substr(-8)}`
   });
 
@@ -64,7 +61,6 @@ export default function PaymentSuccess() {
                 <span style={{color: '#48bb78'}}>{t('success.status_success')}</span>
             </div>
             
-            {/* Показуємо суму, якщо вона визначена (включаючи 0) */}
             {displayData.amount !== undefined && (
                 <div className={styles.detailRow}>
                     <span>{t('success.amount_label')}</span>
@@ -74,7 +70,6 @@ export default function PaymentSuccess() {
             
             <div className={styles.detailRow}>
                 <span>{t('success.tx_label')}</span>
-                {/* Використовуємо monospace шрифт для гарного вигляду ID */}
                 <span style={{ fontFamily: 'monospace', fontSize: '13px' }}>
                     {displayData.txId}
                 </span>

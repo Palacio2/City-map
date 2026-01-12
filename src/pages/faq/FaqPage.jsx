@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { 
   FaChevronDown, FaChevronUp, FaQuestionCircle, FaEnvelope,
-  FaLayerGroup, FaCreditCard, FaDatabase, FaUser // Додані іконки
+  FaLayerGroup, FaCreditCard, FaDatabase, FaUser
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import styles from './FaqPage.module.css';
@@ -12,7 +12,6 @@ export default function FaqPage() {
   const [activeCategory, setActiveCategory] = useState('general');
   const [openIndex, setOpenIndex] = useState(null);
 
-  // Використовуємо компоненти замість битих символів
   const categories = [
     { id: 'general', icon: <FaLayerGroup /> },
     { id: 'subscription', icon: <FaCreditCard /> },
@@ -24,7 +23,6 @@ export default function FaqPage() {
     setOpenIndex(openIndex === index ? null : index);
   };
 
-  // Фолбек на порожній масив для безпеки
   const questions = t(`questions.${activeCategory}`, { returnObjects: true }) || [];
 
   return (

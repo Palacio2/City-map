@@ -12,8 +12,9 @@ import {
   getCrimeLevelClass 
 } from '../../../utils/formatters';
 
-export default function StatsGrid({ filterData }) {
+export default function StatsGrid({ filterData, currencyInfo }) {
   const { t } = useTranslation('districts');
+  const { code, locale } = currencyInfo || { code: 'UAH', locale: 'uk-UA' };
 
   if (!filterData) return null;
 
@@ -34,7 +35,6 @@ export default function StatsGrid({ filterData }) {
 
   return (
     <div className={styles.statsGrid}>
-      {/* Освіта */}
       {hasData(education) && (
         <StatCard title={t('stats.categories.education')} icon="🎓" rating={education.rating}>
           {education.kindergartens > 0 && (
@@ -58,7 +58,6 @@ export default function StatsGrid({ filterData }) {
         </StatCard>
       )}
 
-      {/* Медицина */}
       {hasData(medicine) && (
         <StatCard title={t('stats.categories.medicine')} icon="🏥" rating={medicine.rating}>
           {medicine.hospitals > 0 && (
@@ -79,16 +78,27 @@ export default function StatsGrid({ filterData }) {
               <strong>{formatNumber(medicine.pharmacies)}</strong>
             </div>
           )}
+          {medicine.emergencyServices > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.emergency') || 'Швидка допомога'}</span>
+              <strong>{formatNumber(medicine.emergencyServices)}</strong>
+            </div>
+          )}
         </StatCard>
       )}
 
-      {/* Транспорт */}
       {hasData(transport) && (
         <StatCard title={t('stats.categories.transport')} icon="🚍" rating={transport.rating}>
           {transport.busStops > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.bus_stops')}</span>
               <strong>{formatNumber(transport.busStops)}</strong>
+            </div>
+          )}
+          {transport.tramStops > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.tram_stops') || 'Трамвайні зупинки'}</span>
+              <strong>{formatNumber(transport.tramStops)}</strong>
             </div>
           )}
           {transport.metroStations > 0 && (
@@ -100,20 +110,24 @@ export default function StatsGrid({ filterData }) {
           {transport.bikeLanes > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.bike_lanes')}</span>
-              <strong>{transport.bikeLanes.toFixed(1)}</strong>
+              <strong>{transport.bikeLanes.toFixed(1)} км</strong>
+            </div>
+          )}
+          {transport.distanceRating > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.transport_dist') || 'Доступність'}</span>
+              <strong>{transport.distanceRating.toFixed(1)}/10</strong>
             </div>
           )}
           {transport.frequency && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.transport_frequency')}</span>
-              {/* Примітка: getFrequencyText може повертати текст, який теж потребує перекладу */}
               <strong>{getFrequencyText(transport.frequency)}</strong>
             </div>
           )}
         </StatCard>
       )}
 
-      {/* Безпека */}
       {hasData(safety) && (
         <StatCard title={t('stats.categories.safety')} icon="🛡️" rating={safety.rating}>
           {safety.crimeLevel !== null && (
@@ -130,6 +144,12 @@ export default function StatsGrid({ filterData }) {
               <strong>{formatNumber(safety.policeStations)}</strong>
             </div>
           )}
+          {safety.cctv > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.cctv') || 'Камери'}</span>
+              <strong>{formatNumber(safety.cctv)}</strong>
+            </div>
+          )}
           {safety.streetLighting > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.lighting')}</span>
@@ -139,7 +159,6 @@ export default function StatsGrid({ filterData }) {
         </StatCard>
       )}
 
-      {/* Соціальна інфраструктура */}
       {hasData(social) && (
         <StatCard title={t('stats.categories.social')} icon="🌳" rating={social.rating}>
           {social.parks > 0 && (
@@ -160,10 +179,27 @@ export default function StatsGrid({ filterData }) {
               <strong>{formatNumber(social.playgrounds)}</strong>
             </div>
           )}
+          {social.cinemas > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.cinemas') || 'Кінотеатри'}</span>
+              <strong>{formatNumber(social.cinemas)}</strong>
+            </div>
+          )}
+          {social.theaters > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.theaters') || 'Театри'}</span>
+              <strong>{formatNumber(social.theaters)}</strong>
+            </div>
+          )}
+          {social.museums > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.museums') || 'Музеї'}</span>
+              <strong>{formatNumber(social.museums)}</strong>
+            </div>
+          )}
         </StatCard>
       )}
 
-      {/* Комерція */}
       {hasData(commerce) && (
         <StatCard title={t('stats.categories.commerce')} icon="🛒" rating={commerce.rating}>
           {commerce.groceryStores > 0 && (
@@ -178,6 +214,24 @@ export default function StatsGrid({ filterData }) {
               <strong>{formatNumber(commerce.shoppingMalls)}</strong>
             </div>
           )}
+          {commerce.constructionStores > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.construction') || 'Будматеріали'}</span>
+              <strong>{formatNumber(commerce.constructionStores)}</strong>
+            </div>
+          )}
+          {commerce.clothingStores > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.clothing') || 'Одяг'}</span>
+              <strong>{formatNumber(commerce.clothingStores)}</strong>
+            </div>
+          )}
+          {commerce.beautySalons > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.beauty') || 'Салони краси'}</span>
+              <strong>{formatNumber(commerce.beautySalons)}</strong>
+            </div>
+          )}
           {commerce.banksATMs > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.banks')}</span>
@@ -187,13 +241,17 @@ export default function StatsGrid({ filterData }) {
         </StatCard>
       )}
 
-      {/* Комунальні послуги */}
       {hasData(utilities) && (
         <StatCard title={t('stats.categories.utilities')} icon="⚡" rating={utilities.qualityRating}>
+          <div className={styles.statRow}>
+             <span>{t('stats.labels.air_quality') || 'Якість повітря'}</span>
+             <strong>{utilities.qualityRating ? `${utilities.qualityRating.toFixed(1)}/10` : 'н/д'}</strong>
+          </div>
+
           {utilities.costPerSqm > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.cost_per_sqm')}</span>
-              <strong>{formatPrice(utilities.costPerSqm)}</strong>
+              <strong>{formatPrice(utilities.costPerSqm, code, locale)}</strong>
             </div>
           )}
           {utilities.hasWaterSupply !== null && (

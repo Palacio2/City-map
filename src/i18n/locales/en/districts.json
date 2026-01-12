@@ -7,12 +7,12 @@
   "no_data_title": "No districts available",
   "no_data_text": "Data is being added",
   "not_found_title": "Nothing found",
-  "not_found_text": "Try changing filters",
+  "not_found_text": "Try adjusting the filters",
   "no_photos_text": "No photos to display, but there are {{count}} districts in the list.",
-  "na": "n/a",
+  "na": "N/A",
   "modal": {
-    "no_data_title": "No data",
-    "no_data_text": "Information about this district has not been added yet",
+    "no_data_title": "No data available",
+    "no_data_text": "Information about this district has not yet been added to the system",
     "login_alert": "Please log in to add favorites"
   },
   "buttons": {
@@ -23,12 +23,15 @@
   "details": {
     "price": "Property price:",
     "density": "Density:",
-    "density_unit": "ppl/km²"
+    "density_unit": "people/km²",
+    "population": "Population:",
+    "salary": "Average salary:",
+    "unemployment": "Unemployment rate:"
   },
   "stats": {
     "categories": {
       "education": "Education",
-      "medicine": "Medicine",
+      "medicine": "Healthcare",
       "transport": "Transport",
       "safety": "Safety",
       "social": "Social",
@@ -42,19 +45,30 @@
       "hospitals": "Hospitals:",
       "clinics": "Clinics:",
       "pharmacies": "Pharmacies:",
+      "emergency": "Emergency services:",
       "bus_stops": "Bus stops:",
+      "tram_stops": "Tram stops:",
       "metro_stations": "Metro stations:",
       "bike_lanes": "Bike lanes (km):",
       "transport_frequency": "Transport frequency:",
+      "transport_dist": "Transport accessibility:",
       "crime_level": "Crime level:",
       "police_stations": "Police stations:",
-      "lighting": "Lighting:",
+      "cctv": "CCTV cameras:",
+      "lighting": "Street lighting:",
       "parks": "Parks:",
-      "cafes": "Cafes & Restaurants:",
+      "cafes": "Cafes and restaurants:",
       "playgrounds": "Playgrounds:",
+      "cinemas": "Cinemas:",
+      "theaters": "Theaters:",
+      "museums": "Museums:",
       "grocery": "Grocery stores:",
       "malls": "Shopping malls:",
+      "construction": "Hardware stores:",
+      "clothing": "Clothing stores:",
+      "beauty": "Beauty salons:",
       "banks": "Banks:",
+      "air_quality": "Air quality:",
       "cost_per_sqm": "Cost per m²:",
       "water_supply": "Water supply:"
     }

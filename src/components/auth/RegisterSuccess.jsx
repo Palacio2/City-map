@@ -8,7 +8,6 @@ import styles from './RegisterSuccess.module.css';
 export default function RegisterSuccess() {
   const { t } = useTranslation('auth');
   const location = useLocation();
-  // Прибрав "або 'email'", щоб не показувати технічний текст користувачу
   const email = location.state?.email; 
   const [isResending, setIsResending] = useState(false);
   const [resendStatus, setResendStatus] = useState('');

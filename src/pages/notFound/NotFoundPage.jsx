@@ -5,7 +5,6 @@ import { FaMapMarkedAlt, FaHome } from 'react-icons/fa';
 import styles from './NotFoundPage.module.css';
 
 export default function NotFoundPage() {
-  // Тягнемо переклади з файлу 404.json
   const { t } = useTranslation('notFound');
 
   return (

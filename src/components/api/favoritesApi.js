@@ -1,4 +1,3 @@
-// api/favoritesApi.js
 import { supabase } from '../../supabaseClient';
 
 const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/favorites`;
@@ -44,7 +43,6 @@ export const favoritesApi = {
     return data.favorites || [];
   },
 
-  // Використовує /remove, очікує districtId у тілі
   async removeFavorite(districtId) {
     return await this.request('remove', {
       method: 'POST',

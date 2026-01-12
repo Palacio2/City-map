@@ -1,0 +1,26 @@
+{
+  "cookies": {
+    "text": "Używamy plików cookie, aby poprawić jakość korzystania z serwisu.",
+    "link": "Więcej informacji",
+    "accept": "Rozumiem"
+  },
+  "rodo": {
+    "welcome": "Witamy! 👋",
+    "description_prefix": "Aby utworzyć Twoje konto osobiste i zachować historię wyszukiwania, potrzebujemy Twojej zgody na przetwarzanie danych zgodnie z naszym",
+    "terms_link": "Regulaminem",
+    "we_store_title": "Przechowujemy:",
+    "store_history": "Twoją historię przeglądania dzielnic",
+    "store_favorites": "Wybrane lokalizacje",
+    "store_stats": "Statystyki porównań",
+    "analytics_note": "Pozwala nam to zapewnić Ci spersonalizowaną analitykę.",
+    "accept_btn": "Akceptuję i Kontynuuję",
+    "processing": "Przetwarzanie...",
+    "decline_btn": "Odrzuć (Wyjdź)",
+    "guest_mode_note": "Jeśli odmówisz, możesz kontynuować korzystanie z witryny jako Gość (bez zapisywania historii)."
+  },
+  "errors": {
+    "session_expired": "Sesja wygasła. Zaloguj się ponownie.",
+    "save_failed": "Błąd zapisu. Spróbuj ponownie.",
+    "generic": "Wystąpił błąd. Odśwież stronę."
+  }
+}

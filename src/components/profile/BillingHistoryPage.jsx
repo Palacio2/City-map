@@ -71,7 +71,6 @@ export default function BillingHistoryPage() {
       return {
         id: sub.id,
         date: new Date(sub.created_at).toLocaleDateString('uk-UA'),
-        // Беремо ціну з перекладів
         amount: t(`subscription:subscription.plans.${displayPlanKey}.price`), 
         status: sub.status,
         planName: t(`subscription:subscription.plans.${displayPlanKey}.name`),
@@ -93,7 +92,6 @@ export default function BillingHistoryPage() {
 
     return {
       planName: t(`subscription:subscription.plans.${mappedKey}.name`),
-      // Беремо ціну з перекладів
       amount: t(`subscription:subscription.plans.${mappedKey}.price`),
       expiresAt: (mappedKey !== 'free' && subscription?.ends_at)
         ? new Date(subscription.ends_at).toLocaleDateString('uk-UA')

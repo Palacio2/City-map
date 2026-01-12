@@ -1,14 +1,37 @@
+export const getCurrencyInfo = (countryName) => {
+  if (!countryName) return { code: 'UAH', locale: 'uk-UA', symbol: '₴' };
+  
+  const normalized = countryName.toLowerCase().trim();
+  
+  if (normalized.includes('poland') || normalized.includes('polska') || normalized.includes('польща')) {
+    return { code: 'PLN', locale: 'pl-PL', symbol: 'zł' };
+  }
+  if (normalized.includes('germany') || normalized.includes('deutschland') || normalized.includes('німеччина') || 
+      normalized.includes('france') || normalized.includes('italy') || normalized.includes('spain')) {
+    return { code: 'EUR', locale: 'de-DE', symbol: '€' };
+  }
+  if (normalized.includes('usa') || normalized.includes('america') || normalized.includes('сша')) {
+    return { code: 'USD', locale: 'en-US', symbol: '$' };
+  }
+  if (normalized.includes('uk') || normalized.includes('britain') || normalized.includes('британія')) {
+    return { code: 'GBP', locale: 'en-GB', symbol: '£' };
+  }
+
+  return { code: 'UAH', locale: 'uk-UA', symbol: '₴' };
+};
+
 export const formatNumber = (num) => {
   if (!num && num !== 0) return 'н/д';
   return new Intl.NumberFormat('uk-UA').format(num);
 };
 
-export const formatPrice = (price) => {
+export const formatPrice = (price, currency = 'UAH', locale = 'uk-UA') => {
   if (!price && price !== 0) return 'н/д';
-  return new Intl.NumberFormat('uk-UA', {
+  return new Intl.NumberFormat(locale, {
     style: 'currency',
-    currency: 'UAH',
-    minimumFractionDigits: 0
+    currency: currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0
   }).format(price);
 };
 

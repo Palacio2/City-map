@@ -4,7 +4,6 @@
   --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
   --shadow-card: 0 8px 24px rgba(0, 0, 0, 0.12);
   
-  /* Palette */
   --color-purple: #667eea;
   --color-purple-dark: #764ba2;
   --color-green: #48bb78;
@@ -155,7 +154,6 @@
   font-style: italic;
 }
 
-/* Stats Cards */
 .statsGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -189,7 +187,6 @@
   flex-shrink: 0;
 }
 
-/* Icon Gradients */
 .iconPurple { background: linear-gradient(135deg, var(--color-purple) 0%, var(--color-purple-dark) 100%); }
 .iconGreen { background: linear-gradient(135deg, var(--color-green) 0%, var(--color-green-dark) 100%); }
 .iconOrange { background: linear-gradient(135deg, var(--color-orange) 0%, var(--color-orange-dark) 100%); }
@@ -220,7 +217,6 @@
   margin-top: 4px;
 }
 
-/* Weekly Activity */
 .weeklyActivity {
   display: flex;
   justify-content: space-between;
@@ -310,7 +306,6 @@
 .bgPurple { background: var(--color-purple); }
 .bgOrange { background: var(--color-orange); }
 
-/* Popular Districts */
 .popularList {
   display: flex;
   flex-direction: column;
@@ -379,7 +374,6 @@
   transition: width 0.5s ease;
 }
 
-/* Last Activity */
 .lastActivity {
   display: flex;
   flex-direction: column;
@@ -454,7 +448,6 @@
   color: var(--primary-light);
 }
 
-/* Responsive */
 @media (max-width: 768px) {
   .statsGrid {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

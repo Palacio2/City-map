@@ -1,14 +1,13 @@
 .container {
   display: flex;
   flex-direction: column;
-  padding: 0 1rem; /* Відступи тільки збоку */
+  padding: 0 1rem;
   width: 100%;
-  /* Прибираємо фіксовану висоту, хай контент вирішує */
   min-height: 0; 
 }      
 
 .title {
-  color: inherit; /* Або var(--text-dark) */
+  color: inherit;
   text-align: center;
   margin: 0 0 1.5rem 0;
   font-size: 2rem;
@@ -18,11 +17,9 @@
 
 .contentWrapper {
   display: flex;
-  gap: 1.5rem; /* Трохи більше повітря між фільтром і мапою */
+  gap: 1.5rem;
   width: 100%;
-  /* ВАЖЛИВО: align-items: flex-start дозволяє position: sticky працювати коректно */
   align-items: flex-start;
-  /* Прибираємо calc(100vh...), висоту задають самі панелі всередині */
 }
 
 .loading {
@@ -34,7 +31,7 @@
   background: var(--bg-white);
   border-radius: 16px;
   border: 1px solid var(--border-color);
-  min-height: 400px; /* Мінімальна висота для лоадера */
+  min-height: 400px;
 }
 
 .spinner {
@@ -82,11 +79,10 @@
   background: var(--primary-dark);
 }
 
-/* Адаптивність */
 @media (max-width: 968px) {
   .contentWrapper {
     flex-direction: column;
-    align-items: stretch; /* На мобільному розтягуємо на всю ширину */
+    align-items: stretch;
     gap: 1rem;
   }
 }

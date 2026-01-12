@@ -21,7 +21,7 @@ export const contactsAPI = {
       return result;
     } catch (error) {
       console.error('Contacts API Error:', error);
-      throw error; // Прокидаємо помилку далі в компонент
+      throw error;
     }
   },
 };

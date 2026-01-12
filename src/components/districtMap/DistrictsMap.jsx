@@ -24,7 +24,9 @@ const DistrictCard = React.memo(({ district, isSelected, onClick }) => {
       ) : (
         <div className={styles.photoPlaceholder}>🏙️</div>
       )}
+      
       <div className={styles.districtName}>{district.name}</div>
+      
       {filterData && (
         <div className={styles.districtStats}>
           <span className={styles.statBadge}>🏫 {filterData.education?.rating?.toFixed(1) || na}</span>
@@ -62,14 +64,14 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
     setSelectedDistrict(null);
   }, []);
 
-  const districtsWithPhoto = useMemo(() => districts.filter(d => d.photo_url), [districts]);
+  const visibleDistricts = useMemo(() => districts, [districts]);
 
   const paginatedDistricts = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return districtsWithPhoto.slice(startIndex, startIndex + itemsPerPage);
-  }, [districtsWithPhoto, currentPage]);
+    return visibleDistricts.slice(startIndex, startIndex + itemsPerPage);
+  }, [visibleDistricts, currentPage]);
 
-  const totalPages = Math.ceil(districtsWithPhoto.length / itemsPerPage);
+  const totalPages = Math.ceil(visibleDistricts.length / itemsPerPage);
   const hasActiveFilters = Object.keys(selectedFilters).length > 0;
 
   return (
@@ -80,15 +82,15 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
             {decodeURIComponent(city)}, {decodeURIComponent(country)}
           </h1>
           <div className={styles.mapStats}>
-            {districts.length > 0 && (
+            {visibleDistricts.length > 0 && (
               <span className={styles.statItem}>
-                {t('stats_shown', { shown: districtsWithPhoto.length, total: districts.length })}
+                {t('stats_shown', { shown: visibleDistricts.length, total: districts.length })}
               </span>
             )}
           </div>
         </div>
         
-        {districts.length === 0 ? (
+        {visibleDistricts.length === 0 ? (
           <div className={styles.fullSizeNoData}>
             <div className={styles.placeholder}>
               <div className={styles.placeholderIcon}>{hasActiveFilters ? '🔍' : '🏙️'}</div>
@@ -96,7 +98,7 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
               <p>{hasActiveFilters ? t('not_found_text') : t('no_data_text')}</p>
             </div>
           </div>
-        ) : districtsWithPhoto.length > 0 ? (
+        ) : (
           <div className={styles.mapArea}>
             <div className={styles.mapWrapper}>
               <div className={styles.mapContent}>
@@ -126,10 +128,6 @@ export default function DistrictsMap({ districts, onDistrictClick, selectedFilte
                 </div>
               )}
             </div>
-          </div>
-        ) : (
-          <div className={styles.fullSizeNoData}>
-            <p>{t('no_photos_text', { count: districts.length })}</p>
           </div>
         )}
       </div>

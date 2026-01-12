@@ -1,4 +1,3 @@
-/* ===== Основні стилі для фільтрів ===== */
 .section {
   background: var(--bg-white);
   border-radius: 12px;
@@ -39,7 +38,6 @@
   padding: 16px;
 }
 
-/* ===== Checkbox Items ===== */
 .filterItem {
   display: flex;
   align-items: center;
@@ -92,7 +90,6 @@
   transform: translate(-50%, -50%);
 }
 
-/* ===== Range Filters ===== */
 .rangeFilter {
   margin-top: 16px;
   padding-top: 16px;
@@ -151,7 +148,6 @@
   min-width: fit-content;
 }
 
-/* ===== Rating Filter ===== */
 .ratingFilter {
   margin-top: 16px;
   padding-top: 16px;
@@ -168,7 +164,6 @@
   line-height: 1.4;
 }
 
-/* ===== Select Input Styles ===== */
 .select {
   width: 100%;
   padding: 10px 12px;
@@ -180,7 +175,6 @@
   transition: all 0.3s ease;
   font-family: inherit;
   appearance: none;
-  /* SVG стрілка закодована в base64 для кросбраузерності */
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23667eea'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: right 10px center;
@@ -194,7 +188,6 @@
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
 }
 
-/* ===== Range Slider Container ===== */
 .rangeContainer {
   display: flex;
   align-items: center;
@@ -203,8 +196,8 @@
 }
 
 .rangeSlider {
-  flex: 1; /* Займає весь доступний простір */
-  min-width: 0; /* Запобігає переповненню Flex-контейнера */
+  flex: 1; 
+  min-width: 0;
   height: 6px;
   border-radius: 3px;
   background: #e0e0e0;
@@ -212,6 +205,7 @@
   opacity: 0.7;
   transition: opacity 0.2s;
   -webkit-appearance: none;
+  appearance: none;
 }
 
 .rangeSlider:hover {
@@ -240,7 +234,6 @@
 }
 
 .rangeValue {
-  /* 🛠️ FIX: Фіксована ширина, щоб уникнути "стрибання" слайдера */
   width: 70px; 
   text-align: center;
   font-weight: 600;
@@ -254,11 +247,9 @@
   overflow: hidden;
   white-space: nowrap;
   
-  /* 🛠️ FIX: Однаковий відступ для цифр (моноширинний режим для чисел) */
   font-variant-numeric: tabular-nums;
 }
 
-/* ===== Двойной Range для UtilitiesFilters ===== */
 .doubleRangeContainer {
   display: flex;
   flex-direction: column;
@@ -308,7 +299,6 @@
   padding: 0 4px;
 }
 
-/* ===== Checkbox Label Styles ===== */
 .checkboxLabel {
   display: flex;
   align-items: center;
@@ -355,7 +345,6 @@
   transform: translate(-50%, -50%);
 }
 
-/* ===== Спеціальні стилі для темної теми (якщо використовується) ===== */
 @media (prefers-color-scheme: dark) {
   .filterItem input[type="checkbox"] {
     border-color: var(--border-color);
@@ -366,7 +355,6 @@
   }
   
   .select {
-    /* Оновлена іконка для темної теми (якщо потрібно) */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23667eea'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
   }
   
@@ -397,9 +385,7 @@
   }
 }
 
-/* ===== Responsive Styles ===== */
 
-/* Планшети та маленькі ноутбуки */
 @media (max-width: 1024px) {
   .section {
     margin-bottom: 14px;
@@ -415,14 +401,12 @@
   }
   
   .rangeValue {
-    /* Адаптивна фіксована ширина для менших екранів */
     width: 60px;
     padding: 7px 0;
     font-size: 0.9rem;
   }
 }
 
-/* Планшети (портретна орієнтація) */
 @media (max-width: 768px) {
   .section {
     margin-bottom: 12px;
@@ -478,7 +462,7 @@
   }
   
   .rangeValue {
-    width: 55px; /* Ще менша фіксована ширина */
+    width: 55px;
     padding: 6px 0;
     font-size: 0.85rem;
   }
@@ -511,7 +495,6 @@
   }
 }
 
-/* Мобільні пристрої */
 @media (max-width: 480px) {
   .section {
     border-radius: 8px;
@@ -588,7 +571,6 @@
     background-size: 14px;
   }
   
-  /* На мобільних: Слайдер зверху, Значення знизу */
   .rangeContainer {
     flex-direction: column;
     gap: 8px;
@@ -602,7 +584,7 @@
   
   .rangeValue {
     order: 2;
-    width: 100%; /* На весь рядок */
+    width: 100%; 
     padding: 8px;
     font-size: 0.85rem;
     text-align: center;
@@ -646,7 +628,6 @@
   }
 }
 
-/* Дуже маленькі мобільні пристрої */
 @media (max-width: 360px) {
   .sectionTitle {
     padding: 8px 10px;
@@ -706,7 +687,6 @@
   }
 }
 
-/* ===== Анімації ===== */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -732,7 +712,6 @@
 .filterItem:nth-child(4) { animation-delay: 0.2s; }
 .filterItem:nth-child(5) { animation-delay: 0.25s; }
 
-/* ===== Утилітарні класи ===== */
 .fullWidth {
   width: 100%;
 }

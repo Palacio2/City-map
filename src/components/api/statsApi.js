@@ -22,13 +22,11 @@ async function apiRequest(endpoint, options = {}) {
     return await response.json();
   } catch (error) {
     console.error('API Request failed:', error);
-    throw error; // Прокидаємо помилку, щоб UI міг показати error state
+    throw error;
   }
 }
 
-// Єдиний метод для отримання всього дашборду
 export async function fetchDashboardData() {
-  // Викликаємо нову Edge Function 'get-dashboard-stats'
   const data = await apiRequest('/get-dashboard-stats');
   
   return {

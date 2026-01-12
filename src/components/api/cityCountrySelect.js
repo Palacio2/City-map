@@ -1,6 +1,5 @@
 const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cityCountrySelect`;
 
-// Універсальний мапер для відповіді Supabase
 const mapLocationData = (item) => ({
   value: item.name,
   label: item.name,
@@ -34,10 +33,6 @@ export async function fetchCitiesByCountry(countryName) {
   return Array.isArray(data) ? data.map(mapLocationData) : [];
 }
 
-/**
- * Створює опції для селекта.
- * Доступні елементи йдуть першими, недоступні (disabled) - в кінці.
- */
 export function createSelectOptions(data) {
   if (!Array.isArray(data)) return [];
 
@@ -48,7 +43,7 @@ export function createSelectOptions(data) {
     const option = {
       label: item.label || item.name || item.value,
       value: item.value,
-      disabled: !item.available // Інвертуємо available
+      disabled: !item.available
     };
 
     if (item.available) {

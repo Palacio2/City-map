@@ -62,6 +62,10 @@ import NotFoundPageEN from './locales/en/404.json';
 import NotFoundPagePL from './locales/pl/404.json';
 import NotFoundPageUK from './locales/uk/404.json';
 
+import RodoEN from './locales/en/rodo.json';
+import RodoPL from './locales/pl/rodo.json';
+import RodoUK from './locales/uk/rodo.json';
+
 const resources = {
   ua: { 
     header: headerUK,
@@ -79,6 +83,7 @@ const resources = {
     subscription: subscriptionUK,
     terms: termsUK,
     notFound: NotFoundPageUK,
+    rodo : RodoUK,
   },
   en: { 
     header: headerEN,
@@ -96,6 +101,7 @@ const resources = {
     subscription: subscriptionEN,
     terms: termsEN,
     notFound: NotFoundPageEN,
+    rodo : RodoEN,
   },
   pl: { 
     header: headerPL,
@@ -113,6 +119,7 @@ const resources = {
     subscription: subscriptionPL,
     terms: termsPl,
     notFound: NotFoundPagePL,
+    rodo : RodoPL,
   },
 };
 
@@ -129,7 +136,7 @@ i18n
     },
     
     ns: ['header', 'footer', 'faq', 'auth', 'select',
-       'districts', 'filters', 'profile', 'about',
+       'districts', 'filters', 'profile', 'about', 'rodo',
         'contacts', 'favorites', 'payment', 'subscription', 'terms', 'notFound'], 
     defaultNS: 'header',
 

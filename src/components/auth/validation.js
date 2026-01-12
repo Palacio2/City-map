@@ -1,4 +1,3 @@
-// validation.js
 export const validateEmail = (email, t) => {
   if (!email) return t('errors.required');
   if (!/\S+@\S+\.\S+/.test(email)) return t('errors.email_invalid');
@@ -24,7 +23,6 @@ export const validateConfirmPassword = (password, confirmPassword, t) => {
   return '';
 };
 
-// Приймаємо t як аргумент
 export const validateLoginForm = (formData, t) => {
   const errors = {};
   const emailError = validateEmail(formData.email, t);
@@ -36,7 +34,6 @@ export const validateLoginForm = (formData, t) => {
 
 export const validateRegisterForm = (formData, t) => {
   const errors = {};
-  // Оновлена логіка виклику валідаторів з t
   const emailError = validateEmail(formData.email, t);
   if (emailError) errors.email = emailError;
 

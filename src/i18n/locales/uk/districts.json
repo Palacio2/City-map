@@ -23,7 +23,10 @@
   "details": {
     "price": "Ціна нерухомості:",
     "density": "Щільність:",
-    "density_unit": "осіб/км²"
+    "density_unit": "осіб/км²",
+    "population": "Населення:",
+    "salary": "Середня зарплата:",
+    "unemployment": "Рівень безробіття:"
   },
   "stats": {
     "categories": {
@@ -42,19 +45,30 @@
       "hospitals": "Лікарні:",
       "clinics": "Клініки:",
       "pharmacies": "Аптеки:",
+      "emergency": "Швидка допомога:",
       "bus_stops": "Автобусні зупинки:",
+      "tram_stops": "Трамвайні зупинки:",
       "metro_stations": "Станції метро:",
       "bike_lanes": "Велодоріжки (км):",
       "transport_frequency": "Частота транспорту:",
+      "transport_dist": "Доступність транспорту:",
       "crime_level": "Рівень злочинності:",
       "police_stations": "Відділки поліції:",
+      "cctv": "Камери спостереження:",
       "lighting": "Освітлення:",
       "parks": "Парки:",
       "cafes": "Кафе та ресторани:",
       "playgrounds": "Дитячі майданчики:",
+      "cinemas": "Кінотеатри:",
+      "theaters": "Театри:",
+      "museums": "Музеї:",
       "grocery": "Продуктові магазини:",
       "malls": "Торгові центри:",
+      "construction": "Будівельні магазини:",
+      "clothing": "Магазини одягу:",
+      "beauty": "Салони краси:",
       "banks": "Банки:",
+      "air_quality": "Якість повітря:",
       "cost_per_sqm": "Вартість за м²:",
       "water_supply": "Водопостачання:"
     }

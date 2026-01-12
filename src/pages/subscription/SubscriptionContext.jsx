@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '../../supabaseClient';
-import { subscriptionPlans } from './subscriptionPlans'; // Прибрав featureTranslations
+import { subscriptionPlans } from './subscriptionPlans';
 
 const SubscriptionContext = createContext();
 
@@ -96,7 +96,6 @@ export const SubscriptionProvider = ({ children }) => {
     isPremium: subscription.plan !== 'free' && !subscription.isExpired,
     isFree: subscription.plan === 'free',
     updateSubscription,
-    // Тепер повертає просто список ключів (strings), переклад робимо в компоненті
     getFeatureKeys: () => subscription.features || [] 
   }), [subscription, isLoading, updateSubscription]);
 

@@ -12,10 +12,8 @@ export default function TermsOfService() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Отримуємо масив секцій з перекладу
   const sections = t('sections', { returnObjects: true });
 
-  // Форматування дати відповідно до мови користувача
   const formattedDate = new Date(UPDATE_DATE).toLocaleDateString(i18n.language, {
     year: 'numeric',
     month: 'long',

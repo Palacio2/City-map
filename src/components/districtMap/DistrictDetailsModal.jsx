@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useParams } from 'react-router-dom';
 import styles from './DistrictDetailsModal.module.css';
 import { HeaderSection, ModalFooter } from './modal/HeaderFooter';
 import StatsGrid from './modal/StatsGrid';
 import { checkIsFavorite, toggleFavorite } from '../../utils/favorites';
-import { formatNumber, formatPrice } from '../../utils/formatters';
+import { formatNumber, formatPrice, getCurrencyInfo } from '../../utils/formatters';
 import { supabase } from '../../supabaseClient';
 
 export default function DistrictDetailsModal({ 
@@ -14,9 +15,13 @@ export default function DistrictDetailsModal({
   onToggleFavorite 
 }) {
   const { t } = useTranslation('districts');
+  const { country: paramCountry } = useParams();
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [userId, setUserId] = useState(null);
+
+  const countryName = district?.country || decodeURIComponent(paramCountry || '');
+  const currencyInfo = getCurrencyInfo(countryName);
 
   useEffect(() => {
     let mounted = true;
@@ -100,11 +105,15 @@ export default function DistrictDetailsModal({
           onClose={onClose}
           formatPrice={formatPrice}
           formatNumber={formatNumber}
+          currencyInfo={currencyInfo}
         />
 
         <div className={styles.mainContent}>
           {district.filterData ? (
-            <StatsGrid filterData={district.filterData} />
+            <StatsGrid 
+              filterData={district.filterData} 
+              currencyInfo={currencyInfo}
+            />
           ) : (
             <div className={styles.noData}>
               <div className={styles.noDataIcon}>📊</div>

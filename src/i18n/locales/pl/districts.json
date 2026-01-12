@@ -1,19 +1,19 @@
 {
-  "loading": "Ładowanie analizy dzielnic...",
+  "loading": "Ładowanie analityki dzielnic...",
   "error_prefix": "Błąd: {{error}}",
   "retry": "Spróbuj ponownie",
-  "load_failed": "Nie udało się pobrać danych",
-  "stats_shown": "Pokazano {{shown}} z {{total}} dzielnic",
+  "load_failed": "Nie udało się załadować danych",
+  "stats_shown": "Wyświetlono {{shown}} z {{total}} dzielnic",
   "no_data_title": "Brak dzielnic",
-  "no_data_text": "Dane są dodawane",
+  "no_data_text": "Dane są w trakcie dodawania",
   "not_found_title": "Nic nie znaleziono",
   "not_found_text": "Spróbuj zmienić filtry",
   "no_photos_text": "Brak zdjęć do wyświetlenia, ale na liście jest {{count}} dzielnic.",
-  "na": "n/d",
+  "na": "brak",
   "modal": {
     "no_data_title": "Brak danych",
-    "no_data_text": "Informacje o tej dzielnicy nie zostały jeszcze dodane",
-    "login_alert": "Zaloguj się, aby dodać do ulubionych"
+    "no_data_text": "Informacje o tej dzielnicy nie zostały jeszcze dodane do systemu",
+    "login_alert": "Zaloguj się, aby dodawać do ulubionych"
   },
   "buttons": {
     "close": "Zamknij",
@@ -23,7 +23,10 @@
   "details": {
     "price": "Cena nieruchomości:",
     "density": "Gęstość:",
-    "density_unit": "os./km²"
+    "density_unit": "osób/km²",
+    "population": "Populacja:",
+    "salary": "Średnia pensja:",
+    "unemployment": "Stopa bezrobocia:"
   },
   "stats": {
     "categories": {
@@ -33,30 +36,41 @@
       "safety": "Bezpieczeństwo",
       "social": "Społeczne",
       "commerce": "Handel",
-      "utilities": "Media"
+      "utilities": "Usługi komunalne"
     },
     "labels": {
       "kindergartens": "Przedszkola:",
       "schools": "Szkoły:",
-      "universities": "Uczelnie:",
+      "universities": "Uniwersytety:",
       "hospitals": "Szpitale:",
-      "clinics": "Przychodnie:",
+      "clinics": "Kliniki:",
       "pharmacies": "Apteki:",
+      "emergency": "Pogotowie:",
       "bus_stops": "Przystanki autobusowe:",
+      "tram_stops": "Przystanki tramwajowe:",
       "metro_stations": "Stacje metra:",
       "bike_lanes": "Ścieżki rowerowe (km):",
       "transport_frequency": "Częstotliwość transportu:",
+      "transport_dist": "Dostępność transportu:",
       "crime_level": "Poziom przestępczości:",
-      "police_stations": "Posterunki policji:",
+      "police_stations": "Komisariaty policji:",
+      "cctv": "Monitoring:",
       "lighting": "Oświetlenie:",
       "parks": "Parki:",
       "cafes": "Kawiarnie i restauracje:",
       "playgrounds": "Place zabaw:",
+      "cinemas": "Kina:",
+      "theaters": "Teatry:",
+      "museums": "Muzea:",
       "grocery": "Sklepy spożywcze:",
       "malls": "Centra handlowe:",
+      "construction": "Sklepy budowlane:",
+      "clothing": "Sklepy odzieżowe:",
+      "beauty": "Salony piękności:",
       "banks": "Banki:",
-      "cost_per_sqm": "Koszt za m²:",
-      "water_supply": "Wodociągi:"
+      "air_quality": "Jakość powietrza:",
+      "cost_per_sqm": "Cena za m²:",
+      "water_supply": "Zaopatrzenie w wodę:"
     }
   }
 }

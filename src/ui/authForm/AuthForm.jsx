@@ -97,7 +97,6 @@ export default function AuthForm({
                       type="button"
                       className={styles.passwordToggle}
                       onClick={() => onTogglePassword(name)}
-                      // Прибрав tabIndex="-1", щоб працювала клавіатура
                     >
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>

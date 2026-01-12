@@ -128,7 +128,7 @@ dist-ssr/
 
 # Local backend and scripts
 server/
-scripts/
 
 # Admin panel (Frontend)
 src/pages/admin/
+src/services/

@@ -2,13 +2,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100dvh; /* FIX */
+  min-height: 100dvh;
   background: var(--bg-light);
   padding: 20px;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* Решта CSS без змін, він хороший */
 .card {
   background: var(--bg-white);
   border-radius: 20px;
@@ -320,7 +319,6 @@
   text-decoration: underline;
 }
 
-/* Адаптивність */
 @media (max-width: 768px) {
   .container { padding: 1rem; }
   .card { padding: 2rem; border-radius: 16px; }

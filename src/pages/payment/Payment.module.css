@@ -59,7 +59,6 @@
   color: var(--text-dark);
 }
 
-/* Info Card Specifics */
 .priceTag {
   background: var(--primary-gradient);
   color: white;
