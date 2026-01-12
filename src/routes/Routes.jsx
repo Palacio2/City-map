@@ -30,7 +30,7 @@ import PasswordChangePage from "../components/profile/PasswordChangePage";
 
 // Parser (Admin Panel)
 
-import Admin from "../pages/admin/index";
+// import Admin from "../pages/admin/index";
 
 export default function AppRoutes() {
   return (
@@ -62,7 +62,7 @@ export default function AppRoutes() {
 
         {/* Адмін-панель для парсингу (Захищено) */}
 
-        <Route 
+        {/* <Route 
 
           path="parser" 
 
@@ -76,7 +76,7 @@ export default function AppRoutes() {
 
           } 
 
-        />  
+        />   */}
         
         <Route 
           path="/favorites" 
