@@ -4,23 +4,26 @@
     "subtitle": "Гнучкі плани для пошуку нерухомості та професіоналів",
     "current_label": "(Поточний)",
     "active_plan_label": "Активний план",
+    "wait_expire": "Дочекайтесь завершення поточної підписки, щоб змінити тариф.",
     "included_title": "Що входить:",
     "disabled_title": "Недоступно:",
+    "incomplete": "Очікує оплати",
     "buttons": {
       "active": "Активний",
       "stay_free": "Залишитись на Free",
       "choose": "Обрати {{plan}}",
-      "upgrade": "Покращити підписку"
+      "upgrade": "Покращити підписку",
+      "has_active_sub": "Підписка вже активна"
     },
     "lock": {
       "title": "Необхідна підписка",
       "default_msg": "Ця функція доступна з платною підпискою."
     },
     "plans": {
-      "free": { "name": "Безкоштовний", "price": "0 UAH" },
-      "weekly": { "name": "Тижневий", "price": "99 UAH / тиждень" },
-      "premium": { "name": "Premium", "price": "299 UAH / міс" },
-      "realtor": { "name": "Realtor Pro", "price": "599 UAH / міс" }
+      "free": { "name": "Безкоштовний", "price": "€0" },
+      "weekly": { "name": "Тижневий", "price": "€2.99 / тиждень" },
+      "premium": { "name": "Premium", "price": "€8.99 / міс" },
+      "realtor": { "name": "Realtor Pro", "price": "€29.00 / міс" }
     },
     "features": {
       "basic_map": "Базова інформація",
@@ -33,6 +36,6 @@
       "compare_districts": "Порівняння",
       "export_data": "Експорт звітів (PDF/Excel)",
       "priority_support": "Особистий менеджер"
-    }
+    }  
   }
 }

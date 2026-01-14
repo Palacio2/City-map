@@ -28,6 +28,23 @@
     "salary": "Середня зарплата:",
     "unemployment": "Рівень безробіття:"
   },
+  "enums": {
+    "frequency": {
+      "high": "Висока",
+      "medium": "Середня",
+      "low": "Низька"
+    },
+    "density": {
+      "high": "Висока",
+      "medium": "Середня",
+      "low": "Низька"
+    },
+    "crime": {
+      "high": "Високий",
+      "medium": "Середній",
+      "low": "Низький"
+    }
+  },
   "stats": {
     "categories": {
       "education": "Освіта",

@@ -8,12 +8,12 @@
   "no_data_text": "Dane są w trakcie dodawania",
   "not_found_title": "Nic nie znaleziono",
   "not_found_text": "Spróbuj zmienić filtry",
-  "no_photos_text": "Brak zdjęć do wyświetlenia, ale na liście jest {{count}} dzielnic.",
-  "na": "brak",
+  "no_photos_text": "Brak zdjęć do wyświetlenia, ale na liście znajduje się {{count}} dzielnic.",
+  "na": "n/d",
   "modal": {
     "no_data_title": "Brak danych",
     "no_data_text": "Informacje o tej dzielnicy nie zostały jeszcze dodane do systemu",
-    "login_alert": "Zaloguj się, aby dodawać do ulubionych"
+    "login_alert": "Zaloguj się, aby dodać do ulubionych"
   },
   "buttons": {
     "close": "Zamknij",
@@ -23,10 +23,27 @@
   "details": {
     "price": "Cena nieruchomości:",
     "density": "Gęstość:",
-    "density_unit": "osób/km²",
+    "density_unit": "os./km²",
     "population": "Populacja:",
-    "salary": "Średnia pensja:",
+    "salary": "Średnie wynagrodzenie:",
     "unemployment": "Stopa bezrobocia:"
+  },
+  "enums": {
+    "frequency": {
+      "high": "Wysoka",
+      "medium": "Średnia",
+      "low": "Niska"
+    },
+    "density": {
+      "high": "Wysoka",
+      "medium": "Średnia",
+      "low": "Niska"
+    },
+    "crime": {
+      "high": "Wysoki",
+      "medium": "Średni",
+      "low": "Niski"
+    }
   },
   "stats": {
     "categories": {
@@ -34,18 +51,18 @@
       "medicine": "Medycyna",
       "transport": "Transport",
       "safety": "Bezpieczeństwo",
-      "social": "Społeczne",
+      "social": "Życie społeczne",
       "commerce": "Handel",
-      "utilities": "Usługi komunalne"
+      "utilities": "Media"
     },
     "labels": {
       "kindergartens": "Przedszkola:",
       "schools": "Szkoły:",
       "universities": "Uniwersytety:",
       "hospitals": "Szpitale:",
-      "clinics": "Kliniki:",
+      "clinics": "Przychodnie:",
       "pharmacies": "Apteki:",
-      "emergency": "Pogotowie:",
+      "emergency": "Pogotowie ratunkowe:",
       "bus_stops": "Przystanki autobusowe:",
       "tram_stops": "Przystanki tramwajowe:",
       "metro_stations": "Stacje metra:",
@@ -54,7 +71,7 @@
       "transport_dist": "Dostępność transportu:",
       "crime_level": "Poziom przestępczości:",
       "police_stations": "Komisariaty policji:",
-      "cctv": "Monitoring:",
+      "cctv": "Kamery monitoringu:",
       "lighting": "Oświetlenie:",
       "parks": "Parki:",
       "cafes": "Kawiarnie i restauracje:",
@@ -64,13 +81,13 @@
       "museums": "Muzea:",
       "grocery": "Sklepy spożywcze:",
       "malls": "Centra handlowe:",
-      "construction": "Sklepy budowlane:",
+      "construction": "Materiały budowlane:",
       "clothing": "Sklepy odzieżowe:",
-      "beauty": "Salony piękności:",
+      "beauty": "Salony urody:",
       "banks": "Banki:",
       "air_quality": "Jakość powietrza:",
-      "cost_per_sqm": "Cena za m²:",
-      "water_supply": "Zaopatrzenie w wodę:"
+      "cost_per_sqm": "Koszt za m²:",
+      "water_supply": "Wodociągi:"
     }
   }
 }

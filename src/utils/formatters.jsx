@@ -39,31 +39,24 @@ export const formatBoolean = (value) => {
   return value ? '✅' : '❌';
 };
 
+// ЗМІНЕНО: Повертає ключі
 export const getFrequencyText = (frequency) => {
-  if (!frequency) return 'н/д';
-  switch (frequency) {
-    case 'high': return 'Висока';
-    case 'medium': return 'Середня';
-    case 'low': return 'Низька';
-    default: return frequency;
-  }
+  if (!frequency) return null;
+  return `enums.frequency.${frequency}`;
 };
 
+// ЗМІНЕНО: Повертає ключі
 export const getDensityText = (density) => {
-  if (!density) return 'н/д';
-  switch (density) {
-    case 'high': return 'Висока';
-    case 'medium': return 'Середня';
-    case 'low': return 'Низька';
-    default: return density;
-  }
+  if (!density) return null;
+  return `enums.density.${density}`;
 };
 
+// ЗМІНЕНО: Повертає ключі
 export const getCrimeLevelText = (crimeLevel) => {
-  if (!crimeLevel && crimeLevel !== 0) return 'н/д';
-  if (crimeLevel <= 3) return 'Низький';
-  if (crimeLevel <= 6) return 'Середній';
-  return 'Високий';
+  if (!crimeLevel && crimeLevel !== 0) return null;
+  if (crimeLevel <= 3) return 'enums.crime.low';
+  if (crimeLevel <= 6) return 'enums.crime.medium';
+  return 'enums.crime.high';
 };
 
 export const getCrimeLevelClass = (crimeLevel) => {

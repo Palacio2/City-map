@@ -30,14 +30,32 @@ export const SubscriptionProvider = ({ children }) => {
         .select('*')
         .eq('user_id', session.user.id)
         .in('status', ['active', 'trialing'])
-        .gt('ends_at', new Date().toISOString())
+        .gt('ends_at', new Date().toISOString()) 
         .order('ends_at', { ascending: false })
+        .limit(1)
         .maybeSingle();
 
-      if (error || !data) return { ...FREE_PLAN, features: getFreeFeatures() };
+      if (error) {
+        console.error("Subscription fetch error:", error);
+        return { ...FREE_PLAN, features: getFreeFeatures() };
+      }
 
-      let planName = data.plan_name === 'pro' ? 'premium' : data.plan_name;
-      if (!subscriptionPlans[planName]) planName = 'free';
+      if (!data) {
+        console.log("No active subscription found in DB");
+        return { ...FREE_PLAN, features: getFreeFeatures() };
+      }
+
+      let planName = data.plan_name ? data.plan_name.toLowerCase().trim() : 'free';
+      
+      if (planName === 'pro') planName = 'premium';
+      if (planName === 'realtor pro') planName = 'realtor';
+
+      if (!subscriptionPlans[planName]) {
+        console.warn(`Unknown plan "${planName}" found in DB. Fallback to free.`);
+        planName = 'free';
+      }
+
+      console.log("Active Plan Loaded:", planName); 
 
       return {
         id: data.id,
@@ -48,7 +66,7 @@ export const SubscriptionProvider = ({ children }) => {
         isExpired: false
       };
     } catch (err) {
-      console.error("Subscription fetch error:", err);
+      console.error("Critical subscription error:", err);
       return { ...FREE_PLAN, features: getFreeFeatures() };
     }
   }, []);
@@ -57,6 +75,7 @@ export const SubscriptionProvider = ({ children }) => {
     setIsLoading(true);
     try {
       let sub = await fetchSubscriptionData();
+      
       if (waitForPlan && waitForPlan !== 'free') {
         let attempts = 0;
         while (attempts < 5 && sub.plan !== waitForPlan) {
@@ -67,7 +86,7 @@ export const SubscriptionProvider = ({ children }) => {
       }
       setSubscription(sub);
     } catch (e) {
-      console.error("Critical update error:", e);
+      console.error(e);
       setSubscription({ ...FREE_PLAN, features: getFreeFeatures() });
     } finally {
       setIsLoading(false);

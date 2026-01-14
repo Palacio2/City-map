@@ -3,15 +3,15 @@
   "error_prefix": "Error: {{error}}",
   "retry": "Try again",
   "load_failed": "Failed to load data",
-  "stats_shown": "Showing {{shown}} of {{total}} districts",
-  "no_data_title": "No districts available",
-  "no_data_text": "Data is being added",
+  "stats_shown": "Shown {{shown}} of {{total}} districts",
+  "no_data_title": "No districts",
+  "no_data_text": "Data is still being added",
   "not_found_title": "Nothing found",
-  "not_found_text": "Try adjusting the filters",
-  "no_photos_text": "No photos to display, but there are {{count}} districts in the list.",
-  "na": "N/A",
+  "not_found_text": "Try changing the filters",
+  "no_photos_text": "No photos to display, but there are {{count}} districts listed.",
+  "na": "n/a",
   "modal": {
-    "no_data_title": "No data available",
+    "no_data_title": "Data missing",
     "no_data_text": "Information about this district has not yet been added to the system",
     "login_alert": "Please log in to add favorites"
   },
@@ -23,15 +23,32 @@
   "details": {
     "price": "Property price:",
     "density": "Density:",
-    "density_unit": "people/km²",
+    "density_unit": "ppl/km²",
     "population": "Population:",
     "salary": "Average salary:",
     "unemployment": "Unemployment rate:"
   },
+  "enums": {
+    "frequency": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "density": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "crime": {
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    }
+  },
   "stats": {
     "categories": {
       "education": "Education",
-      "medicine": "Healthcare",
+      "medicine": "Medicine",
       "transport": "Transport",
       "safety": "Safety",
       "social": "Social",
@@ -55,16 +72,16 @@
       "crime_level": "Crime level:",
       "police_stations": "Police stations:",
       "cctv": "CCTV cameras:",
-      "lighting": "Street lighting:",
+      "lighting": "Lighting:",
       "parks": "Parks:",
-      "cafes": "Cafes and restaurants:",
+      "cafes": "Cafes & Restaurants:",
       "playgrounds": "Playgrounds:",
       "cinemas": "Cinemas:",
       "theaters": "Theaters:",
       "museums": "Museums:",
       "grocery": "Grocery stores:",
       "malls": "Shopping malls:",
-      "construction": "Hardware stores:",
+      "construction": "Construction stores:",
       "clothing": "Clothing stores:",
       "beauty": "Beauty salons:",
       "banks": "Banks:",

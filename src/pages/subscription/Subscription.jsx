@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { FaCheck, FaTimes, FaLock } from 'react-icons/fa';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext'; 
 import { subscriptionPlans } from './subscriptionPlans';
 import styles from './Subscription.module.css';
@@ -12,11 +12,17 @@ export default function Subscription() {
   const { t } = useTranslation('subscription');
   const { subscription } = useSubscription(); 
 
+  const hasActivePaidSubscription = subscription && 
+                                    subscription.plan !== 'free' && 
+                                    !subscription.isExpired;
+
   const currentPlanConfig = subscriptionPlans[selectedPlan];
   const IconComponent = currentPlanConfig.icon;
-  const isCurrentPlan = subscription?.plan === selectedPlan && !subscription.isExpired;
+
+  const isThisPlanActive = subscription?.plan === selectedPlan && !subscription.isExpired;
 
   const handlePlanSelection = () => {
+    if (hasActivePaidSubscription) return;
     if (selectedPlan === 'free') return;
     navigate('/payment', { state: { planKey: selectedPlan } });
   };
@@ -60,7 +66,7 @@ export default function Subscription() {
             <IconComponent size={40} />
             <h2>{selectedPlanDetails.name}</h2>
             <div className={styles.price}>
-                {isCurrentPlan ? t('subscription.active_plan_label') : selectedPlanDetails.price}
+                {isThisPlanActive ? t('subscription.active_plan_label') : selectedPlanDetails.price}
             </div>
           </div>
           
@@ -87,14 +93,25 @@ export default function Subscription() {
           <button 
             className={`${styles.subscribeButton} ${styles[selectedPlan]}`}
             onClick={handlePlanSelection}
-            disabled={isCurrentPlan} 
+            disabled={hasActivePaidSubscription || selectedPlan === 'free'}
+            style={hasActivePaidSubscription ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
           >
-            {isCurrentPlan 
-                ? t('subscription.buttons.active') 
-                : selectedPlan === 'free' 
-                    ? t('subscription.buttons.stay_free') 
-                    : t('subscription.buttons.choose', { plan: selectedPlanDetails.name })}
+            {isThisPlanActive 
+                ? t('subscription.buttons.active')
+                : hasActivePaidSubscription 
+                    ? t('subscription.buttons.has_active_sub') 
+                    : selectedPlan === 'free' 
+                        ? t('subscription.buttons.stay_free') 
+                        : t('subscription.buttons.choose', { plan: selectedPlanDetails.name })}
           </button>
+          
+          {hasActivePaidSubscription && !isThisPlanActive && (
+              <p style={{marginTop: '10px', color: '#e53e3e', fontSize: '13px', textAlign: 'center'}}>
+                 <FaLock style={{marginRight: '5px'}}/>
+                 {t('subscription.wait_expire')}
+              </p>
+          )}
+
         </div>
       </div>
     </div>

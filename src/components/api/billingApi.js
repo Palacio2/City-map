@@ -4,7 +4,8 @@ const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
 export async function fetchUserBillingHistory(page = 1, limit = 10) {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    // Виправлено на getSession для надійності
+    const { data: { user } } = await supabase.auth.getUser(); 
     if (!user) throw new Error('Необхідна авторизація');
 
     const start = (page - 1) * limit;
@@ -14,6 +15,7 @@ export async function fetchUserBillingHistory(page = 1, limit = 10) {
       .from('user_subscriptions')
       .select('id, plan_name, status, starts_at, ends_at, payment_id, created_at, cancelled_at, amount', { count: 'exact' })
       .eq('user_id', user.id)
+      .neq('status', 'incomplete')
       .order('created_at', { ascending: false })
       .range(start, end);
 
@@ -36,15 +38,15 @@ export async function cancelUserSubscription(subscriptionId) {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Необхідна авторизація');
 
-  const response = await fetch(`${FUNCTION_URL}/cancel-subscription`, {
+  const response = await fetch(`${FUNCTION_URL}/process-payment`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       'Authorization': `Bearer ${session.access_token}`
     },
-    body: JSON.stringify({ subscriptionId })
+    body: JSON.stringify({ action: 'cancel', subscriptionId })
   });
-
+  
   const result = await response.json();
   if (!response.ok) throw new Error(result.error || 'Не вдалося скасувати підписку');
   return result;

@@ -1,22 +1,43 @@
 import { supabase } from '../../supabaseClient';
 
-const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-payment`;
+// Основна функція створення (Draft)
+export const processPayment = async (details) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error('Необхідна авторизація');
 
-export async function processPayment(planName, paymentId) {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error('Необхідна авторизація');
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-payment`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(details)
+    });
+    
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Payment failed');
+    }
+    return await response.json();
+};
 
-  const response = await fetch(FUNCTION_URL, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${session.access_token}`
-    },
-    body: JSON.stringify({ plan_name: planName, payment_id: paymentId }),
-  });
+// Нова функція активації (Activate)
+export const activateSubscription = async (subscriptionId) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) throw new Error('Необхідна авторизація');
 
-  const data = await response.json();
-  if (!response.ok) throw new Error(data.error || 'Помилка оплати');
-  
-  return data;
-}
+    const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-payment`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'activate', subscriptionId })
+    });
+
+    if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.error || 'Activation failed');
+    }
+    return await response.json();
+};

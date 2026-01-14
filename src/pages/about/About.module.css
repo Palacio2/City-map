@@ -132,7 +132,6 @@
 
 .featureCard:hover,
 .audienceGroup:hover {
-  transform: translateY(-4px);
   box-shadow: 0 15px 50px rgba(102, 126, 234, 0.15);
   background: white;
 }

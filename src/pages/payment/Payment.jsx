@@ -4,14 +4,13 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { FaCheckCircle, FaArrowLeft, FaShieldAlt, FaSync, FaTag } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next'; 
-import { useSubscription } from '../subscription/SubscriptionContext';
 import { subscriptionPlans } from '../subscription/subscriptionPlans';
-import { supabase } from '../../supabaseClient';
+import { processPayment, activateSubscription } from '../../components/api/paymentApi'; // Імпортуємо activateSubscription
 import styles from './Payment.module.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-const CheckoutForm = ({ price, mode }) => {
+const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => { // Отримуємо subscriptionId
   const stripe = useStripe();
   const elements = useElements();
   const { t } = useTranslation('payment'); 
@@ -22,31 +21,50 @@ const CheckoutForm = ({ price, mode }) => {
     e.preventDefault();
     if (!stripe || !elements) return;
     setIsProcessing(true);
+    setMessage(null); // Очищаємо старі помилки
 
-    let result;
+    const returnUrl = `${window.location.origin}/payment-success`;
 
-    if (mode === 'setup') {
-        result = await stripe.confirmSetup({
-            elements,
-            confirmParams: { return_url: `${window.location.origin}/payment-success` },
-        });
-    } else {
-        result = await stripe.confirmPayment({
-            elements,
-            confirmParams: { return_url: `${window.location.origin}/payment-success` },
-        });
-    }
+    try {
+        // 1. Підтверджуємо Setup або Payment у Stripe
+        let result;
+        if (mode === 'setup') {
+            result = await stripe.confirmSetup({
+                elements,
+                redirect: 'if_required', // Не перенаправляти автоматично, якщо не треба
+                confirmParams: { return_url: returnUrl },
+            });
+        } else {
+            result = await stripe.confirmPayment({
+                elements,
+                redirect: 'if_required',
+                confirmParams: { return_url: returnUrl },
+            });
+        }
 
-    if (result.error) {
-        setMessage(result.error.message);
+        if (result.error) {
+            throw new Error(result.error.message);
+        }
+
+        // 2. Якщо Stripe дав добро -> Активуємо підписку в нашій БД
+        if (subscriptionId) {
+            await activateSubscription(subscriptionId);
+        }
+
+        // 3. Якщо все успішно -> Перенаправляємо вручну
+        window.location.href = returnUrl;
+
+    } catch (err) {
+        console.error(err);
+        setMessage(err.message || t('errors.payment_failed'));
         setIsProcessing(false);
     }
   };
 
   const getButtonText = () => {
       if (isProcessing) return t('processing');
-      if (mode === 'setup') return t('activate_btn');
-      return t('pay_btn', { amount: price });
+      if (mode === 'setup') return t('activate_btn'); // "Активувати" для 0 ціни
+      return t('pay_btn', { amount: formattedPrice });
   };
 
   return (
@@ -72,38 +90,53 @@ export default function Payment() {
   const [promoCode, setPromoCode] = useState("");
   const [finalAmount, setFinalAmount] = useState(null);
   const [paymentMode, setPaymentMode] = useState('payment');
+  const [subscriptionId, setSubscriptionId] = useState(null); // ID для активації
 
   const planKey = state?.planKey;
   const planConfig = subscriptionPlans[planKey];
 
+  const formatEuro = (amount) => {
+    if (amount === null || amount === undefined) return '...';
+    return new Intl.NumberFormat('uk-UA', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(amount);
+  };
+
   const fetchPaymentIntent = async (code = null) => {
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return navigate('/auth');
-
-      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-payment`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${session.access_token}` },
-        body: JSON.stringify({ planKey, promoCode: code }),
+      setClientSecret(""); // Скидаємо, щоб показати лоадер при зміні коду
+      const data = await processPayment({
+        planKey,
+        promoCode: code
       });
-
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || t('payment:errors.payment_create'));
       
-      setClientSecret(data.clientSecret);
-      setFinalAmount(data.amount);
-      setPaymentMode(data.mode);
+      console.log("Payment Init Data:", data);
+
+      if (data && data.clientSecret) {
+          setClientSecret(data.clientSecret);
+          setFinalAmount(data.amount);
+          setPaymentMode(data.mode);
+          setSubscriptionId(data.subscriptionId); // Зберігаємо ID
+      } else {
+          throw new Error("No client secret returned from server");
+      }
       
     } catch (error) {
       console.error(error);
-      alert(error.message);
-      if (code) setPromoCode(""); 
+      if (error.message === 'Unauthorized' || error.message.includes('authorization')) {
+          navigate('/auth');
+      } else {
+          alert(error.message || t('errors.payment_create'));
+          if (code) setPromoCode(""); 
+      }
     }
   };
 
   useEffect(() => {
     if (!planKey || !planConfig) navigate('/subscription');
     else fetchPaymentIntent();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [planKey]);
 
   const options = useMemo(() => ({
@@ -112,6 +145,8 @@ export default function Payment() {
   }), [clientSecret]);
 
   if (!planConfig) return null;
+
+  const displayPrice = finalAmount !== null ? formatEuro(finalAmount) : t('loading');
 
   return (
     <div className={styles.container}>
@@ -125,7 +160,7 @@ export default function Payment() {
           <div className={styles.infoCard}>
             <div className={styles.headerRow}><FaCheckCircle /> {t('payment:tariff_label')}</div>
             <div className={styles.priceTag}>
-                {finalAmount !== null ? `${finalAmount} грн` : planConfig.price}
+                {displayPrice}
             </div>
             
             <div className={styles.promoSection}>
@@ -162,8 +197,9 @@ export default function Payment() {
             {clientSecret ? (
               <Elements key={clientSecret} options={options} stripe={stripePromise}>
                 <CheckoutForm 
-                    price={finalAmount !== null ? `${finalAmount} грн` : planConfig.price} 
+                    formattedPrice={displayPrice} 
                     mode={paymentMode} 
+                    subscriptionId={subscriptionId}
                 />
               </Elements>
             ) : (

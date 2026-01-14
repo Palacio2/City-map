@@ -1,31 +1,34 @@
 {
   "subscription": {
     "title": "Wybierz subskrypcję",
-    "subtitle": "Elastyczne plany dla poszukiwania nieruchomości i profesjonalistów",
+    "subtitle": "Elastyczne plany wyszukiwania nieruchomości i dla profesjonalistów",
     "current_label": "(Obecny)",
     "active_plan_label": "Aktywny plan",
-    "included_title": "Co zawiera:",
+    "wait_expire": "Poczekaj na wygaśnięcie obecnej subskrypcji, aby zmienić plan.",
+    "included_title": "W pakiecie:",
     "disabled_title": "Niedostępne:",
+    "incomplete": "Oczekiwanie на płatność",
     "buttons": {
       "active": "Aktywny",
-      "stay_free": "Pozostań przy Free",
+      "stay_free": "Zostań przy Free",
       "choose": "Wybierz {{plan}}",
-      "upgrade": "Ulepsz subskrypcję"
+      "upgrade": "Ulepsz subskrypcję",
+      "has_active_sub": "Subskrypcja aktywna"
     },
     "lock": {
       "title": "Wymagana subskrypcja",
       "default_msg": "Ta funkcja jest dostępna z płatną subskrypcją."
     },
     "plans": {
-      "free": { "name": "Darmowy", "price": "0 zł" },
-      "weekly": { "name": "Tygodniowy", "price": "11 zł / tydzień" },
-      "premium": { "name": "Premium", "price": "25 zł / mies" },
-      "realtor": { "name": "Realtor Pro", "price": "50 zł / mies" }
+      "free": { "name": "Darmowy", "price": "€0" },
+      "weekly": { "name": "Tygodniowy", "price": "€2.99 / tydz." },
+      "premium": { "name": "Premium", "price": "€8.99 / mies." },
+      "realtor": { "name": "Realtor Pro", "price": "€29.00 / mies." }
     },
     "features": {
       "basic_map": "Podstawowe informacje",
       "limited_filters": "Ograniczone filtry",
-      "limited_data_show": "Ograniczone wyświetlanie danych",
+      "limited_data_show": "Ograniczony widok danych",
       "full_data_access": "Pełny dostęp do danych",
       "all_filters": "Wszystkie filtry",
       "personal_stats_access": "Statystyki",

@@ -55,7 +55,7 @@ export function HeaderSection({
             
             {filterData.general.population > 0 && (
                 <div className={headerFooterStyles.quickStat}>
-                <span className={headerFooterStyles.quickStatLabel}>{t('details.population') || 'Населення'}</span>
+                <span className={headerFooterStyles.quickStatLabel}>{t('details.population')}</span>
                 <span className={headerFooterStyles.quickStatValue}>
                     {formatNumber(filterData.general.population)}
                 </span>
@@ -64,7 +64,7 @@ export function HeaderSection({
 
             {filterData.general.averageSalary > 0 && (
                 <div className={headerFooterStyles.quickStat}>
-                <span className={headerFooterStyles.quickStatLabel}>{t('details.salary') || 'Зарплата'}</span>
+                <span className={headerFooterStyles.quickStatLabel}>{t('details.salary')}</span>
                 <span className={headerFooterStyles.quickStatValue}>
                     {formatPrice(filterData.general.averageSalary, code, locale)}
                 </span>
@@ -73,7 +73,7 @@ export function HeaderSection({
 
             {filterData.general.unemploymentRate > 0 && (
                 <div className={headerFooterStyles.quickStat}>
-                <span className={headerFooterStyles.quickStatLabel}>{t('details.unemployment') || 'Безробіття'}</span>
+                <span className={headerFooterStyles.quickStatLabel}>{t('details.unemployment')}</span>
                 <span className={headerFooterStyles.quickStatValue}>
                     {filterData.general.unemploymentRate}%
                 </span>

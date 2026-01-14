@@ -33,6 +33,9 @@ export default function StatsGrid({ filterData, currencyInfo }) {
     return Object.values(obj).some(val => val !== null && val !== undefined && val !== '');
   };
 
+  // Хелпер для перекладу значень з ENUM (high, medium, low)
+  const tEnum = (key) => key ? t(key) : t('na');
+
   return (
     <div className={styles.statsGrid}>
       {hasData(education) && (
@@ -80,7 +83,7 @@ export default function StatsGrid({ filterData, currencyInfo }) {
           )}
           {medicine.emergencyServices > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.emergency') || 'Швидка допомога'}</span>
+              <span>{t('stats.labels.emergency')}</span>
               <strong>{formatNumber(medicine.emergencyServices)}</strong>
             </div>
           )}
@@ -97,7 +100,7 @@ export default function StatsGrid({ filterData, currencyInfo }) {
           )}
           {transport.tramStops > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.tram_stops') || 'Трамвайні зупинки'}</span>
+              <span>{t('stats.labels.tram_stops')}</span>
               <strong>{formatNumber(transport.tramStops)}</strong>
             </div>
           )}
@@ -115,14 +118,14 @@ export default function StatsGrid({ filterData, currencyInfo }) {
           )}
           {transport.distanceRating > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.transport_dist') || 'Доступність'}</span>
+              <span>{t('stats.labels.transport_dist')}</span>
               <strong>{transport.distanceRating.toFixed(1)}/10</strong>
             </div>
           )}
           {transport.frequency && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.transport_frequency')}</span>
-              <strong>{getFrequencyText(transport.frequency)}</strong>
+              <strong>{tEnum(getFrequencyText(transport.frequency))}</strong>
             </div>
           )}
         </StatCard>
@@ -134,7 +137,7 @@ export default function StatsGrid({ filterData, currencyInfo }) {
             <div className={styles.statRow}>
               <span>{t('stats.labels.crime_level')}</span>
               <strong className={getCrimeLevelClass(safety.crimeLevel)}>
-                {getCrimeLevelText(safety.crimeLevel)}
+                {tEnum(getCrimeLevelText(safety.crimeLevel))}
               </strong>
             </div>
           )}
@@ -146,7 +149,7 @@ export default function StatsGrid({ filterData, currencyInfo }) {
           )}
           {safety.cctv > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.cctv') || 'Камери'}</span>
+              <span>{t('stats.labels.cctv')}</span>
               <strong>{formatNumber(safety.cctv)}</strong>
             </div>
           )}
@@ -181,19 +184,19 @@ export default function StatsGrid({ filterData, currencyInfo }) {
           )}
           {social.cinemas > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.cinemas') || 'Кінотеатри'}</span>
+              <span>{t('stats.labels.cinemas')}</span>
               <strong>{formatNumber(social.cinemas)}</strong>
             </div>
           )}
           {social.theaters > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.theaters') || 'Театри'}</span>
+              <span>{t('stats.labels.theaters')}</span>
               <strong>{formatNumber(social.theaters)}</strong>
             </div>
           )}
           {social.museums > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.museums') || 'Музеї'}</span>
+              <span>{t('stats.labels.museums')}</span>
               <strong>{formatNumber(social.museums)}</strong>
             </div>
           )}
@@ -216,19 +219,19 @@ export default function StatsGrid({ filterData, currencyInfo }) {
           )}
           {commerce.constructionStores > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.construction') || 'Будматеріали'}</span>
+              <span>{t('stats.labels.construction')}</span>
               <strong>{formatNumber(commerce.constructionStores)}</strong>
             </div>
           )}
           {commerce.clothingStores > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.clothing') || 'Одяг'}</span>
+              <span>{t('stats.labels.clothing')}</span>
               <strong>{formatNumber(commerce.clothingStores)}</strong>
             </div>
           )}
           {commerce.beautySalons > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.beauty') || 'Салони краси'}</span>
+              <span>{t('stats.labels.beauty')}</span>
               <strong>{formatNumber(commerce.beautySalons)}</strong>
             </div>
           )}
@@ -244,8 +247,8 @@ export default function StatsGrid({ filterData, currencyInfo }) {
       {hasData(utilities) && (
         <StatCard title={t('stats.categories.utilities')} icon="⚡" rating={utilities.qualityRating}>
           <div className={styles.statRow}>
-             <span>{t('stats.labels.air_quality') || 'Якість повітря'}</span>
-             <strong>{utilities.qualityRating ? `${utilities.qualityRating.toFixed(1)}/10` : 'н/д'}</strong>
+             <span>{t('stats.labels.air_quality')}</span>
+             <strong>{utilities.qualityRating ? `${utilities.qualityRating.toFixed(1)}/10` : t('na')}</strong>
           </div>
 
           {utilities.costPerSqm > 0 && (

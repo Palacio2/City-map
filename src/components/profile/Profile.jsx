@@ -5,7 +5,7 @@ import { FaUser, FaCrown, FaCreditCard, FaSync, FaCheckCircle, FaTimesCircle, Fa
 import { supabase } from '../../supabaseClient';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext';
 import { formatPhoneNumber } from '../../utils/phoneUtils';
-import { PLAN_KEY_MAP } from '../../utils/billing';
+// import { PLAN_KEY_MAP } from '../../utils/billing'; // <-- Це більше не потрібно
 import styles from './Profile.module.css';
 
 const SubscriptionSection = ({ subscription, features, isPremium }) => {
@@ -18,7 +18,8 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
         const isExpired = subscription.isExpired;
         const currentLang = i18n.language || 'uk-UA';
         
-        const planKey = PLAN_KEY_MAP[subscription.plan] || 'free';
+        // ВИПРАВЛЕННЯ: Використовуємо plan напряму, бо Context вже його нормалізував
+        const planKey = subscription.plan || 'free'; 
         
         let status = { 
             icon: <FaCheckCircle />, 
@@ -42,6 +43,7 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
 
         return {
             status,
+            // Тепер ключі точно співпадають (weekly, premium, realtor)
             name: t(`subscription:subscription.plans.${planKey}.name`),
             price: t(`subscription:subscription.plans.${planKey}.price`),
             expires: subscription.expiresAt 
@@ -59,7 +61,7 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
                 <h2>{t('profile:subscription.title')}</h2>
             </div>
             <div className={styles.subscriptionCard}>
-                {(subscription.isCancelled || subscription.isExpired) && (
+                {(subscription.status === 'cancelled' || subscription.isExpired) && !subscription.plan === 'free' && (
                     <div className={`${styles.alertNotice} ${subscription.isExpired ? styles.expiredNotice : styles.cancellationNotice}`}>
                         {subscription.isExpired 
                             ? t('profile:subscription.expired_notice', { date: statusInfo.expires })
@@ -87,7 +89,8 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
                     <div className={styles.featuresGrid}>
                         {features.map((feature, index) => (
                             <div key={index} className={styles.featureItem}>
-                                <FaCheckCircle className={styles.featureIcon} /> <span>{feature}</span>
+                                <FaCheckCircle className={styles.featureIcon} /> 
+                                <span>{t(`subscription:subscription.features.${feature}`)}</span>
                             </div>
                         ))}
                     </div>
@@ -111,6 +114,7 @@ export default function Profile() {
     const [userData, setUserData] = useState({ name: '', email: '', phone: '' });
     const [isUserLoading, setIsUserLoading] = useState(true);
     
+    // Отримуємо getFeatureKeys з контексту
     const { subscription, isLoading: subLoading, isPremium, getFeatureKeys } = useSubscription();
 
     useEffect(() => {
@@ -136,12 +140,12 @@ export default function Profile() {
     }, [t]);
 
     const features = useMemo(() => {
+        // Перевірка на наявність функції перед викликом
         if (subscription && typeof getFeatureKeys === 'function') {
-            const keys = getFeatureKeys();
-            return keys.slice(0, 8).map(key => t(`subscription:subscription.features.${key}`));
+            return getFeatureKeys().slice(0, 8); // Повертаємо ключі, переклад робимо в компоненті
         }
         return [];
-    }, [subscription, getFeatureKeys, t]);
+    }, [subscription, getFeatureKeys]);
 
     if (subLoading || isUserLoading) {
         return (

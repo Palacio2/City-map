@@ -10,7 +10,6 @@ export default function PaymentSuccess() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
   const { updateSubscription } = useSubscription();
-  
   const { t } = useTranslation('payment');
 
   const paymentIntent = searchParams.get('payment_intent');
@@ -18,6 +17,14 @@ export default function PaymentSuccess() {
   const realTxId = paymentIntent || setupIntent;
 
   const initialAmount = location.state?.amount ?? (setupIntent ? 0 : undefined);
+
+  const formatEuro = (amount) => {
+    if (amount === undefined || amount === null) return '';
+    return new Intl.NumberFormat('uk-UA', {
+      style: 'currency',
+      currency: 'EUR',
+    }).format(amount);
+  };
 
   const [displayData] = useState({
     plan: location.state?.plan || 'Premium', 
@@ -64,7 +71,7 @@ export default function PaymentSuccess() {
             {displayData.amount !== undefined && (
                 <div className={styles.detailRow}>
                     <span>{t('success.amount_label')}</span>
-                    <span>{displayData.amount} грн</span>
+                    <span>{formatEuro(displayData.amount)}</span>
                 </div>
             )}
             
