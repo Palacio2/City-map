@@ -21,31 +21,12 @@ export default defineConfig({
     }
   },
   build: {
-    // 🔥 ВАЖЛИВО: Вмикаємо карти коду для дебагу на продакшені
+    // Карти коду допоможуть побачити реальні помилки в консолі браузера
     sourcemap: true, 
-    
-    chunkSizeWarningLimit: 1000, 
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       output: {
-        manualChunks(id) {
-          if (id.includes('node_modules/react') || 
-              id.includes('node_modules/react-dom') || 
-              id.includes('node_modules/react-router-dom')) {
-            return 'react-vendor';
-          }
-          if (id.includes('@supabase')) {
-            return 'supabase-vendor';
-          }
-          if (id.includes('react-icons')) {
-            return 'icons-vendor';
-          }
-          if (id.includes('i18next')) {
-            return 'i18n-vendor';
-          }
-          if (id.includes('node_modules')) {
-            return 'vendor';
-          }
-        }
+        // Ми видалили manualChunks, щоб уникнути Circular chunk error
       }
     }
   },
