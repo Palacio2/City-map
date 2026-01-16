@@ -1,16 +1,22 @@
 .container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #f8fafc 0%, #e6e9f0 100%);
+  background: radial-gradient(circle at 10% 20%, rgb(242, 246, 252) 0%, rgb(209, 224, 240) 90%);
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   border-radius: 1rem;
+  padding-bottom: 2rem;
 }
 
 .heroSection {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.8) 0%, rgba(118, 75, 162, 0.8) 100%);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 15px 35px rgba(102, 126, 234, 0.2);
   color: white;
   padding: 4rem 2rem;
   text-align: center;
   border-radius: 1rem;
+  margin-bottom: 2rem;
 }
 
 .heroContent {
@@ -23,11 +29,12 @@
   font-weight: 800;
   margin-bottom: 1rem;
   letter-spacing: -0.5px;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .heroSubtitle {
   font-size: 1.3rem;
-  opacity: 0.9;
+  opacity: 0.95;
   margin: 0;
   font-weight: 400;
 }
@@ -49,6 +56,7 @@
   font-size: 2.5rem;
   font-weight: 800;
   margin-bottom: 0.5rem;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.1);
 }
 
 .statLabel {
@@ -59,16 +67,23 @@
 .content {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 3rem 2rem;
+  padding: 0 2rem;
 }
 
 .section {
-  background: white;
-  border-radius: 20px;
-  padding: 2.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.05),
+    inset 0 0 30px rgba(255, 255, 255, 0.3);
+  border-radius: 24px;
+  padding: 3rem 2.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
-  border: 1px solid #e2e8f0;
+  overflow: hidden;
 }
 
 .sectionHeader {
@@ -81,24 +96,30 @@
 .sectionHeader h2 {
   font-size: 2rem;
   font-weight: 700;
-  color: #2d3748;
+  color: #1a202c;
   margin: 0;
+  text-shadow: 0 1px 1px rgba(255,255,255,0.5);
 }
 
 .sectionIcon {
   width: 32px;
   height: 32px;
   color: #667eea;
+  filter: drop-shadow(0 2px 4px rgba(102, 126, 234, 0.3));
 }
 
 .sectionContent {
   font-size: 1.1rem;
   line-height: 1.7;
-  color: #4a5568;
+  color: #2d3748;
+  font-weight: 500;
 }
 
 .featuresGrid,
-.targetAudience {
+.targetAudience,
+.howItWorks,
+.dataSources,
+.technologies {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 1.5rem;
@@ -106,34 +127,28 @@
 }
 
 .howItWorks {
-  display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
-}
-
-.dataSources,
-.technologies {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
 }
 
 .featureCard,
 .audienceGroup {
-  background: #f8fafc;
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
   padding: 2rem;
-  border-radius: 16px;
+  border-radius: 20px;
   text-align: center;
-  transition: all 0.3s ease;
-  border: 1px solid #e2e8f0;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
 }
 
 .featureCard:hover,
 .audienceGroup:hover {
-  box-shadow: 0 15px 50px rgba(102, 126, 234, 0.15);
-  background: white;
+  background: rgba(255, 255, 255, 0.5);
+  border-color: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 20px 40px rgba(31, 38, 135, 0.1);
+  transform: translateY(-8px);
 }
 
 .featureIcon,
@@ -142,31 +157,37 @@
   height: 48px;
   color: #667eea;
   margin-bottom: 1rem;
+  filter: drop-shadow(0 4px 6px rgba(102, 126, 234, 0.2));
 }
 
 .featureCard h3,
 .audienceGroup h3 {
   font-size: 1.3rem;
-  font-weight: 600;
-  color: #2d3748;
+  font-weight: 700;
+  color: #1a202c;
   margin-bottom: 1rem;
 }
 
 .featureCard p,
 .audienceGroup p {
-  color: #718096;
+  color: #4a5568;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 .step {
   display: flex;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 1.5rem;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
 .stepNumber {
-  width: 40px;
-  height: 40px;
+  width: 45px;
+  height: 45px;
   background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
   color: white;
   border-radius: 50%;
@@ -176,26 +197,29 @@
   font-weight: 700;
   font-size: 1.2rem;
   flex-shrink: 0;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
 }
 
 .stepContent h3 {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: #2d3748;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1a202c;
   margin-bottom: 0.5rem;
 }
 
 .stepContent p {
-  color: #718096;
+  color: #4a5568;
   line-height: 1.6;
   margin: 0;
+  font-weight: 500;
 }
 
 .sourceCategory h3,
 .techCategory h3 {
   font-size: 1.3rem;
-  color: #2d3748;
+  color: #1a202c;
   margin-bottom: 1rem;
+  font-weight: 700;
 }
 
 .sourceCategory ul {
@@ -205,9 +229,10 @@
 
 .sourceCategory li {
   padding: 0.5rem 0;
-  color: #4a5568;
+  color: #2d3748;
   position: relative;
   padding-left: 1.5rem;
+  font-weight: 500;
 }
 
 .sourceCategory li::before {
@@ -219,8 +244,9 @@
 }
 
 .techCategory p {
-  color: #4a5568;
+  color: #2d3748;
   line-height: 1.6;
+  font-weight: 500;
 }
 
 .team {
@@ -230,16 +256,18 @@
 .team p {
   font-size: 1.1rem;
   line-height: 1.7;
-  color: #4a5568;
+  color: #2d3748;
   max-width: 600px;
   margin: 1rem auto;
+  font-weight: 500;
 }
 
 .team ul {
   text-align: left;
   max-width: 600px;
   margin: 1rem auto;
-  color: #4a5568;
+  color: #2d3748;
+  font-weight: 600;
 }
 
 .team li {
@@ -247,70 +275,132 @@
 }
 
 .ctaSection {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 0 20px 50px rgba(102, 126, 234, 0.3);
   color: white;
-  padding: 3rem 2rem;
+  padding: 4rem 2rem;
   border-radius: 20px;
   text-align: center;
   margin-top: 3rem;
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaSection::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
+  transform: rotate(30deg);
+  pointer-events: none;
 }
 
 .ctaSection h2 {
-  font-size: 2.2rem;
-  font-weight: 700;
+  font-size: 2.5rem;
+  font-weight: 800;
   margin-bottom: 1rem;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
 }
 
 .ctaSection p {
-  font-size: 1.2rem;
-  opacity: 0.9;
-  margin-bottom: 2rem;
+  font-size: 1.25rem;
+  opacity: 0.95;
+  margin-bottom: 2.5rem;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .ctaButtons {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   justify-content: center;
   flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: 2rem;
 }
 
-.ctaButtonPrimary,
-.ctaButtonSecondary,
-.ctaButtonTertiary {
-  padding: 1rem 2rem;
-  border-radius: 12px;
+.ctaButton {
+  padding: 1rem 2.5rem;
+  border-radius: 50px;
   text-decoration: none;
-  font-weight: 600;
-  transition: all 0.3s ease;
+  font-weight: 700;
+  font-size: 1.1rem;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  letter-spacing: 0.5px;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box;
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
 }
 
-.ctaButtonPrimary {
+.ctaButton::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  transition: 0.5s;
+}
+
+.ctaButton:hover::after {
+  left: 100%;
+}
+
+.primary {
   background: white;
   color: #667eea;
-}
-
-.ctaButtonSecondary {
-  background: transparent;
-  color: white;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
   border: 2px solid white;
 }
 
-.ctaButtonTertiary {
+.primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  background: #f8fafc;
+}
+
+.secondary {
   background: rgba(255, 255, 255, 0.1);
   color: white;
-  border: 2px solid rgba(255, 255, 255, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.6);
 }
 
-.ctaButtonPrimary:hover,
-.ctaButtonSecondary:hover,
-.ctaButtonTertiary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.3);
+.secondary:hover {
+  transform: translateY(-3px);
+  background: rgba(255, 255, 255, 0.25);
+  border-color: white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
-.ctaButtonSecondary:hover {
-  background: white;
-  color: #667eea;
+.tertiary {
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.9);
+  border: 2px solid transparent;
+}
+
+.tertiary:hover {
+  transform: translateY(-3px);
+  background: rgba(0, 0, 0, 0.3);
+  color: white;
 }
 
 @media (max-width: 768px) {
@@ -320,7 +410,7 @@
   .statNumber { font-size: 2rem; }
   
   .content { padding: 2rem 1rem; }
-  .section { padding: 2rem 1.5rem; margin-bottom: 1.5rem; }
+  .section { padding: 2rem 1.25rem; margin-bottom: 1.5rem; }
   
   .sectionHeader { flex-direction: column; text-align: center; gap: 0.5rem; }
   .sectionHeader h2 { font-size: 1.7rem; }
@@ -334,53 +424,91 @@
     gap: 1rem;
   }
   
-  .step { flex-direction: column; text-align: center; gap: 0.5rem; }
-  .ctaButtons { flex-direction: column; align-items: center; }
+  .step { 
+    flex-direction: column; 
+    text-align: center; 
+    align-items: center; 
+    gap: 1rem; 
+  }
   
-  .ctaButtonPrimary,
-  .ctaButtonSecondary,
-  .ctaButtonTertiary {
+  .ctaSection { padding: 3rem 1.5rem; }
+  
+  .ctaButtons {
+    flex-direction: column;
+    align-items: center;
     width: 100%;
-    max-width: 250px;
-    text-align: center;
+  }
+  
+  .ctaButton {
+    width: 100%;
+    max-width: 320px;
+    padding: 1rem;
+    font-size: 1rem;
   }
 }
 
 @media (max-width: 480px) {
   .heroSection { padding: 3rem 1rem; }
   .heroTitle { font-size: 1.8rem; }
-  .section { padding: 1.5rem; border-radius: 16px; }
+  .section { padding: 1.5rem 1rem; border-radius: 16px; }
   .sectionHeader h2 { font-size: 1.5rem; }
   .featureCard { padding: 1.5rem; }
+  
   .ctaSection { padding: 2rem 1rem; }
   .ctaSection h2 { font-size: 1.8rem; }
   .ctaSection p { font-size: 1.1rem; }
 }
 
 @media (prefers-color-scheme: dark) {
-  .container { background: linear-gradient(135deg, #1a202c 0%, #2d3748 100%); }
-  .section { background: #2d3748; border-color: #4a5568; }
-  .sectionHeader h2 { color: #e2e8f0; }
-  .sectionContent { color: #cbd5e0; }
+  .container { background: radial-gradient(circle at 10% 20%, #1a202c 0%, #2d3748 90%); }
+  
+  .section { 
+    background: rgba(0, 0, 0, 0.3); 
+    border-color: rgba(255, 255, 255, 0.08);
+    box-shadow: 
+      0 20px 50px rgba(0, 0, 0, 0.4),
+      inset 0 0 30px rgba(255, 255, 255, 0.05);
+  }
+  
+  .sectionHeader h2 { color: #f7fafc; text-shadow: none; }
+  .sectionContent { color: #e2e8f0; }
   
   .featureCard,
-  .audienceGroup { background: #1a202c; border-color: #4a5568; }
+  .audienceGroup,
+  .step { 
+    background: rgba(255, 255, 255, 0.03); 
+    border-color: rgba(255, 255, 255, 0.08); 
+  }
+  
   .featureCard:hover,
-  .audienceGroup:hover { background: #2d3748; }
+  .audienceGroup:hover { 
+    background: rgba(255, 255, 255, 0.08); 
+    border-color: rgba(255, 255, 255, 0.2);
+  }
   
   .featureCard h3,
-  .audienceGroup h3 { color: #e2e8f0; }
-  .featureCard p,
-  .audienceGroup p { color: #a0aec0; }
+  .audienceGroup h3,
+  .stepContent h3 { color: #f7fafc; }
   
-  .stepContent h3 { color: #e2e8f0; }
+  .featureCard p,
+  .audienceGroup p,
   .stepContent p { color: #a0aec0; }
   
   .sourceCategory h3,
-  .techCategory h3 { color: #e2e8f0; }
+  .techCategory h3 { color: #f7fafc; }
   .sourceCategory li,
-  .techCategory p { color: #cbd5e0; }
+  .techCategory p { color: #e2e8f0; }
   
   .team p,
-  .team li { color: #cbd5e0; }
+  .team ul { color: #e2e8f0; }
+
+  .ctaSection {
+    background: linear-gradient(135deg, rgba(76, 81, 191, 0.9) 0%, rgba(85, 60, 154, 0.9) 100%);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  }
+  
+  .primary {
+    background: white;
+    color: #4c51bf;
+  }
 }

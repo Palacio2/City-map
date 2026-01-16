@@ -1,169 +1,129 @@
 {
-  "title": "Moje Konto",
+  "title": "Moje konto",
   "subtitle": "Zarządzaj subskrypcją i ustawieniami",
-  "user_profile": "Profil Użytkownika",
+  "user_profile": "Profil użytkownika",
   "labels": {
     "name": "Imię:",
     "email": "Email:",
     "phone": "Telefon:",
-    "join_date": "Data rejestracji:",
-    "full_name": "Imię i nazwisko"
+    "full_name": "Imię i nazwisko",
+    "user": "Użytkownik",
+    "country_code": "Kod kraju"
   },
   "actions": {
     "edit": "Edytuj profil",
     "change_password": "Zmień hasło",
     "manage_subscription": "Zarządzaj subskrypcją",
     "choose_plan": "Wybierz plan",
-    "manage_billing": "Zarządzaj płatnościami",
     "save": "Zapisz zmiany",
     "saving": "Zapisywanie...",
     "cancel": "Anuluj",
     "back_to_profile": "Powrót do profilu",
-    "download": "Pobierz rachunek",
-    "view_details": "Szczegóły",
-    "retry": "Spróbuj ponownie",
     "prev": "Poprzednia",
-    "next": "Następna"
+    "next": "Następna",
+    "hide_password": "Ukryj hasło",
+    "show_password": "Pokaż hasło"
   },
   "subscription": {
     "title": "Subskrypcja",
     "plan": "Plan: {{plan}}",
-    "price": "{{price}}",
     "expires": "Wygasa: {{date}}",
     "cancelled_notice": "Subskrypcja anulowana, ważna do {{date}}",
-    "expired_notice": "Subskrypcja wygasła {{date}}",
+    "expired_notice": "Subskrypcja wygasła w dniu {{date}}",
     "features_title": "Dostępne funkcje:",
-    "more_features": "i jeszcze {{count}} funkcji...",
     "status": {
       "active": "Aktywna",
       "inactive": "Nieaktywna",
       "cancelled": "Anulowana",
       "expired": "Wygasła",
-      "free": "Darmowa"
-    },
-    "plans": {
-      "free": "Darmowy",
-      "premium": "Premium",
-      "pro": "Premium"
+      "free": "Bezpłatna"
     }
   },
   "quick_actions": {
-    "stats_title": "Statystyki użycia",
+    "stats_title": "Statystyki użytkowania",
     "stats_desc": "Zobacz swoją aktywność",
     "billing_title": "Historia płatności",
     "billing_desc": "Zobacz wszystkie transakcje",
     "locked": "Wymagana subskrypcja Premium"
   },
-  "help": {
-    "title": "Potrzebujesz pomocy?",
-    "desc": "Skontaktuj się z naszym wsparciem",
-    "contact_btn": "Kontakty",
-    "faq_btn": "FAQ",
-    "email_btn": "Napisz email"
-  },
-"edit_page": {
-  "title": "Edycja Profilu",
-  "subtitle": "Zaktualizuj swoje dane osobowe",
-  "main_info": "Główne informacje",
-  "enter_data": "Wprowadź swoje dane",
-  "placeholders": {
-    "name": "Wprowadź swoje imię",
-    "email": "Wprowadź swój email",
-    "phone": "991234567"
-  },
-  "email_warning": "E-mail potwierdzający zostanie wysłany na ten adres po zapisaniu",
-  "errors": {
-    "load_failed": "Nie udało się załadować danych profilu",
-    "name_long": "Imię jest za długie (maks. 30 znaków)",
-    "name_required": "Proszę podać imię",
-    "email_required": "Proszę podać email",
-    "save_error": "Błąd podczas zapisywania",
-    "phone_length": "Numer musi zawierać {{count}} cyfr po kodzie",
-    "phone_too_long": "Numer jest za długi"
-  },
-  "success": "Profil zaktualizowany pomyślnie"
+  "edit_page": {
+    "title": "Edytuj profil",
+    "subtitle": "Zaktualizuj swoje dane osobowe",
+    "main_info": "Informacje ogólne",
+    "enter_data": "Wprowadź swoje dane",
+    "placeholders": {
+      "name": "Wprowadź imię",
+      "email": "Wprowadź email",
+      "phone": "991234567"
+    },
+    "email_warning": "Po zapisaniu na ten adres zostanie wysłany e-mail z potwierdzeniem",
+    "errors": {
+      "load_failed": "Nie udało się załadować danych profilu",
+      "name_long": "Imię jest za długie (maks. 30 znaków)",
+      "name_required": "Proszę wpisać imię",
+      "email_required": "Proszę wpisać email",
+      "save_error": "Błąd podczas zapisywania"
+    },
+    "success": "Profil zaktualizowany pomyślnie"
   },
   "password_page": {
-    "title": "Zmiana Hasła",
+    "title": "Zmień hasło",
     "subtitle": "Zaktualizuj hasło, aby zwiększyć bezpieczeństwo konta",
     "form_title": "Bezpieczeństwo konta",
-    "form_subtitle": "Wprowadź nowe hasło do aktualizacji",
+    "form_subtitle": "Wprowadź nowe hasło",
     "new_pass": "Nowe hasło",
     "confirm_pass": "Potwierdź nowe hasło",
-    "tips_title": "Wskazówki dotyczące bezpiecznego hasła",
+    "tips_title": "Wskazówki dotyczące bezpieczeństwa",
     "tips": [
       "Użyj co najmniej 8 znaków",
-      "Dodaj wielkie litery, cyfry i znaki specjalne",
+      "Dodaj wielkie litery, cyfry i symbole",
       "Unikaj danych osobowych",
-      "Nie używaj tego samego hasła do różnych usług",
-      "Unikaj sekwencji (123456, qwerty)",
-      "Zaleca się korzystanie z menedżera haseł",
-      "Okresowo zmieniaj swoje hasła",
-      "Włącz uwierzytelnianie dwuskładnikowe"
+      "Nie używaj tych samych haseł",
+      "Unikaj sekwencji typu 123456",
+      "Używaj menedżera haseł",
+      "Regularnie zmieniaj hasła",
+      "Włącz weryfikację dwuetapową"
     ],
     "placeholders": {
       "new": "Wprowadź nowe hasło (min. 8 znaków)",
       "confirm": "Powtórz nowe hasło"
     },
     "errors": {
-      "length": "Nowe hasło musi mieć co najmniej 8 znaków",
-      "mismatch": "Nowe hasła nie pasują do siebie",
-      "regex": "Hasło musi zawierać wielkie/małe litery, cyfry i znaki specjalne",
+      "length": "Hasło musi mieć co najmniej 8 znaków",
+      "mismatch": "Hasła nie są identyczne",
+      "regex": "Hasło musi zawierać litery, cyfry i znaki specjalne",
       "unknown": "Wystąpił nieznany błąd"
     },
-    "success": "Hasło zostało zmienione pomyślnie!"
+    "success": "Hasło zostało zmienione!"
   },
   "billing_page": {
-  "title": "Subskrypcja i Płatności",
-  "subtitle": "Zarządzanie subskrypcją i historia transakcji",
-  "current_sub": "Obecna subskrypcja",
-  "plan_label": "Plan:",             
-  "price_label": "Cena:",            
-  "next_payment": "Następna płatność:",
-  "valid_until": "Ważne do:",
-  "update_plan": "Zmień plan",
-  "cancel_sub": "Anuluj subskrypcję",
-  "history_title": "Historia płatności",
-  "transactions": "transakcji",      
-  "summary_success": "Udane płatności",
-  "cancel_btn" : "Anuluj subskrypcję",
-  "method_online": "Karta",
-  "loading": "Ładowanie...",
-  "no_history": "Brak historii płatności",
-  "error_load": "Nie udało się załadować historii",
-  "cancel_confirm": "Czy na pewno chcesz anulować subskrypcję? Stracisz dostęp do funkcji Premium po zakończeniu obecnego okresu rozliczeniowego.",
-  "processing": "Przetwarzanie...",
-  "table": {
-    "date": "Data",
-    "plan": "Plan",
-    "amount": "Kwota",
-    "method": "Metoda",
-    "status": "Status",
-    "invoice": "Faktura",            
-    "actions": "Akcje"
-  }
-},
+    "title": "Subskrypcja i Płatności",
+    "subtitle": "Zarządzaj transakcjami i historią",
+    "current_sub": "Aktualna subskrypcja",
+    "plan_label": "Plan:",
+    "price_label": "Cena:",
+    "next_payment": "Następna płatność:",
+    "update_plan": "Zmień plan",
+    "cancel_sub": "Anuluj subskrypcję",
+    "history_title": "Historia płatności",
+    "transactions": "transakcji",
+    "cancel_btn": "Anuluj subskrypcję",
+    "method_online": "Karta",
+    "no_history": "Brak historii płatności",
+    "error_load": "Nie udało się załadować historii",
+    "cancel_confirm": "Czy na pewno chcesz anulować? Stracisz dostęp do funkcji Premium po zakończeniu obecnego okresu.",
+    "error_cancel": "Nie udało się anulować subskrypcji",
+    "processing": "Przetwarzanie...",
+    "table": {
+      "date": "Data",
+      "plan": "Plan",
+      "amount": "Kwota",
+      "method": "Metoda",
+      "status": "Status",
+      "invoice": "Faktura"
+    }
+  },
   "stats_page": {
-    "title": "Statystyki Użycia",
-    "subtitle": "Analiza Twojej aktywności w systemie",
-    "general_stats": "Statystyki ogólne",
-    "searches": "wyszukiwań nieruchomości",
-    "saved": "zapisanych dzielnic",
-    "comparisons": "porównań cen",
-    "time": "czas w systemie",
-    "weekly_activity": "Aktywność tygodniowa",
-    "legend_searches": "Wyszukiwania",
-    "legend_comparisons": "Porównania",
-    "no_weekly_data": "Brak danych o aktywności tygodniowej",
-    "popular_districts": "Popularne dzielnice",
-    "views": "wyświetleń",
-    "no_popular_data": "Brak danych o popularnych dzielnicach",
-    "last_activity": "Ostatnia aktywność",
-    "online": "Online",
-    "last_active_at": "Ostatnia aktywność: {{time}}",
-    "fav_district": "Ulubiona dzielnica:",
-    "not_defined": "Nie określono",
-    "never": "nigdy",
-    "error_load": "Błąd ładowania statystyk"
+    "never": "nigdy"
   }
 }

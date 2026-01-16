@@ -7,19 +7,34 @@ const safeParseInt = (value) =>
 // =========================================================================================
 
 export const transformDistrictForDisplay = (district) => {
-  if (!district || !district.filterData) return district;
-  
+  if (!district) return null;
+
+  // 1. ПЕРЕВІРКА: Чи дані вже трансформовані (прийшли з Edge Function)?
+  // Edge Function повертає filterData як об'єкт з полями general, education і т.д.
+  // Якщо ми бачимо цю структуру, просто повертаємо об'єкт як є.
+  if (district.filterData && district.filterData.general && district.filterData.education) {
+    // Переконаємося, що updated_at на місці
+    return {
+        ...district,
+        updated_at: district.updated_at || district.filterData.data_updated_at || null
+    };
+  }
+
+  // 2. ЯКЩО НІ: Це сирі дані з Supabase (прямий запит SQL), трансформуємо їх.
   let filterData = Array.isArray(district.filterData) 
     ? district.filterData[0] 
     : district.filterData;
     
+  // Якщо filterData немає взагалі (навіть сирого), повертаємо як є
   if (!filterData) return district;
-  if (filterData.education?.rating !== undefined) {
-    return district; 
-  }
-  
+
+  // Трансформація сирих даних SQL -> Красивий об'єкт JS
   return {
     ...district,
+    
+    // Витягуємо дату наверх
+    updated_at: filterData.data_updated_at || filterData.last_updated || district.updated_at,
+
     filterData: {
       general: {
         propertyPrice: safeParseFloat(filterData.average_property_price),
@@ -105,15 +120,11 @@ export const transformDistrictForDisplay = (district) => {
 };
 
 export const transformDistrictsForDisplay = (districts) => {
+  if (!Array.isArray(districts)) return [];
   return districts.map(transformDistrictForDisplay);
 };
 
 export const getFlatFilterData = (district) => {
   if (!district || !district.filterData) return null;
-  
-  if (district.filterData.property_price !== undefined) {
-    return district.filterData;
-  }
-  
   return district.filterData; 
 };

@@ -1,3 +1,5 @@
+import React from 'react';
+
 export const getCurrencyInfo = (countryName) => {
   if (!countryName) return { code: 'UAH', locale: 'uk-UA', symbol: '₴' };
   
@@ -20,13 +22,13 @@ export const getCurrencyInfo = (countryName) => {
   return { code: 'UAH', locale: 'uk-UA', symbol: '₴' };
 };
 
-export const formatNumber = (num) => {
-  if (!num && num !== 0) return 'н/д';
-  return new Intl.NumberFormat('uk-UA').format(num);
+export const formatNumber = (num, locale = 'uk-UA') => {
+  if (num === null || num === undefined) return 'н/д';
+  return new Intl.NumberFormat(locale).format(num);
 };
 
 export const formatPrice = (price, currency = 'UAH', locale = 'uk-UA') => {
-  if (!price && price !== 0) return 'н/д';
+  if (price === null || price === undefined) return 'н/д';
   return new Intl.NumberFormat(locale, {
     style: 'currency',
     currency: currency,
@@ -39,45 +41,57 @@ export const formatBoolean = (value) => {
   return value ? '✅' : '❌';
 };
 
-// ЗМІНЕНО: Повертає ключі
 export const getFrequencyText = (frequency) => {
   if (!frequency) return null;
-  return `enums.frequency.${frequency}`;
+  return `enums.frequency.${frequency.toLowerCase()}`;
 };
 
-// ЗМІНЕНО: Повертає ключі
 export const getDensityText = (density) => {
   if (!density) return null;
-  return `enums.density.${density}`;
+  return `enums.density.${density.toLowerCase()}`;
 };
 
-// ЗМІНЕНО: Повертає ключі
+// Логіка тексту (повертає ключ перекладу)
 export const getCrimeLevelText = (crimeLevel) => {
-  if (!crimeLevel && crimeLevel !== 0) return null;
+  if (crimeLevel === null || crimeLevel === undefined) return null;
+  // Якщо 0-3: Низька злочинність (Добре)
   if (crimeLevel <= 3) return 'enums.crime.low';
+  // Якщо 3-6: Середня
   if (crimeLevel <= 6) return 'enums.crime.medium';
+  // Якщо > 6: Висока (Погано)
   return 'enums.crime.high';
 };
 
-export const getCrimeLevelClass = (crimeLevel) => {
-  if (!crimeLevel && crimeLevel !== 0) return '';
-  if (crimeLevel <= 3) return 'lowCrime';
-  if (crimeLevel <= 6) return 'mediumCrime';
-  return 'highCrime';
+// 🔥 ВИПРАВЛЕНО ТУТ: Функція тепер приймає styles
+export const getCrimeLevelClass = (crimeLevel, styles = {}) => {
+  if (crimeLevel === null || crimeLevel === undefined) return '';
+  
+  // Повертаємо клас з об'єкта styles, або рядок як запасний варіант
+  if (crimeLevel <= 3) return styles.lowCrime || 'lowCrime';
+  if (crimeLevel <= 6) return styles.mediumCrime || 'mediumCrime';
+  return styles.highCrime || 'highCrime';
 };
 
 export const renderRating = (rating) => {
-  if (!rating && rating !== 0) return 'н/д';
-  const fullStars = Math.floor(rating / 2);
-  const halfStar = rating % 2 >= 1;
+  if (rating === null || rating === undefined) return 'н/д';
+  
+  const numericRating = parseFloat(rating);
+  const fullStars = Math.floor(numericRating / 2);
+  const halfStar = numericRating % 2 >= 1;
   const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
   
   return (
-    <div className="ratingStars">
-      {'★'.repeat(fullStars)}
-      {halfStar && '½'}
-      {'☆'.repeat(emptyStars)}
-      <span className="ratingValue">({rating.toFixed(1)})</span>
+    <div className="ratingStars" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+      <span style={{ color: '#fbbf24' }}>
+        {'★'.repeat(Math.max(0, fullStars))}
+      </span>
+      {halfStar && <span style={{ color: '#fbbf24' }}>½</span>}
+      <span style={{ color: '#d1d5db' }}>
+        {'★'.repeat(Math.max(0, emptyStars))}
+      </span>
+      <span style={{ marginLeft: '4px', fontSize: '0.9em', color: '#666' }}>
+        ({numericRating.toFixed(1)})
+      </span>
     </div>
   );
 };

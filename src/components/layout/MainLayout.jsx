@@ -7,6 +7,7 @@ import { supabase } from '../../supabaseClient';
 import RodoModal from '../../components/modals/RodoModal';
 import CookieBanner from '../../components/modals/CookieBanner';
 import { userConsentApi } from '../api/userConsentApi';
+import { useTimeTracker } from '../../hooks/useTimeTracker';
 import styles from './MainLayout.module.css';
 
 const SAFE_ROUTES = ['/terms', '/about', '/faq', '/contacts', '/payment-success'];
@@ -16,9 +17,11 @@ export default function MainLayout() {
   const [showRodoModal, setShowRodoModal] = useState(false);
   const [userId, setUserId] = useState(null);
   const [hasConsent, setHasConsent] = useState(false);
-  const [authReady, setAuthReady] = useState(false); // 👈 НОВЕ
+  const [authReady, setAuthReady] = useState(false);
 
   const location = useLocation();
+
+  useTimeTracker();
 
   const evaluateModalVisibility = (uid, consent) => {
     if (!uid || consent || SAFE_ROUTES.includes(location.pathname)) {

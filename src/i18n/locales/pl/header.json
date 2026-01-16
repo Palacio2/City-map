@@ -8,5 +8,7 @@
   "logout": "Wyloguj się",
   "loading": "Ładowanie...",
   "favorites_title": "Moje ulubione",
-  "language_title": "Zmień język"
+  "language_title": "Zmień język",
+  "light_mode": "Tryb jasny",
+  "dark_mode": "Tryb ciemny"
 }

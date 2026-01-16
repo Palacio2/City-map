@@ -23,12 +23,14 @@ import PrivateRoute from "./PrivateRoute";
 import ProtectedRoute from "./ProtectedRoute";
 
 // Profile components
-import StatsPage from "../components/profile/StatsPage";
+import StatsPage from "../components/stats/StatsPage";
 import BillingHistoryPage from "../components/profile/BillingHistoryPage";
 import ProfileEditPage from "../components/profile/ProfileEditPage";
 import PasswordChangePage from "../components/profile/PasswordChangePage";
 
+// Parser (Admin Panel)
 
+// import Admin from "../pages/admin/index";
 
 export default function AppRoutes() {
   return (
@@ -53,7 +55,28 @@ export default function AppRoutes() {
         <Route path="register-success" element={<RegisterSuccess />} />
         <Route path="auth/callback" element={<AuthCallback />} />
 
- 
+
+  {/* --- Protected / Private Routes --- */}
+
+        
+
+        {/* Адмін-панель для парсингу (Захищено) */}
+{/* 
+        <Route 
+
+          path="parser" 
+
+          element={
+
+            <PrivateRoute>
+
+              <Admin />
+
+            </PrivateRoute>
+
+          } 
+
+        />   */}
         
         <Route 
           path="/favorites" 

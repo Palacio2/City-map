@@ -8,5 +8,7 @@
   "logout": "Вийти",
   "loading": "Завантаження...",
   "favorites_title": "Мої збереження",
-  "language_title": "Змінити мову"
+  "language_title": "Змінити мову",
+  "light_mode": "Світла тема",
+  "dark_mode": "Темна тема"
 }

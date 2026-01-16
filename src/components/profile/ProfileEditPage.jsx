@@ -16,7 +16,6 @@ export default function ProfileEditPage() {
     phone: '',
     countryCode: '+380',
     originalEmail: '',
-    isLoading: true,
     isSaving: false
   });
 
@@ -39,15 +38,13 @@ export default function ProfileEditPage() {
         email: profile.email || '',
         phone: number || '',
         countryCode: code || '+380',
-        originalEmail: profile.email || '',
-        isLoading: false
+        originalEmail: profile.email || ''
       }));
     } catch (error) {
       setStatusMessage({ 
         type: 'error', 
         text: t('edit_page.errors.load_failed') 
       });
-      updateState('isLoading', false);
     }
   };
 
@@ -123,16 +120,7 @@ export default function ProfileEditPage() {
     }
   };
 
-  if (state.isLoading) {
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>
-            <div className={styles.spinner}></div>
-            {t('billing_page.loading')}
-        </div>
-      </div>
-    );
-  }
+  // Початковий лоадер прибрано
 
   return (
     <div className={styles.container}>

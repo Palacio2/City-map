@@ -26,9 +26,13 @@
     "density_unit": "осіб/км²",
     "population": "Населення:",
     "salary": "Середня зарплата:",
-    "unemployment": "Рівень безробіття:"
+    "unemployment": "Рівень безробіття:",
+    "updated_at": "Оновлено: {{date}}"
   },
   "enums": {
+    "high": "Висока",
+    "medium": "Середня",
+    "low": "Низька",
     "frequency": {
       "high": "Висока",
       "medium": "Середня",
@@ -67,6 +71,7 @@
       "tram_stops": "Трамвайні зупинки:",
       "metro_stations": "Станції метро:",
       "bike_lanes": "Велодоріжки (км):",
+      "parking": "Паркомісця:",
       "transport_frequency": "Частота транспорту:",
       "transport_dist": "Доступність транспорту:",
       "crime_level": "Рівень злочинності:",
@@ -79,15 +84,21 @@
       "cinemas": "Кінотеатри:",
       "theaters": "Театри:",
       "museums": "Музеї:",
+      "libraries": "Бібліотеки:",
       "grocery": "Продуктові магазини:",
       "malls": "Торгові центри:",
       "construction": "Будівельні магазини:",
       "clothing": "Магазини одягу:",
       "beauty": "Салони краси:",
-      "banks": "Банки:",
+      "banks": "Банки та банкомати:",
+      "post_offices": "Поштові відділення:",
       "air_quality": "Якість повітря:",
-      "cost_per_sqm": "Вартість за м²:",
-      "water_supply": "Водопостачання:"
+      "cost_per_sqm": "Вартість ком. послуг за м²:",
+      "water_supply": "Водопостачання:",
+      "electricity": "Електропостачання:",
+      "heating": "Опалення:",
+      "gas_supply": "Газопостачання:",
+      "waste_removal": "Вивіз сміття:"
     }
   }
 }

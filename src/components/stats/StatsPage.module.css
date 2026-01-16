@@ -516,3 +516,27 @@
     font-size: 13px;
   }
 }
+
+.clickableItem {
+  cursor: pointer;
+}
+.clickableText {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  transition: opacity 0.2s;
+}
+.clickableText:hover {
+  opacity: 0.8;
+  text-decoration: underline;
+}
+.districtLocation {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-left: 8px;
+  font-weight: normal;
+}
+.linkIcon {
+  font-size: 12px;
+}

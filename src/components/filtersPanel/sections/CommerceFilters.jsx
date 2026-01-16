@@ -10,22 +10,6 @@ const CommerceFilters = memo(({ values = {}, onChange }) => {
     onChange?.({ [name]: checked });
   };
 
-  const handleDensityChange = (event) => {
-    const { value } = event.target;
-    onChange?.({ density: value });
-  };
-
-  const handleMinStoresChange = (event) => {
-    const { value } = event.target;
-    onChange?.({ minGroceryStores: value ? parseInt(value) : undefined });
-  };
-
-  const preventInvalidInput = (e) => {
-    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{t('commerce.title')}</h3>
@@ -84,54 +68,6 @@ const CommerceFilters = memo(({ values = {}, onChange }) => {
           />
           <span>{t('commerce.beauty')}</span>
         </label>
-        
-        <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>{t('commerce.min_groceries')}</span>
-          <div className={styles.rangeInputContainer}>
-            <input 
-              type="number" 
-              placeholder="0"
-              value={values.minGroceryStores || ''}
-              onChange={handleMinStoresChange}
-              onKeyDown={preventInvalidInput}
-              className={styles.rangeInput}
-              min="0"
-            />
-            <span className={styles.rangeUnit}>{t('education.unit')}</span>
-          </div>
-        </div>
-
-        <div className={styles.ratingFilter}>
-          <span className={styles.ratingLabel}>{t('commerce.density')}</span>
-          <select 
-            className={styles.select}
-            value={values.density || 'any'}
-            onChange={handleDensityChange}
-          >
-            <option value="any">{t('options.any')}</option>
-            <option value="high">{t('options.high')}</option>
-            <option value="medium">{t('options.medium')}</option>
-            <option value="low">{t('options.low')}</option>
-          </select>
-        </div>
-
-        <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>{t('commerce.min_rating')}</span>
-          <div className={styles.rangeContainer}>
-            <input 
-              type="range" 
-              min="0" 
-              max="10" 
-              step="0.5"
-              value={values.minRating || 0}
-              onChange={(e) => onChange?.({ minRating: parseFloat(e.target.value) })}
-              className={styles.rangeSlider}
-            />
-            <span className={styles.rangeValue}>
-              {values.minRating || 0}
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );

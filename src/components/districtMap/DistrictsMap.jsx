@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictsMap.module.css';
@@ -15,12 +15,16 @@ const DistrictCard = React.memo(({ district, isSelected, onClick }) => {
       onClick={() => onClick(district)}
     >
       {district.photo_url ? (
-        <img 
-          src={district.photo_url} 
-          alt={district.photo_description || district.name}
-          className={styles.districtPhoto}
-          loading="lazy"
-        />
+        <div className={styles.imageWrapper}>
+            <img 
+            src={district.photo_url} 
+            alt={district.photo_description || district.name}
+            className={styles.districtPhoto}
+            loading="lazy"
+            width="300"
+            height="200"
+            />
+        </div>
       ) : (
         <div className={styles.photoPlaceholder}>🏙️</div>
       )}
@@ -41,13 +45,35 @@ const DistrictCard = React.memo(({ district, isSelected, onClick }) => {
   );
 });
 
-export default function DistrictsMap({ districts, onDistrictClick, selectedFilters = {} }) {
+export default function DistrictsMap({ 
+  districts, 
+  onDistrictClick, 
+  selectedFilters = {}, 
+  initialSelectedDistrict 
+}) {
   const { t } = useTranslation('districts');
   const { country, city } = useParams();
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
+  
+  const hasOpenedInitialRef = useRef(false);
+
+  useEffect(() => {
+    if (initialSelectedDistrict && districts.length > 0 && !hasOpenedInitialRef.current) {
+      const targetDistrict = districts.find(d => 
+        d.name.trim().toLowerCase() === initialSelectedDistrict.trim().toLowerCase()
+      );
+
+      if (targetDistrict) {
+        setSelectedDistrict(targetDistrict);
+        setIsModalOpen(true);
+        onDistrictClick?.(targetDistrict);
+        hasOpenedInitialRef.current = true;
+      }
+    }
+  }, [initialSelectedDistrict, districts, onDistrictClick]);
 
   useEffect(() => {
     setCurrentPage(1);

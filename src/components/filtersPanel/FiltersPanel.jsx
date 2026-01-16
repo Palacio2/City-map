@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { FaStar } from 'react-icons/fa';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext';
 import styles from './FiltersPanel.module.css';
+
 import EducationFilters from './sections/EducationFilters';
 import MedicineFilters from './sections/MedicineFilters';
 import TransportFilters from './sections/TransportFilters';
@@ -16,6 +17,7 @@ const FiltersPanel = React.memo(({ onFiltersChange, selectedFilters = {} }) => {
   const { t } = useTranslation('filters');
   const navigate = useNavigate();
   const { isPremium, isFree } = useSubscription();
+  
   const [filters, setFilters] = useState(selectedFilters);
 
   const handleUpgradeClick = () => {
@@ -47,13 +49,10 @@ const FiltersPanel = React.memo(({ onFiltersChange, selectedFilters = {} }) => {
           {isFree && (
             <div className={styles.subscriptionInfo}>
               <span className={styles.freeBadge}>
-                <FaStar style={{ marginRight: '6px', fontSize: '1em' , color: 'yellow' }} /> 
+                <FaStar style={{ marginRight: '6px', fontSize: '1em' , color: '#f59e0b' }} /> 
                 {t('panel.free_version')}
               </span>
-              <button 
-                className={styles.upgradeLink}
-                onClick={handleUpgradeClick}
-              >
+              <button className={styles.upgradeLink} onClick={handleUpgradeClick}>
                 {t('panel.upgrade')}
               </button>
             </div>
@@ -123,10 +122,7 @@ const FiltersPanel = React.memo(({ onFiltersChange, selectedFilters = {} }) => {
             <div className={styles.bannerContent}>
               <h4>{t('panel.banner_title')}</h4>
               <p>{t('panel.banner_text')}</p>
-              <button 
-                className={styles.bannerButton}
-                onClick={handleUpgradeClick}
-              >
+              <button className={styles.bannerButton} onClick={handleUpgradeClick}>
                 {t('panel.view_tariffs')}
               </button>
             </div>
@@ -135,10 +131,7 @@ const FiltersPanel = React.memo(({ onFiltersChange, selectedFilters = {} }) => {
       </div>
       
       <div className={styles.actions}>
-        <button 
-          className={styles.clearButton}
-          onClick={handleClearFilters}
-        >
+        <button className={styles.clearButton} onClick={handleClearFilters}>
           {t('panel.clear')}
         </button>
       </div>

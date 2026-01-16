@@ -8,5 +8,7 @@
   "logout": "Log Out",
   "loading": "Loading...",
   "favorites_title": "My favorites",
-  "language_title": "Change language"
+  "language_title": "Change language",
+  "light_mode": "Light mode",
+  "dark_mode": "Dark mode"
 }

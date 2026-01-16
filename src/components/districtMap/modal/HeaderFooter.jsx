@@ -13,10 +13,19 @@ export function HeaderSection({
   formatPrice,
   currencyInfo
 }) {
-  const { t } = useTranslation('districts');
-  const { name, photo_url, photo_description } = district;
+  const { t, i18n } = useTranslation('districts'); // Додали i18n для локалізації дати
+  const { name, photo_url, photo_description, updated_at } = district; // Дістаємо updated_at
   const filterData = district.filterData;
   const { code, locale } = currencyInfo || { code: 'UAH', locale: 'uk-UA' };
+
+  // Форматування дати
+  const formattedDate = updated_at 
+    ? new Date(updated_at).toLocaleDateString(i18n.language, {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      })
+    : null;
 
   return (
     <div className={headerFooterStyles.headerSection}>
@@ -29,7 +38,15 @@ export function HeaderSection({
       )}
       <div className={headerFooterStyles.headerContent}>
         <div className={headerFooterStyles.headerTop}>
-          <h2 className={headerFooterStyles.modalTitle}>{name}</h2>
+          <div className={headerFooterStyles.titleWrapper}>
+            <h2 className={headerFooterStyles.modalTitle}>{name}</h2>
+            {formattedDate && (
+              <span className={headerFooterStyles.lastUpdated}>
+                {t('details.updated_at', { date: formattedDate })}
+              </span>
+            )}
+          </div>
+          
           <div className={headerFooterStyles.headerActions}>
             <FavoriteButton 
               isFavorite={isFavorite}
@@ -39,20 +56,9 @@ export function HeaderSection({
             <CloseButton onClose={onClose} />
           </div>
         </div>
-        
-        {photo_description && (
-          <p className={headerFooterStyles.photoDescription}>{photo_description}</p>
-        )}
 
         {filterData?.general && (
-          <div className={headerFooterStyles.quickStats}>
-            <div className={headerFooterStyles.quickStat}>
-              <span className={headerFooterStyles.quickStatLabel}>{t('details.price')}</span>
-              <span className={headerFooterStyles.quickStatValue}>
-                {formatPrice(filterData.general.propertyPrice, code, locale)}
-              </span>
-            </div>
-            
+          <div className={headerFooterStyles.quickStatsBar}>
             {filterData.general.population > 0 && (
                 <div className={headerFooterStyles.quickStat}>
                 <span className={headerFooterStyles.quickStatLabel}>{t('details.population')}</span>

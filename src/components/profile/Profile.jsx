@@ -5,7 +5,6 @@ import { FaUser, FaCrown, FaCreditCard, FaSync, FaCheckCircle, FaTimesCircle, Fa
 import { supabase } from '../../supabaseClient';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext';
 import { formatPhoneNumber } from '../../utils/phoneUtils';
-// import { PLAN_KEY_MAP } from '../../utils/billing'; // <-- Це більше не потрібно
 import styles from './Profile.module.css';
 
 const SubscriptionSection = ({ subscription, features, isPremium }) => {
@@ -18,7 +17,6 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
         const isExpired = subscription.isExpired;
         const currentLang = i18n.language || 'uk-UA';
         
-        // ВИПРАВЛЕННЯ: Використовуємо plan напряму, бо Context вже його нормалізував
         const planKey = subscription.plan || 'free'; 
         
         let status = { 
@@ -43,7 +41,6 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
 
         return {
             status,
-            // Тепер ключі точно співпадають (weekly, premium, realtor)
             name: t(`subscription:subscription.plans.${planKey}.name`),
             price: t(`subscription:subscription.plans.${planKey}.price`),
             expires: subscription.expiresAt 
@@ -112,10 +109,8 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
 export default function Profile() {
     const { t } = useTranslation(['profile', 'subscription']);
     const [userData, setUserData] = useState({ name: '', email: '', phone: '' });
-    const [isUserLoading, setIsUserLoading] = useState(true);
     
-    // Отримуємо getFeatureKeys з контексту
-    const { subscription, isLoading: subLoading, isPremium, getFeatureKeys } = useSubscription();
+    const { subscription, isPremium, getFeatureKeys } = useSubscription();
 
     useEffect(() => {
         let mounted = true;
@@ -131,8 +126,6 @@ export default function Profile() {
                 }
             } catch (e) {
                 console.error("User fetch error", e);
-            } finally {
-                if (mounted) setIsUserLoading(false);
             }
         };
         fetchUserData();
@@ -140,20 +133,11 @@ export default function Profile() {
     }, [t]);
 
     const features = useMemo(() => {
-        // Перевірка на наявність функції перед викликом
         if (subscription && typeof getFeatureKeys === 'function') {
-            return getFeatureKeys().slice(0, 8); // Повертаємо ключі, переклад робимо в компоненті
+            return getFeatureKeys().slice(0, 8);
         }
         return [];
     }, [subscription, getFeatureKeys]);
-
-    if (subLoading || isUserLoading) {
-        return (
-            <div className={styles.container}>
-                <div className={styles.loading}>{t('profile:billing_page.loading')}</div>
-            </div>
-        );
-    }
 
     return (
         <div className={styles.container}>

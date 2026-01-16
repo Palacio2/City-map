@@ -1,0 +1,30 @@
+{
+  "stats_page": {
+    "title": "Statystyki użytkowania",
+    "subtitle": "Analityka Twojej aktywności w systemie",
+    "general_stats": "Statystyki ogólne",
+    "searches": "wyszukiwania nieruchomości",
+    "saved": "zapisane dzielnice",
+    "comparisons": "porównania cen",
+    "time": "czas w systemie",
+    "weekly_activity": "Aktywność tygodniowa",
+    "legend_searches": "Wyszukiwania",
+    "legend_comparisons": "Porównania",
+    "no_weekly_data": "Brak danych o aktywności w tym tygodniu",
+    "popular_districts": "Popularne dzielnice",
+    "views": "wyświetleń",
+    "saves": "zapisów",
+    "no_popular_data": "Brak danych o popularnych dzielnicach",
+    "last_activity": "Ostatnia aktywność",
+    "online": "Online",
+    "last_active_at": "Ostatnia aktywność: {{time}}",
+    "fav_district": "Ulubiona dzielnica:",
+    "not_defined": "Nie zdefiniowano",
+    "never": "nigdy",
+    "error_load": "Błąd ładowania statystyk",
+    "error_unknown": "Wystąpił nieznany błąd",
+    "back_to_profile": "Powrót do profilu",
+    "hours": "godz",
+    "minutes": "min"
+  }
+}

@@ -1,10 +1,15 @@
 .footer {
   background: var(--primary-gradient);
-  color: white;
+  color: #ffffff; /* Залишаємо білим, бо градієнт темний */
   padding: 3rem 0 0;
   margin-top: auto;
   position: relative;
   overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+[data-theme='dark'] .footer {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
 }
 
 .footer::before {
@@ -14,7 +19,7 @@
   left: 0;
   right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
 }
 
 .footerContent {
@@ -38,7 +43,7 @@
 
 .footerSection h3 {
   margin-bottom: 1rem;
-  color: white;
+  color: #ffffff;
   font-size: 1.5rem;
   font-weight: 700;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
@@ -61,17 +66,16 @@
   transform: translateX(-50%);
   width: 40px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.5);
+  background: rgba(255, 255, 255, 0.4);
 }
 
 .footerSection p {
   margin: 0.5rem 0;
   line-height: 1.5;
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.85);
   font-size: 0.95rem;
 }
 
-/* Навігація */
 .navLinks {
   display: flex;
   flex-direction: column;
@@ -80,7 +84,7 @@
 }
 
 .navLinks a, .contactLink {
-  color: rgba(255, 255, 255, 0.9);
+  color: rgba(255, 255, 255, 0.85);
   text-decoration: none;
   transition: all 0.3s ease;
   font-size: 0.95rem;
@@ -89,7 +93,7 @@
 }
 
 .navLinks a:hover, .contactLink:hover {
-  color: white;
+  color: #ffffff;
   transform: translateX(5px);
 }
 
@@ -104,40 +108,24 @@
   margin-top: 2rem;
   background: rgba(0, 0, 0, 0.15);
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: rgba(255, 255, 255, 0.7);
   position: relative;
 }
 
+[data-theme='dark'] .copyright {
+  background: rgba(0, 0, 0, 0.3);
+}
+
 @media (max-width: 768px) {
-
   .footerContent {
-    gap: 0.8rem;              
+    gap: 1.5rem;
   }
-
+  
   .footerSection {
-    padding: 0.4rem 0;   
+    padding: 0.5rem 0;
   }
 
-  .footerSection h3 {
-    margin-bottom: 0.2rem;
-  }
-
-  .footerSection h4 {
-    margin-top: 0.3rem;
-    margin-bottom: 0.3rem;
-  }
-
-  .footerSection p {
-    margin: 0.2rem 0;
-  }
-
-  .navLinks a,
-  .contactLink {
-    margin: 0.15rem 0;
-  }
-
-  .copyright {
-    margin-top: 1rem;
-    padding: 0.8rem;
+  .navLinks a:hover, .contactLink:hover {
+    transform: none;
   }
 }

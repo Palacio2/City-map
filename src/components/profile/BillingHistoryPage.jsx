@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft, FaCheckCircle, FaTimesCircle, FaExclamationTriangle } from 'react-icons/fa';
@@ -12,7 +12,7 @@ export default function BillingHistoryPage() {
   const { t } = useTranslation(['profile', 'subscription']);
   const navigate = useNavigate();
   
-  const { subscription, updateSubscription, isLoading: isSubscriptionLoading, getFeatureKeys } = useSubscription();
+  const { subscription, updateSubscription, isLoading: isSubscriptionLoading } = useSubscription();
   const [billingHistory, setBillingHistory] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -21,23 +21,22 @@ export default function BillingHistoryPage() {
   const [isCancelling, setIsCancelling] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
 
-  const loadBillingData = useCallback(async () => {
-    try {
-      setIsLoading(true);
-      const { subscriptions, count } = await fetchUserBillingHistory(currentPage, ITEMS_PER_PAGE);
-      setBillingHistory(subscriptions || []);
-      setTotalCount(count);
-    } catch (e) {
-      console.error(e);
-      setError(t('profile:billing_page.error_load'));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [currentPage, t]);
-
   useEffect(() => {
+    const loadBillingData = async () => {
+      try {
+        setIsLoading(true);
+        const { subscriptions, count } = await fetchUserBillingHistory(currentPage, ITEMS_PER_PAGE);
+        setBillingHistory(subscriptions || []);
+        setTotalCount(count);
+      } catch (e) {
+        console.error(e);
+        setError(t('profile:billing_page.error_load'));
+      } finally {
+        setIsLoading(false);
+      }
+    };
     loadBillingData();
-  }, [loadBillingData]);
+  }, [currentPage, t]);
 
   const handleManageButton = () => {
     if (subscription.plan === 'free' || subscription.status !== 'active') {
@@ -54,7 +53,9 @@ export default function BillingHistoryPage() {
       if (!subscription.id) throw new Error('No subscription ID found');
       await cancelUserSubscription(subscription.id);
       await updateSubscription(); 
-      loadBillingData(); 
+       const { subscriptions, count } = await fetchUserBillingHistory(currentPage, ITEMS_PER_PAGE);
+       setBillingHistory(subscriptions || []);
+       setTotalCount(count);
     } catch (error) {
       console.error(error);
       alert(t('profile:billing_page.error_cancel'));
@@ -70,24 +71,22 @@ export default function BillingHistoryPage() {
     }
   };
 
-  const tableData = useMemo(() => {
-    return billingHistory.map(sub => {
-      const planKey = sub.plan_name === 'pro' ? 'premium' : (sub.plan_name || 'free');
-      
-      return {
-        id: sub.id,
-        date: new Date(sub.created_at).toLocaleDateString('uk-UA'),
-        amount: `€${sub.amount}`, 
-        status: sub.status,
-        planName: t(`subscription:subscription.plans.${planKey}.name`),
-        method: t('profile:billing_page.method_online'),
-        invoiceId: sub.payment_id ? sub.payment_id.replace('TX_', '').replace('SUB_', '').slice(-8).toUpperCase() : '---',
-        expiresAt: sub.ends_at ? new Date(sub.ends_at).toLocaleDateString('uk-UA') : t('profile:stats_page.never')
-      };
-    });
-  }, [billingHistory, t]);
+  const tableData = billingHistory.map(sub => {
+    const planKey = sub.plan_name === 'pro' ? 'premium' : (sub.plan_name || 'free');
+    
+    return {
+      id: sub.id,
+      date: new Date(sub.created_at).toLocaleDateString('uk-UA'),
+      amount: `€${sub.amount}`, 
+      status: sub.status,
+      planName: t(`subscription:subscription.plans.${planKey}.name`),
+      method: t('profile:billing_page.method_online'),
+      invoiceId: sub.payment_id ? sub.payment_id.replace('TX_', '').replace('SUB_', '').slice(-8).toUpperCase() : '---',
+      expiresAt: sub.ends_at ? new Date(sub.ends_at).toLocaleDateString('uk-UA') : t('profile:stats_page.never')
+    };
+  });
 
-  const subscriptionInfo = useMemo(() => {
+  const getSubscriptionInfo = () => {
     if (isSubscriptionLoading) return null;
 
     const actualPlanKey = (subscription?.isExpired || !subscription?.plan) 
@@ -103,16 +102,9 @@ export default function BillingHistoryPage() {
       isActive: subscription?.status === 'active' && actualPlanKey !== 'free',
       isFree: actualPlanKey === 'free'
     };
-  }, [subscription, isSubscriptionLoading, t]);
+  };
 
-  if (isLoading && !billingHistory.length) {
-    return (
-      <div className={styles.loadingContainer}>
-        <div className={styles.spinner}></div>
-        <p>{t('profile:billing_page.loading')}</p>
-      </div>
-    );
-  }
+  const subscriptionInfo = getSubscriptionInfo();
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 

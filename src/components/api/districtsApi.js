@@ -17,11 +17,6 @@ async function apiRequest(endpoint) {
   }
 }
 
-export async function fetchDistrictsByCity(country, city) {
-  const params = new URLSearchParams({ country, city, filters: 'false' });
-  return apiRequest(`/get-districts?${params.toString()}`);
-}
-
 export async function fetchDistrictsWithFilters(country, city) {
   const params = new URLSearchParams({ country, city, filters: 'true' });
   return apiRequest(`/get-districts?${params.toString()}`);

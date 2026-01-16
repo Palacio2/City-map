@@ -66,6 +66,10 @@ import RodoEN from './locales/en/rodo.json';
 import RodoPL from './locales/pl/rodo.json';
 import RodoUK from './locales/uk/rodo.json';
 
+import StatsEN from './locales/en/stats.json';
+import StatsPL from './locales/pl/stats.json';
+import StatsUK from './locales/uk/stats.json';
+
 const resources = {
   ua: { 
     header: headerUK,
@@ -84,6 +88,7 @@ const resources = {
     terms: termsUK,
     notFound: NotFoundPageUK,
     rodo : RodoUK,
+    stats : StatsUK,
   },
   en: { 
     header: headerEN,
@@ -102,6 +107,7 @@ const resources = {
     terms: termsEN,
     notFound: NotFoundPageEN,
     rodo : RodoEN,
+    stats : StatsPL,
   },
   pl: { 
     header: headerPL,
@@ -120,6 +126,7 @@ const resources = {
     terms: termsPl,
     notFound: NotFoundPagePL,
     rodo : RodoPL,
+    stats : StatsEN,
   },
 };
 
@@ -135,7 +142,7 @@ i18n
       caches: ['localStorage', 'cookie'],
     },
     
-    ns: ['header', 'footer', 'faq', 'auth', 'select',
+    ns: ['header', 'footer', 'faq', 'auth', 'select', 'stats',
        'districts', 'filters', 'profile', 'about', 'rodo',
         'contacts', 'favorites', 'payment', 'subscription', 'terms', 'notFound'], 
     defaultNS: 'header',

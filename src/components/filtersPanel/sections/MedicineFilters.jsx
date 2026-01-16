@@ -10,17 +10,6 @@ const MedicineFilters = memo(({ values = {}, onChange }) => {
     onChange?.({ [name]: checked });
   };
 
-  const handleMinChange = (event, field) => {
-    const { value } = event.target;
-    onChange?.({ [field]: value ? parseInt(value) : undefined });
-  };
-
-  const preventInvalidInput = (e) => {
-    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{t('medicine.title')}</h3>
@@ -61,56 +50,6 @@ const MedicineFilters = memo(({ values = {}, onChange }) => {
           />
           <span>{t('medicine.emergency')}</span>
         </label>
-
-        <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>{t('medicine.min_hospitals')}</span>
-          <div className={styles.rangeInputContainer}>
-            <input 
-              type="number" 
-              placeholder="0"
-              value={values.minHospitals || ''}
-              onChange={(e) => handleMinChange(e, 'minHospitals')}
-              onKeyDown={preventInvalidInput}
-              className={styles.rangeInput}
-              min="0"
-            />
-            <span className={styles.rangeUnit}>{t('education.unit')}</span>
-          </div>
-        </div>
-
-        <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>{t('medicine.min_clinics')}</span>
-          <div className={styles.rangeInputContainer}>
-            <input 
-              type="number" 
-              placeholder="0"
-              value={values.minClinics || ''}
-              onChange={(e) => handleMinChange(e, 'minClinics')}
-              onKeyDown={preventInvalidInput}
-              className={styles.rangeInput}
-              min="0"
-            />
-            <span className={styles.rangeUnit}>{t('education.unit')}</span>
-          </div>
-        </div>
-
-        <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>{t('medicine.min_rating')}</span>
-          <div className={styles.rangeContainer}>
-            <input 
-              type="range" 
-              min="0" 
-              max="10" 
-              step="0.5"
-              value={values.minRating || 0}
-              onChange={(e) => onChange?.({ minRating: parseFloat(e.target.value) })}
-              className={styles.rangeSlider}
-            />
-            <span className={styles.rangeValue}>
-              {values.minRating || 0}
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );

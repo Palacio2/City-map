@@ -25,7 +25,6 @@ export default function PasswordChangePage() {
     const { t } = useTranslation('profile');
     const [formData, setFormData] = useState({ newPassword: '', confirmPassword: '' });
     const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
-    const [isLoading, setIsLoading] = useState(false);
     const [isTipsOpen, setIsTipsOpen] = useState(false);
     const [showPasswords, setShowPasswords] = useState({ new: false, confirm: false });
 
@@ -48,10 +47,8 @@ export default function PasswordChangePage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setStatusMessage({ type: '', text: '' });
-        setIsLoading(true);
 
         if (!validatePassword()) {
-            setIsLoading(false);
             return;
         }
 
@@ -66,8 +63,6 @@ export default function PasswordChangePage() {
             setFormData({ newPassword: '', confirmPassword: '' });
         } catch (error) {
             setStatusMessage({ type: 'error', text: error.message || t('password_page.errors.unknown') });
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -122,7 +117,6 @@ export default function PasswordChangePage() {
                                     onChange={(e) => handleInputChange('newPassword', e.target.value)}
                                     placeholder={t('password_page.placeholders.new')}
                                     required
-                                    disabled={isLoading}
                                     autoComplete="new-password"
                                 />
                                 <button
@@ -151,7 +145,6 @@ export default function PasswordChangePage() {
                                     onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
                                     placeholder={t('password_page.placeholders.confirm')}
                                     required
-                                    disabled={isLoading}
                                     autoComplete="new-password"
                                 />
                                 <button
@@ -169,10 +162,9 @@ export default function PasswordChangePage() {
                             <button
                                 type="submit"
                                 className={`${styles.baseButton} ${styles.primaryButton}`}
-                                disabled={isLoading}
                             >
                                 <FaSave className={styles.buttonIcon} />
-                                {isLoading ? t('actions.saving') : t('actions.change_password')}
+                                {t('actions.change_password')}
                             </button>
 
                             <Link to="/profile" className={`${styles.baseButton} ${styles.secondaryButton}`}>

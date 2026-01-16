@@ -17,41 +17,11 @@ export default function DistrictDetailsModal({
   const { t } = useTranslation('districts');
   const { country: paramCountry } = useParams();
   const [isFavorite, setIsFavorite] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState(null);
 
   const countryName = district?.country || decodeURIComponent(paramCountry || '');
   const currencyInfo = getCurrencyInfo(countryName);
-
-  useEffect(() => {
-    let mounted = true;
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (mounted) setUserId(session?.user?.id ?? null);
-    });
-    return () => { mounted = false; };
-  }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-    const checkStatus = async () => {
-        if (!isOpen || !district || !userId) {
-            if (isMounted) setIsFavorite(false);
-            return;
-        }
-        setIsLoading(true);
-        try {
-          const favoriteStatus = await checkIsFavorite(district.id);
-          if (isMounted) setIsFavorite(favoriteStatus);
-        } catch (error) {
-          console.warn('Favorite check failed:', error);
-          if (isMounted) setIsFavorite(false);
-        } finally {
-          if (isMounted) setIsLoading(false);
-        }
-    };
-    checkStatus();
-    return () => { isMounted = false; };
-  }, [district?.id, userId, isOpen]);
 
   useEffect(() => {
     if (isOpen) {
@@ -70,6 +40,37 @@ export default function DistrictDetailsModal({
       document.body.style.width = '';
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!isOpen || !district) return;
+
+    let mounted = true;
+    setIsLoading(true);
+
+    const checkStatus = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const uid = session?.user?.id;
+
+        if (mounted) setUserId(uid || null);
+
+        if (uid) {
+          const favoriteStatus = await checkIsFavorite(district.id);
+          if (mounted) setIsFavorite(favoriteStatus);
+        } else {
+          if (mounted) setIsFavorite(false);
+        }
+      } catch (error) {
+        console.warn('Favorite check failed:', error);
+        if (mounted) setIsFavorite(false);
+      } finally {
+        if (mounted) setIsLoading(false);
+      }
+    };
+
+    checkStatus();
+    return () => { mounted = false; };
+  }, [district?.id, isOpen]);
 
   const handleToggleFavorite = async () => {
     if (!userId) {

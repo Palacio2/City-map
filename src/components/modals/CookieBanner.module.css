@@ -9,9 +9,9 @@ html, body {
   bottom: 20px;
   transform: translateX(-50%);
   width: min(800px, calc(100% - 40px));
-  background: rgba(30,30,30,.98);
+  background: var(--bg-white);
   backdrop-filter: blur(10px);
-  border: 1px solid #444;
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 16px 24px;
   display: flex;
@@ -19,25 +19,79 @@ html, body {
   align-items: center;
   justify-content: space-between;
   z-index: 9999;
-  box-shadow: 0 12px 40px rgba(0,0,0,.55);
+  box-shadow: var(--shadow-modal);
   box-sizing: border-box;
   animation: slideUpPC .4s ease-out forwards;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+[data-theme='dark'] .banner {
+  background: rgba(30, 30, 30, 0.98);
 }
 
 @keyframes slideUpPC {
-  from { opacity:0; transform:translate(-50%,40px); }
-  to   { opacity:1; transform:translate(-50%,0); }
+  from { opacity: 0; transform: translate(-50%, 40px); }
+  to   { opacity: 1; transform: translate(-50%, 0); }
 }
 
-.content { display:flex; gap:14px; flex:1; align-items:center; }
-.iconWrapper { background:rgba(255,165,0,.12); padding:10px; border-radius:50%; }
-.icon { color:#ffa500; font-size:1.4rem; }
-.text p { margin:0; color:#eee; font-size:.95rem; line-height:1.45; }
-.link { color:#3b82f6; text-decoration:underline; white-space:nowrap; }
-.actions { display:flex; gap:12px; }
-.acceptBtn { background:#3b82f6; border:none; padding:10px 20px; color:white; border-radius:6px; font-weight:600; }
-.closeBtn { background:none; border:none; color:#aaa; font-size:1.2rem; }
+.content { 
+  display: flex; 
+  gap: 14px; 
+  flex: 1; 
+  align-items: center; 
+}
 
+.iconWrapper { 
+  background: rgba(255, 165, 0, 0.12); 
+  padding: 10px; 
+  border-radius: 50%; 
+}
+
+.icon { 
+  color: #ffa500; 
+  font-size: 1.4rem; 
+}
+
+.text p { 
+  margin: 0; 
+  color: var(--text-dark); 
+  font-size: .95rem; 
+  line-height: 1.45; 
+}
+
+.link { 
+  color: var(--primary-light); 
+  text-decoration: underline; 
+  white-space: nowrap; 
+}
+
+.actions { 
+  display: flex; 
+  gap: 12px; 
+}
+
+.acceptBtn { 
+  background: var(--primary-light); 
+  border: none; 
+  padding: 10px 20px; 
+  color: white; 
+  border-radius: 6px; 
+  font-weight: 600; 
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.acceptBtn:hover {
+  transform: translateY(-2px);
+}
+
+.closeBtn { 
+  background: none; 
+  border: none; 
+  color: var(--text-light); 
+  font-size: 1.2rem; 
+  cursor: pointer;
+}
 
 @media (max-width: 600px) {
   .banner {
@@ -59,20 +113,20 @@ html, body {
     flex-direction: column;
     gap: 12px;
 
-    animation: slideUpMobile .35s cubic-bezier(.4,0,.2,1) forwards;
+    animation: slideUpMobile .35s cubic-bezier(.4, 0, .2, 1) forwards;
   }
 
   @keyframes slideUpMobile {
-    from { transform: translateY(100%); opacity:0; }
-    to   { transform: translateY(0); opacity:1; }
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0); opacity: 1; }
   }
 
-  .content { width:100%; justify-content:center; }
-  .text p { text-align:center; font-size:.85rem; }
-  .actions { width:100%; }
-  .acceptBtn { flex:1; padding:12px; }
+  .content { width: 100%; justify-content: center; }
+  .text p { text-align: center; font-size: .85rem; }
+  .actions { width: 100%; }
+  .acceptBtn { flex: 1; padding: 12px; }
   .closeBtn {
-    background: rgba(255,255,255,.05);
+    background: var(--bg-hover);
     border-radius: 10px;
     padding: 12px;
   }

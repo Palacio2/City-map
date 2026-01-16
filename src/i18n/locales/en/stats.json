@@ -1,0 +1,30 @@
+{
+  "stats_page": {
+    "title": "Usage Statistics",
+    "subtitle": "Analytics of your activity in the system",
+    "general_stats": "General Statistics",
+    "searches": "property searches",
+    "saved": "saved districts",
+    "comparisons": "price comparisons",
+    "time": "time in system",
+    "weekly_activity": "Weekly Activity",
+    "legend_searches": "Searches",
+    "legend_comparisons": "Comparisons",
+    "no_weekly_data": "No weekly activity data yet",
+    "popular_districts": "Popular Districts",
+    "views": "views",
+    "saves": "saves",
+    "no_popular_data": "No data on popular districts yet",
+    "last_activity": "Last Activity",
+    "online": "Online",
+    "last_active_at": "Last active at: {{time}}",
+    "fav_district": "Favorite District:",
+    "not_defined": "Not defined",
+    "never": "never",
+    "error_load": "Error loading statistics",
+    "error_unknown": "An unknown error occurred",
+    "back_to_profile": "Back to profile",
+    "hours": "h",
+    "minutes": "min"
+  }
+}

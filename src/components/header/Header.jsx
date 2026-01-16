@@ -2,7 +2,15 @@ import { useEffect, useState } from 'react';
 import styles from './Header.module.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../../supabaseClient';
-import { FaGlobe, FaHeart, FaBars, FaTimes, FaChevronDown } from 'react-icons/fa';
+import { 
+  FaGlobe, 
+  FaHeart, 
+  FaBars, 
+  FaTimes, 
+  FaChevronDown, 
+  FaSun, 
+  FaMoon 
+} from 'react-icons/fa';
 import { useSubscription } from '../../pages/subscription/SubscriptionContext';
 import { useTranslation } from 'react-i18next';
 
@@ -16,6 +24,19 @@ export default function Header() {
   const [isLoading, setIsLoading] = useState(true);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark';
+  });
+
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.setItem('theme', 'light');
+    }
+  }, [isDarkMode]);
 
   useEffect(() => {
     checkAuthStatus();
@@ -34,13 +55,9 @@ export default function Header() {
   }, [location]);
 
   useEffect(() => {
-    if (isMenuOpen) {
-      document.documentElement.style.overflow = 'hidden';
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.documentElement.style.overflow = '';
-      document.body.style.overflow = '';
-    }
+    const overflowValue = isMenuOpen ? 'hidden' : '';
+    document.documentElement.style.overflow = overflowValue;
+    document.body.style.overflow = overflowValue;
     return () => {
       document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
@@ -54,9 +71,9 @@ export default function Header() {
   };
 
   const isActive = (path) => location.pathname === path ? styles.navLinkActive : '';
-
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleLanguageDropdown = () => setShowLanguageDropdown(!showLanguageDropdown);
+  const toggleTheme = () => setIsDarkMode(!isDarkMode);
 
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
@@ -100,6 +117,11 @@ export default function Header() {
           </nav>
 
           <div className={styles.userControls}>
+            <button className={`${styles.navButton} ${styles.themeToggle}`} onClick={toggleTheme}>
+              {isDarkMode ? <FaSun className={styles.icon} /> : <FaMoon className={styles.icon} />}
+              <span className={styles.buttonText}>{isDarkMode ? t('light_mode') : t('dark_mode')}</span>
+            </button>
+
             {isAuthenticated && isPremium && (
               <button className={`${styles.navButton} ${styles.favoritesButton}`} onClick={() => navigate('/favorites')}>
                 <FaHeart className={styles.icon} />

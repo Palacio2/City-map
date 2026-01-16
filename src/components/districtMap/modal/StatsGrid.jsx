@@ -7,7 +7,6 @@ import {
   formatPrice, 
   formatBoolean, 
   getFrequencyText,
-  getDensityText,
   getCrimeLevelText,
   getCrimeLevelClass 
 } from '../../../utils/formatters';
@@ -33,7 +32,6 @@ export default function StatsGrid({ filterData, currencyInfo }) {
     return Object.values(obj).some(val => val !== null && val !== undefined && val !== '');
   };
 
-  // Хелпер для перекладу значень з ENUM (high, medium, low)
   const tEnum = (key) => key ? t(key) : t('na');
 
   return (
@@ -92,6 +90,12 @@ export default function StatsGrid({ filterData, currencyInfo }) {
 
       {hasData(transport) && (
         <StatCard title={t('stats.categories.transport')} icon="🚍" rating={transport.rating}>
+          {transport.metroStations > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.metro_stations')}</span>
+              <strong>{formatNumber(transport.metroStations)}</strong>
+            </div>
+          )}
           {transport.busStops > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.bus_stops')}</span>
@@ -104,22 +108,16 @@ export default function StatsGrid({ filterData, currencyInfo }) {
               <strong>{formatNumber(transport.tramStops)}</strong>
             </div>
           )}
-          {transport.metroStations > 0 && (
-            <div className={styles.statRow}>
-              <span>{t('stats.labels.metro_stations')}</span>
-              <strong>{formatNumber(transport.metroStations)}</strong>
-            </div>
-          )}
           {transport.bikeLanes > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.bike_lanes')}</span>
               <strong>{transport.bikeLanes.toFixed(1)} км</strong>
             </div>
           )}
-          {transport.distanceRating > 0 && (
+          {transport.parkingSpots > 0 && (
             <div className={styles.statRow}>
-              <span>{t('stats.labels.transport_dist')}</span>
-              <strong>{transport.distanceRating.toFixed(1)}/10</strong>
+              <span>{t('stats.labels.parking')}</span>
+              <strong>{formatNumber(transport.parkingSpots)}</strong>
             </div>
           )}
           {transport.frequency && (
@@ -136,8 +134,8 @@ export default function StatsGrid({ filterData, currencyInfo }) {
           {safety.crimeLevel !== null && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.crime_level')}</span>
-              <strong className={getCrimeLevelClass(safety.crimeLevel)}>
-                {tEnum(getCrimeLevelText(safety.crimeLevel))}
+              <strong className={getCrimeLevelClass(safety.crimeLevel, styles)}>
+                {t(getCrimeLevelText(safety.crimeLevel))}
               </strong>
             </div>
           )}
@@ -156,7 +154,7 @@ export default function StatsGrid({ filterData, currencyInfo }) {
           {safety.streetLighting > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.lighting')}</span>
-              <strong>{safety.streetLighting.toFixed(1)}/10</strong>
+              <strong>{safety.streetLighting}/10</strong>
             </div>
           )}
         </StatCard>
@@ -182,22 +180,28 @@ export default function StatsGrid({ filterData, currencyInfo }) {
               <strong>{formatNumber(social.playgrounds)}</strong>
             </div>
           )}
-          {social.cinemas > 0 && (
-            <div className={styles.statRow}>
-              <span>{t('stats.labels.cinemas')}</span>
-              <strong>{formatNumber(social.cinemas)}</strong>
-            </div>
-          )}
           {social.theaters > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.theaters')}</span>
               <strong>{formatNumber(social.theaters)}</strong>
             </div>
           )}
+          {social.cinemas > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.cinemas')}</span>
+              <strong>{formatNumber(social.cinemas)}</strong>
+            </div>
+          )}
           {social.museums > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.museums')}</span>
               <strong>{formatNumber(social.museums)}</strong>
+            </div>
+          )}
+          {social.libraries > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.libraries')}</span>
+              <strong>{formatNumber(social.libraries)}</strong>
             </div>
           )}
         </StatCard>
@@ -215,6 +219,18 @@ export default function StatsGrid({ filterData, currencyInfo }) {
             <div className={styles.statRow}>
               <span>{t('stats.labels.malls')}</span>
               <strong>{formatNumber(commerce.shoppingMalls)}</strong>
+            </div>
+          )}
+          {commerce.banksATMs > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.banks')}</span>
+              <strong>{formatNumber(commerce.banksATMs)}</strong>
+            </div>
+          )}
+          {commerce.postOffices > 0 && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.post_offices')}</span>
+              <strong>{formatNumber(commerce.postOffices)}</strong>
             </div>
           )}
           {commerce.constructionStores > 0 && (
@@ -235,22 +251,11 @@ export default function StatsGrid({ filterData, currencyInfo }) {
               <strong>{formatNumber(commerce.beautySalons)}</strong>
             </div>
           )}
-          {commerce.banksATMs > 0 && (
-            <div className={styles.statRow}>
-              <span>{t('stats.labels.banks')}</span>
-              <strong>{formatNumber(commerce.banksATMs)}</strong>
-            </div>
-          )}
         </StatCard>
       )}
 
       {hasData(utilities) && (
         <StatCard title={t('stats.categories.utilities')} icon="⚡" rating={utilities.qualityRating}>
-          <div className={styles.statRow}>
-             <span>{t('stats.labels.air_quality')}</span>
-             <strong>{utilities.qualityRating ? `${utilities.qualityRating.toFixed(1)}/10` : t('na')}</strong>
-          </div>
-
           {utilities.costPerSqm > 0 && (
             <div className={styles.statRow}>
               <span>{t('stats.labels.cost_per_sqm')}</span>
@@ -261,6 +266,30 @@ export default function StatsGrid({ filterData, currencyInfo }) {
             <div className={styles.statRow}>
               <span>{t('stats.labels.water_supply')}</span>
               <strong>{formatBoolean(utilities.hasWaterSupply)}</strong>
+            </div>
+          )}
+          {utilities.hasElectricity !== null && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.electricity')}</span>
+              <strong>{formatBoolean(utilities.hasElectricity)}</strong>
+            </div>
+          )}
+          {utilities.hasHeating !== null && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.heating')}</span>
+              <strong>{formatBoolean(utilities.hasHeating)}</strong>
+            </div>
+          )}
+          {utilities.hasGasSupply !== null && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.gas_supply')}</span>
+              <strong>{formatBoolean(utilities.hasGasSupply)}</strong>
+            </div>
+          )}
+          {utilities.hasWasteRemoval !== null && (
+            <div className={styles.statRow}>
+              <span>{t('stats.labels.waste_removal')}</span>
+              <strong>{formatBoolean(utilities.hasWasteRemoval)}</strong>
             </div>
           )}
         </StatCard>

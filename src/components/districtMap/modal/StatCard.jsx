@@ -18,7 +18,7 @@ export default function StatCard({
           <span className={styles.cardIcon}>{icon}</span>
           <h3>{title}</h3>
         </div>
-        <div className={`${styles.cardRating} ${getRatingColor(rating)}`}>
+        <div className={`${styles.cardRating} ${styles[getRatingColor(rating)]}`}>
           {rating?.toFixed(1) || t('na')}
         </div>
       </div>

@@ -10,17 +10,6 @@ const SocialFilters = memo(({ values = {}, onChange }) => {
     onChange?.({ [name]: checked });
   };
 
-  const handleMinChange = (event, field) => {
-    const { value } = event.target;
-    onChange?.({ [field]: value ? parseInt(value) : undefined });
-  };
-
-  const preventInvalidInput = (e) => {
-    if (['e', 'E', '+', '-', '.'].includes(e.key)) {
-      e.preventDefault();
-    }
-  };
-
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>{t('social.title')}</h3>
@@ -97,56 +86,6 @@ const SocialFilters = memo(({ values = {}, onChange }) => {
           />
           <span>{t('social.museums')}</span>
         </label>
-
-        <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>{t('social.min_parks')}</span>
-          <div className={styles.rangeInputContainer}>
-            <input 
-              type="number" 
-              placeholder="0"
-              value={values.minParks || ''}
-              onChange={(e) => handleMinChange(e, 'minParks')}
-              onKeyDown={preventInvalidInput}
-              className={styles.rangeInput}
-              min="0"
-            />
-            <span className={styles.rangeUnit}>{t('education.unit')}</span>
-          </div>
-        </div>
-
-        <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>{t('social.min_park_size')}</span>
-          <div className={styles.rangeInputContainer}>
-            <input 
-              type="number" 
-              placeholder="0"
-              value={values.minParkSize || ''}
-              onChange={(e) => handleMinChange(e, 'minParkSize')}
-              onKeyDown={preventInvalidInput}
-              className={styles.rangeInput}
-              min="0"
-            />
-            <span className={styles.rangeUnit}>{t('social.unit_size')}</span>
-          </div>
-        </div>
-
-        <div className={styles.rangeFilter}>
-          <span className={styles.rangeLabel}>{t('social.min_rating')}</span>
-          <div className={styles.rangeContainer}>
-            <input 
-              type="range" 
-              min="0" 
-              max="10" 
-              step="0.5"
-              value={values.minRating || 0}
-              onChange={(e) => onChange?.({ minRating: parseFloat(e.target.value) })}
-              className={styles.rangeSlider}
-            />
-            <span className={styles.rangeValue}>
-              {values.minRating || 0}
-            </span>
-          </div>
-        </div>
       </div>
     </div>
   );

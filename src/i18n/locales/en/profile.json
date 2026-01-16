@@ -6,45 +6,37 @@
     "name": "Name:",
     "email": "Email:",
     "phone": "Phone:",
-    "join_date": "Registration Date:",
-    "full_name": "Full Name"
+    "full_name": "Full name",
+    "user": "User",
+    "country_code": "Country code"
   },
   "actions": {
-    "edit": "Edit Profile",
-    "change_password": "Change Password",
-    "manage_subscription": "Manage Subscription",
-    "choose_plan": "Choose Plan",
-    "manage_billing": "Manage Billing",
-    "save": "Save Changes",
+    "edit": "Edit profile",
+    "change_password": "Change password",
+    "manage_subscription": "Manage subscription",
+    "choose_plan": "Choose plan",
+    "save": "Save changes",
     "saving": "Saving...",
     "cancel": "Cancel",
-    "back_to_profile": "Back to Profile",
-    "download": "Download Receipt",
-    "view_details": "View Details",
-    "retry": "Try Again",
+    "back_to_profile": "Back to profile",
     "prev": "Previous",
-    "next": "Next"
+    "next": "Next",
+    "hide_password": "Hide password",
+    "show_password": "Show password"
   },
   "subscription": {
     "title": "Subscription",
     "plan": "Plan: {{plan}}",
-    "price": "{{price}}",
     "expires": "Expires: {{date}}",
     "cancelled_notice": "Subscription cancelled, valid until {{date}}",
     "expired_notice": "Subscription expired on {{date}}",
     "features_title": "Available features:",
-    "more_features": "and {{count}} more features...",
     "status": {
       "active": "Active",
       "inactive": "Inactive",
       "cancelled": "Cancelled",
       "expired": "Expired",
       "free": "Free"
-    },
-    "plans": {
-      "free": "Free",
-      "premium": "Premium",
-      "pro": "Premium"
     }
   },
   "quick_actions": {
@@ -52,19 +44,12 @@
     "stats_desc": "View your activity",
     "billing_title": "Billing History",
     "billing_desc": "View all transactions",
-    "locked": "Premium Subscription Required"
+    "locked": "Premium subscription required"
   },
-  "help": {
-    "title": "Need Help?",
-    "desc": "Contact our support team",
-    "contact_btn": "Contacts",
-    "faq_btn": "FAQ",
-    "email_btn": "Email Us"
-  },
- "edit_page": {
+  "edit_page": {
     "title": "Edit Profile",
     "subtitle": "Update your personal information",
-    "main_info": "Main Information",
+    "main_info": "General Information",
     "enter_data": "Enter your personal details",
     "placeholders": {
       "name": "Enter your name",
@@ -77,28 +62,26 @@
       "name_long": "Name is too long (max 30 characters)",
       "name_required": "Please enter your name",
       "email_required": "Please enter your email",
-      "save_error": "Error saving data",
-      "phone_length": "Number must contain {{count}} digits after code",
-      "phone_too_long": "Number is too long"
+      "save_error": "Error while saving"
     },
     "success": "Profile updated successfully"
   },
   "password_page": {
     "title": "Change Password",
-    "subtitle": "Update your password to improve account security",
+    "subtitle": "Update your password to enhance account security",
     "form_title": "Account Security",
     "form_subtitle": "Enter a new password to update",
-    "new_pass": "New Password",
-    "confirm_pass": "Confirm New Password",
-    "tips_title": "Tips for a secure password",
+    "new_pass": "New password",
+    "confirm_pass": "Confirm new password",
+    "tips_title": "Security Tips",
     "tips": [
       "Use at least 8 characters",
-      "Include uppercase letters, numbers, and special characters",
+      "Include uppercase, numbers, and symbols",
       "Avoid personal information",
-      "Do not use the same password for different services",
-      "Avoid sequences (123456, qwerty)",
-      "Using a password manager is recommended",
-      "Update your passwords periodically",
+      "Do not reuse passwords",
+      "Avoid sequences like 123456",
+      "Use a password manager",
+      "Update passwords periodically",
       "Enable two-factor authentication"
     ],
     "placeholders": {
@@ -106,64 +89,41 @@
       "confirm": "Repeat new password"
     },
     "errors": {
-      "length": "New password must be at least 8 characters long",
-      "mismatch": "New passwords do not match",
-      "regex": "Password must contain uppercase/lowercase letters, numbers, and special characters",
+      "length": "Password must be at least 8 characters",
+      "mismatch": "Passwords do not match",
+      "regex": "Password must contain letters, numbers, and special characters",
       "unknown": "An unknown error occurred"
     },
     "success": "Password changed successfully!"
   },
   "billing_page": {
-  "title": "Subscription & Billing",
-  "subtitle": "Manage your subscription and transaction history",
-  "current_sub": "Current Subscription",
-  "plan_label": "Plan:",             
-  "price_label": "Price:",           
-  "next_payment": "Next payment:",
-  "valid_until": "Valid until:",
-  "update_plan": "Change Plan",
-  "cancel_sub": "Cancel Subscription",
-  "history_title": "Payment History",
-  "transactions": "transactions",    
-  "cancel_btn" : "Cancel subscription",
-  "summary_success": "Successful payments",
-  "method_online": "Card",
-  "loading": "Loading...",
-  "no_history": "No payment history",
-  "error_load": "Failed to load history",
-  "cancel_confirm": "Are you sure you want to cancel your subscription? You will lose access to Premium features after the current billing period ends.",
-  "processing": "Processing...",
-  "table": {
-    "date": "Date",
-    "plan": "Plan",
-    "amount": "Amount",
-    "method": "Method",
-    "status": "Status",
-    "invoice": "Invoice",            
-    "actions": "Actions"
-  }
-},
+    "title": "Subscription & Billing",
+    "subtitle": "Manage transactions and history",
+    "current_sub": "Current Subscription",
+    "plan_label": "Plan:",
+    "price_label": "Price:",
+    "next_payment": "Next payment:",
+    "update_plan": "Update plan",
+    "cancel_sub": "Cancel subscription",
+    "history_title": "Billing History",
+    "transactions": "transactions",
+    "cancel_btn": "Cancel subscription",
+    "method_online": "Card",
+    "no_history": "No billing history found",
+    "error_load": "Failed to load history",
+    "cancel_confirm": "Are you sure you want to cancel? You will lose access to Premium features after the current period ends.",
+    "error_cancel": "Failed to cancel subscription",
+    "processing": "Processing...",
+    "table": {
+      "date": "Date",
+      "plan": "Plan",
+      "amount": "Amount",
+      "method": "Method",
+      "status": "Status",
+      "invoice": "Invoice"
+    }
+  },
   "stats_page": {
-    "title": "Usage Statistics",
-    "subtitle": "Analytics of your activity in the system",
-    "general_stats": "General Statistics",
-    "searches": "property searches",
-    "saved": "saved districts",
-    "comparisons": "price comparisons",
-    "time": "time in system",
-    "weekly_activity": "Weekly Activity",
-    "legend_searches": "Searches",
-    "legend_comparisons": "Comparisons",
-    "no_weekly_data": "No weekly activity data yet",
-    "popular_districts": "Popular Districts",
-    "views": "views",
-    "no_popular_data": "No popular districts data yet",
-    "last_activity": "Last Activity",
-    "online": "Online",
-    "last_active_at": "Last activity: {{time}}",
-    "fav_district": "Favorite District:",
-    "not_defined": "Not defined",
-    "never": "never",
-    "error_load": "Error loading statistics"
+    "never": "never"
   }
 }

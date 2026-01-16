@@ -14,12 +14,13 @@
   object-fit: cover;
 }
 
+/* Градієнт зроблено трохи темнішим зверху, щоб кнопки було видно */
 .headerContent {
   position: relative;
   z-index: 2;
   height: 100%;
   min-height: 250px;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 60%, rgba(0,0,0,0.1) 100%);
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.95) 100%);
   padding: 24px;
   display: flex;
   flex-direction: column;
@@ -27,31 +28,61 @@
   color: white;
 }
 
+.headerTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end; /* Вирівнюємо по низу, щоб заголовок і кнопки були на одному рівні візуально */
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.titleWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-width: 85%;
+  /* Щоб текст не налізав на кнопки на мобільних */
+  padding-right: 10px; 
+}
+
+/* Кнопки закриття та лайку тепер фіксовані зверху */
 .headerActions {
   position: absolute;
-  top: 16px;
-  right: 16px;
+  top: -100px; /* Піднімаємо їх у верхній правий кут контейнера */
+  right: 0;
   display: flex;
   gap: 10px;
   z-index: 10;
 }
 
+
+
 .modalTitle {
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 800;
-  margin: 0 0 8px 0;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
-  line-height: 1.2;
+  margin: 0;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  line-height: 1.1;
   word-break: break-word;
-  padding-right: 60px;
+}
+
+.lastUpdated {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .photoDescription {
   font-size: 15px;
-  opacity: 0.9;
-  margin: 0 0 16px 0;
+  opacity: 0.95;
+  margin: 8px 0 16px 0;
   max-width: 600px;
   line-height: 1.5;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
   display: -webkit-box;
   -webkit-line-clamp: 2;
   line-clamp: 2;
@@ -59,10 +90,10 @@
   overflow: hidden;
 }
 
-.quickStats {
+.quickStatsBar {
   display: flex;
   gap: 24px;
-  border-top: 1px solid rgba(255,255,255,0.2);
+  border-top: 1px solid rgba(255,255,255,0.3);
   padding-top: 16px;
   flex-wrap: wrap;
 }
@@ -76,12 +107,14 @@
   font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  opacity: 0.8;
+  opacity: 0.9;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .quickStatValue {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
 }
 
 .modalFooter {
@@ -116,15 +149,26 @@
   .headerContent {
     padding: 20px 16px;
   }
-
-  .modalTitle {
-    font-size: 24px;
-    padding-right: 0;
-    max-width: 85%;
+  
+  .headerActions {
+    top: -80px; 
   }
 
-  .quickStats {
+  .modalTitle {
+    font-size: 26px;
+  }
+
+  .titleWrapper {
+    max-width: 100%;
+  }
+
+  .quickStatsBar {
     gap: 16px;
     padding-top: 12px;
+    justify-content: space-between;
+  }
+  
+  .quickStat {
+    flex: 1 1 auto;
   }
 }

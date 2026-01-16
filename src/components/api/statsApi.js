@@ -27,11 +27,33 @@ async function apiRequest(endpoint, options = {}) {
 }
 
 export async function fetchDashboardData() {
-  const data = await apiRequest('/get-dashboard-stats');
-  
-  return {
-    stats: data.stats || null,
-    weeklyActivity: Array.isArray(data.weeklyActivity) ? data.weeklyActivity : [],
-    popularDistricts: Array.isArray(data.popularDistricts) ? data.popularDistricts : []
-  };
+  return await apiRequest('/get-dashboard-stats');
+}
+
+export async function trackActivity(type) {
+  try {
+    const { error } = await supabase.rpc('track_user_activity', { activity_type: type });
+    if (error) console.error('Tracking error:', error);
+  } catch (err) {
+    console.error('Tracking failed:', err);
+  }
+}
+
+// НОВА ФУНКЦІЯ: Оновлення часу
+export async function updateUserTime(seconds) {
+  try {
+    const { error } = await supabase.rpc('update_user_time', { seconds });
+    if (error) console.error('Time tracking error:', error);
+  } catch (err) {
+    console.error('Time tracking failed:', err);
+  }
+}
+
+export async function trackDistrictVisit(districtId) {
+  try {
+    const { error } = await supabase.rpc('track_district_visit', { did: districtId });
+    if (error) console.error('District visit error:', error);
+  } catch (err) {
+    console.error('District visit failed:', err);
+  }
 }
