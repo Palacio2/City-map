@@ -1,150 +1,129 @@
+import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "@layout/MainLayout";
+import PageLoader from "@ui/PageLoader/PageLoader";
 
-import DistrictMap from "@maps/DistrictMap";
-import Contacts from "@pages/contacts/Contacts";
-import Subscription from "@pages/subscription/Subscription";
-import Login from "@auth/Login";
-import Register from "@auth/Register";
-import ForgotPassword from "@auth/ForgotPassword";
-import TermsOfService from "@pages/termsOfService/TermsOfService";
-import About from "@pages/about/About";
-import Profile from "../components/profile/Profile";
-import Payment from "@pages/payment/Payment";
-import RegisterSuccess from "../components/auth/RegisterSuccess";
-import AuthCallback from "../components/auth/AuthCallback";
-import PaymentSuccess from "../pages/payment/PaymentSuccess";
-import FavoritesPage from '../pages/favorites/FavoritesPage';
-import FaqPage from '../pages/faq/FaqPage';
-import NotFoundPage from "../pages/notFound/NotFoundPage";
+// Lazy-loaded components
+const DistrictMap = lazy(() => import("@maps/DistrictMap"));
+const Contacts = lazy(() => import("@pages/contacts/Contacts"));
+const Subscription = lazy(() => import("@pages/subscription/Subscription"));
+const Login = lazy(() => import("@auth/Login"));
+const Register = lazy(() => import("@auth/Register"));
+const ForgotPassword = lazy(() => import("@auth/ForgotPassword"));
+const TermsOfService = lazy(() => import("@pages/termsOfService/TermsOfService"));
+const About = lazy(() => import("@pages/about/About"));
+const Profile = lazy(() => import("../components/profile/Profile"));
+const Payment = lazy(() => import("@pages/payment/Payment"));
+const RegisterSuccess = lazy(() => import("../components/auth/RegisterSuccess"));
+const AuthCallback = lazy(() => import("../components/auth/AuthCallback"));
+const PaymentSuccess = lazy(() => import("../pages/payment/PaymentSuccess"));
+const FavoritesPage = lazy(() => import('../pages/favorites/FavoritesPage'));
+const FaqPage = lazy(() => import('../pages/faq/FaqPage'));
+const NotFoundPage = lazy(() => import("../pages/notFound/NotFoundPage"));
 
-// Routes guards
+// Route guards
 import PrivateRoute from "./PrivateRoute";
 import ProtectedRoute from "./ProtectedRoute";
 
 // Profile components
-import StatsPage from "../components/stats/StatsPage";
-import BillingHistoryPage from "../components/profile/BillingHistoryPage";
-import ProfileEditPage from "../components/profile/ProfileEditPage";
-import PasswordChangePage from "../components/profile/PasswordChangePage";
-
-// Parser (Admin Panel)
-
-// import Admin from "../pages/admin/index";
+const StatsPage = lazy(() => import("../components/stats/StatsPage"));
+const BillingHistoryPage = lazy(() => import("../components/profile/BillingHistoryPage"));
+const ProfileEditPage = lazy(() => import("../components/profile/ProfileEditPage"));
+const PasswordChangePage = lazy(() => import("../components/profile/PasswordChangePage"));
 
 export default function AppRoutes() {
   return (
-    <Routes>
-      <Route path="/" element={<MainLayout />}>
-        {/* --- Public Routes --- */}
-        <Route index element={<DistrictMap />} />
-        <Route path="city/:country" element={<DistrictMap />} />
-        <Route path="map/:country/:city" element={<DistrictMap />} />
-        
-        <Route path="contacts" element={<Contacts />} />
-        <Route path="about" element={<About />} />
-        <Route path="faq" element={<FaqPage />} />
-        <Route path="terms" element={<TermsOfService />} />
-        
-        <Route path="subscription" element={<Subscription />} />
-        
-        {/* --- Auth Routes --- */}
-        <Route path="login" element={<Login />} />
-        <Route path="register" element={<Register />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
-        <Route path="register-success" element={<RegisterSuccess />} />
-        <Route path="auth/callback" element={<AuthCallback />} />
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
+        <Route path="/" element={<MainLayout />}>
+          {/* --- Public Routes --- */}
+          <Route index element={<DistrictMap />} />
+          <Route path="city/:country" element={<DistrictMap />} />
+          <Route path="map/:country/:city" element={<DistrictMap />} />
 
+          <Route path="contacts" element={<Contacts />} />
+          <Route path="about" element={<About />} />
+          <Route path="faq" element={<FaqPage />} />
+          <Route path="terms" element={<TermsOfService />} />
 
-  {/* --- Protected / Private Routes --- */}
+          <Route path="subscription" element={<Subscription />} />
 
-        
+          {/* --- Auth Routes --- */}
+          <Route path="login" element={<Login />} />
+          <Route path="register" element={<Register />} />
+          <Route path="forgot-password" element={<ForgotPassword />} />
+          <Route path="register-success" element={<RegisterSuccess />} />
+          <Route path="auth/callback" element={<AuthCallback />} />
 
-        {/* Адмін-панель для парсингу (Захищено) */}
-{/* 
-        <Route 
-
-          path="parser" 
-
-          element={
-
-            <PrivateRoute>
-
-              <Admin />
-
-            </PrivateRoute>
-
-          } 
-
-        />   */}
-        
-        <Route 
-          path="/favorites" 
-          element={
-            <PrivateRoute>
-              <FavoritesPage />
-            </PrivateRoute>
-          } 
-        />
-
-        <Route path="profile">
+          {/* --- Protected / Private Routes --- */}
           <Route 
-            index 
+            path="/favorites"
             element={
               <PrivateRoute>
-                <Profile />
+                <FavoritesPage />
               </PrivateRoute>
             } 
           />
+
+          <Route path="profile">
+            <Route
+              index
+              element={
+                <PrivateRoute>
+                  <Profile />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="stats"
+              element={
+                <PrivateRoute>
+                  <ProtectedRoute requiredPlan="premium">
+                    <StatsPage />
+                  </ProtectedRoute>
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="billing-history"
+              element={
+                <PrivateRoute>
+                  <BillingHistoryPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="edit"
+              element={
+                <PrivateRoute>
+                  <ProfileEditPage />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="password"
+              element={
+                <PrivateRoute>
+                  <PasswordChangePage />
+                </PrivateRoute>
+              }
+            />
+          </Route>
+
           <Route
-            path="stats"
+            path="payment"
             element={
               <PrivateRoute>
-                <ProtectedRoute requiredPlan="premium">
-                  <StatsPage />
-                </ProtectedRoute>
+                <Payment />
               </PrivateRoute>
             }
           />
-          <Route
-            path="billing-history"
-            element={
-              <PrivateRoute>
-                <BillingHistoryPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="edit"
-            element={
-              <PrivateRoute>
-                <ProfileEditPage />
-              </PrivateRoute>
-            }
-          />
-          <Route
-            path="password"
-            element={
-              <PrivateRoute>
-                <PasswordChangePage />
-              </PrivateRoute>
-            }
-          />
+          <Route path="payment-success" element={<PaymentSuccess />} />
+
+          {/* --- 404 Route --- */}
+          <Route path="*" element={<NotFoundPage />} />
         </Route>
-
-        <Route
-          path="payment"
-          element={
-            <PrivateRoute>
-              <Payment />
-            </PrivateRoute>
-          }
-        />
-        <Route path="payment-success" element={<PaymentSuccess />} />
-
-        {/* --- 404 Route (Має бути останнім) --- */}
-        <Route path="*" element={<NotFoundPage />} />
-      </Route>
-    </Routes>
+      </Routes>
+    </Suspense>
   );
 }

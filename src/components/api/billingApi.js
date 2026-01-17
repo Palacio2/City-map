@@ -29,7 +29,6 @@ export async function fetchUserBillingHistory(page = 1, limit = 10) {
       count 
     };
   } catch (error) {
-    console.error("API Error:", error);
     throw error;
   }
 }

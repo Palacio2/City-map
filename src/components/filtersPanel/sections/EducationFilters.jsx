@@ -1,48 +1,23 @@
 import React, { memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styles from './Filters.module.css';
+import FilterSection from './FilterSection';
 
-const EducationFilters = memo(({ values = {}, onChange }) => {
-  const { t } = useTranslation('filters');
+const educationFilterConfig = {
+  title: 'education.title',
+  filters: [
+    { name: 'kindergartens', label: 'education.kindergartens' },
+    { name: 'schools', label: 'education.schools' },
+    { name: 'universities', label: 'education.universities' },
+  ],
+};
 
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    onChange?.({ [name]: checked });
-  };
-
+const EducationFilters = memo(({ values, onChange }) => {
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>{t('education.title')}</h3>
-      <div className={styles.filterGroup}>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="kindergartens" 
-            checked={values.kindergartens || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('education.kindergartens')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="schools" 
-            checked={values.schools || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('education.schools')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="universities" 
-            checked={values.universities || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('education.universities')}</span>
-        </label>
-      </div>
-    </div>
+    <FilterSection
+      title={educationFilterConfig.title}
+      filters={educationFilterConfig.filters}
+      values={values}
+      onChange={onChange}
+    />
   );
 });
 

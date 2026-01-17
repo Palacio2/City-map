@@ -17,7 +17,6 @@ export const profileAPI = {
         new_email: user.email_change_sent_at ? user.email : null 
       };
     } catch (error) {
-      console.error('Error getting profile:', error);
       throw error;
     }
   },
@@ -34,7 +33,6 @@ export const profileAPI = {
       
       return { success: true, message: 'Профіль успішно оновлено.' };
     } catch (error) {
-      console.error('Error updating profile:', error);
       throw error;
     }
   },
@@ -50,7 +48,6 @@ export const profileAPI = {
         needs_confirmation: true
       };
     } catch (error) {
-      console.error('Error updating email:', error);
       throw error;
     }
   },
@@ -65,7 +62,6 @@ export const profileAPI = {
         newEmailPending: !!user.email_change_sent_at
       };
     } catch (error) {
-      console.error('Error checking email confirmation:', error);
       throw error;
     }
   },
@@ -80,15 +76,12 @@ export const profileAPI = {
       
       return { success: true, message: 'Лист для підтвердження відправлено повторно.' };
     } catch (error) {
-      console.error('Error resending confirmation email:', error);
       throw error;
     }
   }
 };
 
 export const handleApiError = (error) => {
-  console.error('API Error:', error);
-  
   if (!error || !error.message) {
       return 'Сталася невідома помилка.';
   }

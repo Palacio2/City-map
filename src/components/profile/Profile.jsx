@@ -125,7 +125,7 @@ export default function Profile() {
                     });
                 }
             } catch (e) {
-                console.error("User fetch error", e);
+                // Errors are handled silently
             }
         };
         fetchUserData();

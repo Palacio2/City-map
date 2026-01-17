@@ -1,75 +1,26 @@
 import React, { memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styles from './Filters.module.css';
+import FilterSection from './FilterSection';
 
-const CommerceFilters = memo(({ values = {}, onChange }) => {
-  const { t } = useTranslation('filters');
+const commerceFilterConfig = {
+  title: 'commerce.title',
+  filters: [
+    { name: 'groceries', label: 'commerce.groceries' },
+    { name: 'construction', label: 'commerce.construction' },
+    { name: 'clothing', label: 'commerce.clothing' },
+    { name: 'postOffices', label: 'commerce.post' },
+    { name: 'banks', label: 'commerce.banks' },
+    { name: 'beauty', label: 'commerce.beauty' },
+  ],
+};
 
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    onChange?.({ [name]: checked });
-  };
-
+const CommerceFilters = memo(({ values, onChange }) => {
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>{t('commerce.title')}</h3>
-      <div className={styles.filterGroup}>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="groceries" 
-            checked={values.groceries || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('commerce.groceries')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="construction" 
-            checked={values.construction || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('commerce.construction')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="clothing" 
-            checked={values.clothing || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('commerce.clothing')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="postOffices" 
-            checked={values.postOffices || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('commerce.post')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="banks" 
-            checked={values.banks || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('commerce.banks')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="beauty" 
-            checked={values.beauty || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('commerce.beauty')}</span>
-        </label>
-      </div>
-    </div>
+    <FilterSection
+      title={commerceFilterConfig.title}
+      filters={commerceFilterConfig.filters}
+      values={values}
+      onChange={onChange}
+    />
   );
 });
 

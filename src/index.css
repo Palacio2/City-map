@@ -34,6 +34,7 @@
 }
 
 [data-theme='dark'] {
+  --primary-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
   --text-dark: rgba(255, 255, 255, 0.92);
   --text-medium: rgba(255, 255, 255, 0.78);
   --text-light: rgba(255, 255, 255, 0.6);

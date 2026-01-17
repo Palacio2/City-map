@@ -7,14 +7,13 @@ import { transformDistrictsForDisplay } from '../../utils/dataTransformers';
 import DistrictDetailsModal from '../../components/districtMap/DistrictDetailsModal';
 import mapStyles from '../../components/districtMap/DistrictsMap.module.css'; 
 import styles from './FavoritesPage.module.css';
-import { formatPrice, getCurrencyInfo } from '../../utils/formatters'; // Додано getCurrencyInfo
+import { formatPrice, getCurrencyInfo } from '../../utils/formatters';
 
 const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
     const { t } = useTranslation('favorites');
     const filterData = district.filterData;
     const na = t('na');
     
-    // Визначаємо валюту для конкретного району
     const currencyInfo = getCurrencyInfo(district.country);
     
     return (
@@ -42,13 +41,12 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
             
             {filterData?.general?.propertyPrice && (
                 <div className={styles.priceTag}>
-                    {/* Передаємо код валюти та локаль */}
                     {formatPrice(filterData.general.propertyPrice, currencyInfo.code, currencyInfo.locale)}
                 </div>
             )}
 
             {filterData && (
-                <div className={mapStyles.districtStats}>
+                <div className={styles.districtStats}>
                     <span className={mapStyles.statBadge}>🏫 {filterData.education?.rating?.toFixed(1) || na}</span>
                     <span className={mapStyles.statBadge}>🚍 {filterData.transport?.rating?.toFixed(1) || na}</span>
                     <span className={mapStyles.statBadge}>🛡️ {filterData.safety?.rating?.toFixed(1) || na}</span>
@@ -66,6 +64,7 @@ export default function FavoritesPage() {
     const [favorites, setFavorites] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
+    const [removeError, setRemoveError] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const navigate = useNavigate();
@@ -85,7 +84,6 @@ export default function FavoritesPage() {
             const rawData = await favoritesApi.getFavorites();
             setFavorites(transformDistrictsForDisplay(rawData || []));
         } catch (err) {
-            console.error('Error loading favorites:', err);
             setError(err.message || t('errors.load_failed'));
         } finally {
             setLoading(false);
@@ -98,12 +96,13 @@ export default function FavoritesPage() {
         
         const previousFavorites = [...favorites];
         setFavorites(prev => prev.filter(d => d.id !== districtId));
+        setRemoveError('');
 
         try {
             await favoritesApi.removeFavorite(districtId);
         } catch (err) {
             setFavorites(previousFavorites);
-            alert(`${t('errors.delete_failed')}: ${err.message}`);
+            setRemoveError(t('errors.delete_failed'));
         }
     };
 
@@ -154,6 +153,8 @@ export default function FavoritesPage() {
                     <h1 className={styles.title}>{t('title')}</h1>
                     <span className={styles.favoritesCount}>{favorites.length}</span>
                 </header>
+
+                {removeError && <div className={styles.removeError}>{removeError}</div>}
 
                 <div className={styles.favoritesGrid}>
                     {favorites.map(district => (

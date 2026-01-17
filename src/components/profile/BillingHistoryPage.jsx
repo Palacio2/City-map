@@ -20,16 +20,17 @@ export default function BillingHistoryPage() {
   const [totalCount, setTotalCount] = useState(0);
   const [isCancelling, setIsCancelling] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
+  const [cancellationError, setCancellationError] = useState(null);
 
   useEffect(() => {
     const loadBillingData = async () => {
       try {
         setIsLoading(true);
+        setError(null);
         const { subscriptions, count } = await fetchUserBillingHistory(currentPage, ITEMS_PER_PAGE);
         setBillingHistory(subscriptions || []);
         setTotalCount(count);
       } catch (e) {
-        console.error(e);
         setError(t('profile:billing_page.error_load'));
       } finally {
         setIsLoading(false);
@@ -48,7 +49,8 @@ export default function BillingHistoryPage() {
 
   const confirmCancellation = async () => {
     setIsCancelling(true);
-    setShowCancelModal(false); 
+    setShowCancelModal(false);
+    setCancellationError(null);
     try {
       if (!subscription.id) throw new Error('No subscription ID found');
       await cancelUserSubscription(subscription.id);
@@ -57,8 +59,7 @@ export default function BillingHistoryPage() {
        setBillingHistory(subscriptions || []);
        setTotalCount(count);
     } catch (error) {
-      console.error(error);
-      alert(t('profile:billing_page.error_cancel'));
+      setCancellationError(t('profile:billing_page.error_cancel'));
     } finally {
       setIsCancelling(false);
     }
@@ -160,6 +161,7 @@ export default function BillingHistoryPage() {
                     : t('profile:billing_page.update_plan')
                 )}
               </button>
+              {cancellationError && <div className={styles.cancellationError}>{cancellationError}</div>}
             </div>
           )}
 

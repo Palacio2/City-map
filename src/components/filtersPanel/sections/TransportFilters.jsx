@@ -1,66 +1,25 @@
 import React, { memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styles from './Filters.module.css';
+import FilterSection from './FilterSection';
 
-const TransportFilters = memo(({ values = {}, onChange }) => {
-  const { t } = useTranslation('filters');
+const transportFilterConfig = {
+  title: 'transport.title',
+  filters: [
+    { name: 'bus_stops', label: 'transport.bus_stops' },
+    { name: 'tram_stops', label: 'transport.tram_stops' },
+    { name: 'metro', label: 'transport.metro' },
+    { name: 'bike_lanes', label: 'transport.bike_lanes' },
+    { name: 'parking', label: 'transport.parking' },
+  ],
+};
 
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    onChange?.({ [name]: checked });
-  };
-
+const TransportFilters = memo(({ values, onChange }) => {
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>{t('transport.title')}</h3>
-      <div className={styles.filterGroup}>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="bus_stops" 
-            checked={values.bus_stops || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('transport.bus_stops')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="tram_stops" 
-            checked={values.tram_stops || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('transport.tram_stops')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="metro" 
-            checked={values.metro || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('transport.metro')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="bike_lanes" 
-            checked={values.bike_lanes || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('transport.bike_lanes')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="parking" 
-            checked={values.parking || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('transport.parking')}</span>
-        </label>
-      </div>
-    </div>
+    <FilterSection
+      title={transportFilterConfig.title}
+      filters={transportFilterConfig.filters}
+      values={values}
+      onChange={onChange}
+    />
   );
 });
 

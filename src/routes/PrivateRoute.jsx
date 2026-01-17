@@ -31,7 +31,6 @@ const PrivateRoute = ({ children }) => {
           }
         }
       } catch (error) {
-        console.error('Check failed:', error);
         if (mounted) {
           setIsAuthenticated(false);
           setHasConsent(false);
