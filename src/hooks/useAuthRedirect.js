@@ -23,7 +23,6 @@ export default function useAuthRedirect() {
           setIsAutoLoginAttempted(true);
         }
       } catch (error) {
-        console.error('Session check error:', error);
         setIsAutoLoginAttempted(true);
       }
     };

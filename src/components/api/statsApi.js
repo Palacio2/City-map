@@ -21,7 +21,6 @@ async function apiRequest(endpoint, options = {}) {
     if (!response.ok) throw new Error(`API Error: ${response.status}`);
     return await response.json();
   } catch (error) {
-    console.error('API Request failed:', error);
     throw error;
   }
 }
@@ -32,28 +31,24 @@ export async function fetchDashboardData() {
 
 export async function trackActivity(type) {
   try {
-    const { error } = await supabase.rpc('track_user_activity', { activity_type: type });
-    if (error) console.error('Tracking error:', error);
+    await supabase.rpc('track_user_activity', { activity_type: type });
   } catch (err) {
-    console.error('Tracking failed:', err);
+    // Errors are logged silently
   }
 }
 
-// НОВА ФУНКЦІЯ: Оновлення часу
 export async function updateUserTime(seconds) {
   try {
-    const { error } = await supabase.rpc('update_user_time', { seconds });
-    if (error) console.error('Time tracking error:', error);
+    await supabase.rpc('update_user_time', { seconds });
   } catch (err) {
-    console.error('Time tracking failed:', err);
+    // Errors are logged silently
   }
 }
 
 export async function trackDistrictVisit(districtId) {
   try {
-    const { error } = await supabase.rpc('track_district_visit', { did: districtId });
-    if (error) console.error('District visit error:', error);
+    await supabase.rpc('track_district_visit', { did: districtId });
   } catch (err) {
-    console.error('District visit failed:', err);
+    // Errors are logged silently
   }
 }

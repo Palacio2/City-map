@@ -5,12 +5,12 @@ import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-
 import { FaCheckCircle, FaArrowLeft, FaShieldAlt, FaSync, FaTag } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next'; 
 import { subscriptionPlans } from '../subscription/subscriptionPlans';
-import { processPayment, activateSubscription } from '../../components/api/paymentApi'; // Імпортуємо activateSubscription
+import { processPayment, activateSubscription } from '../../components/api/paymentApi';
 import styles from './Payment.module.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => { // Отримуємо subscriptionId
+const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { t } = useTranslation('payment'); 
@@ -21,17 +21,16 @@ const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => { // Отри
     e.preventDefault();
     if (!stripe || !elements) return;
     setIsProcessing(true);
-    setMessage(null); // Очищаємо старі помилки
+    setMessage(null);
 
     const returnUrl = `${window.location.origin}/payment-success`;
 
     try {
-        // 1. Підтверджуємо Setup або Payment у Stripe
         let result;
         if (mode === 'setup') {
             result = await stripe.confirmSetup({
                 elements,
-                redirect: 'if_required', // Не перенаправляти автоматично, якщо не треба
+                redirect: 'if_required',
                 confirmParams: { return_url: returnUrl },
             });
         } else {
@@ -46,16 +45,13 @@ const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => { // Отри
             throw new Error(result.error.message);
         }
 
-        // 2. Якщо Stripe дав добро -> Активуємо підписку в нашій БД
         if (subscriptionId) {
             await activateSubscription(subscriptionId);
         }
 
-        // 3. Якщо все успішно -> Перенаправляємо вручну
         window.location.href = returnUrl;
 
     } catch (err) {
-        console.error(err);
         setMessage(err.message || t('errors.payment_failed'));
         setIsProcessing(false);
     }
@@ -63,7 +59,7 @@ const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => { // Отри
 
   const getButtonText = () => {
       if (isProcessing) return t('processing');
-      if (mode === 'setup') return t('activate_btn'); // "Активувати" для 0 ціни
+      if (mode === 'setup') return t('activate_btn');
       return t('pay_btn', { amount: formattedPrice });
   };
 
@@ -90,7 +86,8 @@ export default function Payment() {
   const [promoCode, setPromoCode] = useState("");
   const [finalAmount, setFinalAmount] = useState(null);
   const [paymentMode, setPaymentMode] = useState('payment');
-  const [subscriptionId, setSubscriptionId] = useState(null); // ID для активації
+  const [subscriptionId, setSubscriptionId] = useState(null);
+  const [error, setError] = useState(null);
 
   const planKey = state?.planKey;
   const planConfig = subscriptionPlans[planKey];
@@ -105,29 +102,27 @@ export default function Payment() {
 
   const fetchPaymentIntent = async (code = null) => {
     try {
-      setClientSecret(""); // Скидаємо, щоб показати лоадер при зміні коду
+      setClientSecret("");
+      setError(null);
       const data = await processPayment({
         planKey,
         promoCode: code
       });
       
-      console.log("Payment Init Data:", data);
-
       if (data && data.clientSecret) {
           setClientSecret(data.clientSecret);
           setFinalAmount(data.amount);
           setPaymentMode(data.mode);
-          setSubscriptionId(data.subscriptionId); // Зберігаємо ID
+          setSubscriptionId(data.subscriptionId);
       } else {
           throw new Error("No client secret returned from server");
       }
       
     } catch (error) {
-      console.error(error);
       if (error.message === 'Unauthorized' || error.message.includes('authorization')) {
           navigate('/auth');
       } else {
-          alert(error.message || t('errors.payment_create'));
+          setError(error.message || t('errors.payment_create'));
           if (code) setPromoCode(""); 
       }
     }
@@ -194,6 +189,7 @@ export default function Payment() {
           </div>
 
           <div className={styles.paymentCard}>
+            {error && <div className={styles.serverError}>{error}</div>}
             {clientSecret ? (
               <Elements key={clientSecret} options={options} stripe={stripePromise}>
                 <CheckoutForm 
@@ -203,7 +199,7 @@ export default function Payment() {
                 />
               </Elements>
             ) : (
-              <div className={styles.loadingState}><FaSync className={styles.spin} /></div>
+              !error && <div className={styles.loadingState}><FaSync className={styles.spin} /></div>
             )}
           </div>
         </div>

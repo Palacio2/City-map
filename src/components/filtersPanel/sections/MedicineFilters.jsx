@@ -1,57 +1,24 @@
 import React, { memo } from 'react';
-import { useTranslation } from 'react-i18next';
-import styles from './Filters.module.css';
+import FilterSection from './FilterSection';
 
-const MedicineFilters = memo(({ values = {}, onChange }) => {
-  const { t } = useTranslation('filters');
+const medicineFilterConfig = {
+  title: 'medicine.title',
+  filters: [
+    { name: 'hospitals', label: 'medicine.hospitals' },
+    { name: 'clinics', label: 'medicine.clinics' },
+    { name: 'pharmacies', label: 'medicine.pharmacies' },
+    { name: 'emergency', label: 'medicine.emergency' },
+  ],
+};
 
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    onChange?.({ [name]: checked });
-  };
-
+const MedicineFilters = memo(({ values, onChange }) => {
   return (
-    <div className={styles.section}>
-      <h3 className={styles.sectionTitle}>{t('medicine.title')}</h3>
-      <div className={styles.filterGroup}>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="hospitals" 
-            checked={values.hospitals || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('medicine.hospitals')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="clinics" 
-            checked={values.clinics || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('medicine.clinics')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="pharmacies" 
-            checked={values.pharmacies || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('medicine.pharmacies')}</span>
-        </label>
-        <label className={styles.filterItem}>
-          <input 
-            type="checkbox" 
-            name="emergency" 
-            checked={values.emergency || false}
-            onChange={handleCheckboxChange}
-          />
-          <span>{t('medicine.emergency')}</span>
-        </label>
-      </div>
-    </div>
+    <FilterSection
+      title={medicineFilterConfig.title}
+      filters={medicineFilterConfig.filters}
+      values={values}
+      onChange={onChange}
+    />
   );
 });
 

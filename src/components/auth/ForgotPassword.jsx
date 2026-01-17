@@ -51,7 +51,6 @@ export default function ForgotPassword() {
 
       setIsSubmitted(true);
     } catch (error) {
-      console.error('Reset password error:', error);
       setErrors({ submit: t('errors.generic') });
     } finally {
       setIsLoading(false);

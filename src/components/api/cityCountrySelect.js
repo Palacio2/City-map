@@ -1,4 +1,4 @@
-const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cityCountrySelect`;
+import { authenticatedApiRequest } from './apiClient';
 
 const mapLocationData = (item) => ({
   value: item.name,
@@ -7,18 +7,7 @@ const mapLocationData = (item) => ({
 });
 
 async function apiRequest(endpoint) {
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    headers: {
-      'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-      'Content-Type': 'application/json'
-    }
-  });
-
-  if (!response.ok) {
-    throw new Error(`API Error: ${response.statusText}`);
-  }
-
-  return response.json();
+  return authenticatedApiRequest(`/cityCountrySelect${endpoint}`);
 }
 
 export async function fetchCountries() {

@@ -70,7 +70,6 @@ export default function DistrictMap() {
       setAllDistricts(transformedData);
       setFilteredDistricts(transformedData);
     } catch (err) {
-      console.error(err);
       setError(err.message || t('load_failed'));
     } finally {
       setIsLoading(false);

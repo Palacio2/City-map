@@ -1,5 +1,5 @@
 .header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: var(--primary-gradient);
   color: white;
   box-shadow: 0 4px 20px rgba(102, 126, 234, 0.3);
   position: sticky;
@@ -7,11 +7,6 @@
   z-index: 100;
   backdrop-filter: blur(10px);
   width: 100%;
-}
-
-[data-theme='dark'] .header {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .container {

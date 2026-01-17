@@ -19,6 +19,7 @@ export default function DistrictDetailsModal({
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState(null);
+  const [error, setError] = useState(null);
 
   const countryName = district?.country || decodeURIComponent(paramCountry || '');
   const currencyInfo = getCurrencyInfo(countryName);
@@ -46,6 +47,7 @@ export default function DistrictDetailsModal({
 
     let mounted = true;
     setIsLoading(true);
+    setError(null);
 
     const checkStatus = async () => {
       try {
@@ -61,7 +63,6 @@ export default function DistrictDetailsModal({
           if (mounted) setIsFavorite(false);
         }
       } catch (error) {
-        console.warn('Favorite check failed:', error);
         if (mounted) setIsFavorite(false);
       } finally {
         if (mounted) setIsLoading(false);
@@ -74,20 +75,21 @@ export default function DistrictDetailsModal({
 
   const handleToggleFavorite = async () => {
     if (!userId) {
-      alert(t('modal.login_alert'));
+      setError(t('modal.login_alert'));
       return;
     }
     const previousState = isFavorite;
     const newState = !previousState;
     setIsFavorite(newState); 
+    setError(null);
 
     try {
       const resultState = await toggleFavorite(district, newState); 
       if (resultState !== newState) setIsFavorite(resultState);
       onToggleFavorite?.(district.id, resultState);
     } catch (error) {
-      console.error('Toggle error:', error);
       setIsFavorite(previousState);
+      setError(t('modal.favorite_error'));
     }
   };
 
@@ -97,6 +99,8 @@ export default function DistrictDetailsModal({
     <div className={styles.modalOverlay} onClick={onClose}>
       <div className={styles.modalContent} onClick={(e) => e.stopPropagation()}>
         <div className={styles.mobileHandle} /> 
+
+        {error && <div className={styles.errorMessage}>{error}</div>}
 
         <HeaderSection 
           district={district}

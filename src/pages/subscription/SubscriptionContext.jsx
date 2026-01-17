@@ -36,12 +36,10 @@ export const SubscriptionProvider = ({ children }) => {
         .maybeSingle();
 
       if (error) {
-        console.error("Subscription fetch error:", error);
         return { ...FREE_PLAN, features: getFreeFeatures() };
       }
 
       if (!data) {
-        console.log("No active subscription found in DB");
         return { ...FREE_PLAN, features: getFreeFeatures() };
       }
 
@@ -51,11 +49,8 @@ export const SubscriptionProvider = ({ children }) => {
       if (planName === 'realtor pro') planName = 'realtor';
 
       if (!subscriptionPlans[planName]) {
-        console.warn(`Unknown plan "${planName}" found in DB. Fallback to free.`);
         planName = 'free';
       }
-
-      console.log("Active Plan Loaded:", planName); 
 
       return {
         id: data.id,
@@ -66,7 +61,6 @@ export const SubscriptionProvider = ({ children }) => {
         isExpired: false
       };
     } catch (err) {
-      console.error("Critical subscription error:", err);
       return { ...FREE_PLAN, features: getFreeFeatures() };
     }
   }, []);
@@ -86,7 +80,6 @@ export const SubscriptionProvider = ({ children }) => {
       }
       setSubscription(sub);
     } catch (e) {
-      console.error(e);
       setSubscription({ ...FREE_PLAN, features: getFreeFeatures() });
     } finally {
       setIsLoading(false);
