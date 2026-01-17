@@ -1,8 +1,6 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "@layout/MainLayout";
-import PageLoader from "@ui/PageLoader/PageLoader";
-
 // Lazy-loaded components
 const DistrictMap = lazy(() => import("@maps/DistrictMap"));
 const Contacts = lazy(() => import("@pages/contacts/Contacts"));
@@ -33,7 +31,7 @@ const PasswordChangePage = lazy(() => import("../components/profile/PasswordChan
 
 export default function AppRoutes() {
   return (
-    <Suspense fallback={<PageLoader />}>
+    
       <Routes>
         <Route path="/" element={<MainLayout />}>
           {/* --- Public Routes --- */}
@@ -124,6 +122,6 @@ export default function AppRoutes() {
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
-    </Suspense>
+    
   );
 }
