@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaStar } from 'react-icons/fa';
-import { useSubscription } from '../../pages/subscription/SubscriptionContext';
+import { useSubscription } from '@subscription/SubscriptionContext';
 import styles from './FiltersPanel.module.css';
 
 import EducationFilters from './sections/EducationFilters';

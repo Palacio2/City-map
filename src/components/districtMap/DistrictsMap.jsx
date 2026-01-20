@@ -1,33 +1,43 @@
-import React, { useState, useCallback, useMemo, useEffect, useRef } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictsMap.module.css';
-import DistrictDetailsModal from './DistrictDetailsModal';
 
-const DistrictCard = React.memo(({ district, isSelected, onClick }) => {
+const DistrictCard = React.memo(({ district, onClick }) => {
   const { t } = useTranslation('districts');
+  const [imgError, setImgError] = useState(false);
   const filterData = district.filterData;
   const na = t('na');
   
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      onClick(district);
+    }
+  };
+
   return (
     <div
-      className={`${styles.districtCard} ${isSelected ? styles.selected : ''}`}
+      className={styles.districtCard}
       onClick={() => onClick(district)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
     >
-      {district.photo_url ? (
-        <div className={styles.imageWrapper}>
+      <div className={styles.imageWrapper}>
+        {district.photo_url && !imgError ? (
             <img 
-            src={district.photo_url} 
-            alt={district.photo_description || district.name}
-            className={styles.districtPhoto}
-            loading="lazy"
-            width="300"
-            height="200"
+              src={district.photo_url} 
+              alt={district.photo_description || district.name}
+              className={styles.districtPhoto}
+              loading="lazy"
+              width="300"
+              height="200"
+              onError={() => setImgError(true)} 
             />
-        </div>
-      ) : (
-        <div className={styles.photoPlaceholder}>🏙️</div>
-      )}
+        ) : (
+            <div className={styles.photoPlaceholder}>🏙️</div>
+        )}
+      </div>
       
       <div className={styles.districtName}>{district.name}</div>
       
@@ -48,121 +58,80 @@ const DistrictCard = React.memo(({ district, isSelected, onClick }) => {
 export default function DistrictsMap({ 
   districts, 
   onDistrictClick, 
-  selectedFilters = {}, 
-  initialSelectedDistrict 
+  selectedFilters = {}
 }) {
   const { t } = useTranslation('districts');
   const { country, city } = useParams();
-  const [selectedDistrict, setSelectedDistrict] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
-  
-  const hasOpenedInitialRef = useRef(false);
-
-  useEffect(() => {
-    if (initialSelectedDistrict && districts.length > 0 && !hasOpenedInitialRef.current) {
-      const targetDistrict = districts.find(d => 
-        d.name.trim().toLowerCase() === initialSelectedDistrict.trim().toLowerCase()
-      );
-
-      if (targetDistrict) {
-        setSelectedDistrict(targetDistrict);
-        setIsModalOpen(true);
-        onDistrictClick?.(targetDistrict);
-        hasOpenedInitialRef.current = true;
-      }
-    }
-  }, [initialSelectedDistrict, districts, onDistrictClick]);
 
   useEffect(() => {
     setCurrentPage(1);
   }, [districts.length, selectedFilters]);
 
-  const handleDistrictClick = useCallback((district) => {
-    setSelectedDistrict(district);
-    setIsModalOpen(true);
-    onDistrictClick?.(district);
-  }, [onDistrictClick]);
-
-  const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false);
-    setSelectedDistrict(null);
-  }, []);
-
-  const visibleDistricts = useMemo(() => districts, [districts]);
-
   const paginatedDistricts = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
-    return visibleDistricts.slice(startIndex, startIndex + itemsPerPage);
-  }, [visibleDistricts, currentPage]);
+    return districts.slice(startIndex, startIndex + itemsPerPage);
+  }, [districts, currentPage]);
 
-  const totalPages = Math.ceil(visibleDistricts.length / itemsPerPage);
+  const totalPages = Math.ceil(districts.length / itemsPerPage);
   const hasActiveFilters = Object.keys(selectedFilters).length > 0;
 
   return (
-    <>
-      <div className={styles.mapContainer}>
-        <div className={styles.mapHeader}>
-          <h1 className={styles.title}>
-            {decodeURIComponent(city)}, {decodeURIComponent(country)}
-          </h1>
-          <div className={styles.mapStats}>
-            {visibleDistricts.length > 0 && (
-              <span className={styles.statItem}>
-                {t('stats_shown', { shown: visibleDistricts.length, total: districts.length })}
-              </span>
+    <div className={styles.mapContainer}>
+      <div className={styles.mapHeader}>
+        <h1 className={styles.title}>
+          {decodeURIComponent(city)}, {decodeURIComponent(country)}
+        </h1>
+        <div className={styles.mapStats}>
+          {districts.length > 0 && (
+            <span className={styles.statItem}>
+              {t('stats_shown', { shown: districts.length, total: districts.length })}
+            </span>
+          )}
+        </div>
+      </div>
+      
+      {districts.length === 0 ? (
+        <div className={styles.fullSizeNoData}>
+          <div className={styles.placeholder}>
+            <div className={styles.placeholderIcon}>{hasActiveFilters ? '🔍' : '🏙️'}</div>
+            <h3>{hasActiveFilters ? t('not_found_title') : t('no_data_title')}</h3>
+            <p>{hasActiveFilters ? t('not_found_text') : t('no_data_text')}</p>
+          </div>
+        </div>
+      ) : (
+        <div className={styles.mapArea}>
+          <div className={styles.mapWrapper}>
+            <div className={styles.mapContent}>
+              <div className={styles.combinedMap}>
+                {paginatedDistricts.map(district => (
+                  <DistrictCard
+                    key={district.id}
+                    district={district}
+                    onClick={onDistrictClick}
+                  />
+                ))}
+              </div>
+            </div>
+            
+            {totalPages > 1 && (
+              <div className={styles.pagination}>
+                <button 
+                  onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+                  disabled={currentPage === 1}
+                >←</button>
+                <span>{currentPage} / {totalPages}</span>
+                <button 
+                  onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >→</button>
+              </div>
             )}
           </div>
         </div>
-        
-        {visibleDistricts.length === 0 ? (
-          <div className={styles.fullSizeNoData}>
-            <div className={styles.placeholder}>
-              <div className={styles.placeholderIcon}>{hasActiveFilters ? '🔍' : '🏙️'}</div>
-              <h3>{hasActiveFilters ? t('not_found_title') : t('no_data_title')}</h3>
-              <p>{hasActiveFilters ? t('not_found_text') : t('no_data_text')}</p>
-            </div>
-          </div>
-        ) : (
-          <div className={styles.mapArea}>
-            <div className={styles.mapWrapper}>
-              <div className={styles.mapContent}>
-                <div className={styles.combinedMap}>
-                  {paginatedDistricts.map(district => (
-                    <DistrictCard
-                      key={district.id}
-                      district={district}
-                      isSelected={selectedDistrict?.id === district.id}
-                      onClick={handleDistrictClick}
-                    />
-                  ))}
-                </div>
-              </div>
-              
-              {totalPages > 1 && (
-                <div className={styles.pagination}>
-                  <button 
-                    onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
-                    disabled={currentPage === 1}
-                  >←</button>
-                  <span>{currentPage} / {totalPages}</span>
-                  <button 
-                    onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
-                    disabled={currentPage === totalPages}
-                  >→</button>
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      <DistrictDetailsModal
-        district={selectedDistrict}
-        isOpen={isModalOpen}
-        onClose={handleCloseModal}
-      />
-    </>
+      )}
+    </div>
   );
 }

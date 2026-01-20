@@ -11,84 +11,100 @@
 }
 
 .header h1 {
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   color: var(--text-dark);
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
 .header p {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
   color: var(--text-light);
   line-height: 1.6;
 }
 
 .plansContainer {
   background: var(--bg-white);
-  border-radius: 20px;
+  border-radius: 24px;
   padding: 2rem;
-  box-shadow: var(--shadow);
+  box-shadow: var(--shadow-md);
   border: 1px solid var(--border-color);
-  max-width: 800px; 
+  max-width: 900px; 
   margin: 0 auto;
 }
 
 .planToggle {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 8px;
-  margin-bottom: 2rem;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin-bottom: 2.5rem;
   background: var(--bg-light);
-  border-radius: 12px;
-  padding: 6px;
+  border-radius: 16px;
+  padding: 8px;
 }
 
 .toggleButton {
+  position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  justify-content: center; 
-  gap: 0.5rem;
-  padding: 12px 16px; 
-  border: none;
+  justify-content: center;
+  padding: 12px 8px; 
+  border: 1px solid transparent;
   background: transparent;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem; 
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
   color: var(--text-medium);
-  white-space: nowrap; 
   width: 100%;
+  height: 100%;
+  min-height: 90px;
+}
+
+.toggleButton:hover {
+  background: rgba(255,255,255,0.5);
+  color: var(--text-dark);
 }
 
 .toggleButton.active {
   background: var(--bg-white);
-  box-shadow: var(--shadow-card);
-  color: var(--primary-light);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  color: var(--primary-color);
+  border-color: var(--border-color);
 }
 
-.toggleButton svg {
-  width: 16px;
-  height: 16px;
-  flex-shrink: 0; 
+.buttonContent {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  justify-content: center;
+  height: 100%;
 }
 
-.currentPlanLabel {
-  font-size: 0.75rem;
-  background: rgba(72, 187, 120, 0.2);
-  color: #2f855a;
-  padding: 2px 6px;
-  border-radius: 4px;
-  margin-left: 4px;
+.planIcon {
+  width: 24px;
+  height: 24px;
+}
+
+.planName {
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  line-height: 1.2;
+  white-space: normal; 
 }
 
 .planCard {
   text-align: center;
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn 0.4s ease-out;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(5px); }
+  from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
@@ -96,11 +112,21 @@
   margin-bottom: 2rem;
 }
 
-.planHeader svg {
-  width: 48px;
-  height: 48px;
-  color: var(--primary-light);
-  margin-bottom: 1rem;
+.bigIconWrapper {
+  width: 70px;
+  height: 70px;
+  background: var(--bg-light);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+}
+
+.bigIconWrapper svg {
+  width: 32px;
+  height: 32px;
+  color: var(--primary-color);
 }
 
 .planCard h2 {
@@ -111,33 +137,37 @@
 }
 
 .price {
-  font-size: 2.5rem;
+  font-size: 1.8rem;
   font-weight: 700;
-  color: var(--primary-light);
+  color: var(--primary-color);
   margin-bottom: 0.5rem;
 }
 
 .features {
   margin-bottom: 2rem;
   text-align: left;
-  max-width: 500px; 
-  margin-left: auto;
-  margin-right: auto;
+  background: var(--bg-light);
+  padding: 20px;
+  border-radius: 16px;
 }
 
 .features h3 {
   color: var(--text-dark);
   margin-bottom: 1rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
   text-align: center;
+  font-weight: 600;
 }
 
 .featureItem {
   display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid var(--border-color);
+  align-items: flex-start;
+  gap: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(0,0,0,0.05);
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: var(--text-dark);
 }
 
 .featureItem:last-child {
@@ -146,38 +176,34 @@
 
 .featureItem svg {
   color: #48bb78; 
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
   flex-shrink: 0;
+  margin-top: 3px;
 }
 
 .disabledFeatures {
   margin-bottom: 2rem;
   text-align: left;
-  max-width: 500px;
-  margin-left: auto;
-  margin-right: auto;
-  opacity: 0.8;
+  padding: 0 20px;
+  opacity: 0.6;
 }
 
 .disabledFeatures h3 {
   color: var(--text-medium);
   margin-bottom: 1rem;
-  font-size: 1.1rem;
+  font-size: 1rem;
   text-align: center;
+  font-weight: 600;
 }
 
 .disabledFeature {
   display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.8rem 0;
-  border-bottom: 1px solid var(--border-color);
+  align-items: flex-start;
+  gap: 12px;
+  padding: 8px 0;
   color: var(--text-light);
-}
-
-.disabledFeature:last-child {
-  border-bottom: none;
+  font-size: 0.9rem;
 }
 
 .disabledFeature svg {
@@ -185,108 +211,98 @@
   width: 16px;
   height: 16px;
   flex-shrink: 0;
+  margin-top: 3px;
 }
 
 .subscribeButton {
   width: 100%;
-  max-width: 400px; 
-  padding: 1.2rem;
-  background: var(--primary-gradient);
+  padding: 14px;
+  background: var(--primary-color); 
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   color: white;
   border: none;
   border-radius: 12px;
-  font-size: 1.1rem;
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-bottom: 1rem;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.2);
 }
 
 .subscribeButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
+  box-shadow: 0 6px 18px rgba(0, 123, 255, 0.3);
 }
 
 .subscribeButton:disabled {
-  opacity: 0.7;
-  cursor: default;
-  background: #a0aec0;
+  opacity: 0.6;
+  cursor: not-allowed;
+  background: #cbd5e0;
+  box-shadow: none;
+  transform: none;
 }
 
 .subscribeButton.free {
-  background: var(--bg-light);
+  background: white;
   color: var(--text-dark);
-  border: 2px solid var(--border-color);
+  border: 1px solid var(--border-color);
+  box-shadow: none;
 }
 
 .subscribeButton.free:hover {
-  background: var(--border-color);
-  transform: translateY(-2px);
+  border-color: var(--text-medium);
+  background: var(--bg-hover);
 }
 
-.faqLink {
-  text-align: center;
-  padding: 1rem;
+.lockMessage {
+  margin-top: 16px;
+  color: #e53e3e;
+  font-size: 0.9rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
-  color: var(--text-medium);
+  gap: 6px;
+  font-weight: 500;
 }
 
-.faqLink svg {
-  width: 20px;
-  height: 20px;
-  color: var(--primary-light);
+@media (max-width: 900px) {
+  .planToggle {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
-.faqLink a {
-  color: var(--primary-light);
-  text-decoration: none;
-  font-weight: 600;
-}
-
-.faqLink a:hover {
-  color: var(--primary-dark);
-  text-decoration: underline;
-}
-
-@media (max-width: 768px) {
+@media (max-width: 600px) {
   .container {
     padding: 1rem;
   }
   
-  .header h1 {
-    font-size: 2rem;
-  }
-  
   .plansContainer {
-    padding: 1.5rem;
-  }
-
-  .planToggle {
-    grid-template-columns: 1fr 1fr;
-  }
-}
-
-@media (max-width: 480px) {
-  .header h1 {
-    font-size: 1.8rem;
-  }
-  
-  .price {
-    font-size: 2rem;
-  }
-  
-  .planCard h2 {
-    font-size: 1.5rem;
-  }
-  
-  .plansContainer {
-    padding: 1rem;
+    padding: 1.5rem 1rem;
   }
 
   .planToggle {
     grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .toggleButton {
+    min-height: auto;
+    flex-direction: row; 
+    padding: 14px 16px;
+    text-align: left;
+  }
+
+  .buttonContent {
+    flex-direction: row;
+    gap: 12px;
+    justify-content: flex-start;
+  }
+
+  .planIcon {
+    margin-bottom: 0;
+  }
+  
+  .planName {
+    text-align: left;
   }
 }

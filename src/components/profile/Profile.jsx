@@ -58,7 +58,7 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
                 <h2>{t('profile:subscription.title')}</h2>
             </div>
             <div className={styles.subscriptionCard}>
-                {(subscription.status === 'cancelled' || subscription.isExpired) && !subscription.plan === 'free' && (
+                {(subscription.status === 'cancelled' || subscription.isExpired) && subscription.plan !== 'free' && (
                     <div className={`${styles.alertNotice} ${subscription.isExpired ? styles.expiredNotice : styles.cancellationNotice}`}>
                         {subscription.isExpired 
                             ? t('profile:subscription.expired_notice', { date: statusInfo.expires })
@@ -110,7 +110,7 @@ export default function Profile() {
     const { t } = useTranslation(['profile', 'subscription']);
     const [userData, setUserData] = useState({ name: '', email: '', phone: '' });
     
-    const { subscription, isPremium, getFeatureKeys } = useSubscription();
+    const { subscription, isPremium, isRealtor, getFeatureKeys } = useSubscription();
 
     useEffect(() => {
         let mounted = true;
@@ -125,7 +125,6 @@ export default function Profile() {
                     });
                 }
             } catch (e) {
-                // Errors are handled silently
             }
         };
         fetchUserData();
@@ -186,21 +185,18 @@ export default function Profile() {
                 />
 
                 <div className={styles.quickActions}>
-                    <Link 
-                        to={isPremium ? "/profile/stats" : "#"} 
-                        className={`${styles.quickActionCard} ${!isPremium ? styles.lockedCard : ''}`}
-                    >
-                         {!isPremium && (
-                             <div className={styles.lockOverlay}>
-                                 <FaLock className={styles.lockIcon} /> {t('profile:quick_actions.locked')}
-                             </div>
-                         )}
-                        <FaChartLine className={styles.quickActionIcon} />
-                        <div>
-                            <h3>{t('profile:quick_actions.stats_title')}</h3>
-                            <p>{t('profile:quick_actions.stats_desc')}</p>
-                        </div>
-                    </Link>
+                    {isRealtor && (
+                        <Link 
+                            to="/profile/stats" 
+                            className={styles.quickActionCard}
+                        >
+                            <FaChartLine className={styles.quickActionIcon} />
+                            <div>
+                                <h3>{t('profile:quick_actions.stats_title')}</h3>
+                                <p>{t('profile:quick_actions.stats_desc')}</p>
+                            </div>
+                        </Link>
+                    )}
                     
                     <Link to="/profile/billing-history" className={styles.quickActionCard}>
                         <FaCreditCard className={styles.quickActionIcon} />

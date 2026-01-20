@@ -1,12 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import styles from './DistrictDetailsModal.module.css';
 import { HeaderSection, ModalFooter } from './modal/HeaderFooter';
 import StatsGrid from './modal/StatsGrid';
-import { checkIsFavorite, toggleFavorite } from '../../utils/favorites';
-import { formatNumber, formatPrice, getCurrencyInfo } from '../../utils/formatters';
-import { supabase } from '../../supabaseClient';
+import { checkIsFavorite, toggleFavorite } from '@utils/favorites';
+import { formatNumber, formatPrice, getCurrencyInfo } from '@utils/formatters';
+import { supabase } from '@supabaseClient';
+import { trackActivity, trackDistrictVisit } from '@api/statsApi';
+import { useSubscription } from '@subscription/SubscriptionContext';
 
 export default function DistrictDetailsModal({ 
   district, 
@@ -16,10 +18,15 @@ export default function DistrictDetailsModal({
 }) {
   const { t } = useTranslation('districts');
   const { country: paramCountry } = useParams();
+  const navigate = useNavigate();
+  const { isPremium } = useSubscription();
+
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [userId, setUserId] = useState(null);
   const [error, setError] = useState(null);
+
+  const statsSentRef = useRef(false);
 
   const countryName = district?.country || decodeURIComponent(paramCountry || '');
   const currencyInfo = getCurrencyInfo(countryName);
@@ -33,6 +40,7 @@ export default function DistrictDetailsModal({
       document.body.style.overflow = '';
       document.body.style.position = '';
       document.body.style.width = '';
+      statsSentRef.current = false;
     }
 
     return () => {
@@ -41,6 +49,14 @@ export default function DistrictDetailsModal({
       document.body.style.width = '';
     };
   }, [isOpen]);
+
+  useEffect(() => {
+    if (isOpen && district?.id && !statsSentRef.current) {
+      trackActivity('search');
+      trackDistrictVisit(district.id);
+      statsSentRef.current = true;
+    }
+  }, [isOpen, district?.id]);
 
   useEffect(() => {
     if (!isOpen || !district) return;
@@ -78,6 +94,12 @@ export default function DistrictDetailsModal({
       setError(t('modal.login_alert'));
       return;
     }
+
+    if (!isPremium) {
+      setError(t('modal.premium_required_favorites'));
+      return;
+    }
+
     const previousState = isFavorite;
     const newState = !previousState;
     setIsFavorite(newState); 
@@ -111,6 +133,7 @@ export default function DistrictDetailsModal({
           formatPrice={formatPrice}
           formatNumber={formatNumber}
           currencyInfo={currencyInfo}
+          isPremium={isPremium}
         />
 
         <div className={styles.mainContent}>

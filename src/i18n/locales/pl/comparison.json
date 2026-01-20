@@ -1,0 +1,81 @@
+{
+  "title": "Porównanie dzielnic",
+  "subtitle": "Wybierz do 5 dzielnic, aby szczegółowo porównać ceny i wskaźniki",
+  "limit_reached": "Maksymalna liczba dzielnic do porównania: {{max}}",
+  "selected_count": "Wybrano",
+  "add_district": "Dodaj dzielnicę",
+  "empty_title": "Lista porównań jest pusta",
+  "empty_desc": "Dodaj dzielnice z różnych miast, aby porównać ceny wynajmu i jakość życia.",
+  "start_btn": "Rozpocznij wybór",
+  "add_another": "Dodaj kolejną",
+  "ready_message": "Dzielnice wybrane. Kliknij przycisk poniżej, aby przeanalizować.",
+  "compare_btn": "Porównaj wskaźniki",
+  "success_saved": "Porównanie zapisane!",
+  "results_title": "Wyniki porównania",
+  
+  "finance_population": "Finanse i Ludność",
+  "avg_property_price": "Śr. cena nieruchomości",
+  "avg_salary": "Średnie wynagrodzenie",
+  "population": "Ludność",
+  "population_density": "Gęstość zaludnienia",
+  "unemployment": "Stopa bezrobocia",
+  
+  "education": "Edukacja",
+  "schools": "Szkoły",
+  "kindergartens": "Przedszkola",
+  "universities": "Uniwersytety",
+  "rating": "Ocena",
+  
+  "medicine": "Medycyna",
+  "hospitals": "Szpitale",
+  "clinics": "Przychodnie",
+  "pharmacies": "Apteki",
+  "emergency": "Pogotowie ratunkowe",
+  
+  "transport": "Transport",
+  "metro": "Stacje metra",
+  "bus_stops": "Przystanki autobusowe",
+  "tram_stops": "Przystanki tramwajowe",
+  "bike_lanes": "Ścieżki rowerowe",
+  "parking": "Miejsca parkingowe",
+  "transport_dist": "Dostępność transportu",
+  "traffic_freq": "Częstotliwość transportu",
+  
+  "safety": "Bezpieczeństwo",
+  "crime_level": "Poziom przestępczości",
+  "police": "Posterunki policji",
+  "cctv": "Kamery monitoringu",
+  "lighting": "Oświetlenie ulic",
+  
+  "social": "Sfera społeczna",
+  "green_zones": "Tereny zielone",
+  "parks": "Parki",
+  "park_size": "Wielkość parków",
+  "playgrounds": "Place zabaw",
+  "sports": "Obiekty sportowe",
+  "culture": "Kultura (muzea, teatry)",
+  "cafes": "Kawiarnie i restauracje",
+  
+  "commerce": "Handel",
+  "supermarkets": "Supermarkety",
+  "malls": "Centra handlowe",
+  "banks": "Banki i bankomaty",
+  "beauty": "Salony urody",
+  "shops_density": "Zagęszczenie sklepów",
+  
+  "utilities": "Media",
+  "util_cost": "Koszt mediów",
+  "water": "Wodociągi",
+  "heating": "Ogrzewanie",
+  "gas": "Gaz",
+  "waste": "Wywóz śmieci",
+
+  "rent_label": "Wynajem",
+  "sale_label": "Sprzedaż",
+
+  "levels": {
+    "low": "Niska",
+    "medium": "Średnia",
+    "high": "Wysoka"
+  }
+}

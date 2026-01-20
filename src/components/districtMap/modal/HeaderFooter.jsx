@@ -11,14 +11,13 @@ export function HeaderSection({
   onClose,
   formatNumber,
   formatPrice,
-  currencyInfo
+  currencyInfo,
+  isPremium 
 }) {
-  const { t, i18n } = useTranslation('districts'); // Додали i18n для локалізації дати
-  const { name, photo_url, photo_description, updated_at } = district; // Дістаємо updated_at
-  const filterData = district.filterData;
+  const { t, i18n } = useTranslation('districts');
+  const { name, photo_url, photo_description, updated_at, filterData } = district;
   const { code, locale } = currencyInfo || { code: 'UAH', locale: 'uk-UA' };
 
-  // Форматування дати
   const formattedDate = updated_at 
     ? new Date(updated_at).toLocaleDateString(i18n.language, {
         day: '2-digit',
@@ -48,11 +47,14 @@ export function HeaderSection({
           </div>
           
           <div className={headerFooterStyles.headerActions}>
-            <FavoriteButton 
-              isFavorite={isFavorite}
-              onToggle={onToggleFavorite}
-              isLoading={isLoading}
-            />
+            {isPremium && (
+              <FavoriteButton 
+                isFavorite={isFavorite}
+                onToggle={onToggleFavorite}
+                isLoading={isLoading}
+              />
+            )}
+            
             <CloseButton onClose={onClose} />
           </div>
         </div>
@@ -61,28 +63,28 @@ export function HeaderSection({
           <div className={headerFooterStyles.quickStatsBar}>
             {filterData.general.population > 0 && (
                 <div className={headerFooterStyles.quickStat}>
-                <span className={headerFooterStyles.quickStatLabel}>{t('details.population')}</span>
-                <span className={headerFooterStyles.quickStatValue}>
-                    {formatNumber(filterData.general.population)}
-                </span>
+                  <span className={headerFooterStyles.quickStatLabel}>{t('details.population')}</span>
+                  <span className={headerFooterStyles.quickStatValue}>
+                      {formatNumber(filterData.general.population)}
+                  </span>
                 </div>
             )}
 
             {filterData.general.averageSalary > 0 && (
                 <div className={headerFooterStyles.quickStat}>
-                <span className={headerFooterStyles.quickStatLabel}>{t('details.salary')}</span>
-                <span className={headerFooterStyles.quickStatValue}>
-                    {formatPrice(filterData.general.averageSalary, code, locale)}
-                </span>
+                  <span className={headerFooterStyles.quickStatLabel}>{t('details.salary')}</span>
+                  <span className={headerFooterStyles.quickStatValue}>
+                      {formatPrice(filterData.general.averageSalary, code, locale)}
+                  </span>
                 </div>
             )}
 
             {filterData.general.unemploymentRate > 0 && (
                 <div className={headerFooterStyles.quickStat}>
-                <span className={headerFooterStyles.quickStatLabel}>{t('details.unemployment')}</span>
-                <span className={headerFooterStyles.quickStatValue}>
-                    {filterData.general.unemploymentRate}%
-                </span>
+                  <span className={headerFooterStyles.quickStatLabel}>{t('details.unemployment')}</span>
+                  <span className={headerFooterStyles.quickStatValue}>
+                      {filterData.general.unemploymentRate}%
+                  </span>
                 </div>
             )}
           </div>

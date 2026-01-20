@@ -72,9 +72,10 @@
   color: var(--color-primary);
 }
 
+/* Основний грід для ПК: Інфо зліва, Кнопки справа */
 .profileGrid {
   display: grid;
-  grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto; /* auto притискає кнопки вправо */
   gap: 2rem;
   align-items: start;
 }
@@ -89,6 +90,7 @@
   display: flex;
   align-items: center;
   gap: 1rem;
+  max-width: 100%;
 }
 
 .infoLabel {
@@ -96,17 +98,24 @@
   color: var(--text-dark);
   min-width: 120px;
   transition: color 0.3s ease;
+  flex-shrink: 0;
 }
 
 .infoValue {
   color: var(--text-medium);
   transition: color 0.3s ease;
+  white-space: nowrap;       
+  overflow: hidden;          
+  text-overflow: ellipsis;   
+  flex-grow: 1;              
+  min-width: 0;
 }
 
 .profileActions {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  /* Важливо для ПК: ширина визначається контентом кнопок */
 }
 
 .baseLinkButton {
@@ -122,6 +131,7 @@
   gap: 0.5rem;
   text-align: center;
   box-sizing: border-box; 
+  white-space: nowrap; /* Щоб текст не ламався */
 }
 
 .actionButton {
@@ -146,6 +156,7 @@
   color: white;
 }
 
+/* --- SUBSCRIPTION CARD --- */
 .subscriptionCard {
   background: var(--bg-light);
   border-radius: 16px;
@@ -278,6 +289,7 @@
   box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
+/* --- QUICK ACTIONS --- */
 .quickActions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -323,45 +335,7 @@
   margin: 0;
 }
 
-.loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 50vh;
-  font-size: 1.2rem;
-  color: var(--text-light);
-}
-
-.lockedCard {
-  opacity: 0.8;
-  cursor: not-allowed;
-}
-
-.lockOverlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: var(--bg-white);
-  opacity: 0.9;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  border-radius: 16px;
-  z-index: 10;
-  gap: 0.5rem;
-  color: var(--color-primary);
-  font-weight: 600;
-}
-
-.lockIcon {
-  width: 24px;
-  height: 24px;
-}
-
-/* DARK MODE SPECIFIC OVERRIDES */
+/* --- DARK MODE --- */
 [data-theme='dark'] .status.active {
   background: #1c4532;
   color: #c6f6d5;
@@ -385,20 +359,37 @@
   border-color: #822727;
 }
 
-[data-theme='dark'] .lockOverlay {
-  background: var(--bg-white);
-  opacity: 0.85;
-}
-
+/* --- MOBILE FIX --- */
 @media (max-width: 768px) {
   .container { padding: 1rem; }
   .title { font-size: 2rem; }
   .section { padding: 1.5rem; }
-  .profileGrid { grid-template-columns: 1fr; gap: 1.5rem; }
+  
+  /* Переключаємося з Grid на Flex для мобільного, це надійніше */
+  .profileGrid { 
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .profileInfo {
+    width: 100%;
+  }
+
+  /* Виправляємо прилипання кнопок */
+  .profileActions {
+    width: 100%; /* Розтягуємо контейнер на всю ширину */
+    align-items: stretch; /* Розтягуємо кнопки всередині */
+  }
+
+  .baseLinkButton {
+    width: 100%; /* Кнопка займає всю доступну ширину */
+    justify-content: center;
+  }
+
   .subscriptionHeader { flex-direction: column; gap: 1rem; text-align: center; }
   .planInfo, .planPrice { text-align: center; }
   .subscriptionActions { flex-direction: column; }
-  .baseLinkButton { width: 100%; }
   .quickActions { grid-template-columns: 1fr; }
   .quickActionCard { padding: 1.5rem; }
 }

@@ -1,3 +1,6 @@
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+const MIN_PASSWORD_LENGTH = 8;
+
 export const validateEmail = (email, t) => {
   if (!email) return t('errors.required');
   if (!/\S+@\S+\.\S+/.test(email)) return t('errors.email_invalid');
@@ -6,7 +9,15 @@ export const validateEmail = (email, t) => {
 
 export const validatePassword = (password, t, isLogin = false) => {
   if (!password) return t('errors.required');
-  if (!isLogin && password.length < 6) return t('errors.password_short');
+  
+  if (!isLogin) {
+    if (password.length < MIN_PASSWORD_LENGTH) {
+      return t('errors.password_short', { count: MIN_PASSWORD_LENGTH }); 
+    }
+    if (!PASSWORD_REGEX.test(password)) {
+      return t('password_page.errors.regex') || t('errors.password_weak'); 
+    }
+  }
   return '';
 };
 

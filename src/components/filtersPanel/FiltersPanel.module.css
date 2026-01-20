@@ -210,9 +210,10 @@
   transform: translateY(-1px);
 }
 
-@media (max-width: 768px) {
+@media (max-width: 968px) {
   .panel {
     width: 100%;
+    min-width: 0; 
     height: auto;
     max-height: 80vh; 
     position: static; 

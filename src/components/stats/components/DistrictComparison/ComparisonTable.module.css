@@ -1,0 +1,89 @@
+.tableWrapper {
+  overflow-x: auto;
+  background: var(--bg-white);
+  border-radius: 16px;
+  box-shadow: var(--shadow-default);
+  border: 1px solid var(--border-light);
+  margin-top: 24px;
+  max-height: 80vh; /* Обмежимо висоту і дамо скрол */
+  overflow-y: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate; /* Важливо для sticky заголовків */
+  border-spacing: 0;
+  min-width: 800px;
+}
+
+.table th, .table td {
+  padding: 12px 16px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-light);
+  border-right: 1px solid var(--border-light); /* Вертикальні лінії для ясності */
+  color: var(--text-dark);
+  white-space: nowrap;
+}
+
+/* Sticky Header (Райони) */
+.table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--bg-white);
+  border-bottom: 2px solid var(--border-light);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+/* Sticky Column (Назви метрик) */
+.table th.metricCol, .table td.metricName {
+  text-align: left;
+  background: var(--bg-light);
+  width: 220px;
+  min-width: 220px;
+  position: sticky;
+  left: 0;
+  z-index: 5; /* Менше ніж у заголовка таблиці */
+  font-weight: 600;
+  color: var(--text-dark);
+  border-right: 2px solid var(--border-light);
+}
+
+/* Перетин Sticky заголовка і Sticky колонки */
+.table thead th.metricCol {
+  z-index: 15;
+  background: var(--bg-light);
+}
+
+/* Заголовки секцій (Фінанси, Освіта...) */
+.sectionHeader td {
+  background: var(--bg-hover);
+  text-align: left;
+  font-size: 14px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-purple);
+  padding: 16px;
+  /* Sticky fix для заголовків секцій при горизонтальному скролі */
+  position: sticky; 
+  left: 0;
+}
+
+.rating {
+  font-weight: 700;
+  padding: 4px 8px;
+  background: rgba(102, 126, 234, 0.1);
+  color: var(--color-purple);
+  border-radius: 6px;
+}
+
+.check { color: var(--color-green); font-size: 16px; }
+.cross { color: var(--color-red); font-size: 16px; }
+.dash { color: var(--text-light); }
+
+.districtHeader {
+  display: flex; flex-direction: column; gap: 4px; align-items: center;
+}
+.dName { font-size: 16px; font-weight: 700; color: var(--color-purple); }
+.dCity { font-size: 12px; color: var(--text-medium); display: flex; align-items: center; gap: 4px; }

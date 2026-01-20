@@ -1,0 +1,81 @@
+{
+  "title": "District Comparison",
+  "subtitle": "Select up to 5 districts for detailed price and metric comparison",
+  "limit_reached": "Maximum number of districts to compare: {{max}}",
+  "selected_count": "Selected",
+  "add_district": "Add District",
+  "empty_title": "Comparison list is empty",
+  "empty_desc": "Add districts from different cities to compare rental prices and quality of life.",
+  "start_btn": "Start Selecting",
+  "add_another": "Add another",
+  "ready_message": "Districts selected. Click the button below to analyze.",
+  "compare_btn": "Compare Metrics",
+  "success_saved": "Comparison saved!",
+  "results_title": "Comparison Results",
+  
+  "finance_population": "Finance & Population",
+  "avg_property_price": "Avg Property Price",
+  "avg_salary": "Average Salary",
+  "population": "Population",
+  "population_density": "Population Density",
+  "unemployment": "Unemployment Rate",
+  
+  "education": "Education",
+  "schools": "Schools",
+  "kindergartens": "Kindergartens",
+  "universities": "Universities",
+  "rating": "Rating",
+  
+  "medicine": "Medicine",
+  "hospitals": "Hospitals",
+  "clinics": "Clinics",
+  "pharmacies": "Pharmacies",
+  "emergency": "Emergency Services",
+  
+  "transport": "Transport",
+  "metro": "Metro Stations",
+  "bus_stops": "Bus Stops",
+  "tram_stops": "Tram Stops",
+  "bike_lanes": "Bike Lanes",
+  "parking": "Parking Spots",
+  "transport_dist": "Transport Accessibility",
+  "traffic_freq": "Transport Frequency",
+  
+  "safety": "Safety",
+  "crime_level": "Crime Level",
+  "police": "Police Stations",
+  "cctv": "CCTV Cameras",
+  "lighting": "Street Lighting",
+  
+  "social": "Social Sphere",
+  "green_zones": "Green Spaces",
+  "parks": "Parks",
+  "park_size": "Park Size",
+  "playgrounds": "Playgrounds",
+  "sports": "Sports Facilities",
+  "culture": "Culture (Museums, Theaters)",
+  "cafes": "Cafes & Restaurants",
+  
+  "commerce": "Commerce",
+  "supermarkets": "Supermarkets",
+  "malls": "Shopping Malls",
+  "banks": "Banks & ATMs",
+  "beauty": "Beauty Salons",
+  "shops_density": "Shops Density",
+  
+  "utilities": "Utilities",
+  "util_cost": "Utility Costs",
+  "water": "Water Supply",
+  "heating": "Heating",
+  "gas": "Gas Supply",
+  "waste": "Waste Removal",
+
+  "rent_label": "Rent",
+  "sale_label": "Sale",
+
+  "levels": {
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High"
+  }
+}

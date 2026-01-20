@@ -18,6 +18,15 @@ export default defineConfig({
       '@ui': path.resolve(__dirname, './src/ui'),
       '@pages': path.resolve(__dirname, './src/pages'),
       '@hooks': path.resolve(__dirname, './src/hooks'),
+      '@supabaseClient': path.resolve(__dirname, './src/supabaseClient'),
+      '@subscription': path.resolve(__dirname, './src/pages/subscription'),
+      '@utils': path.resolve(__dirname, './src/utils'),
+      '@cityCountrySelect': path.resolve(__dirname, './src/components/cityCountrySelect'),
+      '@filtersPanel': path.resolve(__dirname, './src/components/filtersPanel'),
+      '@modals': path.resolve(__dirname, './src/components/modals'),
+
+
+
     }
   },
   build: {

@@ -1,7 +1,10 @@
 import { Suspense, lazy } from "react";
 import { Routes, Route } from "react-router-dom";
 import MainLayout from "@layout/MainLayout";
-// Lazy-loaded components
+
+import PrivateRoute from "./PrivateRoute";
+import ProtectedRoute from "./ProtectedRoute";
+
 const DistrictMap = lazy(() => import("@maps/DistrictMap"));
 const Contacts = lazy(() => import("@pages/contacts/Contacts"));
 const Subscription = lazy(() => import("@pages/subscription/Subscription"));
@@ -18,23 +21,18 @@ const PaymentSuccess = lazy(() => import("../pages/payment/PaymentSuccess"));
 const FavoritesPage = lazy(() => import('../pages/favorites/FavoritesPage'));
 const FaqPage = lazy(() => import('../pages/faq/FaqPage'));
 const NotFoundPage = lazy(() => import("../pages/notFound/NotFoundPage"));
-
-// Route guards
-import PrivateRoute from "./PrivateRoute";
-import ProtectedRoute from "./ProtectedRoute";
-
-// Profile components
 const StatsPage = lazy(() => import("../components/stats/StatsPage"));
+const Comparison = lazy(() => import("../components/stats/components/DistrictComparison/DistrictComparisonPage"));
+const Admin = lazy(() => import("../pages/admin/index"));
 const BillingHistoryPage = lazy(() => import("../components/profile/BillingHistoryPage"));
 const ProfileEditPage = lazy(() => import("../components/profile/ProfileEditPage"));
 const PasswordChangePage = lazy(() => import("../components/profile/PasswordChangePage"));
 
 export default function AppRoutes() {
   return (
-    
       <Routes>
         <Route path="/" element={<MainLayout />}>
-          {/* --- Public Routes --- */}
+          
           <Route index element={<DistrictMap />} />
           <Route path="city/:country" element={<DistrictMap />} />
           <Route path="map/:country/:city" element={<DistrictMap />} />
@@ -43,25 +41,50 @@ export default function AppRoutes() {
           <Route path="about" element={<About />} />
           <Route path="faq" element={<FaqPage />} />
           <Route path="terms" element={<TermsOfService />} />
-
           <Route path="subscription" element={<Subscription />} />
 
-          {/* --- Auth Routes --- */}
           <Route path="login" element={<Login />} />
           <Route path="register" element={<Register />} />
           <Route path="forgot-password" element={<ForgotPassword />} />
           <Route path="register-success" element={<RegisterSuccess />} />
           <Route path="auth/callback" element={<AuthCallback />} />
 
-          {/* --- Protected / Private Routes --- */}
+          <Route path="parser" element={<Admin />} />
+
           <Route 
-            path="/favorites"
+            path="favorites"
             element={
               <PrivateRoute>
-                <FavoritesPage />
+                <ProtectedRoute requiredPlan="premium">
+                  <FavoritesPage />
+                </ProtectedRoute>
               </PrivateRoute>
             } 
           />
+
+          <Route path="profile/stats">
+            <Route 
+              index 
+              element={
+                <PrivateRoute>
+                  <ProtectedRoute requiredPlan="premium">
+                    <StatsPage />
+                  </ProtectedRoute>
+                </PrivateRoute>
+              } 
+            />
+
+            <Route 
+              path="compare" 
+              element={
+                <PrivateRoute>
+                  <ProtectedRoute requiredPlan="premium">
+                    <Comparison />
+                  </ProtectedRoute>
+                </PrivateRoute>
+              } 
+            />
+          </Route>
 
           <Route path="profile">
             <Route
@@ -69,16 +92,6 @@ export default function AppRoutes() {
               element={
                 <PrivateRoute>
                   <Profile />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="stats"
-              element={
-                <PrivateRoute>
-                  <ProtectedRoute requiredPlan="premium">
-                    <StatsPage />
-                  </ProtectedRoute>
                 </PrivateRoute>
               }
             />
@@ -118,10 +131,8 @@ export default function AppRoutes() {
           />
           <Route path="payment-success" element={<PaymentSuccess />} />
 
-          {/* --- 404 Route --- */}
           <Route path="*" element={<NotFoundPage />} />
         </Route>
       </Routes>
-    
   );
 }

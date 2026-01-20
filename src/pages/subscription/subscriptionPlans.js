@@ -2,20 +2,66 @@ import { FaStar, FaGem, FaBriefcase, FaCalendarWeek } from 'react-icons/fa';
 
 export const subscriptionPlans = {
   free: {
+    name: 'Free',
     icon: FaStar,
-    features: ['basic_map', 'limited_filters', 'limited_data_show'],
-    disabledFeatures: ['full_data_access', 'all_filters', 'personal_stats_access', 'save_favorites', 'compare_districts', 'export_data'],
+    features: [
+      'Огляд до 5 районів одного міста',
+      'Доступ до 2-х основних блоків фільтрації',
+      'Базовий рейтинг привабливості локації',
+      'Інформація про транспорт, аптеки та магазини',
+    ],
+    disabledFeatures: [
+      'Детальна аналітика безпеки та освіти',
+      'Повна фінансова статистика та ціни м²',
+      'Збереження районів в «Улюблене»',
+      'Інструменти порівняння декількох районів',
+      'Експорт професійних PDF-звітів',
+    ],
   },
   weekly: {
+    name: 'Weekly',
     icon: FaCalendarWeek,
-    features: ['basic_map', 'full_data_access', 'all_filters', 'personal_stats_access', 'save_favorites', 'compare_districts'],
+    features: [
+      'Безлімітний доступ до всіх районів міста',
+      'Повна аналітика: Безпека, Освіта, Соціалка',
+      'Всі 6 блоків професійних фільтрів',
+      'Порівняння до 5 районів в одній таблиці',
+      'Персональна статистика та «Улюблене»',
+    ],
+    disabledFeatures: [
+      'Інвестиційний калькулятор (ROI)',
+      'White Label: звіти з вашим логотипом',
+      'Порівняння показників між різними містами',
+      'CRM-система для управління клієнтами',
+    ],
   },
   premium: {
+    name: 'Premium',
     icon: FaGem,
-    features: ['basic_map', 'full_data_access', 'all_filters', 'personal_stats_access', 'save_favorites', 'compare_districts'],
+    features: [
+      'Повний доступ до мапи без обмежень',
+      'Глибока аналітика інфраструктури та фінансів',
+      'Всі фільтри та інструменти порівняння',
+      'Збереження та трекінг улюблених локацій',
+      'PDF-звіт для особистого використання',
+    ],
+    disabledFeatures: [
+      'Брендування звітів (White Label)',
+      'Інвестиційний аналіз та Deep Data',
+      'Пріоритетна підтримка 24/7',
+    ],
   },
   realtor: {
+    name: 'Realtor Pro',
     icon: FaBriefcase,
-    features: ['basic_map', 'full_data_access', 'all_filters', 'personal_stats_access', 'save_favorites', 'compare_districts', 'export_data', 'priority_support'],
+    features: [
+      'Усі переваги Premium-плану',
+      'Інвестиційний калькулятор (ROI)',
+      'White Label: PDF-звіти з вашим лого',
+      'Мульти-місто: порівняння до 5 міст одночасно',
+      'CRM-інструменти для роботи з клієнтами',
+      'Доступ до Deep Data: зарплати та демографія',
+    ],
+    disabledFeatures: [],
   },
 };

@@ -6,6 +6,9 @@ import { profileAPI } from '../api/edit-profileApi';
 import { parsePhoneNumber, countryCodes, cleanPhoneNumberForSave, validatePhoneNumber } from '../../utils/phoneUtils';
 import styles from './ProfileEditPages.module.css';
 
+// Простий Regex для email
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 export default function ProfileEditPage() {
   const { t } = useTranslation('profile');
   const navigate = useNavigate();
@@ -41,11 +44,27 @@ export default function ProfileEditPage() {
         originalEmail: profile.email || ''
       }));
     } catch (error) {
+      // Тут можна використати загальну помилку завантаження
       setStatusMessage({ 
         type: 'error', 
         text: t('edit_page.errors.load_failed') 
       });
     }
+  };
+
+  // Функція для мапінгу помилок API на ключі перекладу
+  const mapErrorToMessage = (error) => {
+    const msg = error?.message || '';
+    
+    if (msg.includes('Invalid Refresh Token') || msg.includes('JWT')) return t('errors.auth_error');
+    if (msg.includes('NetworkError') || msg.includes('Failed to fetch')) return t('errors.network_error');
+    if (msg.includes('User not found')) return t('errors.user_not_found');
+    // Обробка дублікатів (Supabase повертає це, якщо email зайнятий)
+    if (msg.includes('already registered') || msg.includes('unique constraint')) return t('errors.email_taken');
+    if (msg.includes('email') && msg.includes('invalid')) return t('errors.email_invalid_format');
+    if (msg.includes('rate limit')) return t('errors.too_many_requests');
+    
+    return error.message || t('errors.unknown_error');
   };
 
   const handleInputChange = useCallback((e) => {
@@ -75,6 +94,12 @@ export default function ProfileEditPage() {
       return false;
     }
 
+    // 🔥 ВАЖЛИВО: Сувора перевірка Email перед відправкою
+    if (!EMAIL_REGEX.test(email.trim())) {
+        setStatusMessage({ type: 'error', text: t('edit_page.errors.email_invalid') });
+        return false;
+    }
+
     if (phone.trim()) {
         const phoneError = validatePhoneNumber(countryCode, phone, t);
         if (phoneError) {
@@ -95,6 +120,7 @@ export default function ProfileEditPage() {
     updateState('isSaving', true);
     
     try {
+      // 1. Спочатку зберігаємо дані профілю (ім'я, телефон)
       const phoneToSave = cleanPhoneNumberForSave(state.countryCode, state.phone);
 
       await profileAPI.updateProfile({
@@ -102,25 +128,30 @@ export default function ProfileEditPage() {
         phone: phoneToSave
       });
 
-      if (state.email !== state.originalEmail) {
-        const updateEmailResult = await profileAPI.updateEmail(state.email.trim());
-        setStatusMessage({ type: 'success', text: updateEmailResult.message });
+      // 2. Якщо email змінився, оновлюємо його окремо
+      if (state.email.trim() !== state.originalEmail) {
+        await profileAPI.updateEmail(state.email.trim());
+        
+        setStatusMessage({ 
+            type: 'success', 
+            text: t('edit_page.email_update_sent') // "Профіль оновлено. Лист підтвердження відправлено на нову пошту."
+        });
         updateState('originalEmail', state.email);
       } else {
         setStatusMessage({ type: 'success', text: t('edit_page.success') });
         setTimeout(() => navigate('/profile'), 1500);
       }
     } catch (error) {
+      console.error("Save error:", error);
+      // Використовуємо нашу нову функцію перекладу
       setStatusMessage({ 
         type: 'error', 
-        text: error.message || t('edit_page.errors.save_error') 
+        text: mapErrorToMessage(error) 
       });
     } finally {
       updateState('isSaving', false);
     }
   };
-
-  // Початковий лоадер прибрано
 
   return (
     <div className={styles.container}>
@@ -136,7 +167,7 @@ export default function ProfileEditPage() {
       
       <div className={styles.content}>
         <div className={styles.section}>
-          <form onSubmit={handleSubmit} className={styles.form}>
+          <form onSubmit={handleSubmit} className={styles.form} noValidate>
             <div className={styles.formHeader}>
               <h2 className={styles.formTitle}>{t('edit_page.main_info')}</h2>
               <p className={styles.formSubtitle}>{t('edit_page.enter_data')}</p>
@@ -173,7 +204,6 @@ export default function ProfileEditPage() {
                 required
                 disabled={state.isSaving}
                 maxLength={30}
-                autoComplete="name"
               />
             </div>
 
@@ -192,8 +222,8 @@ export default function ProfileEditPage() {
                 placeholder={t('edit_page.placeholders.email')}
                 required
                 disabled={state.isSaving}
-                maxLength={54}
-                autoComplete="email"
+                // maxLength не завжди рятує від copy-paste, тому валідація важливіша
+                maxLength={60} 
               />
               
               {state.email !== state.originalEmail && (
@@ -235,7 +265,6 @@ export default function ProfileEditPage() {
                   className={styles.formInput}
                   placeholder={t('edit_page.placeholders.phone')}
                   disabled={state.isSaving}
-                  autoComplete="tel-national"
                 />
               </div>
             </div>

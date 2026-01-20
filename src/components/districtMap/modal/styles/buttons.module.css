@@ -54,14 +54,16 @@
 }
 
 .favoriteActive {
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.95);
   border-color: white;
 }
 
 .favoriteActive svg {
-  color: var(--favorite-color);
-  fill: var(--favorite-color);
-  stroke: var(--favorite-color);
+  color: #ff4757; 
+  fill: #ff4757;
+  
+  stroke: #ff4757; 
+  stroke-width: 0;
   filter: none;
 }
 
@@ -72,6 +74,7 @@
 
 .loading svg {
   animation: spin 1s linear infinite;
+  stroke: currentColor; 
 }
 
 @keyframes spin {

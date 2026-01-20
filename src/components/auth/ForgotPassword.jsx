@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaEnvelope, FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
 import styles from './ForgotPassword.module.css';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@supabaseClient';
 
 export default function ForgotPassword() {
   const { t } = useTranslation('auth');

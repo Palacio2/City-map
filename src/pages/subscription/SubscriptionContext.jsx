@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
 import { supabase } from '../../supabaseClient';
-import { subscriptionPlans } from './subscriptionPlans';
+import { fetchSubscriptionStatus, FREE_PLAN_DATA } from '../../components/api/subscriptionApi';
 
 const SubscriptionContext = createContext();
 
@@ -10,81 +10,30 @@ export const useSubscription = () => {
   return context;
 };
 
-const getFreeFeatures = () => subscriptionPlans?.free?.features || [];
-
-const FREE_PLAN = {
-  id: null, plan: 'free', features: [], expiresAt: null, status: 'active', isExpired: false
-};
-
 export const SubscriptionProvider = ({ children }) => {
-  const [subscription, setSubscription] = useState({ ...FREE_PLAN, features: getFreeFeatures() });
+  const [subscription, setSubscription] = useState(FREE_PLAN_DATA);
   const [isLoading, setIsLoading] = useState(true);
-
-  const fetchSubscriptionData = useCallback(async () => {
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) return { ...FREE_PLAN, features: getFreeFeatures() };
-
-      const { data, error } = await supabase
-        .from('user_subscriptions')
-        .select('*')
-        .eq('user_id', session.user.id)
-        .in('status', ['active', 'trialing'])
-        .gt('ends_at', new Date().toISOString()) 
-        .order('ends_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (error) {
-        return { ...FREE_PLAN, features: getFreeFeatures() };
-      }
-
-      if (!data) {
-        return { ...FREE_PLAN, features: getFreeFeatures() };
-      }
-
-      let planName = data.plan_name ? data.plan_name.toLowerCase().trim() : 'free';
-      
-      if (planName === 'pro') planName = 'premium';
-      if (planName === 'realtor pro') planName = 'realtor';
-
-      if (!subscriptionPlans[planName]) {
-        planName = 'free';
-      }
-
-      return {
-        id: data.id,
-        plan: planName,
-        features: subscriptionPlans[planName]?.features || getFreeFeatures(),
-        expiresAt: data.ends_at,
-        status: data.status,
-        isExpired: false
-      };
-    } catch (err) {
-      return { ...FREE_PLAN, features: getFreeFeatures() };
-    }
-  }, []);
 
   const updateSubscription = useCallback(async (waitForPlan = null) => {
     setIsLoading(true);
     try {
-      let sub = await fetchSubscriptionData();
+      let sub = await fetchSubscriptionStatus();
       
       if (waitForPlan && waitForPlan !== 'free') {
         let attempts = 0;
         while (attempts < 5 && sub.plan !== waitForPlan) {
           await new Promise(r => setTimeout(r, 1000));
-          sub = await fetchSubscriptionData();
+          sub = await fetchSubscriptionStatus();
           attempts++;
         }
       }
       setSubscription(sub);
     } catch (e) {
-      setSubscription({ ...FREE_PLAN, features: getFreeFeatures() });
+      setSubscription(FREE_PLAN_DATA);
     } finally {
       setIsLoading(false);
     }
-  }, [fetchSubscriptionData]);
+  }, []);
 
   useEffect(() => {
     let mounted = true;
@@ -94,22 +43,28 @@ export const SubscriptionProvider = ({ children }) => {
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((event) => {
        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') updateSubscription();
        else if (event === 'SIGNED_OUT') {
-          setSubscription({ ...FREE_PLAN, features: getFreeFeatures() });
+          setSubscription(FREE_PLAN_DATA);
           setIsLoading(false);
        }
     });
     return () => { mounted = false; authSub.unsubscribe(); };
   }, [updateSubscription]);
 
-  const value = useMemo(() => ({
-    subscription,
-    isLoading,
-    hasFeature: (feature) => subscription.features?.includes(feature) || false,
-    isPremium: subscription.plan !== 'free' && !subscription.isExpired,
-    isFree: subscription.plan === 'free',
-    updateSubscription,
-    getFeatureKeys: () => subscription.features || [] 
-  }), [subscription, isLoading, updateSubscription]);
+  const value = useMemo(() => {
+    const isPlanActive = subscription.plan !== 'free' && !subscription.isExpired;
+    const premiumPlans = ['weekly', 'premium', 'realtor'];
+
+    return {
+      subscription,
+      isLoading,
+      hasFeature: (feature) => subscription.features?.includes(feature) || false,
+      isPremium: premiumPlans.includes(subscription.plan) && isPlanActive,
+      isRealtor: subscription.plan === 'realtor' && isPlanActive,
+      isFree: subscription.plan === 'free',
+      updateSubscription,
+      getFeatureKeys: () => subscription.features || [] 
+    };
+  }, [subscription, isLoading, updateSubscription]);
 
   return <SubscriptionContext.Provider value={value}>{children}</SubscriptionContext.Provider>;
 };

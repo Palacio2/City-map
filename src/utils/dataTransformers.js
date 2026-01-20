@@ -10,29 +10,22 @@ export const transformDistrictForDisplay = (district) => {
   if (!district) return null;
 
   // 1. ПЕРЕВІРКА: Чи дані вже трансформовані (прийшли з Edge Function)?
-  // Edge Function повертає filterData як об'єкт з полями general, education і т.д.
-  // Якщо ми бачимо цю структуру, просто повертаємо об'єкт як є.
   if (district.filterData && district.filterData.general && district.filterData.education) {
-    // Переконаємося, що updated_at на місці
     return {
         ...district,
         updated_at: district.updated_at || district.filterData.data_updated_at || null
     };
   }
 
-  // 2. ЯКЩО НІ: Це сирі дані з Supabase (прямий запит SQL), трансформуємо їх.
+  // 2. ЯКЩО НІ: Це сирі дані з Supabase
   let filterData = Array.isArray(district.filterData) 
     ? district.filterData[0] 
     : district.filterData;
     
-  // Якщо filterData немає взагалі (навіть сирого), повертаємо як є
   if (!filterData) return district;
 
-  // Трансформація сирих даних SQL -> Красивий об'єкт JS
   return {
     ...district,
-    
-    // Витягуємо дату наверх
     updated_at: filterData.data_updated_at || filterData.last_updated || district.updated_at,
 
     filterData: {
@@ -70,7 +63,7 @@ export const transformDistrictForDisplay = (district) => {
         bikeLanes: safeParseFloat(filterData.bike_lanes_km),
         parkingSpots: safeParseInt(filterData.parking_spots_count),
         averageDistance: safeParseInt(filterData.transport_average_distance_m),
-        frequency: filterData.transport_frequency 
+        frequency: filterData.transport_frequency // Це TEXT в базі
       },
       
       social: {
@@ -88,6 +81,7 @@ export const transformDistrictForDisplay = (district) => {
       
       safety: {
         rating: safeParseFloat(filterData.safety_rating),
+        // ВАЖЛИВО: Це numeric(3,1) в базі, тому парсимо як float
         crimeLevel: safeParseFloat(filterData.crime_level), 
         policeStations: safeParseInt(filterData.police_stations_count),
         cctv: safeParseInt(filterData.cctv_count),
@@ -103,7 +97,7 @@ export const transformDistrictForDisplay = (district) => {
         banksATMs: safeParseInt(filterData.banks_atms_count),
         postOffices: safeParseInt(filterData.post_offices_count),
         beautySalons: safeParseInt(filterData.beauty_salons_count),
-        density: filterData.shops_density 
+        density: filterData.shops_density // Це TEXT в базі
       },
       
       utilities: {
@@ -127,4 +121,18 @@ export const transformDistrictsForDisplay = (districts) => {
 export const getFlatFilterData = (district) => {
   if (!district || !district.filterData) return null;
   return district.filterData; 
+};
+
+// Утиліти для кольорів рейтингу (залишаємо як є)
+export const getRatingColor = (rating) => {
+  if (rating === null || rating === undefined) return '';
+  const num = parseFloat(rating);
+  if (num >= 8) return 'highRating';
+  if (num >= 5) return 'mediumRating';
+  return 'lowRating';
+};
+
+export const getRatingColorClass = (rating) => {
+  const color = getRatingColor(rating);
+  return color ? ` ${color}` : '';
 };

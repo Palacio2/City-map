@@ -1,24 +1,18 @@
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@supabaseClient';
 
 const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 export async function authenticatedApiRequest(endpoint, options = {}) {
   const { data: { session } } = await supabase.auth.getSession();
   const token = session?.access_token;
-
-  if (!token) {
-    // This is a public function, so we don't throw an error here.
-    // The Edge Function is responsible for handling unauthorized requests.
-  }
 
   const headers = {
     'Content-Type': 'application/json',
     ...options.headers,
   };
 
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
+  headers['Authorization'] = `Bearer ${token || SUPABASE_ANON_KEY}`;
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, {
     ...options,

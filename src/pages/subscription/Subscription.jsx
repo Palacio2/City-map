@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaCheck, FaTimes, FaLock } from 'react-icons/fa';
@@ -7,29 +7,39 @@ import { subscriptionPlans } from './subscriptionPlans';
 import styles from './Subscription.module.css';
 
 export default function Subscription() {
-  const [selectedPlan, setSelectedPlan] = useState('premium'); 
+  const { subscription } = useSubscription(); 
   const navigate = useNavigate();
   const { t } = useTranslation('subscription');
-  const { subscription } = useSubscription(); 
+  
+  const [selectedPlan, setSelectedPlan] = useState(() => {
+    if (subscription && subscription.plan !== 'free' && !subscription.isExpired) {
+       return subscription.plan;
+    }
+    return 'premium';
+  });
+
+  useEffect(() => {
+    if (subscription && subscription.plan !== 'free' && !subscription.isExpired) {
+        setSelectedPlan(subscription.plan);
+    }
+  }, [subscription]);
 
   const hasActivePaidSubscription = subscription && 
                                     subscription.plan !== 'free' && 
                                     !subscription.isExpired;
 
-  const currentPlanConfig = subscriptionPlans[selectedPlan];
+  const currentPlanConfig = subscriptionPlans[selectedPlan] || subscriptionPlans['premium'];
   const IconComponent = currentPlanConfig.icon;
-
   const isThisPlanActive = subscription?.plan === selectedPlan && !subscription.isExpired;
 
   const handlePlanSelection = () => {
-    if (hasActivePaidSubscription) return;
-    if (selectedPlan === 'free') return;
+    if (hasActivePaidSubscription || selectedPlan === 'free') return;
     navigate('/payment', { state: { planKey: selectedPlan } });
   };
 
   const getPlanDetails = (key) => ({
-    name: t(`subscription.plans.${key}.name`),
-    price: t(`subscription.plans.${key}.price`)
+    name: subscriptionPlans[key].name, // Беремо ім'я прямо з конфігу
+    price: t(`subscription.plans.${key}.price`) // Ціну лишаємо в перекладах для валют
   });
 
   const selectedPlanDetails = getPlanDetails(selectedPlan);
@@ -46,8 +56,6 @@ export default function Subscription() {
           {Object.keys(subscriptionPlans).map((key) => {
             const planConfig = subscriptionPlans[key];
             const PlanIcon = planConfig.icon;
-            const isActive = subscription?.plan === key && !subscription.isExpired;
-            const { name } = getPlanDetails(key);
             
             return (
               <button
@@ -55,7 +63,10 @@ export default function Subscription() {
                 className={`${styles.toggleButton} ${selectedPlan === key ? styles.active : ''}`}
                 onClick={() => setSelectedPlan(key)}
               >
-                <PlanIcon /> {name} {isActive && <span className={styles.currentPlanLabel}>{t('subscription.current_label')}</span>}
+                <div className={styles.buttonContent}>
+                    <PlanIcon className={styles.planIcon} />
+                    <span className={styles.planName}>{planConfig.name}</span>
+                </div>
               </button>
             );
           })}
@@ -63,7 +74,9 @@ export default function Subscription() {
 
         <div className={styles.planCard}>
           <div className={styles.planHeader}>
-            <IconComponent size={40} />
+            <div className={styles.bigIconWrapper}>
+                <IconComponent />
+            </div>
             <h2>{selectedPlanDetails.name}</h2>
             <div className={styles.price}>
                 {isThisPlanActive ? t('subscription.active_plan_label') : selectedPlanDetails.price}
@@ -72,19 +85,19 @@ export default function Subscription() {
           
           <div className={styles.features}>
             <h3>{t('subscription.included_title')}</h3>
-            {currentPlanConfig.features.map((f, i) => (
+            {currentPlanConfig.features.map((featureText, i) => (
               <div key={i} className={styles.featureItem}>
-                <FaCheck /> {t(`subscription.features.${f}`)}
+                <FaCheck className={styles.checkIcon} /> {featureText}
               </div>
             ))}
           </div>
 
-          {selectedPlan === 'free' && currentPlanConfig.disabledFeatures && (
+          {currentPlanConfig.disabledFeatures?.length > 0 && (
             <div className={styles.disabledFeatures}>
               <h3>{t('subscription.disabled_title')}</h3>
-              {currentPlanConfig.disabledFeatures.map((f, i) => (
+              {currentPlanConfig.disabledFeatures.map((disabledText, i) => (
                 <div key={i} className={styles.disabledFeature}>
-                    <FaTimes /> {t(`subscription.features.${f}`)}
+                    <FaTimes className={styles.timesIcon} /> {disabledText}
                 </div>
               ))}
             </div>
@@ -93,8 +106,7 @@ export default function Subscription() {
           <button 
             className={`${styles.subscribeButton} ${styles[selectedPlan]}`}
             onClick={handlePlanSelection}
-            disabled={hasActivePaidSubscription || selectedPlan === 'free'}
-            style={hasActivePaidSubscription ? { opacity: 0.6, cursor: 'not-allowed' } : {}}
+            disabled={hasActivePaidSubscription || (selectedPlan === 'free' && !isThisPlanActive)}
           >
             {isThisPlanActive 
                 ? t('subscription.buttons.active')
@@ -106,12 +118,10 @@ export default function Subscription() {
           </button>
           
           {hasActivePaidSubscription && !isThisPlanActive && (
-              <p style={{marginTop: '10px', color: '#e53e3e', fontSize: '13px', textAlign: 'center'}}>
-                 <FaLock style={{marginRight: '5px'}}/>
-                 {t('subscription.wait_expire')}
+              <p className={styles.lockMessage}>
+                 <FaLock /> {t('subscription.wait_expire')}
               </p>
           )}
-
         </div>
       </div>
     </div>
