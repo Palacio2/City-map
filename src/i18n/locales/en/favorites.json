@@ -3,16 +3,26 @@
   "remove_tooltip": "Remove from favorites",
   "confirm_remove": "Remove from favorites?",
   "na": "n/a",
+  "price_label": "Price:",
   "empty": {
     "title": "List is empty",
     "description": "Add districts to favorites on the map"
   },
   "errors": {
     "auth_required": "Please log in",
-    "load_failed": "Loading error",
-    "delete_failed": "Delete error"
+    "load_failed": "Loading failed",
+    "delete_failed": "Deletion failed"
   },
   "buttons": {
-    "login": "Log In"
+    "login": "Log in",
+    "go_to_map": "Go to map"
+  },
+  "stats": {
+    "education": "Education",
+    "transport": "Transport",
+    "safety": "Safety",
+    "ecology": "Ecology",
+    "medicine": "Medicine",
+    "shopping": "Shopping"
   }
 }

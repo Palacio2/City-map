@@ -2,18 +2,35 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictsMap.module.css';
+import { DISTRICT_CATEGORIES } from '@config/districtFields';
+import { useSubscription } from '@subscription/SubscriptionContext';
 
-const DistrictCard = React.memo(({ district, onClick }) => {
+const DistrictCard = React.memo(({ district, onClick, isFree }) => {
   const { t } = useTranslation('districts');
   const [imgError, setImgError] = useState(false);
   const filterData = district.filterData;
-  const na = t('na');
   
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' || e.key === ' ') {
       onClick(district);
     }
   };
+
+  const visibleStats = useMemo(() => {
+    if (!filterData) return [];
+    
+    return Object.values(DISTRICT_CATEGORIES)
+      .filter(cat => {
+        if (isFree && cat.isPremium) return false;
+        const rating = filterData[cat.key]?.rating || filterData[cat.key]?.qualityRating;
+        return rating !== undefined && rating !== null;
+      })
+      .map(cat => ({
+        key: cat.key,
+        icon: cat.icon,
+        rating: filterData[cat.key]?.rating || filterData[cat.key]?.qualityRating
+      }));
+  }, [filterData, isFree]);
 
   return (
     <div
@@ -41,16 +58,13 @@ const DistrictCard = React.memo(({ district, onClick }) => {
       
       <div className={styles.districtName}>{district.name}</div>
       
-      {filterData && (
-        <div className={styles.districtStats}>
-          <span className={styles.statBadge}>🏫 {filterData.education?.rating?.toFixed(1) || na}</span>
-          <span className={styles.statBadge}>🚍 {filterData.transport?.rating?.toFixed(1) || na}</span>
-          <span className={styles.statBadge}>🛡️ {filterData.safety?.rating?.toFixed(1) || na}</span>
-          <span className={styles.statBadge}>🌳 {filterData.social?.rating?.toFixed(1) || na}</span>
-          <span className={styles.statBadge}>🏥 {filterData.medicine?.rating?.toFixed(1) || na}</span>
-          <span className={styles.statBadge}>🛒 {filterData.commerce?.rating?.toFixed(1) || na}</span>
-        </div>
-      )}
+      <div className={styles.districtStats}>
+        {visibleStats.map(stat => (
+          <span key={stat.key} className={styles.statBadge}>
+            {stat.icon} {Number(stat.rating).toFixed(1)}
+          </span>
+        ))}
+      </div>
     </div>
   );
 });
@@ -58,10 +72,12 @@ const DistrictCard = React.memo(({ district, onClick }) => {
 export default function DistrictsMap({ 
   districts, 
   onDistrictClick, 
-  selectedFilters = {}
+  selectedFilters = {},
+  totalCount
 }) {
   const { t } = useTranslation('districts');
   const { country, city } = useParams();
+  const { isFree } = useSubscription();
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
@@ -78,6 +94,9 @@ export default function DistrictsMap({
   const totalPages = Math.ceil(districts.length / itemsPerPage);
   const hasActiveFilters = Object.keys(selectedFilters).length > 0;
 
+  const shownCount = districts.length;
+  const realTotal = totalCount || shownCount;
+
   return (
     <div className={styles.mapContainer}>
       <div className={styles.mapHeader}>
@@ -87,7 +106,13 @@ export default function DistrictsMap({
         <div className={styles.mapStats}>
           {districts.length > 0 && (
             <span className={styles.statItem}>
-              {t('stats_shown', { shown: districts.length, total: districts.length })}
+              {t('stats_shown', { shown: shownCount, total: realTotal })}
+              
+              {isFree && realTotal > shownCount && (
+                  <span style={{ marginLeft: '6px', opacity: 0.7, fontSize: '0.9em' }}>
+                    ({t('premium.hidden_districts_title', { count: realTotal - shownCount })})
+                  </span>
+              )}
             </span>
           )}
         </div>
@@ -111,6 +136,7 @@ export default function DistrictsMap({
                     key={district.id}
                     district={district}
                     onClick={onDistrictClick}
+                    isFree={isFree}
                   />
                 ))}
               </div>

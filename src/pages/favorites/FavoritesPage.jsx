@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { favoritesApi } from '../../components/api/favoritesApi'; 
-import { supabase } from '../../supabaseClient';
-import { transformDistrictsForDisplay } from '../../utils/dataTransformers'; 
-import DistrictDetailsModal from '../../components/districtMap/DistrictDetailsModal';
+import { favoritesApi } from '@api/favoritesApi'; 
+import { supabase } from '@supabaseClient';
+import { transformDistrictsForDisplay } from '@utils/dataTransformers'; 
+import DistrictDetailsModal from '@components/districtMap/DistrictDetailsModal';
 import styles from './FavoritesPage.module.css'; 
-import { formatPrice, getCurrencyInfo } from '../../utils/formatters';
+import { formatPrice, getCurrencyInfo } from '@utils/formatters';
 
 const TrashIcon = () => (
   <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -20,7 +20,8 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
     const filterData = district.filterData;
     const na = '-';
     
-    const currencyInfo = getCurrencyInfo(district.country);
+    const countryName = district.country || district.cities?.countries?.name || '';
+    const currencyInfo = getCurrencyInfo(countryName);
     
     return (
         <div className={styles.card} onClick={() => onClick(district)}>
@@ -53,10 +54,10 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
 
             <div className={styles.cardContent}>
                 <div className={styles.priceRow}>
-                    <span className={styles.priceLabel}>{t('price_label', 'Ціна:')}</span>
+                    <span className={styles.priceLabel}>{t('price_label')}</span>
                     {filterData?.general?.propertyPrice ? (
                         <span className={styles.priceValue}>
-                            {formatPrice(filterData.general.propertyPrice, currencyInfo.code, currencyInfo.locale)}
+                            {formatPrice(filterData.general.propertyPrice, currencyInfo)}
                         </span>
                     ) : (
                         <span className={styles.priceValue}>{na}</span>
@@ -105,38 +106,46 @@ export default function FavoritesPage() {
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     
+    const dataLoadedRef = useRef(false);
+    
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
 
     const navigate = useNavigate();
 
-    useEffect(() => {
-        loadFavorites();
-    }, []);
+    const loadFavorites = useCallback(async () => {
+        if (dataLoadedRef.current) return;
 
-    const loadFavorites = async () => {
         try {
-            setLoading(true);
             const { data: { session } } = await supabase.auth.getSession();
             if (!session) {
                 setError(t('errors.auth_required'));
+                setLoading(false);
                 return;
             }
+
             const rawData = await favoritesApi.getFavorites();
             setFavorites(transformDistrictsForDisplay(rawData || []));
+            
+            dataLoadedRef.current = true;
         } catch (err) {
+            console.error(err);
             setError(err.message || t('errors.load_failed'));
         } finally {
             setLoading(false);
         }
-    };
+    }, [t]);
+
+    useEffect(() => {
+        loadFavorites();
+    }, []);
 
     useEffect(() => {
         const totalPages = Math.ceil(favorites.length / itemsPerPage) || 1;
         if (currentPage > totalPages) {
             setCurrentPage(totalPages);
         }
-    }, [favorites, currentPage]);
+    }, [favorites.length, itemsPerPage]);
 
     const handleRemove = async (districtId, e) => {
         if (e) e.stopPropagation();
@@ -191,7 +200,7 @@ export default function FavoritesPage() {
                 <h2 className={styles.stateTitle}>{t('empty.title')}</h2>
                 <p className={styles.stateDescription}>{t('empty.description')}</p>
                 <button onClick={() => navigate('/')} className={styles.primaryButton} style={{marginTop: '20px'}}>
-                    {t('buttons.go_to_map', 'Перейти до карти')}
+                    {t('buttons.go_to_map')}
                 </button>
             </div>
         );

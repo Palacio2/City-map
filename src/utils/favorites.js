@@ -1,35 +1,19 @@
-import { favoritesAPI } from '../components/api/addFavoritesApi';
-import { supabase } from '../supabaseClient';
-
-export const getAuthToken = async () => {
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    return session?.access_token ?? null;
-  } catch {
-    return null;
-  }
-};
+import { favoritesApi } from '../components/api/favoritesApi';
 
 export const checkIsFavorite = async (districtId) => {
-  const token = await getAuthToken();
-  if (!token) return false;
-
   try {
-    const result = await favoritesAPI.checkFavorite(districtId, token);
-    return !!result.isFavorite;
-  } catch {
+    return await favoritesApi.checkFavorite(districtId);
+  } catch (error) {
+    console.error(error);
     return false;
   }
 };
 
-export const toggleFavorite = async (district, currentState) => {
-  const token = await getAuthToken();
-  if (!token) return currentState;
-
+export const toggleFavorite = async (districtId) => {
   try {
-    const result = await favoritesAPI.toggleFavorite(district.id, token);
-    return result.success ? result.isFavorite : currentState;
-  } catch {
-    return currentState;
+    return await favoritesApi.toggleFavorite(districtId);
+  } catch (error) {
+    console.error(error);
+    throw error;
   }
 };

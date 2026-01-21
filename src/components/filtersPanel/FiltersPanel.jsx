@@ -1,24 +1,29 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaStar } from 'react-icons/fa';
 import { useSubscription } from '@subscription/SubscriptionContext';
 import styles from './FiltersPanel.module.css';
+import { DISTRICT_CATEGORIES } from '@config/districtFields';
+import SafetyFilters from './SafetyFilters'; 
+import GenericCategoryFilter from './GenericCategoryFilter'; 
 
-import EducationFilters from './sections/EducationFilters';
-import MedicineFilters from './sections/MedicineFilters';
-import TransportFilters from './sections/TransportFilters';
-import SocialFilters from './sections/SocialFilters';
-import SafetyFilters from './sections/SafetyFilters';
-import CommerceFilters from './sections/CommerceFilters';
-import UtilitiesFilters from './sections/UtilitiesFilters';
-
-const FiltersPanel = React.memo(({ onFiltersChange, selectedFilters = {} }) => {
+const FiltersPanel = React.memo(({ 
+  onFiltersChange, 
+  selectedFilters = {},
+  allowedCategories = null 
+}) => {
   const { t } = useTranslation('filters');
   const navigate = useNavigate();
-  const { isPremium, isFree } = useSubscription();
+  
+  const { isFree, isRealtor } = useSubscription(); 
   
   const [filters, setFilters] = useState(selectedFilters);
+  
+  const FREE_ALLOWED_CATEGORIES = ['medicine', 'transport', 'commerce'];
+
+  useEffect(() => {
+    setFilters(selectedFilters);
+  }, [selectedFilters]);
 
   const handleUpgradeClick = () => {
     navigate('/subscription');
@@ -35,95 +40,62 @@ const FiltersPanel = React.memo(({ onFiltersChange, selectedFilters = {} }) => {
     });
   }, [onFiltersChange]);
 
-  const handleClearFilters = () => {
-    const clearedFilters = {};
-    setFilters(clearedFilters);
-    onFiltersChange?.(clearedFilters);
+  const handleClearFilters = useCallback(() => {
+    setFilters({});
+    onFiltersChange?.({});
+  }, [onFiltersChange]);
+
+  const isSectionVisible = (key) => {
+    if (!allowedCategories) return true;
+    return allowedCategories.includes(key);
   };
 
   return (
     <div className={styles.panel}>
       <div className={styles.panelHeader}>
-        <h2 className={styles.panelTitle}>{t('panel.title')}</h2>
-        <div className={styles.subscriptionStatus}>
-          {isFree && (
-            <div className={styles.subscriptionInfo}>
-              <span className={styles.freeBadge}>
-                <FaStar style={{ marginRight: '6px', fontSize: '1em' , color: '#f59e0b' }} /> 
-                {t('panel.free_version')}
-              </span>
-              <button className={styles.upgradeLink} onClick={handleUpgradeClick}>
-                {t('panel.upgrade')}
-              </button>
-            </div>
-          )}
-          {isPremium && (
-            <div className={styles.subscriptionInfoPremium}>
-              <span className={styles.premiumBadge}>💎 {t('panel.premium')}</span>
-            </div>
-          )}
-        </div>
+        <h2 className={styles.panelTitle}>{t('filter.panel.title')}</h2>
       </div>
-      
-      <div className={styles.panelContent}>
-        <div className={styles.scrollContainer}>
-          <div className={styles.section}>
-            <EducationFilters 
-              values={filters.education || {}} 
-              onChange={(data) => updateFilters('education', data)}
-            />
-          </div>
-          
-          <div className={styles.section}>
-            <MedicineFilters 
-              values={filters.medicine || {}} 
-              onChange={(data) => updateFilters('medicine', data)}
-            />
-          </div>
 
-          {isPremium && (
-            <>
-              <div className={styles.section}>
-                <TransportFilters 
-                  values={filters.transport || {}}
-                  onChange={(data) => updateFilters('transport', data)}
+      <div className={styles.content}>
+        <div className={styles.scrollableContent}>
+          {Object.entries(DISTRICT_CATEGORIES).map(([key, config]) => {
+            if (key === 'safety') return null;
+            
+            if (isFree && !FREE_ALLOWED_CATEGORIES.includes(key)) return null;
+            
+            if (!isSectionVisible(key)) return null;
+
+            return (
+              <div key={key} className={styles.sectionContainer}>
+                <GenericCategoryFilter
+                  categoryKey={key}
+                  values={filters[key] || {}}
+                  onChange={(data) => updateFilters(key, data)}
+                  isFree={isFree}
+                  isRealtor={isRealtor}
                 />
               </div>
-              <div className={styles.section}>
-                <SocialFilters 
-                  values={filters.social || {}}
-                  onChange={(data) => updateFilters('social', data)}
-                />
-              </div>
-              <div className={styles.section}>
-                <SafetyFilters 
-                  values={filters.safety || {}}
-                  onChange={(data) => updateFilters('safety', data)}
-                />
-              </div>
-              <div className={styles.section}>
-                <CommerceFilters 
-                  values={filters.commerce || {}}
-                  onChange={(data) => updateFilters('commerce', data)}
-                />
-              </div>
-              <div className={styles.section}>
-                <UtilitiesFilters 
-                  values={filters.utilities || {}}
-                  onChange={(data) => updateFilters('utilities', data)}
-                />
-              </div>
-            </>
+            );
+          })}
+
+          {!isFree && isSectionVisible('safety') && (
+            <div className={styles.sectionContainer}>
+              <SafetyFilters 
+                values={filters.safety || {}}
+                onChange={(data) => updateFilters('safety', data)}
+              />
+            </div>
           )}
+
         </div>
         
         {isFree && (
           <div className={styles.upgradeBanner}>
             <div className={styles.bannerContent}>
-              <h4>{t('panel.banner_title')}</h4>
-              <p>{t('panel.banner_text')}</p>
+              <h4>{t('filter.panel.banner_title')}</h4>
+              <p>{t('filter.panel.banner_text')}</p>
               <button className={styles.bannerButton} onClick={handleUpgradeClick}>
-                {t('panel.view_tariffs')}
+                {t('filter.panel.view_tariffs')}
               </button>
             </div>
           </div>
@@ -132,7 +104,7 @@ const FiltersPanel = React.memo(({ onFiltersChange, selectedFilters = {} }) => {
       
       <div className={styles.actions}>
         <button className={styles.clearButton} onClick={handleClearFilters}>
-          {t('panel.clear')}
+          {t('filter.panel.clear')}
         </button>
       </div>
     </div>

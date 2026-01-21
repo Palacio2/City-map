@@ -1,92 +1,143 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import headerFooterStyles from './styles/headerFooter.module.css';
+import styles from './styles/headerFooter.module.css';
 import { CloseButton, FavoriteButton } from './Buttons';
+import { FiDownload, FiUsers, FiBriefcase, FiTrendingUp, FiHome, FiDollarSign } from 'react-icons/fi';
+import { AiOutlineLoading3Quarters } from 'react-icons/ai';
+
+const getStatIcon = (key) => {
+  switch (key) {
+    case 'population': return <FiUsers />;
+    case 'unemploymentRate': return <FiTrendingUp />;
+    case 'averageSalary': return <FiBriefcase />;
+    case 'propertyPrice': return <FiHome />;
+    case 'average_rent_price': return <FiDollarSign />;
+    default: return <FiTrendingUp />;
+  }
+};
 
 export function HeaderSection({ 
   district, 
-  isFavorite, 
-  onToggleFavorite, 
-  isLoading, 
+  updatedAt,
+  filterData,
   onClose,
   formatNumber,
   formatPrice,
-  currencyInfo,
-  isPremium 
+  isRealtor,
+  isFavorite,
+  onToggleFavorite,
+  onDownloadPdf,
+  isDownloading,
+  isFree,
+  currencyInfo
 }) {
   const { t, i18n } = useTranslation('districts');
-  const { name, photo_url, photo_description, updated_at, filterData } = district;
-  const { code, locale } = currencyInfo || { code: 'UAH', locale: 'uk-UA' };
 
-  const formattedDate = updated_at 
-    ? new Date(updated_at).toLocaleDateString(i18n.language, {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
+  if (!district) return null;
+
+  const { name, photo_url } = district;
+
+  const dateToFormat = updatedAt || district.updated_at;
+  const formattedDate = dateToFormat 
+    ? new Date(dateToFormat).toLocaleDateString(i18n.language, {
+        day: '2-digit', month: '2-digit', year: 'numeric'
       })
     : null;
 
+  const quickStatsConfig = [
+    { 
+      key: 'population', 
+      label: 'details.population', 
+      formatter: formatNumber 
+    },
+    { 
+      key: 'averageSalary', 
+      label: 'details.salary', 
+      formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val 
+    },
+    { 
+      key: 'unemploymentRate', 
+      label: 'details.unemployment', 
+      formatter: (val) => `${val}%` 
+    },
+    { 
+      key: 'propertyPrice', 
+      label: 'details.price', 
+      formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val
+    },
+    { 
+      key: 'average_rent_price', 
+      label: 'pdf.rent', 
+      formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val
+    }
+  ];
+
   return (
-    <div className={headerFooterStyles.headerSection}>
-      {photo_url && (
-        <img 
-          src={photo_url} 
-          alt={photo_description || name}
-          className={headerFooterStyles.headerPhoto}
-        />
-      )}
-      <div className={headerFooterStyles.headerContent}>
-        <div className={headerFooterStyles.headerTop}>
-          <div className={headerFooterStyles.titleWrapper}>
-            <h2 className={headerFooterStyles.modalTitle}>{name}</h2>
-            {formattedDate && (
-              <span className={headerFooterStyles.lastUpdated}>
-                {t('details.updated_at', { date: formattedDate })}
-              </span>
-            )}
-          </div>
-          
-          <div className={headerFooterStyles.headerActions}>
-            {isPremium && (
-              <FavoriteButton 
-                isFavorite={isFavorite}
-                onToggle={onToggleFavorite}
-                isLoading={isLoading}
-              />
-            )}
-            
-            <CloseButton onClose={onClose} />
-          </div>
+    <div className={styles.headerSection}>
+       {photo_url && (
+         <div className={styles.headerBackground}>
+            <img src={photo_url} alt={name} className={styles.headerPhoto} />
+            <div className={styles.gradientOverlay} />
+         </div>
+       )}
+      
+      <div className={styles.headerContent}>
+        
+        <div className={styles.topBar}>
+           {formattedDate ? (
+             <div className={styles.updateBadge}>
+               <span className={styles.dot}></span>
+               {t('details.updated')}: {formattedDate}
+             </div>
+           ) : <div />}
+
+           <div className={styles.actionButtons}>
+              {!isFree && (
+                <>
+                  <button 
+                    className={styles.glassBtn}
+                    onClick={onDownloadPdf}
+                    disabled={isDownloading}
+                    title={t('buttons.download_pdf')}
+                  >
+                    {isDownloading ? <AiOutlineLoading3Quarters className={styles.spinner} /> : <FiDownload size={18} />}
+                  </button>
+
+                  <FavoriteButton 
+                    isFavorite={isFavorite} 
+                    onToggle={() => onToggleFavorite(district.id, !isFavorite)} 
+                    className={styles.glassBtn} 
+                  />
+                </>
+              )}
+              <CloseButton onClose={onClose} />
+           </div>
         </div>
 
-        {filterData?.general && (
-          <div className={headerFooterStyles.quickStatsBar}>
-            {filterData.general.population > 0 && (
-                <div className={headerFooterStyles.quickStat}>
-                  <span className={headerFooterStyles.quickStatLabel}>{t('details.population')}</span>
-                  <span className={headerFooterStyles.quickStatValue}>
-                      {formatNumber(filterData.general.population)}
-                  </span>
-                </div>
-            )}
+        <div className={styles.titleSection}>
+          <h1 className={styles.districtTitle}>{name}</h1>
+        </div>
+        
+        {isRealtor && filterData?.general && (
+          <div className={styles.statsGrid}>
+            {quickStatsConfig.map(({ key, label, formatter }) => {
+              const value = filterData.general[key];
+              if (value === undefined || value === null || (typeof value === 'number' && value <= 0)) return null;
 
-            {filterData.general.averageSalary > 0 && (
-                <div className={headerFooterStyles.quickStat}>
-                  <span className={headerFooterStyles.quickStatLabel}>{t('details.salary')}</span>
-                  <span className={headerFooterStyles.quickStatValue}>
-                      {formatPrice(filterData.general.averageSalary, code, locale)}
-                  </span>
+              return (
+                <div key={key} className={styles.statCard}>
+                  <div className={styles.statIconWrapper}>
+                    {getStatIcon(key)}
+                  </div>
+                  <div className={styles.statInfo}>
+                    <span className={styles.statLabel}>{t(label)}</span>
+                    <span className={styles.statValue}>
+                        {formatter ? formatter(value) : value}
+                    </span>
+                  </div>
                 </div>
-            )}
-
-            {filterData.general.unemploymentRate > 0 && (
-                <div className={headerFooterStyles.quickStat}>
-                  <span className={headerFooterStyles.quickStatLabel}>{t('details.unemployment')}</span>
-                  <span className={headerFooterStyles.quickStatValue}>
-                      {filterData.general.unemploymentRate}%
-                  </span>
-                </div>
-            )}
+              );
+            })}
           </div>
         )}
       </div>
@@ -97,10 +148,12 @@ export function HeaderSection({
 export function ModalFooter({ onClose }) {
   const { t } = useTranslation('districts');
   return (
-    <div className={headerFooterStyles.modalFooter}>
-      <button className={headerFooterStyles.simpleCloseButton} onClick={onClose}>
+    <div className={styles.modalFooter}>
+      <button className={styles.closeFooterBtn} onClick={onClose}>
         {t('buttons.close')}
       </button>
     </div>
   );
 }
+
+export default HeaderSection;

@@ -5,17 +5,18 @@ export const getCurrencyInfo = (countryName) => {
   
   const normalized = countryName.toLowerCase().trim();
   
-  if (normalized.includes('poland') || normalized.includes('polska') || normalized.includes('польща')) {
+  if (normalized === 'pl' || normalized.includes('poland') || normalized.includes('polska') || normalized.includes('польща')) {
     return { code: 'PLN', locale: 'pl-PL', symbol: 'zł' };
   }
-  if (normalized.includes('germany') || normalized.includes('deutschland') || normalized.includes('німеччина') || 
+  if (normalized === 'de' || normalized === 'fr' || normalized === 'es' || normalized === 'it' || 
+      normalized.includes('germany') || normalized.includes('deutschland') || normalized.includes('німеччина') || 
       normalized.includes('france') || normalized.includes('italy') || normalized.includes('spain')) {
     return { code: 'EUR', locale: 'de-DE', symbol: '€' };
   }
-  if (normalized.includes('usa') || normalized.includes('america') || normalized.includes('сша')) {
+  if (normalized === 'us' || normalized.includes('usa') || normalized.includes('america') || normalized.includes('сша')) {
     return { code: 'USD', locale: 'en-US', symbol: '$' };
   }
-  if (normalized.includes('uk') || normalized.includes('britain') || normalized.includes('британія')) {
+  if (normalized === 'uk' || normalized === 'gb' || normalized.includes('uk') || normalized.includes('britain') || normalized.includes('британія')) {
     return { code: 'GBP', locale: 'en-GB', symbol: '£' };
   }
 
@@ -23,57 +24,56 @@ export const getCurrencyInfo = (countryName) => {
 };
 
 export const formatNumber = (num, locale = 'uk-UA') => {
-  if (num === null || num === undefined) return 'н/д';
+  if (num === null || num === undefined) return '0';
   return new Intl.NumberFormat(locale).format(num);
 };
 
-export const formatPrice = (price, currency = 'UAH', locale = 'uk-UA') => {
-  if (price === null || price === undefined) return 'н/д';
-  return new Intl.NumberFormat(locale, {
-    style: 'currency',
-    currency: currency,
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0
-  }).format(price);
+export const formatPrice = (price, currencyInfo) => {
+  if (price === null || price === undefined) return 'n/a';
+  
+  const info = currencyInfo || {};
+  const code = info.code || 'UAH';
+  const locale = info.locale || 'uk-UA';
+
+  try {
+    return new Intl.NumberFormat(locale, {
+      style: 'currency',
+      currency: code,
+      maximumFractionDigits: 0
+    }).format(price);
+  } catch (e) {
+    console.error("Error formatting price:", e);
+    return `${price}`;
+  }
 };
 
-export const formatBoolean = (value) => {
-  return value ? '✅' : '❌';
+export const formatBoolean = (value, t) => {
+  if (t) {
+    return value ? t('enums.yes') : t('enums.no');
+  }
+  return value ? 'Yes' : 'No';
 };
 
-export const getFrequencyText = (frequency) => {
-  if (!frequency) return null;
-  return `enums.frequency.${frequency.toLowerCase()}`;
-};
-
-export const getDensityText = (density) => {
-  if (!density) return null;
-  return `enums.density.${density.toLowerCase()}`;
-};
-
-// Логіка тексту (повертає ключ перекладу)
 export const getCrimeLevelText = (crimeLevel) => {
-  if (crimeLevel === null || crimeLevel === undefined) return null;
-  // Якщо 0-3: Низька злочинність (Добре)
-  if (crimeLevel <= 3) return 'enums.crime.low';
-  // Якщо 3-6: Середня
-  if (crimeLevel <= 6) return 'enums.crime.medium';
-  // Якщо > 6: Висока (Погано)
-  return 'enums.crime.high';
+  if (crimeLevel === null || crimeLevel === undefined) return 'enums.crime_medium';
+  
+  if (crimeLevel <= 3) return 'enums.crime_low';
+  if (crimeLevel <= 6) return 'enums.crime_medium';
+  return 'enums.crime_high';
 };
 
-// 🔥 ВИПРАВЛЕНО ТУТ: Функція тепер приймає styles
+export const getCrimeLevelLabel = getCrimeLevelText;
+
 export const getCrimeLevelClass = (crimeLevel, styles = {}) => {
   if (crimeLevel === null || crimeLevel === undefined) return '';
   
-  // Повертаємо клас з об'єкта styles, або рядок як запасний варіант
   if (crimeLevel <= 3) return styles.lowCrime || 'lowCrime';
   if (crimeLevel <= 6) return styles.mediumCrime || 'mediumCrime';
   return styles.highCrime || 'highCrime';
 };
 
 export const renderRating = (rating) => {
-  if (rating === null || rating === undefined) return 'н/д';
+  if (rating === null || rating === undefined) return 'n/a';
   
   const numericRating = parseFloat(rating);
   const fullStars = Math.floor(numericRating / 2);
@@ -82,16 +82,10 @@ export const renderRating = (rating) => {
   
   return (
     <div className="ratingStars" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-      <span style={{ color: '#fbbf24' }}>
-        {'★'.repeat(Math.max(0, fullStars))}
-      </span>
-      {halfStar && <span style={{ color: '#fbbf24' }}>½</span>}
-      <span style={{ color: '#d1d5db' }}>
-        {'★'.repeat(Math.max(0, emptyStars))}
-      </span>
-      <span style={{ marginLeft: '4px', fontSize: '0.9em', color: '#666' }}>
-        ({numericRating.toFixed(1)})
-      </span>
+      <span style={{ color: '#fbb03b', fontWeight: 'bold', marginRight: '4px' }}>{numericRating.toFixed(1)}</span>
+      {[...Array(fullStars)].map((_, i) => <span key={`full-${i}`} style={{ color: '#fbb03b' }}>★</span>)}
+      {halfStar && <span style={{ color: '#fbb03b' }}>★</span>} 
+      {[...Array(emptyStars)].map((_, i) => <span key={`empty-${i}`} style={{ color: '#e0e0e0' }}>★</span>)}
     </div>
   );
 };

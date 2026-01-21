@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, Suspense, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictMap.module.css';
@@ -9,8 +9,14 @@ import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import { filterDistrictsByCriteria } from '@utils/filterUtils';
 import { transformDistrictsForDisplay } from '@utils/dataTransformers';
 import DistrictDetailsModal from './DistrictDetailsModal';
+import { DISTRICT_CATEGORIES } from '@config/districtFields';
+import { useSubscription } from '@subscription/SubscriptionContext';
 
 const DistrictsMap = React.lazy(() => import('./DistrictsMap'));
+
+const FREE_ALLOWED_CATEGORIES = Object.values(DISTRICT_CATEGORIES)
+  .filter(cat => !cat.isPremium)
+  .map(cat => cat.key);
 
 const LoadingIndicator = () => {
   const { t } = useTranslation('districts');
@@ -26,8 +32,10 @@ const ErrorDisplay = ({ error, onRetry }) => {
   const { t } = useTranslation('districts');
   return (
     <div className={styles.error}>
-      <p>{t('error_prefix', { error })}</p>
-      <button onClick={onRetry} className={styles.retryButton}>{t('retry')}</button>
+      <p>{error}</p>
+      <button onClick={onRetry} className={styles.retryButton}>
+        {t('retry')}
+      </button>
     </div>
   );
 };
@@ -35,28 +43,32 @@ const ErrorDisplay = ({ error, onRetry }) => {
 export default function DistrictMap() {
   const { country, city } = useParams();
   const { t } = useTranslation('districts');
+  const { isFree } = useSubscription(); 
   
   const [allDistricts, setAllDistricts] = useState([]);
-  const [filteredDistricts, setFilteredDistricts] = useState([]);
-  const [selectedFilters, setSelectedFilters] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedFilters, setSelectedFilters] = useState({});
   
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const allowedCategories = useMemo(() => {
+    return isFree ? FREE_ALLOWED_CATEGORIES : null;
+  }, [isFree]);
+
   const loadData = useCallback(async () => {
     if (!country || !city) return;
 
+    setIsLoading(true);
+    setError(null);
+
     try {
-      setIsLoading(true);
-      setError(null);
-      const rawData = await fetchDistrictsWithFilters(country, city);
-      const transformedData = transformDistrictsForDisplay(rawData);
-      setAllDistricts(transformedData);
-      setFilteredDistricts(transformedData);
+      const data = await fetchDistrictsWithFilters(country, city);
+      const transformed = transformDistrictsForDisplay(data);
+      setAllDistricts(transformed);
     } catch (err) {
-      setError(err.message || t('load_failed'));
+      setError(t('errors.fetch_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -66,11 +78,25 @@ export default function DistrictMap() {
     loadData();
   }, [loadData]);
 
-  const handleFiltersChange = useCallback((filters) => {
-    setSelectedFilters(filters);
-    const filtered = filterDistrictsByCriteria(allDistricts, filters);
-    setFilteredDistricts(filtered);
-  }, [allDistricts]);
+  // КРОК 1: Спочатку отримуємо ПОВНИЙ список відфільтрованих районів
+  const allFilteredDistricts = useMemo(() => {
+    return filterDistrictsByCriteria(allDistricts, selectedFilters);
+  }, [allDistricts, selectedFilters]);
+
+  // Рахуємо справжню кількість
+  const totalCount = allFilteredDistricts.length;
+
+  // КРОК 2: Готуємо список для ВІДОБРАЖЕННЯ (ріжемо тільки тут)
+  const districtsToDisplay = useMemo(() => {
+    if (isFree) {
+       return allFilteredDistricts.slice(0, 5);
+    }
+    return allFilteredDistricts;
+  }, [allFilteredDistricts, isFree]);
+
+  const handleFiltersChange = useCallback((newFilters) => {
+    setSelectedFilters(newFilters);
+  }, []);
 
   const handleDistrictClick = useCallback((district) => {
     setSelectedDistrict(district);
@@ -87,7 +113,6 @@ export default function DistrictMap() {
       list.map(d => d.id === districtId ? { ...d, isFavorite } : d);
 
     setAllDistricts(prev => updateDistrictInList(prev));
-    setFilteredDistricts(prev => updateDistrictInList(prev));
   }, []);
 
   if (!country) return <CountrySelect />;
@@ -99,6 +124,7 @@ export default function DistrictMap() {
         <FiltersPanel 
           onFiltersChange={handleFiltersChange}
           selectedFilters={selectedFilters}
+          allowedCategories={allowedCategories}
         />
         
         {isLoading ? (
@@ -108,7 +134,11 @@ export default function DistrictMap() {
         ) : (
           <Suspense fallback={<LoadingIndicator />}>
             <DistrictsMap 
-                districts={filteredDistricts}
+                // 👇 Передаємо обрізаний список для рендеру
+                districts={districtsToDisplay}
+                // 👇 Передаємо ПОВНУ кількість для статистики
+                totalCount={totalCount}
+                
                 onDistrictClick={handleDistrictClick}
                 selectedFilters={selectedFilters}
             />
