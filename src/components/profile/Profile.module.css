@@ -1,39 +1,25 @@
-:root {
-  --color-primary: #667eea;
-  --color-primary-dark: #5a67d8;
-  --color-primary-gradient: linear-gradient(135deg, var(--color-primary) 0%, #764ba2 100%);
-  --transition-default: all 0.3s ease;
-  --shadow-default: 0 10px 40px rgba(0, 0, 0, 0.1);
-  --shadow-hover-lift: 0 15px 40px rgba(0, 0, 0, 0.1);
-}
-
 .container {
-  background: transparent;
-  padding: 1rem;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: var(--spacing-md);
   min-height: 100vh;
-  border-radius: 1rem;
   transition: color 0.3s ease;
 }
 
 .header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: var(--spacing-xl);
 }
 
 .title {
   font-size: 2.5rem;
   font-weight: 800;
   color: var(--text-dark);
-  margin-bottom: 0.5rem;
-  transition: color 0.3s ease;
+  margin-bottom: var(--spacing-xs);
 }
 
 .subtitle {
   font-size: 1.2rem;
   color: var(--text-light);
   margin: 0;
-  transition: color 0.3s ease;
 }
 
 .content {
@@ -43,19 +29,19 @@
 
 .section {
   background: var(--bg-white);
-  border-radius: 20px;
-  padding: 2.5rem;
-  margin-bottom: 2rem;
-  box-shadow: var(--shadow-default);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  margin-bottom: var(--spacing-lg);
+  box-shadow: var(--shadow);
   border: 1px solid var(--border-color);
-  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  transition: var(--transition-default);
 }
 
 .sectionHeader {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
 }
 
 .sectionHeader h2 {
@@ -63,33 +49,31 @@
   font-weight: 700;
   color: var(--text-dark);
   margin: 0;
-  transition: color 0.3s ease;
 }
 
 .sectionIcon {
   width: 28px;
   height: 28px;
-  color: var(--color-primary);
+  color: var(--primary-color);
 }
 
-/* Основний грід для ПК: Інфо зліва, Кнопки справа */
 .profileGrid {
   display: grid;
-  grid-template-columns: 1fr auto; /* auto притискає кнопки вправо */
-  gap: 2rem;
+  grid-template-columns: 1fr auto;
+  gap: var(--spacing-lg);
   align-items: start;
 }
 
 .profileInfo {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: var(--spacing-md);
 }
 
 .infoItem {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: var(--spacing-md);
   max-width: 100%;
 }
 
@@ -97,13 +81,11 @@
   font-weight: 600;
   color: var(--text-dark);
   min-width: 120px;
-  transition: color 0.3s ease;
   flex-shrink: 0;
 }
 
 .infoValue {
   color: var(--text-medium);
-  transition: color 0.3s ease;
   white-space: nowrap;       
   overflow: hidden;          
   text-overflow: ellipsis;   
@@ -114,13 +96,12 @@
 .profileActions {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  /* Важливо для ПК: ширина визначається контентом кнопок */
+  gap: var(--spacing-sm);
 }
 
 .baseLinkButton {
   padding: 0.75rem 1.5rem;
-  border-radius: 10px;
+  border-radius: var(--border-radius-sm);
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition-default);
@@ -128,39 +109,38 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
   text-align: center;
   box-sizing: border-box; 
-  white-space: nowrap; /* Щоб текст не ламався */
+  white-space: nowrap;
 }
 
 .actionButton {
-  background: var(--color-primary);
+  background: var(--primary-color);
   color: white;
   border: none;
 }
 
 .actionButton:hover {
-  background: var(--color-primary-dark);
+  background: var(--primary-dark);
   transform: translateY(-2px);
 }
 
 .actionButtonSecondary {
   background: transparent;
-  color: var(--color-primary);
-  border: 2px solid var(--color-primary);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
 }
 
 .actionButtonSecondary:hover {
-  background: var(--color-primary);
+  background: var(--primary-color);
   color: white;
 }
 
-/* --- SUBSCRIPTION CARD --- */
 .subscriptionCard {
   background: var(--bg-light);
-  border-radius: 16px;
-  padding: 2rem;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
   border: 1px solid var(--border-color);
   transition: all 0.3s ease;
 }
@@ -172,9 +152,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border-radius: 10px;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border-radius: var(--border-radius-sm);
   font-weight: 600;
 }
 
@@ -185,9 +165,9 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  border-radius: 10px;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  border-radius: var(--border-radius-sm);
   font-weight: 600;
 }
 
@@ -195,23 +175,22 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 2rem;
+  margin-bottom: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
   border-bottom: 1px solid var(--border-color);
-  transition: border-color 0.3s ease;
 }
 
 .planInfo h3 {
   font-size: 1.5rem;
   font-weight: 700;
   color: var(--text-dark);
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 var(--spacing-sm) 0;
 }
 
 .status {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
   font-weight: 600;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -235,7 +214,7 @@
 .price {
   font-size: 2rem;
   font-weight: 800;
-  color: var(--color-primary);
+  color: var(--primary-color);
   display: block;
 }
 
@@ -248,25 +227,25 @@
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--text-dark);
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
 
 .featuresGrid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-lg);
 }
 
 .featureItem {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: var(--spacing-sm);
   color: var(--text-medium);
 }
 
 .featureIcon {
-  color: #48bb78;
+  color: var(--secondary-color);
   width: 16px;
   height: 16px;
   flex-shrink: 0;
@@ -274,33 +253,32 @@
 
 .subscriptionActions {
   display: flex;
-  gap: 1rem;
+  gap: var(--spacing-md);
   flex-wrap: wrap;
 }
 
 .primaryButton {
-  background: var(--color-primary-gradient);
+  background: var(--primary-gradient);
   color: white;
   border: none;
 }
 
 .primaryButton:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+  box-shadow: var(--shadow-hover);
 }
 
-/* --- QUICK ACTIONS --- */
 .quickActions {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
+  gap: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
 }
 
 .quickActionCard {
   background: var(--bg-white);
-  padding: 2rem;
-  border-radius: 16px;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
   text-decoration: none;
   color: inherit;
   border: 1px solid var(--border-color);
@@ -308,26 +286,27 @@
   text-align: center;
   position: relative;
   overflow: hidden;
+  box-shadow: var(--shadow-card);
 }
 
 .quickActionCard:hover {
   transform: translateY(-4px);
-  box-shadow: var(--shadow-hover-lift);
-  border-color: var(--color-primary);
+  box-shadow: var(--shadow-hover);
+  border-color: var(--primary-color);
 }
 
 .quickActionIcon {
   width: 40px;
   height: 40px;
-  color: var(--color-primary);
-  margin-bottom: 1rem;
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
 }
 
 .quickActionCard h3 {
   font-size: 1.2rem;
   font-weight: 600;
   color: var(--text-dark);
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-xs);
 }
 
 .quickActionCard p {
@@ -335,61 +314,33 @@
   margin: 0;
 }
 
-/* --- DARK MODE --- */
-[data-theme='dark'] .status.active {
-  background: #1c4532;
-  color: #c6f6d5;
-}
-
-[data-theme='dark'] .status.inactive, 
-[data-theme='dark'] .status.expired {
-  background: #4a1212;
-  color: #fed7d7;
-}
-
-[data-theme='dark'] .cancellationNotice {
-  background: #44371c;
-  color: #fefcbf;
-  border-color: #744210;
-}
-
-[data-theme='dark'] .expiredNotice {
-  background: #4a1212;
-  color: #fed7d7;
-  border-color: #822727;
-}
-
-/* --- MOBILE FIX --- */
 @media (max-width: 768px) {
-  .container { padding: 1rem; }
+  .container { padding: var(--spacing-sm); }
   .title { font-size: 2rem; }
-  .section { padding: 1.5rem; }
+  .section { padding: var(--spacing-md); }
   
-  /* Переключаємося з Grid на Flex для мобільного, це надійніше */
   .profileGrid { 
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: var(--spacing-lg);
   }
   
   .profileInfo {
     width: 100%;
   }
 
-  /* Виправляємо прилипання кнопок */
   .profileActions {
-    width: 100%; /* Розтягуємо контейнер на всю ширину */
-    align-items: stretch; /* Розтягуємо кнопки всередині */
+    width: 100%;
+    align-items: stretch;
   }
 
   .baseLinkButton {
-    width: 100%; /* Кнопка займає всю доступну ширину */
+    width: 100%;
     justify-content: center;
   }
 
-  .subscriptionHeader { flex-direction: column; gap: 1rem; text-align: center; }
+  .subscriptionHeader { flex-direction: column; gap: var(--spacing-md); text-align: center; }
   .planInfo, .planPrice { text-align: center; }
   .subscriptionActions { flex-direction: column; }
   .quickActions { grid-template-columns: 1fr; }
-  .quickActionCard { padding: 1.5rem; }
 }

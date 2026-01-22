@@ -78,15 +78,12 @@ export default function DistrictMap() {
     loadData();
   }, [loadData]);
 
-  // КРОК 1: Спочатку отримуємо ПОВНИЙ список відфільтрованих районів
   const allFilteredDistricts = useMemo(() => {
     return filterDistrictsByCriteria(allDistricts, selectedFilters);
   }, [allDistricts, selectedFilters]);
 
-  // Рахуємо справжню кількість
   const totalCount = allFilteredDistricts.length;
 
-  // КРОК 2: Готуємо список для ВІДОБРАЖЕННЯ (ріжемо тільки тут)
   const districtsToDisplay = useMemo(() => {
     if (isFree) {
        return allFilteredDistricts.slice(0, 5);
@@ -134,9 +131,7 @@ export default function DistrictMap() {
         ) : (
           <Suspense fallback={<LoadingIndicator />}>
             <DistrictsMap 
-                // 👇 Передаємо обрізаний список для рендеру
                 districts={districtsToDisplay}
-                // 👇 Передаємо ПОВНУ кількість для статистики
                 totalCount={totalCount}
                 
                 onDistrictClick={handleDistrictClick}
