@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './styles/cards.module.css';
-import { getRatingColor } from '../../../utils/ratingUtils';
+import { getRatingColor } from '@utils/ratingUtils';
 
 export default function StatCard({ 
   title, 

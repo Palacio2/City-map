@@ -1,6 +1,5 @@
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@supabaseClient';
 
-// Основна функція створення (Draft)
 export const processPayment = async (details) => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('Необхідна авторизація');
@@ -21,7 +20,6 @@ export const processPayment = async (details) => {
     return await response.json();
 };
 
-// Нова функція активації (Activate)
 export const activateSubscription = async (subscriptionId) => {
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error('Необхідна авторизація');

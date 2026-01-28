@@ -1,15 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { supabase } from '../supabaseClient'; 
+import { supabase } from '@supabaseClient';
 
-/**
-
-@returns {boolean}
- */
 export default function useAuthRedirect() {
   const [isAutoLoginAttempted, setIsAutoLoginAttempted] = useState(false);
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation(); 
 
   useEffect(() => {
     const checkSession = async () => {

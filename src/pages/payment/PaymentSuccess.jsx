@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { FaCheckCircle, FaArrowLeft } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import { useSubscription } from '../../pages/subscription/SubscriptionContext';
+import { useSubscription } from '@subscription/SubscriptionContext';
 import styles from './PaymentSuccess.module.css';
 
 export default function PaymentSuccess() {

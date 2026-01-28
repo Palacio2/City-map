@@ -1,0 +1,232 @@
+.calculatorContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  background: var(--bg-white);
+  border-radius: var(--border-radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+@media (min-width: 850px) {
+  .calculatorContainer {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+/* --- Inputs Section --- */
+.inputsSection {
+  flex: 1;
+  padding: 16px;
+}
+
+/* --- Header --- */
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.sectionTitle {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.currencySelect {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-white);
+  font-weight: 600;
+  cursor: pointer;
+  color: var(--text-dark);
+  outline: none;
+}
+
+/* --- Inputs --- */
+.gridInputs {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.inputGroup,
+.inputGroupFull {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.inputGroupFull {
+  grid-column: 1 / -1;
+}
+
+.inputGroup label,
+.inputGroupFull label {
+  font-size: 12px;
+  color: var(--text-medium);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.inputGroup input,
+.inputGroupFull input {
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 15px;
+  background: var(--bg-white);
+  color: var(--text-dark);
+  transition: all 0.2s;
+}
+
+.inputGroup input:focus,
+.inputGroupFull input:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+  outline: none;
+}
+
+/* --- Reset Button --- */
+.resetBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 10px;
+  background: var(--bg-light);
+  border: 1px solid var(--border-color);
+  color: var(--text-medium);
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.resetBtn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+/* --- Results Section --- */
+.resultsSection {
+  flex: 0.9;
+  background: var(--bg-white);
+  padding: 20px;
+  border-radius: var(--border-radius-lg);
+  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* --- Main KPI --- */
+.mainResult {
+  text-align: center;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.mainLabel {
+  display: block;
+  font-size: 11px;
+  color: var(--text-medium);
+  margin-bottom: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.mainValue {
+  display: block;
+  font-size: 38px;
+  font-weight: 800;
+  line-height: 1.2;
+}
+
+.subLabel {
+  font-size: 12px;
+  color: var(--text-light);
+}
+
+.positive { color: #10b981; }
+.negative { color: #ef4444; }
+
+/* --- Metrics --- */
+.metricsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.metricItem {
+  background: var(--bg-light);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.metricIcon {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(102, 126, 234, 0.15);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.metricContent {
+  display: flex;
+  flex-direction: column;
+}
+
+.metricLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-light);
+}
+
+.metricValue {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+/* --- Footer --- */
+.totalInfo {
+  margin-top: auto;
+  font-size: 12px;
+  color: var(--text-medium);
+  text-align: center;
+  background: var(--bg-light);
+  padding: 8px;
+  border-radius: 8px;
+}
+
+/* ===== DARK THEME ===== */
+
+[data-theme='dark'] .calculatorContainer,
+[data-theme='dark'] .resultsSection,
+[data-theme='dark'] .inputsSection {
+  background: var(--bg-white);
+}
+
+[data-theme='dark'] .metricItem,
+[data-theme='dark'] .totalInfo {
+  background: #0f172a;
+}
+
+[data-theme='dark'] .mainValue {
+  color: #e5e7eb;
+}

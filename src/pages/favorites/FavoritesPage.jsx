@@ -1,60 +1,98 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { favoritesApi } from '../../components/api/favoritesApi'; 
-import { supabase } from '../../supabaseClient';
-import { transformDistrictsForDisplay } from '../../utils/dataTransformers'; 
-import DistrictDetailsModal from '../../components/districtMap/DistrictDetailsModal';
-import mapStyles from '../../components/districtMap/DistrictsMap.module.css'; 
-import styles from './FavoritesPage.module.css';
-import { formatPrice, getCurrencyInfo } from '../../utils/formatters';
+import { favoritesApi } from '@api/favoritesApi'; 
+import { supabase } from '@supabaseClient';
+import { transformDistrictsForDisplay } from '@utils/dataTransformers'; 
+import DistrictDetailsModal from '@components/districtMap/DistrictDetailsModal';
+import styles from './FavoritesPage.module.css'; 
+import { formatPrice, getCurrencyInfo } from '@utils/formatters';
+
+const TrashIcon = () => (
+  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <polyline points="3 6 5 6 21 6"></polyline>
+    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+  </svg>
+);
 
 const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
     const { t } = useTranslation('favorites');
     const filterData = district.filterData;
-    const na = t('na');
+    const na = '-';
     
-    const currencyInfo = getCurrencyInfo(district.country);
+    const countryName = district.country || district.cities?.countries?.name || '';
+    const currencyInfo = getCurrencyInfo(countryName);
     
     return (
-        <div className={mapStyles.districtCard} onClick={() => onClick(district)}>
-            <button 
-                className={styles.removeButton} 
-                onClick={(e) => { e.stopPropagation(); onRemove(district.id, e); }}
-                title={t('remove_tooltip')}
-            >
-                ❌
-            </button>
-
-            {district.photo_url ? (
-                <img 
-                    src={district.photo_url} 
-                    alt={district.photo_description || district.name}
-                    className={mapStyles.districtPhoto}
-                    loading="lazy"
-                />
-            ) : (
-                <div className={mapStyles.photoPlaceholder}>🏙️</div>
-            )}
-            
-            <div className={mapStyles.districtName}>{district.name}</div>
-            
-            {filterData?.general?.propertyPrice && (
-                <div className={styles.priceTag}>
-                    {formatPrice(filterData.general.propertyPrice, currencyInfo.code, currencyInfo.locale)}
+        <div className={styles.card} onClick={() => onClick(district)}>
+            <div className={styles.imageContainer}>
+                {district.photo_url ? (
+                    <img 
+                        src={district.photo_url} 
+                        alt={district.photo_description || district.name}
+                        className={styles.cardPhoto}
+                        loading="lazy"
+                    />
+                ) : (
+                    <div className={styles.photoPlaceholder}>
+                        <span style={{fontSize: '3rem'}}>🏙️</span>
+                    </div>
+                )}
+                
+                <button 
+                    className={styles.removeButton} 
+                    onClick={(e) => { e.stopPropagation(); onRemove(district.id, e); }}
+                    title={t('remove_tooltip')}
+                >
+                    <TrashIcon />
+                </button>
+                
+                <div className={styles.cardOverlay}>
+                      <h3 className={styles.cardName}>{district.name}</h3>
                 </div>
-            )}
+            </div>
 
-            {filterData && (
-                <div className={styles.districtStats}>
-                    <span className={mapStyles.statBadge}>🏫 {filterData.education?.rating?.toFixed(1) || na}</span>
-                    <span className={mapStyles.statBadge}>🚍 {filterData.transport?.rating?.toFixed(1) || na}</span>
-                    <span className={mapStyles.statBadge}>🛡️ {filterData.safety?.rating?.toFixed(1) || na}</span>
-                    <span className={mapStyles.statBadge}>🌳 {filterData.social?.rating?.toFixed(1) || na}</span>
-                    <span className={mapStyles.statBadge}>🏥 {filterData.medicine?.rating?.toFixed(1) || na}</span>
-                    <span className={mapStyles.statBadge}>🛒 {filterData.commerce?.rating?.toFixed(1) || na}</span>
+            <div className={styles.cardContent}>
+                <div className={styles.priceRow}>
+                    <span className={styles.priceLabel}>{t('price_label')}</span>
+                    {filterData?.general?.propertyPrice ? (
+                        <span className={styles.priceValue}>
+                            {formatPrice(filterData.general.propertyPrice, currencyInfo)}
+                        </span>
+                    ) : (
+                        <span className={styles.priceValue}>{na}</span>
+                    )}
                 </div>
-            )}
+
+                {filterData && (
+                    <div className={styles.statsGrid}>
+                        <div className={styles.statItem} title={t('stats.education')}>
+                            <span className={styles.statIcon}>🏫</span>
+                            <span className={styles.statValue}>{filterData.education?.rating?.toFixed(1) || na}</span>
+                        </div>
+                        <div className={styles.statItem} title={t('stats.transport')}>
+                            <span className={styles.statIcon}>🚍</span>
+                            <span className={styles.statValue}>{filterData.transport?.rating?.toFixed(1) || na}</span>
+                        </div>
+                        <div className={styles.statItem} title={t('stats.safety')}>
+                            <span className={styles.statIcon}>🛡️</span>
+                            <span className={styles.statValue}>{filterData.safety?.rating?.toFixed(1) || na}</span>
+                        </div>
+                        <div className={styles.statItem} title={t('stats.ecology')}>
+                            <span className={styles.statIcon}>🌳</span>
+                            <span className={styles.statValue}>{filterData.social?.rating?.toFixed(1) || na}</span>
+                        </div>
+                        <div className={styles.statItem} title={t('stats.medicine')}>
+                            <span className={styles.statIcon}>🏥</span>
+                            <span className={styles.statValue}>{filterData.medicine?.rating?.toFixed(1) || na}</span>
+                        </div>
+                        <div className={styles.statItem} title={t('stats.shopping')}>
+                            <span className={styles.statIcon}>🛒</span>
+                            <span className={styles.statValue}>{filterData.commerce?.rating?.toFixed(1) || na}</span>
+                        </div>
+                    </div>
+                )}
+            </div>
         </div>
     );
 });
@@ -67,28 +105,47 @@ export default function FavoritesPage() {
     const [removeError, setRemoveError] = useState('');
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
+    
+    const dataLoadedRef = useRef(false);
+    
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 6;
+
     const navigate = useNavigate();
+
+    const loadFavorites = useCallback(async () => {
+        if (dataLoadedRef.current) return;
+
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) {
+                setError(t('errors.auth_required'));
+                setLoading(false);
+                return;
+            }
+
+            const rawData = await favoritesApi.getFavorites();
+            setFavorites(transformDistrictsForDisplay(rawData || []));
+            
+            dataLoadedRef.current = true;
+        } catch (err) {
+            console.error(err);
+            setError(err.message || t('errors.load_failed'));
+        } finally {
+            setLoading(false);
+        }
+    }, [t]);
 
     useEffect(() => {
         loadFavorites();
     }, []);
 
-    const loadFavorites = async () => {
-        try {
-            setLoading(true);
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                setError(t('errors.auth_required'));
-                return;
-            }
-            const rawData = await favoritesApi.getFavorites();
-            setFavorites(transformDistrictsForDisplay(rawData || []));
-        } catch (err) {
-            setError(err.message || t('errors.load_failed'));
-        } finally {
-            setLoading(false);
+    useEffect(() => {
+        const totalPages = Math.ceil(favorites.length / itemsPerPage) || 1;
+        if (currentPage > totalPages) {
+            setCurrentPage(totalPages);
         }
-    };
+    }, [favorites.length, itemsPerPage]);
 
     const handleRemove = async (districtId, e) => {
         if (e) e.stopPropagation();
@@ -122,14 +179,14 @@ export default function FavoritesPage() {
         }
     }, []);
 
-    if (loading) return <div className={styles.emptyState}><div className={styles.emptyIcon}>⏳</div></div>;
+    if (loading) return <div className={styles.loaderContainer}><div className={styles.spinner}></div></div>;
 
     if (error) {
         return (
-            <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>⚠️</div>
-                <p className={styles.emptyTitle}>{error}</p>
-                <button onClick={() => navigate('/login')} className={styles.detailsButton}>
+            <div className={styles.stateContainer}>
+                <div className={styles.stateIcon}>⚠️</div>
+                <p className={styles.stateTitle}>{error}</p>
+                <button onClick={() => navigate('/login')} className={styles.primaryButton}>
                     {t('buttons.login')}
                 </button>
             </div>
@@ -138,26 +195,36 @@ export default function FavoritesPage() {
 
     if (favorites.length === 0) {
         return (
-            <div className={styles.emptyState}>
-                <div className={styles.emptyIcon}>⭐</div>
-                <h2 className={styles.emptyTitle}>{t('empty.title')}</h2>
-                <p className={styles.emptyDescription}>{t('empty.description')}</p>
+            <div className={styles.stateContainer}>
+                <div className={styles.stateIcon}>⭐</div>
+                <h2 className={styles.stateTitle}>{t('empty.title')}</h2>
+                <p className={styles.stateDescription}>{t('empty.description')}</p>
+                <button onClick={() => navigate('/')} className={styles.primaryButton} style={{marginTop: '20px'}}>
+                    {t('buttons.go_to_map')}
+                </button>
             </div>
         );
     }
+
+    const totalPages = Math.ceil(favorites.length / itemsPerPage);
+    const paginatedFavorites = favorites.slice(
+        (currentPage - 1) * itemsPerPage,
+        currentPage * itemsPerPage
+    );
 
     return (
         <>
             <div className={styles.container}>
                 <header className={styles.header}>
-                    <h1 className={styles.title}>{t('title')}</h1>
-                    <span className={styles.favoritesCount}>{favorites.length}</span>
+                    <div className={styles.headerContent}>
+                        <h1 className={styles.title}>{t('title')}</h1>
+                    </div>
                 </header>
 
-                {removeError && <div className={styles.removeError}>{removeError}</div>}
+                {removeError && <div className={styles.errorMessage}>{removeError}</div>}
 
                 <div className={styles.favoritesGrid}>
-                    {favorites.map(district => (
+                    {paginatedFavorites.map(district => (
                         <FavoriteDistrictCard
                             key={district.id}
                             district={district}
@@ -166,6 +233,24 @@ export default function FavoritesPage() {
                         />
                     ))}
                 </div>
+
+                {totalPages > 1 && (
+                    <div className={styles.pagination}>
+                        <button 
+                            onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                            disabled={currentPage === 1}
+                        >
+                            ←
+                        </button>
+                        <span>{currentPage} / {totalPages}</span>
+                        <button 
+                            onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                            disabled={currentPage === totalPages}
+                        >
+                            →
+                        </button>
+                    </div>
+                )}
             </div>
 
             <DistrictDetailsModal

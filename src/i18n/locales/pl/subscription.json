@@ -1,13 +1,11 @@
 {
   "subscription": {
     "title": "Wybierz subskrypcję",
-    "subtitle": "Elastyczne plany wyszukiwania nieruchomości i dla profesjonalistów",
-    "current_label": "(Obecny)",
+    "subtitle": "Elastyczne plany dla poszukiwaczy nieruchomości i profesjonalistów",
     "active_plan_label": "Aktywny plan",
     "wait_expire": "Poczekaj na wygaśnięcie obecnej subskrypcji, aby zmienić plan.",
     "included_title": "W pakiecie:",
     "disabled_title": "Niedostępne:",
-    "incomplete": "Oczekiwanie на płatność",
     "buttons": {
       "active": "Aktywny",
       "stay_free": "Zostań przy Free",
@@ -15,27 +13,36 @@
       "upgrade": "Ulepsz subskrypcję",
       "has_active_sub": "Subskrypcja aktywna"
     },
-    "lock": {
-      "title": "Wymagana subskrypcja",
-      "default_msg": "Ta funkcja jest dostępna z płatną subskrypcją."
-    },
     "plans": {
       "free": { "name": "Darmowy", "price": "€0" },
-      "weekly": { "name": "Tygodniowy", "price": "€2.99 / tydz." },
+      "weekly": { "name": "Tygodniowy", "price": "€2.99 / tydzień" },
       "premium": { "name": "Premium", "price": "€8.99 / mies." },
       "realtor": { "name": "Realtor Pro", "price": "€29.00 / mies." }
     },
     "features": {
-      "basic_map": "Podstawowe informacje",
-      "limited_filters": "Ograniczone filtry",
-      "limited_data_show": "Ograniczony widok danych",
-      "full_data_access": "Pełny dostęp do danych",
-      "all_filters": "Wszystkie filtry",
-      "personal_stats_access": "Statystyki",
-      "save_favorites": "Zapisywanie dzielnic",
-      "compare_districts": "Porównywanie",
-      "export_data": "Eksport raportów (PDF/Excel)",
-      "priority_support": "Osobisty menedżer"
+      "district_limit_5": "Podgląd do 5 dzielnic w jednym mieście",
+      "filters_limit_2": "Dostęp ograniczony do 2 bloków filtrów",
+      "basic_rating": "Podstawowa ocena atrakcyjności lokalizacji",
+      "safety_edu_analytics": "Szczegółowa analityka bezpieczeństwa i edukacji",
+      "financial_stats": "Pełne statystyki finansowe i ceny za m²",
+      "favorites_save": "Zapisywanie dzielnic w „Ulubionych”",
+      "compare_tools": "Narzędzia do porównywania kilku dzielnic",
+      "pdf_export": "Eksport profesjonalnych raportów PDF",
+      "unlimited_districts": "Nieograniczony dostęp do wszystkich dzielnic",
+      "extended_filters": "Rozszerzony dostęp do filtrowania",
+      "partial_analytics": "Częściowy dostęp do strony analityki",
+      "personal_stats": "Statystyki osobiste",
+      "save_favorites": "Możliwość zapisywania ulubionych dzielnic",
+      "pdf_download": "Pobieranie plików PDF z informacjami o dzielnicy",
+      "all_weekly_features": "Wszystkie funkcje planu tygodniowego w opcji miesięcznej",
+      "all_premium_features": "Wszystkie korzyści planu Premium",
+      "roi_calculator": "Kalkulator inwestycyjny (ROI)",
+      "white_label_pdf": "Raporty PDF z możliwością dodania własnego brandingu",
+      "compare_4_districts": "Porównanie do 4 dzielnic jednocześnie",
+      "full_filter_access": "Pełny dostęp do filtrów",
+      "full_district_info": "Pełna informacja o dzielnicach",
+      "popular_districts_monitor": "Monitoring najpopularniejszych dzielnic",
+      "growth_tracking": "Śledzenie wzrostu wybranych dzielnic"
     }
   }
 }

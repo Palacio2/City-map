@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react'; 
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@supabaseClient';
 import { FaSpinner, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
 import styles from './AuthCallback.module.css';
 

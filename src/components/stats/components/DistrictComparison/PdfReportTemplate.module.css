@@ -1,0 +1,211 @@
+/* Змінні для "дорогого" вигляду */
+:root {
+  --color-primary: #1a202c; /* Глибокий графіт */
+  --color-accent: #c5a572;  /* Приглушене золото/бронза */
+  --color-text: #2d3748;
+  --color-text-light: #718096;
+  --bg-header: #f7fafc;
+  --border-light: #e2e8f0;
+}
+
+.reportContainer {
+  width: 210mm;
+  min-height: 297mm;
+  background: #ffffff;
+  padding: 40px 50px; /* Більші відступи по боках */
+  font-family: 'Georgia', 'Times New Roman', serif; /* Serif виглядає дорожче для звітів */
+  color: var(--color-text);
+  box-sizing: border-box;
+  position: relative;
+}
+
+/* --- Header --- */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  border-bottom: 3px solid var(--color-primary); /* Жирна лінія знизу */
+  padding-bottom: 25px;
+  margin-bottom: 40px;
+}
+
+.brandSection {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.logoPlaceholder {
+  width: 60px;
+  height: 60px;
+  background: var(--color-primary);
+  color: var(--color-accent);
+  border-radius: 0; /* Гострі кути виглядають суворіше */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+}
+
+.brandName {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  font-size: 26px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.reportDate {
+  margin: 6px 0 0;
+  color: var(--color-accent);
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+}
+
+.reportTitleBlock {
+  text-align: right;
+}
+
+.reportTitleBlock h2 {
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  font-size: 14px;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--color-text-light);
+  font-weight: 600;
+}
+
+.reportTitleBlock p {
+  margin: 8px 0 0;
+  font-size: 32px;
+  font-weight: 400; /* Тонкий шрифт для елегантності */
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+/* --- Table --- */
+.tableWrapper {
+  margin-bottom: 50px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Helvetica Neue', 'Arial', sans-serif; /* Дані краще читаються в Sans-Serif */
+}
+
+/* Заголовки стовпців */
+.metricHeader {
+  text-align: left;
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--color-primary);
+  font-size: 11px;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  vertical-align: bottom;
+}
+
+.districtHeader {
+  padding: 16px 12px;
+  border-bottom: 1px solid var(--color-primary);
+  text-align: center;
+  vertical-align: bottom;
+  background: rgba(197, 165, 114, 0.05); /* Легкий фон колонки */
+  border-top: 3px solid var(--color-accent); /* Золота "шапка" */
+}
+
+.dName {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin-bottom: 4px;
+}
+
+.dCity {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-text-light);
+}
+
+/* Рядки розділів */
+.sectionRow td {
+  padding: 24px 12px 12px; /* Відступ зверху для розділення */
+  font-family: 'Georgia', serif;
+  font-weight: 700;
+  font-size: 16px;
+  color: var(--color-accent); /* Золотий колір заголовків */
+  border-bottom: 1px solid var(--border-light);
+  text-transform: none;
+}
+
+/* Рядки даних */
+.dataRow td {
+  padding: 14px 12px;
+  border-bottom: 1px solid #edf2f7;
+  font-size: 13px;
+  color: var(--color-text);
+}
+
+.dataRow:last-child td {
+  border-bottom: 1px solid var(--color-primary); /* Завершальна лінія розділу */
+}
+
+.labelCell {
+  font-weight: 500;
+  color: var(--color-text);
+}
+
+.valueCell {
+  text-align: center;
+  font-weight: 600; /* Трохи жирніше для цифр */
+  color: var(--color-primary);
+  background: rgba(197, 165, 114, 0.02); /* Дуже ледь помітний фон для колонок даних */
+}
+
+/* --- Footer --- */
+.footer {
+  position: absolute;
+  bottom: 40px;
+  left: 50px;
+  right: 50px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: 'Helvetica Neue', 'Arial', sans-serif;
+  font-size: 10px;
+  color: var(--color-text-light);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.footerInfo {
+  display: flex;
+  gap: 30px;
+}
+
+.footerInfo span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.disclaimer {
+  max-width: 40%;
+  text-align: right;
+  line-height: 1.4;
+  opacity: 0.7;
+}

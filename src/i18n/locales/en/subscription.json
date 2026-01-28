@@ -1,41 +1,48 @@
 {
   "subscription": {
-    "title": "Choose Subscription",
-    "subtitle": "Flexible plans for property search and professionals",
-    "current_label": "(Current)",
+    "title": "Choose a Subscription",
+    "subtitle": "Flexible plans for real estate search and professionals",
     "active_plan_label": "Active Plan",
-    "wait_expire": "Please wait for your current subscription to expire to change plans.",
+    "wait_expire": "Please wait for your current subscription to expire before changing plans.",
     "included_title": "Included:",
     "disabled_title": "Not available:",
-        "incomplete": "Payment pending",
     "buttons": {
       "active": "Active",
       "stay_free": "Stay on Free",
-      "choose": "Choose {{plan}}",
+      "choose": "Select {{plan}}",
       "upgrade": "Upgrade Subscription",
       "has_active_sub": "Subscription Active"
-    },
-    "lock": {
-      "title": "Subscription Required",
-      "default_msg": "This feature is available with a paid subscription."
     },
     "plans": {
       "free": { "name": "Free", "price": "€0" },
       "weekly": { "name": "Weekly", "price": "€2.99 / week" },
-      "premium": { "name": "Premium", "price": "€8.99 / mo" },
-      "realtor": { "name": "Realtor Pro", "price": "€29.00 / mo" }
+      "premium": { "name": "Premium", "price": "€8.99 / month" },
+      "realtor": { "name": "Realtor Pro", "price": "€29.00 / month" }
     },
     "features": {
-      "basic_map": "Basic information",
-      "limited_filters": "Limited filters",
-      "limited_data_show": "Limited data view",
-      "full_data_access": "Full data access",
-      "all_filters": "All filters",
-      "personal_stats_access": "Statistics",
-      "save_favorites": "Save districts",
-      "compare_districts": "Comparison",
-      "export_data": "Export reports (PDF/Excel)",
-      "priority_support": "Personal Manager"
+      "district_limit_5": "View up to 5 districts per city",
+      "filters_limit_2": "Limited access to only 2 filter blocks",
+      "basic_rating": "Basic location attractiveness rating",
+      "safety_edu_analytics": "Detailed safety and education analytics",
+      "financial_stats": "Full financial stats and price per m²",
+      "favorites_save": "Save districts to 'Favorites'",
+      "compare_tools": "Tools for comparing multiple districts",
+      "pdf_export": "Export professional PDF reports",
+      "unlimited_districts": "Unlimited access to all city districts",
+      "extended_filters": "Extended access to filtering",
+      "partial_analytics": "Partial access to analytics page",
+      "personal_stats": "Personal statistics",
+      "save_favorites": "Ability to save favorite districts",
+      "pdf_download": "Download PDF files with district info",
+      "all_weekly_features": "All Weekly features in a monthly plan",
+      "all_premium_features": "All Premium plan benefits",
+      "roi_calculator": "Investment Calculator (ROI)",
+      "white_label_pdf": "PDF reports with your custom branding",
+      "compare_4_districts": "Compare up to 4 districts simultaneously",
+      "full_filter_access": "Full access to all filters",
+      "full_district_info": "Complete district information",
+      "popular_districts_monitor": "Monitoring of most popular districts",
+      "growth_tracking": "Tracking growth of selected districts"
     }
   }
 }

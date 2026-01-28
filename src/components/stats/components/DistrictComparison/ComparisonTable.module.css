@@ -1,0 +1,98 @@
+.tableWrapper {
+  background: var(--bg-white);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+  padding: var(--spacing-lg);
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.metricCol {
+  background: linear-gradient(180deg, var(--bg-white), var(--bg-light));
+  color: var(--text-medium);
+  font-weight: 600;
+}
+
+.districtCol {
+  background: linear-gradient(180deg, var(--bg-white), var(--bg-light));
+  text-align: center;
+}
+
+.districtHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dName {
+  font-weight: 700;
+  color: var(--text-dark);
+}
+
+.dCity {
+  font-size: 0.75rem;
+  color: var(--text-light);
+}
+
+.sectionHeader td {
+  background: var(--primary-gradient);
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 10px;
+}
+
+.dataRow td {
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border-color);
+  transition: background-color 0.2s ease;
+}
+
+.dataRow:hover td {
+  background-color: var(--bg-hover);
+}
+
+.metricName {
+  font-weight: 500;
+  color: var(--text-medium);
+}
+
+.rating {
+  font-weight: 700;
+  color: var(--accent-color);
+}
+
+/* ===== DARK THEME FIXES ===== */
+
+[data-theme='dark'] .tableWrapper {
+  background: var(--bg-white);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+}
+
+[data-theme='dark'] .metricCol {
+  background: linear-gradient(180deg, var(--bg-white), var(--bg-light));
+  color: rgba(255,255,255,0.7);
+}
+
+[data-theme='dark'] .metricName {
+  color: rgba(255,255,255,0.85);
+}
+
+[data-theme='dark'] .districtCol {
+  background: linear-gradient(180deg, #1e293b, #0f172a);
+}
+
+[data-theme='dark'] .sectionHeader td {
+  background: linear-gradient(135deg, #1e293b, #020617);
+  color: #e5e7eb;
+}
+
+[data-theme='dark'] .dataRow:hover td {
+  background-color: #334155;
+}

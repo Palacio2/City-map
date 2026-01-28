@@ -6,6 +6,8 @@
   width: 100%;
   padding: var(--spacing-md);
   box-sizing: border-box; 
+  /* Ensures the form takes full height if needed, or at least respects the layout */
+  min-height: 100%; 
 }
 
 .errorContainer {
@@ -14,13 +16,13 @@
 }
 
 .card {
-  background-color: var(--bg-white);
+  background-color: var(--bg-white); /* Will turn dark in dark mode */
   border-radius: var(--border-radius-lg);
   padding: var(--spacing-xl);
   width: 100%;
   max-width: 500px;
   box-shadow: var(--shadow-card);
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color); /* Will adapt to dark border */
   position: relative;
   transition: var(--transition-default);
   box-sizing: border-box; 
@@ -28,6 +30,7 @@
 
 .card:hover {
   box-shadow: var(--shadow-hover);
+  border-color: var(--primary-light);
 }
 
 .header {
@@ -36,7 +39,7 @@
 }
 
 .title {
-  color: var(--text-dark);
+  color: var(--text-dark); /* Will turn white in dark mode */
   font-size: 2rem;
   margin: 0 0 var(--spacing-xs) 0;
   font-weight: 700;
@@ -180,10 +183,11 @@
 .button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow: var(--shadow-hover);
+  opacity: 0.9;
 }
 
 .backButton {
-  background-color: var(--bg-light);
+  background-color: var(--bg-light); /* Will be dark blue in dark mode */
   color: var(--text-medium);
   border: 1px solid transparent; 
   flex: 0 0 100px;

@@ -1,4 +1,4 @@
-import { supabase } from '../../supabaseClient';
+import { supabase } from '../../supabaseClient'; 
 
 const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/favorites`;
 
@@ -32,7 +32,7 @@ export const favoritesApi = {
     }
 
     if (response.status === 204 || response.headers.get('content-length') === '0') {
-        return { success: true, message: "Дія виконана" };
+        return { success: true };
     }
 
     return await response.json();
@@ -43,10 +43,38 @@ export const favoritesApi = {
     return data.favorites || [];
   },
 
+  async addFavorite(districtId) {
+    return await this.request('add', {
+      method: 'POST',
+      body: JSON.stringify({ districtId })
+    });
+  },
+
   async removeFavorite(districtId) {
     return await this.request('remove', {
       method: 'POST',
       body: JSON.stringify({ districtId })
     });
+  },
+
+  async checkFavorite(districtId) {
+    try {
+      const favorites = await this.getFavorites();
+      return favorites.some(f => f.district_id === districtId || f.id === districtId);
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+  },
+
+  async toggleFavorite(districtId) {
+    const isFav = await this.checkFavorite(districtId);
+    if (isFav) {
+      await this.removeFavorite(districtId);
+      return false;
+    } else {
+      await this.addFavorite(districtId);
+      return true;
+    }
   }
 };

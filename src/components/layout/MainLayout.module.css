@@ -3,6 +3,9 @@
   flex-direction: column;
   min-height: 100dvh;
   width: 100%;
+  background-color: var(--bg-light);
+  color: var(--text-dark);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .mainContent {
@@ -14,17 +17,16 @@
   align-items: center;
   padding: 20px 0;
   background-color: var(--bg-light);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .contentWrapper {
   width: 100%;
   max-width: 1200px;
-  
   display: flex;
   justify-content: center;
   flex-direction: column;
   margin: auto 0;
-  
   padding: 0 16px; 
   box-sizing: border-box; 
 }
@@ -33,4 +35,12 @@
   .contentWrapper {
     padding: 0 24px;
   }
+}
+
+.card,
+.button,
+.backButton,
+.select,
+.navLink {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }

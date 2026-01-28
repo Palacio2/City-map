@@ -1,4 +1,4 @@
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@supabaseClient';
 
 const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
@@ -33,7 +33,6 @@ export async function trackActivity(type) {
   try {
     await supabase.rpc('track_user_activity', { activity_type: type });
   } catch (err) {
-    // Errors are logged silently
   }
 }
 
@@ -41,7 +40,6 @@ export async function updateUserTime(seconds) {
   try {
     await supabase.rpc('update_user_time', { seconds });
   } catch (err) {
-    // Errors are logged silently
   }
 }
 
@@ -49,6 +47,5 @@ export async function trackDistrictVisit(districtId) {
   try {
     await supabase.rpc('track_district_visit', { did: districtId });
   } catch (err) {
-    // Errors are logged silently
   }
 }

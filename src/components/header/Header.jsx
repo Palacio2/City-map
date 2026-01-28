@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from './Header.module.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@supabaseClient';
 import { 
   FaGlobe, 
   FaHeart, 
@@ -11,32 +11,24 @@ import {
   FaSun, 
   FaMoon 
 } from 'react-icons/fa';
-import { useSubscription } from '../../pages/subscription/SubscriptionContext';
+import { useSubscription } from '@subscription/SubscriptionContext';
 import { useTranslation } from 'react-i18next';
+import { useTheme } from './ThemeContext';
 
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
   const { isPremium } = useSubscription();
+  
+  const { theme, toggleTheme } = useTheme(); 
+  
+  const isDarkMode = theme === 'dark';
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'dark';
-  });
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.setAttribute('data-theme', 'dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.removeAttribute('data-theme');
-      localStorage.setItem('theme', 'light');
-    }
-  }, [isDarkMode]);
 
   useEffect(() => {
     checkAuthStatus();
@@ -73,8 +65,7 @@ export default function Header() {
   const isActive = (path) => location.pathname === path ? styles.navLinkActive : '';
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
   const toggleLanguageDropdown = () => setShowLanguageDropdown(!showLanguageDropdown);
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
-
+  
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     setShowLanguageDropdown(false);

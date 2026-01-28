@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft, FaCheckCircle, FaTimesCircle, FaExclamationTriangle } from 'react-icons/fa';
-import { fetchUserBillingHistory, cancelUserSubscription } from '../api/billingApi';
-import { useSubscription } from '../../pages/subscription/SubscriptionContext';
+import { fetchUserBillingHistory, cancelUserSubscription } from '@api/billingApi';
+import { useSubscription } from '@subscription/SubscriptionContext';
 import styles from './BillingHistoryPage.module.css';
 
 const ITEMS_PER_PAGE = 5;
@@ -23,21 +23,25 @@ export default function BillingHistoryPage() {
   const [cancellationError, setCancellationError] = useState(null);
 
   useEffect(() => {
+    let mounted = true;
     const loadBillingData = async () => {
       try {
         setIsLoading(true);
         setError(null);
         const { subscriptions, count } = await fetchUserBillingHistory(currentPage, ITEMS_PER_PAGE);
-        setBillingHistory(subscriptions || []);
-        setTotalCount(count);
+        if (mounted) {
+            setBillingHistory(subscriptions || []);
+            setTotalCount(count);
+        }
       } catch (e) {
-        setError(t('profile:billing_page.error_load'));
+        if (mounted) setError(t('profile:billing_page.error_load'));
       } finally {
-        setIsLoading(false);
+        if (mounted) setIsLoading(false);
       }
     };
     loadBillingData();
-  }, [currentPage, t]);
+    return () => { mounted = false; };
+  }, [currentPage]);
 
   const handleManageButton = () => {
     if (subscription.plan === 'free' || subscription.status !== 'active') {
@@ -48,16 +52,17 @@ export default function BillingHistoryPage() {
   };
 
   const confirmCancellation = async () => {
+    if (isCancelling) return;
     setIsCancelling(true);
     setShowCancelModal(false);
     setCancellationError(null);
     try {
-      if (!subscription.id) throw new Error('No subscription ID found');
+      if (!subscription.id) throw new Error('No subscription ID');
       await cancelUserSubscription(subscription.id);
       await updateSubscription(); 
-       const { subscriptions, count } = await fetchUserBillingHistory(currentPage, ITEMS_PER_PAGE);
-       setBillingHistory(subscriptions || []);
-       setTotalCount(count);
+      const { subscriptions, count } = await fetchUserBillingHistory(currentPage, ITEMS_PER_PAGE);
+      setBillingHistory(subscriptions || []);
+      setTotalCount(count);
     } catch (error) {
       setCancellationError(t('profile:billing_page.error_cancel'));
     } finally {
@@ -72,9 +77,8 @@ export default function BillingHistoryPage() {
     }
   };
 
-  const tableData = billingHistory.map(sub => {
+  const tableData = useMemo(() => billingHistory.map(sub => {
     const planKey = sub.plan_name === 'pro' ? 'premium' : (sub.plan_name || 'free');
-    
     return {
       id: sub.id,
       date: new Date(sub.created_at).toLocaleDateString('uk-UA'),
@@ -85,15 +89,11 @@ export default function BillingHistoryPage() {
       invoiceId: sub.payment_id ? sub.payment_id.replace('TX_', '').replace('SUB_', '').slice(-8).toUpperCase() : '---',
       expiresAt: sub.ends_at ? new Date(sub.ends_at).toLocaleDateString('uk-UA') : t('profile:stats_page.never')
     };
-  });
+  }), [billingHistory, t]);
 
   const getSubscriptionInfo = () => {
     if (isSubscriptionLoading) return null;
-
-    const actualPlanKey = (subscription?.isExpired || !subscription?.plan) 
-        ? 'free' 
-        : subscription.plan;
-    
+    const actualPlanKey = (subscription?.isExpired || !subscription?.plan) ? 'free' : subscription.plan;
     return {
       planName: t(`subscription:subscription.plans.${actualPlanKey}.name`),
       amount: t(`subscription:subscription.plans.${actualPlanKey}.price`),
@@ -106,7 +106,6 @@ export default function BillingHistoryPage() {
   };
 
   const subscriptionInfo = getSubscriptionInfo();
-
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
@@ -123,7 +122,6 @@ export default function BillingHistoryPage() {
       
       <div className={styles.content}>
         <div className={styles.billingContainer}>
-          
           {subscriptionInfo && (
             <div className={styles.subscriptionInfoCard}>
               <div className={styles.subInfoHeader}>
@@ -132,7 +130,6 @@ export default function BillingHistoryPage() {
                       {subscriptionInfo.isActive ? t('profile:subscription.status.active') : 'Free'}
                   </span>
               </div>
-              
               <div className={styles.currentPlanDetails}>
                 <div className={styles.planRow}>
                     <span className={styles.planLabel}>{t('profile:billing_page.plan_label')}</span>
@@ -149,16 +146,13 @@ export default function BillingHistoryPage() {
                     </div>
                 )}
               </div>
-              
               <button 
                 className={`${styles.manageButton} ${subscriptionInfo.isActive ? styles.cancelButton : styles.upgradeButton}`} 
                 onClick={handleManageButton}
                 disabled={isCancelling}
               >
                 {isCancelling ? t('profile:billing_page.processing') : (
-                  subscriptionInfo.isActive 
-                    ? t('profile:billing_page.cancel_sub')
-                    : t('profile:billing_page.update_plan')
+                  subscriptionInfo.isActive ? t('profile:billing_page.cancel_sub') : t('profile:billing_page.update_plan')
                 )}
               </button>
               {cancellationError && <div className={styles.cancellationError}>{cancellationError}</div>}

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaCheckCircle, FaEnvelope, FaRedo } from 'react-icons/fa';
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@supabaseClient';
 import styles from './RegisterSuccess.module.css';
 
 export default function RegisterSuccess() {

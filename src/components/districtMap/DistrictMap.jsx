@@ -1,16 +1,22 @@
-import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import React, { useState, useEffect, useCallback, Suspense, useMemo } from 'react';
+import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictMap.module.css';
-import CountrySelect from '../cityCountrySelect/CountrySelect';
-import CitySelect from '../cityCountrySelect/CitySelect';
-import FiltersPanel from '../filtersPanel/FiltersPanel';
-import { fetchDistrictsWithFilters } from '../api/districtsApi';
-import { filterDistrictsByCriteria } from '../../utils/filterUtils';
-import { transformDistrictsForDisplay } from '../../utils/dataTransformers';
-import { trackActivity, trackDistrictVisit } from '../../components/api/statsApi';
+import CountrySelect from '@cityCountrySelect/CountrySelect';
+import CitySelect from '@cityCountrySelect/CitySelect';
+import FiltersPanel from '@filtersPanel/FiltersPanel';
+import { fetchDistrictsWithFilters } from '@api/districtsApi';
+import { filterDistrictsByCriteria } from '@utils/filterUtils';
+import { transformDistrictsForDisplay } from '@utils/dataTransformers';
+import DistrictDetailsModal from './DistrictDetailsModal';
+import { DISTRICT_CATEGORIES } from '@config/districtFields';
+import { useSubscription } from '@subscription/SubscriptionContext';
 
 const DistrictsMap = React.lazy(() => import('./DistrictsMap'));
+
+const FREE_ALLOWED_CATEGORIES = Object.values(DISTRICT_CATEGORIES)
+  .filter(cat => !cat.isPremium)
+  .map(cat => cat.key);
 
 const LoadingIndicator = () => {
   const { t } = useTranslation('districts');
@@ -26,51 +32,43 @@ const ErrorDisplay = ({ error, onRetry }) => {
   const { t } = useTranslation('districts');
   return (
     <div className={styles.error}>
-      <p>{t('error_prefix', { error })}</p>
-      <button onClick={onRetry} className={styles.retryButton}>{t('retry')}</button>
+      <p>{error}</p>
+      <button onClick={onRetry} className={styles.retryButton}>
+        {t('retry')}
+      </button>
     </div>
   );
 };
 
 export default function DistrictMap() {
-  const { t } = useTranslation('districts');
   const { country, city } = useParams();
-  const [searchParams] = useSearchParams();
+  const { t } = useTranslation('districts');
+  const { isFree } = useSubscription(); 
   
   const [allDistricts, setAllDistricts] = useState([]);
-  const [filteredDistricts, setFilteredDistricts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({});
-
-  const trackedSearchRef = useRef(null);
   
-  const districtToOpen = searchParams.get('district');
+  const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const allowedCategories = useMemo(() => {
+    return isFree ? FREE_ALLOWED_CATEGORIES : null;
+  }, [isFree]);
 
   const loadData = useCallback(async () => {
     if (!country || !city) return;
 
-    const currentSearchKey = `${country}-${city}`;
-    
-    if (trackedSearchRef.current !== currentSearchKey) {
-      trackActivity('search');
-      trackedSearchRef.current = currentSearchKey;
-    }
+    setIsLoading(true);
+    setError(null);
 
     try {
-      setIsLoading(true);
-      setError(null);
-      
-      const decodedCountry = decodeURIComponent(country);
-      const decodedCity = decodeURIComponent(city);
-      
-      const rawData = await fetchDistrictsWithFilters(decodedCountry, decodedCity);
-      const transformedData = transformDistrictsForDisplay(rawData);
-      
-      setAllDistricts(transformedData);
-      setFilteredDistricts(transformedData);
+      const data = await fetchDistrictsWithFilters(country, city);
+      const transformed = transformDistrictsForDisplay(data);
+      setAllDistricts(transformed);
     } catch (err) {
-      setError(err.message || t('load_failed'));
+      setError(t('errors.fetch_failed'));
     } finally {
       setIsLoading(false);
     }
@@ -80,16 +78,38 @@ export default function DistrictMap() {
     loadData();
   }, [loadData]);
 
-  const handleFiltersChange = useCallback((filters) => {
-    setSelectedFilters(filters);
-    const filtered = filterDistrictsByCriteria(allDistricts, filters);
-    setFilteredDistricts(filtered);
-  }, [allDistricts]);
+  const allFilteredDistricts = useMemo(() => {
+    return filterDistrictsByCriteria(allDistricts, selectedFilters);
+  }, [allDistricts, selectedFilters]);
+
+  const totalCount = allFilteredDistricts.length;
+
+  const districtsToDisplay = useMemo(() => {
+    if (isFree) {
+       return allFilteredDistricts.slice(0, 5);
+    }
+    return allFilteredDistricts;
+  }, [allFilteredDistricts, isFree]);
+
+  const handleFiltersChange = useCallback((newFilters) => {
+    setSelectedFilters(newFilters);
+  }, []);
 
   const handleDistrictClick = useCallback((district) => {
-    if (district?.id) {
-      trackDistrictVisit(district.id);
-    }
+    setSelectedDistrict(district);
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedDistrict(null);
+  }, []);
+  
+  const handleToggleFavorite = useCallback((districtId, isFavorite) => {
+    const updateDistrictInList = (list) => 
+      list.map(d => d.id === districtId ? { ...d, isFavorite } : d);
+
+    setAllDistricts(prev => updateDistrictInList(prev));
   }, []);
 
   if (!country) return <CountrySelect />;
@@ -101,6 +121,7 @@ export default function DistrictMap() {
         <FiltersPanel 
           onFiltersChange={handleFiltersChange}
           selectedFilters={selectedFilters}
+          allowedCategories={allowedCategories}
         />
         
         {isLoading ? (
@@ -110,14 +131,22 @@ export default function DistrictMap() {
         ) : (
           <Suspense fallback={<LoadingIndicator />}>
             <DistrictsMap 
-                districts={filteredDistricts}
+                districts={districtsToDisplay}
+                totalCount={totalCount}
+                
                 onDistrictClick={handleDistrictClick}
                 selectedFilters={selectedFilters}
-                initialSelectedDistrict={districtToOpen}
             />
           </Suspense>
         )}
       </div>
+      
+      <DistrictDetailsModal
+        district={selectedDistrict}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onToggleFavorite={handleToggleFavorite}
+      />
     </div>
   );
 }

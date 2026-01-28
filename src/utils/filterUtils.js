@@ -1,52 +1,13 @@
+import { DISTRICT_CATEGORIES } from '@config/districtFields';
+
 const getFilterData = (district) => district.filterData || null;
 
-const FILTER_MAPPING = {
-  education: {
-    kindergartens: 'kindergartens',
-    schools: 'schools',
-    universities: 'universities'
-  },
-  medicine: {
-    hospitals: 'hospitals',
-    clinics: 'clinics',
-    pharmacies: 'pharmacies',
-    emergency: 'emergencyServices'
-  },
-  transport: {
-    bus_stops: 'busStops',
-    tram_stops: 'tramStops',
-    metro: 'metroStations',
-    parking: 'parkingSpots'
-  },
-  social: {
-    parks: 'parks',
-    cafes: 'cafesRestaurants',
-    playgrounds: 'playgrounds',
-    sports: 'sportsFacilities',
-    libraries: 'libraries',
-    cinemas: 'cinemas',
-    theaters: 'theaters',
-    museums: 'museums'
-  },
-  commerce: {
-    groceries: 'groceryStores',
-    construction: 'constructionStores',
-    clothing: 'clothingStores',
-    postOffices: 'postOffices',
-    banks: 'banksATMs',
-    beauty: 'beautySalons'
-  },
-  safety: {
-    police: 'policeStations',
-    cctv: 'cctv'
-  },
-  utilities: {
-    water: 'hasWaterSupply',
-    heating: 'hasHeating',
-    electricity: 'hasElectricity',
-    gas: 'hasGasSupply',
-    waste: 'hasWasteRemoval'
-  }
+const mapCrimeScoreToCategory = (score) => {
+  if (score === null || score === undefined) return null;
+  const num = parseFloat(score);
+  if (num < 4) return 'low';
+  if (num < 7) return 'medium';
+  return 'high';
 };
 
 export const filterDistrictsByCriteria = (districtsList, filters) => {
@@ -58,25 +19,31 @@ export const filterDistrictsByCriteria = (districtsList, filters) => {
     const data = getFilterData(district);
     if (!data) return false;
 
-    for (const [category, fieldsMap] of Object.entries(FILTER_MAPPING)) {
-      if (filters[category]) {
-        const filterGroup = filters[category];
-        const dataGroup = data[category] || {};
+    for (const categoryConfig of Object.values(DISTRICT_CATEGORIES)) {
+      const catKey = categoryConfig.key;
+      const filterGroup = filters[catKey];
 
-        for (const [filterKey, dataKey] of Object.entries(fieldsMap)) {
-          if (filterGroup[filterKey] && !dataGroup[dataKey]) {
-            return false;
-          }
+      if (!filterGroup) continue;
+
+      const dataGroup = data[catKey] || {};
+
+      for (const field of categoryConfig.fields) {
+        if (field.key === 'crimeLevel') continue; 
+        
+        if (filterGroup[field.key]) {
+           const value = dataGroup[field.key];
+           if (!value) return false;
         }
       }
     }
 
-    if (filters.transport?.bike_lanes) {
-      if (!data.transport?.bikeLanes || data.transport.bikeLanes <= 0) return false;
-    }
-
-    if (filters.safety?.lighting) {
-      if (!data.safety?.streetLighting || data.safety.streetLighting <= 0) return false;
+    if (filters.safety?.crimeLevel && filters.safety.crimeLevel !== 'any') {
+      const dataLevelScore = data.safety?.crimeLevel;
+      const dataCategory = mapCrimeScoreToCategory(dataLevelScore);
+      
+      if (dataCategory !== filters.safety.crimeLevel) {
+        return false;
+      }
     }
 
     return true;

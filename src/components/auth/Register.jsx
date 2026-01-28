@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { supabase } from '@supabaseClient';
 import AuthForm from '@ui/authForm/AuthForm';
-import { supabase } from '../../supabaseClient';
+import useAuthRedirect from '@hooks/useAuthRedirect';
+import { useSocialLogin } from '@hooks/useSocialLogin';
 import { validateRegisterForm } from './validation';
-import useAuthRedirect from '../../hooks/useAuthRedirect';
 
 const LoadingScreen = () => (
   <div className="loading-container">
@@ -14,14 +15,17 @@ const LoadingScreen = () => (
 
 export default function Register() {
   const { t } = useTranslation('auth');
+  const navigate = useNavigate();
+  const isAutoLoginAttempted = useAuthRedirect();
+
   const [formData, setFormData] = useState({
     name: '', email: '', password: '', confirmPassword: ''
   });
   const [passwordVisibility, setPasswordVisibility] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
-  const isAutoLoginAttempted = useAuthRedirect();
+
+  const socialLogin = useSocialLogin(setIsLoading, setErrors);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -69,28 +73,10 @@ export default function Register() {
 
     } catch (error) {
       let errorMessage = t('errors.generic');
-      if (error.message.includes('already registered')) errorMessage = t('errors.user_exists');
-      if (error.message.includes('password')) errorMessage = t('errors.password_short');
+      if (error.message && error.message.includes('already registered')) errorMessage = t('errors.user_exists');
+      if (error.message && error.message.includes('password')) errorMessage = t('errors.password_short');
       
       setErrors({ submit: errorMessage });
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const socialLogin = async (provider) => {
-    try {
-      setIsLoading(true);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider,
-        options: { 
-          redirectTo: `${window.location.origin}/auth/callback`,
-          skipBrowserRedirect: false
-        }
-      });
-      if (error) throw error;
-    } catch (error) {
-      setErrors({ submit: t('errors.generic') });
     } finally {
       setIsLoading(false);
     }

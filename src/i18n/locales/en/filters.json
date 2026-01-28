@@ -1,104 +1,82 @@
 {
-  "panel": {
-    "title": "Filters",
-    "free_version": "Free version",
-    "premium": "Premium",
-    "upgrade": "Upgrade",
-    "banner_title": "Get more features!",
-    "banner_text": "Unlock all filters with Premium subscription",
-    "view_tariffs": "View plans",
-    "clear": "Clear"
-  },
-  "options": {
-    "any": "Any",
-    "high": "High",
-    "medium": "Medium",
-    "low": "Low",
-    "good": "Good",
-    "average": "Average",
-    "poor": "Poor"
-  },
-  "education": {
-    "title": "🎓 Education",
-    "kindergartens": "Kindergartens",
-    "schools": "Schools",
-    "universities": "Universities",
-    "min_kindergartens": "Min. kindergartens:",
-    "min_schools": "Min. schools:",
-    "min_universities": "Min. universities:",
-    "min_rating": "Min. education rating:",
-    "unit": "pcs"
-  },
-  "medicine": {
-    "title": "🏥 Medicine",
-    "hospitals": "Hospitals",
-    "clinics": "Clinics",
-    "pharmacies": "Pharmacies",
-    "emergency": "Emergency",
-    "min_hospitals": "Min. hospitals:",
-    "min_clinics": "Min. clinics:",
-    "min_rating": "Min. medicine rating:"
-  },
-  "commerce": {
-    "title": "🛒 Commerce & Services",
-    "groceries": "Grocery stores",
-    "construction": "Hardware stores",
-    "clothing": "Clothing stores",
-    "post": "Post offices",
-    "banks": "Banks & ATMs",
-    "beauty": "Beauty salons",
-    "min_groceries": "Min. grocery stores:",
-    "density": "Store density:",
-    "min_rating": "Min. commerce rating:"
-  },
-  "safety": {
-    "title": "🛡️ Safety",
-    "crime_level": "Crime level:",
-    "police": "Police stations",
-    "cctv": "CCTV Cameras",
-    "lighting": "Night lighting",
-    "level_low": "Low",
-    "level_medium": "Medium",
-    "level_high": "High",
-    "level_any": "Any"
-  },
-  "utilities": {
-    "title": "💡 Utilities",
-    "water": "Water supply",
-    "heating": "Heating",
-    "electricity": "Electricity",
-    "gas": "Gas supply",
-    "waste": "Waste disposal",
-    "quality": "Service quality:",
-    "cost_label": "Utility cost (UAH/m²):",
-    "from": "From",
-    "to": "To"
-  },
-  "social": {
-    "title": "🌳 Social Infrastructure",
-    "parks": "Parks & Squares",
-    "cafes": "Cafes & Restaurants",
-    "playgrounds": "Playgrounds",
-    "sports": "Sports grounds",
-    "libraries": "Libraries",
-    "cinemas": "Cinemas",
-    "theaters": "Theaters",
-    "museums": "Museums",
-    "min_parks": "Min. parks:",
-    "min_park_size": "Min. park size:",
-    "min_rating": "Min. social rating:",
-    "unit_size": "m²"
-  },
-  "transport": {
-    "title": "🚍 Transport",
-    "bus_stops": "Bus stops",
-    "tram_stops": "Tram stops",
-    "metro": "Metro stations",
-    "bike_lanes": "Bike lanes",
-    "parking": "Parking",
-    "distance": "Distance to transport:",
-    "frequency": "Transport frequency:",
-    "unit_dist": "meters",
-    "placeholder_dist": "Up to"
+  "filter": {
+    "panel": {
+      "title": "Filters",
+      "banner_title": "Get more features!",
+      "banner_text": "Unlock all filters with a subscription",
+      "view_tariffs": "View Plans",
+      "clear": "Clear"
+    },
+    "options": {
+      "any": "Any",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "categories": {
+      "education": {
+        "label": "Education",
+        "schools": "Schools",
+        "kindergartens": "Kindergartens",
+        "universities": "Universities"
+      },
+      "medicine": {
+        "label": "Medicine",
+        "hospitals": "Hospitals",
+        "pharmacies": "Pharmacies",
+        "clinics": "Clinics",
+        "emergencyServices": "Emergency Services"
+      },
+      "transport": {
+        "label": "Transport",
+        "busStops": "Bus stops",
+        "parkingSpots": "Parking spots",
+        "metroStations": "Metro stations",
+        "tramStops": "Tram stops",
+        "bikeLanes": "Bike lanes",
+        "transportFrequency": "Transport frequency",
+        "transportAvgDistance": "Distance to transport"
+      },
+      "commerce": {
+        "label": "Commerce",
+        "groceryStores": "Grocery stores",
+        "banksATMs": "Banks & ATMs",
+        "shoppingMalls": "Shopping malls",
+        "postOffices": "Post offices",
+        "constructionStores": "Hardware stores",
+        "clothingStores": "Clothing stores",
+        "beautySalons": "Beauty salons",
+        "cafesRestaurants": "Cafes & Restaurants"
+      },
+      "safety": {
+        "label": "Safety",
+        "crimeLevel": "Crime level",
+        "policeStations": "Police stations",
+        "cctv": "CCTV cameras",
+        "streetLighting": "Street lighting"
+      },
+      "utilities": {
+        "label": "Utilities",
+        "costPerSqm": "Cost per m²",
+        "propertyPricePerSqm": "Price per m²",
+        "hasWaterSupply": "Water supply",
+        "hasElectricity": "Electricity",
+        "hasHeating": "Heating",
+        "hasGasSupply": "Gas",
+        "hasWasteRemoval": "Waste removal"
+      },
+      "social": {
+        "label": "Social",
+        "parks": "Parks",
+        "avgParkSize": "Avg park size",
+        "playgrounds": "Playgrounds",
+        "cinemas": "Cinemas",
+        "theaters": "Theaters",
+        "museums": "Museums",
+        "libraries": "Libraries",
+        "sportsFacilities": "Sports facilities",
+        "airQuality": "Air Quality"
+      }
+    }
   }
 }

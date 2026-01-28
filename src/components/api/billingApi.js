@@ -1,10 +1,9 @@
-import { supabase } from '../../supabaseClient';
+import { supabase } from '@supabaseClient';
 
 const FUNCTION_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 
 export async function fetchUserBillingHistory(page = 1, limit = 10) {
   try {
-    // Виправлено на getSession для надійності
     const { data: { user } } = await supabase.auth.getUser(); 
     if (!user) throw new Error('Необхідна авторизація');
 

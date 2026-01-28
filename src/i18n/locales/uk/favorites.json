@@ -3,6 +3,7 @@
   "remove_tooltip": "Видалити з улюблених",
   "confirm_remove": "Видалити з улюблених?",
   "na": "н/д",
+  "price_label": "Ціна:",
   "empty": {
     "title": "Список порожній",
     "description": "Додайте райони до улюблених на карті"
@@ -13,6 +14,15 @@
     "delete_failed": "Помилка видалення"
   },
   "buttons": {
-    "login": "Увійти"
+    "login": "Увійти",
+    "go_to_map": "Перейти до карти"
+  },
+  "stats": {
+    "education": "Освіта",
+    "transport": "Транспорт",
+    "safety": "Безпека",
+    "ecology": "Екологія",
+    "medicine": "Медицина",
+    "shopping": "Магазини"
   }
 }

@@ -1,174 +1,253 @@
 .headerSection {
   position: relative;
-  min-height: 250px; 
-  background: var(--bg-light);
+  min-height: 380px;
+  background: var(--bg-dark, #1a1a1a);
   flex-shrink: 0;
+  overflow: hidden;
+  border-radius: 24px 24px 0 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.headerBackground {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
 }
 
 .headerPhoto {
   width: 100%;
   height: 100%;
-  position: absolute;
-  top: 0;
-  left: 0;
   object-fit: cover;
+  animation: slowZoom 20s infinite alternate; 
 }
 
-/* Градієнт зроблено трохи темнішим зверху, щоб кнопки було видно */
+@keyframes slowZoom {
+  from { transform: scale(1); }
+  to { transform: scale(1.1); }
+}
+
+.gradientOverlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.2) 0%,
+    rgba(0,0,0,0) 30%,
+    rgba(0,0,0,0.4) 60%,
+    rgba(0,0,0,0.9) 100%
+  );
+}
+
 .headerContent {
   position: relative;
   z-index: 2;
-  height: 100%;
-  min-height: 250px;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, rgba(0,0,0,0) 20%, rgba(0,0,0,0.6) 60%, rgba(0,0,0,0.95) 100%);
-  padding: 24px;
+  flex: 1;
+  padding: 24px 32px;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
+  justify-content: space-between;
   color: white;
 }
 
-.headerTop {
+.topBar {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end; /* Вирівнюємо по низу, щоб заголовок і кнопки були на одному рівні візуально */
-  margin-bottom: 12px;
-  position: relative;
+  align-items: center;
 }
 
-.titleWrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  max-width: 85%;
-  /* Щоб текст не налізав на кнопки на мобільних */
-  padding-right: 10px; 
-}
-
-/* Кнопки закриття та лайку тепер фіксовані зверху */
-.headerActions {
-  position: absolute;
-  top: -100px; /* Піднімаємо їх у верхній правий кут контейнера */
-  right: 0;
-  display: flex;
-  gap: 10px;
-  z-index: 10;
-}
-
-
-
-.modalTitle {
-  font-size: 32px;
-  font-weight: 800;
-  margin: 0;
-  text-shadow: 0 2px 4px rgba(0,0,0,0.6);
-  line-height: 1.1;
-  word-break: break-word;
-}
-
-.lastUpdated {
-  font-size: 13px;
-  color: rgba(255, 255, 255, 0.85);
+.updateBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(8px);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
   font-weight: 500;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+  color: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  background-color: #4ade80;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #4ade80;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 12px;
+}
+
+.glassBtn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
-  gap: 4px;
-}
-
-.photoDescription {
-  font-size: 15px;
-  opacity: 0.95;
-  margin: 8px 0 16px 0;
-  max-width: 600px;
-  line-height: 1.5;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-.quickStatsBar {
-  display: flex;
-  gap: 24px;
-  border-top: 1px solid rgba(255,255,255,0.3);
-  padding-top: 16px;
-  flex-wrap: wrap;
-}
-
-.quickStat {
-  display: flex;
-  flex-direction: column;
-}
-
-.quickStatLabel {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  opacity: 0.9;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-}
-
-.quickStatValue {
-  font-size: 16px;
-  font-weight: 700;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
-}
-
-.modalFooter {
-  padding: 16px;
-  border-top: 1px solid var(--border-color);
-  background: var(--bg-white);
-  padding-bottom: max(16px, env(safe-area-inset-bottom));
-}
-
-.simpleCloseButton {
-  width: 100%;
-  padding: 14px;
-  background: var(--bg-light);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-dark);
+  justify-content: center;
+  color: white;
   cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 0;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.glassBtn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25);
+}
+
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.titleSection {
+  margin-top: auto;
+  margin-bottom: 24px;
+}
+
+.districtTitle {
+  font-size: 48px;
+  font-weight: 800;
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  text-shadow: 0 2px 15px rgba(0,0,0,0.3);
+  background: linear-gradient(to right, #fff, #f0f0f0);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+  width: 100%;
+}
+
+.statCard {
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
   transition: background 0.2s;
 }
 
-.simpleCloseButton:active {
-  background: #e2e8f0;
+.statCard:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.statIconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.statInfo {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.statLabel {
+  font-size: 11px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.statValue {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.modalFooter {
+  padding: 16px 32px;
+  border-top: 1px solid var(--border-color, #eee);
+  background: var(--bg-white, #fff);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.closeFooterBtn {
+  padding: 10px 24px;
+  border-radius: 12px;
+  background: #f3f4f6;
+  border: none;
+  color: #374151;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.closeFooterBtn:hover {
+  background: #e5e7eb;
 }
 
 @media (max-width: 768px) {
-  .headerSection, .headerContent {
-    min-height: 220px;
+  .headerSection {
+    min-height: 320px;
   }
-
+  
   .headerContent {
-    padding: 20px 16px;
+    padding: 20px;
+  }
+
+  .districtTitle {
+    font-size: 32px;
+  }
+
+  .statsGrid {
+    display: flex;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 4px;
+    margin: 0 -20px;
+    padding: 0 20px 10px 20px;
+    width: calc(100% + 40px);
+  }
+
+  .statCard {
+    min-width: 140px;
+    scroll-snap-align: start;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
   
-  .headerActions {
-    top: -80px; 
-  }
-
-  .modalTitle {
-    font-size: 26px;
-  }
-
-  .titleWrapper {
-    max-width: 100%;
-  }
-
-  .quickStatsBar {
-    gap: 16px;
-    padding-top: 12px;
-    justify-content: space-between;
-  }
-  
-  .quickStat {
-    flex: 1 1 auto;
+  .statIconWrapper {
+    width: 28px;
+    height: 28px;
   }
 }

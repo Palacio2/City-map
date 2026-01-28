@@ -1,271 +1,118 @@
 .panel {
-  width: 360px; 
+  width: 360px;
   min-width: 360px;
-  height: calc(100vh - 120px); 
+  height: calc(100vh - 120px);
   display: flex;
   flex-direction: column;
   background: var(--bg-white);
-  border-radius: 16px;
-  box-shadow: var(--shadow);
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  border-radius: 18px;
+  box-shadow: var(--shadow-card);
   color: var(--text-dark);
   overflow: hidden;
   border: 1px solid var(--border-color);
-  transition: all 0.3s ease;
-  
   position: sticky;
   top: 20px;
-}
-
-.panel:hover {
-  box-shadow: var(--shadow-hover);
+  transition: all 0.3s ease;
 }
 
 .panelHeader {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 1.5rem 1.5rem 1rem 1.5rem;
-  background: var(--bg-white);
+  padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--border-color);
-  flex-shrink: 0;
+  background: var(--bg-white);
 }
 
 .panelTitle {
   margin: 0;
-  font-size: 1.5rem;
+  font-size: 1.15rem;
   font-weight: 700;
-  color: var(--text-dark);
-  text-align: center;
 }
 
-.subscriptionStatus {
-  display: flex;
-  justify-content: center;
-}
-
-.subscriptionInfo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-}
-
-.freeBadge {
-  color: #636e72;
-  font-weight: 500;
-}
-
-.subscriptionInfoPremium {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 0.875rem;
-}
-
-.premiumBadge {
-  color: #a29bfe;
-  font-weight: 600;
-}
-
-.upgradeLink {
-  background: none;
-  border: none;
-  color: #667eea;
-  cursor: pointer;
-  text-decoration: underline;
-  font-size: 0.875rem;
-  padding: 0.25rem 0.5rem;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
-
-.upgradeLink:hover {
-  color: #5a67d8;
-  background-color: rgba(102, 126, 234, 0.1);
-}
-
-.panelContent {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  min-height: 0; 
-}
-
-.scrollContainer {
+.content {
   flex: 1;
   overflow-y: auto;
-  padding: 1.5rem;
-  padding-right: 1rem;
-  scrollbar-width: thin;
-  scrollbar-color: var(--primary-light) var(--bg-light);
+  display: flex;
+  flex-direction: column;
 }
 
-.scrollContainer::-webkit-scrollbar {
-  width: 6px;
+.scrollableContent {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
-.scrollContainer::-webkit-scrollbar-track {
-  background: var(--bg-light);
-  border-radius: 3px;
-}
-
-.scrollContainer::-webkit-scrollbar-thumb {
-  background: var(--primary-light);
-  border-radius: 3px;
-  transition: background 0.3s ease;
-}
-
-.scrollContainer::-webkit-scrollbar-thumb:hover {
-  background: var(--primary-dark);
-}
-
-.section {
-  position: relative;
-  padding-bottom: 1.5rem;
-  margin-bottom: 1.5rem;
-}
-
-.section::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  height: 1px;
-  background: linear-gradient(to right, transparent, var(--border-color), transparent);
-  opacity: 0.7;
-}
-
-.section:last-of-type::after {
-  content: none;
+.sectionContainer {
+  animation: fadeIn 0.35s ease-out forwards;
 }
 
 .upgradeBanner {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
+  margin: 0 1.25rem 1.25rem;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+  border-radius: 14px;
   padding: 1rem;
-  margin: 0 1rem 1rem 1rem;
-  border-radius: 12px;
+  color: white;
   text-align: center;
-  flex-shrink: 0;
 }
 
 .bannerContent h4 {
-  margin: 0 0 0.5rem 0;
+  margin: 0 0 0.25rem 0;
   font-size: 1rem;
-  font-weight: 600;
 }
 
 .bannerContent p {
-  margin: 0 0 1rem 0;
-  font-size: 0.875rem;
+  margin: 0 0 0.75rem 0;
+  font-size: 0.85rem;
   opacity: 0.9;
 }
 
 .bannerButton {
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  background: white;
+  color: var(--primary-color);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 10px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-}
-
-.bannerButton:hover {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-1px);
+  width: 100%;
 }
 
 .actions {
-  display: flex;
-  gap: 12px;
-  padding: 1.5rem;
+  padding: 1rem 1.25rem;
   border-top: 1px solid var(--border-color);
   background: var(--bg-white);
-  flex-shrink: 0;
-  justify-content: center;
 }
 
 .clearButton {
-  padding: 1rem 2rem;
+  width: 100%;
+  padding: 0.7rem;
   background: var(--bg-light);
   color: var(--text-medium);
-  border: 2px solid var(--border-color);
-  border-radius: 12px;
-  font-weight: 600;
-  font-size: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: inherit;
+  transition: all 0.2s ease;
 }
 
 .clearButton:hover {
-  background: var(--bg-hover);
-  border-color: var(--text-light);
-  transform: translateY(-1px);
+  background: var(--primary-color);
+  color: white;
 }
 
-@media (max-width: 768px) {
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 968px) {
   .panel {
     width: 100%;
+    min-width: 0;
     height: auto;
-    max-height: 80vh; 
-    position: static; 
-  }
-  
-  .panelHeader {
-    padding: 1rem 1rem 0.75rem 1rem;
-  }
-  
-  .panelTitle {
-    font-size: 1.3rem;
-  }
-  
-  .scrollContainer {
-    padding: 1rem;
-    padding-right: 0.75rem;
-  }
-  
-  .upgradeBanner {
-    margin: 0.5rem;
-    padding: 0.875rem;
-  }
-  
-  .actions {
-    padding: 1rem;
-  }
-  
-  .clearButton {
-    width: 100%;
-  }
-}
-
-@media (max-width: 480px) {
-  .scrollContainer {
-    padding: 0.75rem;
-    padding-right: 0.5rem;
-  }
-  
-  .section {
-    padding-bottom: 1rem;
-    margin-bottom: 1rem;
-  }
-  
-  .upgradeBanner {
-    margin: 0.5rem;
-    padding: 0.75rem;
-  }
-  
-  .actions {
-    padding: 0.75rem;
-  }
-  
-  .clearButton {
-    padding: 0.75rem;
+    position: static;
+    border-radius: 0;
+    box-shadow: none;
+    border-left: none;
+    border-right: none;
   }
 }

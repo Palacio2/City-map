@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft, FaUser, FaEnvelope, FaSave, FaTimes, FaPhone, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
-import { profileAPI } from '../api/edit-profileApi';
-import { parsePhoneNumber, countryCodes, cleanPhoneNumberForSave, validatePhoneNumber } from '../../utils/phoneUtils';
+import { profileAPI } from '@api/edit-profileApi';
+import { parsePhoneNumber, countryCodes, cleanPhoneNumberForSave } from '@utils/phoneUtils';
+import { validateProfileForm } from '@utils/profileValidation';
 import styles from './ProfileEditPages.module.css';
 
 export default function ProfileEditPage() {
@@ -48,49 +49,49 @@ export default function ProfileEditPage() {
     }
   };
 
+const mapErrorToMessage = (error) => {
+    const msg = (error?.message || '').toLowerCase();
+
+    if (msg.includes('invalid refresh token') || msg.includes('jwt')) return t('errors.auth_error');
+    if (msg.includes('networkerror') || msg.includes('failed to fetch')) return t('errors.network_error');
+    if (msg.includes('user not found')) return t('errors.user_not_found');
+    
+    if (msg.includes('already registered') || msg.includes('already been registered') || msg.includes('unique constraint')) {
+        return t('errors.email_taken');
+    }
+    
+    if (msg.includes('rate limit') || msg.includes('security purposes') || msg.includes('try again after')) {
+        return t('errors.too_many_requests');
+    }
+    
+    if (msg.includes('is invalid') || (msg.includes('email') && msg.includes('invalid'))) {
+        return t('errors.email_invalid_format');
+    }
+
+    return error.message || t('errors.unknown_error');
+  };
+
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
     let newValue = value;
-
     if (name === 'phone') {
       newValue = value.replace(/[^0-9]/g, '');
     }
-
     updateState(name, newValue);
   }, []);
-
-  const validateForm = useCallback(() => {
-    const { name, email, phone, countryCode } = state;
-
-    if (name.trim().length > 30) {
-      setStatusMessage({ type: 'error', text: t('edit_page.errors.name_long') });
-      return false;
-    }
-    
-    if (!name.trim() || !email.trim()) {
-      setStatusMessage({ 
-          type: 'error', 
-          text: !name.trim() ? t('edit_page.errors.name_required') : t('edit_page.errors.email_required') 
-      });
-      return false;
-    }
-
-    if (phone.trim()) {
-        const phoneError = validatePhoneNumber(countryCode, phone, t);
-        if (phoneError) {
-            setStatusMessage({ type: 'error', text: phoneError });
-            return false;
-        }
-    }
-
-    return true;
-  }, [state, t]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setStatusMessage({ type: '', text: '' });
     
-    if (!validateForm()) return;
+    const validationError = validateProfileForm(state, t);
+    
+    if (validationError) {
+        setStatusMessage(validationError);
+        return; 
+    }
+
+    if (state.isSaving) return;
 
     updateState('isSaving', true);
     
@@ -102,10 +103,14 @@ export default function ProfileEditPage() {
         phone: phoneToSave
       });
 
-      if (state.email !== state.originalEmail) {
-        const updateEmailResult = await profileAPI.updateEmail(state.email.trim());
-        setStatusMessage({ type: 'success', text: updateEmailResult.message });
-        updateState('originalEmail', state.email);
+      if (state.email.trim() !== state.originalEmail) {
+        await profileAPI.updateEmail(state.email.trim());
+        
+        setStatusMessage({ 
+            type: 'success', 
+            text: t('edit_page.email_update_sent') 
+        });
+        updateState('originalEmail', state.email.trim());
       } else {
         setStatusMessage({ type: 'success', text: t('edit_page.success') });
         setTimeout(() => navigate('/profile'), 1500);
@@ -113,14 +118,12 @@ export default function ProfileEditPage() {
     } catch (error) {
       setStatusMessage({ 
         type: 'error', 
-        text: error.message || t('edit_page.errors.save_error') 
+        text: mapErrorToMessage(error) 
       });
     } finally {
       updateState('isSaving', false);
     }
   };
-
-  // Початковий лоадер прибрано
 
   return (
     <div className={styles.container}>
@@ -136,7 +139,7 @@ export default function ProfileEditPage() {
       
       <div className={styles.content}>
         <div className={styles.section}>
-          <form onSubmit={handleSubmit} className={styles.form}>
+          <form onSubmit={handleSubmit} className={styles.form} noValidate>
             <div className={styles.formHeader}>
               <h2 className={styles.formTitle}>{t('edit_page.main_info')}</h2>
               <p className={styles.formSubtitle}>{t('edit_page.enter_data')}</p>
@@ -173,7 +176,6 @@ export default function ProfileEditPage() {
                 required
                 disabled={state.isSaving}
                 maxLength={30}
-                autoComplete="name"
               />
             </div>
 
@@ -192,8 +194,7 @@ export default function ProfileEditPage() {
                 placeholder={t('edit_page.placeholders.email')}
                 required
                 disabled={state.isSaving}
-                maxLength={54}
-                autoComplete="email"
+                maxLength={60} 
               />
               
               {state.email !== state.originalEmail && (
@@ -218,7 +219,6 @@ export default function ProfileEditPage() {
                   onChange={(e) => updateState('countryCode', e.target.value)}
                   className={styles.countryCodeSelect}
                   disabled={state.isSaving}
-                  aria-label={t('labels.country_code')}
                 >
                   {countryCodes.map(item => (
                     <option key={item.code} value={item.code}>
@@ -235,7 +235,6 @@ export default function ProfileEditPage() {
                   className={styles.formInput}
                   placeholder={t('edit_page.placeholders.phone')}
                   disabled={state.isSaving}
-                  autoComplete="tel-national"
                 />
               </div>
             </div>

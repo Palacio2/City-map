@@ -1,32 +1,15 @@
-:root {
-  --transition-default: all 0.3s ease;
-  --shadow-default: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 6px 16px rgba(0, 0, 0, 0.12);
-  --status-success: #48bb78;
-  --status-error: #e53e3e;
-  --status-inactive: #a0aec0;
-  --bg-hover: #f7fafc;
-  --primary-light: #667eea;
-  --text-dark: #2d3748;
-  --text-medium: #4a5568;
-  --text-light: #718096;
-  --border-color: #e2e8f0;
-  --bg-light: #f7fafc;
-  --bg-white: #ffffff;
-}
-
 .container {
   min-height: 100vh;
   background: var(--bg-light);
-  padding: 24px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: var(--spacing-lg);
+  font-family: inherit;
 }
 
 .header {
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  margin-bottom: 32px;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
   max-width: 1200px;
   width: 100%;
   margin: 0 auto;
@@ -35,7 +18,7 @@
 .backButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
   color: var(--primary-light);
   background-color: var(--bg-white);
   text-decoration: none;
@@ -43,9 +26,9 @@
   font-size: 14px;
   transition: var(--transition-default);
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-sm);
   border: 2px solid var(--border-color);
-  box-shadow: var(--shadow-default);
+  box-shadow: var(--shadow-card);
   width: fit-content;
 }
 
@@ -62,15 +45,15 @@
 }
 
 .title {
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-xs);
   color: var(--text-dark);
-  font-size: 32px;
+  font-size: 2rem;
   font-weight: 700;
 }
 
 .subtitle {
   color: var(--text-light);
-  font-size: 16px;
+  font-size: 1rem;
   line-height: 1.5;
 }
 
@@ -83,21 +66,21 @@
 .billingContainer {
   display: grid;
   grid-template-columns: 320px 1fr;
-  gap: 24px;
+  gap: var(--spacing-lg);
   align-items: start;
 }
 
 .subscriptionInfoCard {
   background: var(--bg-white);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: var(--shadow-default);
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-xl);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--spacing-lg);
   position: sticky;
-  top: 24px;
+  top: var(--spacing-lg);
 }
 
 .subInfoHeader {
@@ -105,18 +88,18 @@
   justify-content: space-between;
   align-items: center;
   border-bottom: 1px solid var(--border-color);
-  padding-bottom: 16px;
+  padding-bottom: var(--spacing-md);
 }
 
 .subInfoHeader h3 {
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-dark);
   margin: 0;
 }
 
 .statusBadge {
-  font-size: 12px;
+  font-size: 0.75rem;
   font-weight: 700;
   padding: 4px 10px;
   border-radius: 20px;
@@ -124,19 +107,19 @@
 }
 
 .activeBadge {
-  background-color: #c6f6d5;
-  color: #276749;
+  background-color: #d1fae5;
+  color: #065f46;
 }
 
 .freeBadge {
-  background-color: #e2e8f0;
-  color: #4a5568;
+  background-color: var(--bg-hover);
+  color: var(--text-medium);
 }
 
 .currentPlanDetails {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-md);
 }
 
 .planRow {
@@ -146,12 +129,12 @@
 }
 
 .planLabel {
-  font-size: 14px;
+  font-size: 0.9rem;
   color: var(--text-light);
 }
 
 .planValue {
-  font-size: 15px;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-dark);
 }
@@ -159,9 +142,9 @@
 .manageButton {
   width: 100%;
   padding: 12px;
-  border-radius: 10px;
+  border-radius: var(--border-radius-sm);
   font-weight: 600;
-  font-size: 15px;
+  font-size: 1rem;
   cursor: pointer;
   transition: var(--transition-default);
   text-align: center;
@@ -175,14 +158,14 @@
 }
 
 .upgradeButton:hover:not(:disabled) {
-  background: #5a67d8;
+  background: var(--primary-dark);
   transform: translateY(-2px);
 }
 
 .cancelButton {
   background: transparent;
-  color: var(--status-error);
-  border: 1px solid var(--status-error);
+  color: var(--danger-color);
+  border: 1px solid var(--danger-color);
 }
 
 .cancelButton:hover:not(:disabled) {
@@ -197,7 +180,7 @@
 .billingTableSection {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--spacing-md);
 }
 
 .tableHeaderWrapper {
@@ -205,14 +188,14 @@
   justify-content: space-between;
   align-items: center;
   background: var(--bg-white);
-  padding: 16px 24px;
-  border-radius: 12px;
-  box-shadow: var(--shadow-default);
+  padding: var(--spacing-md) var(--spacing-lg);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-card);
   border: 1px solid var(--border-color);
 }
 
 .tableHeaderWrapper h3 {
-  font-size: 18px;
+  font-size: 1.1rem;
   font-weight: 700;
   color: var(--text-dark);
   margin: 0;
@@ -221,10 +204,10 @@
 .summaryBadge {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
+  gap: var(--spacing-sm);
+  font-size: 0.9rem;
   font-weight: 600;
-  color: var(--status-success);
+  color: var(--secondary-color);
   background: #f0fff4;
   padding: 6px 12px;
   border-radius: 20px;
@@ -232,20 +215,20 @@
 
 .billingTableContainer {
   background: var(--bg-white);
-  border-radius: 12px;
+  border-radius: var(--border-radius-md);
   border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-default);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
 }
 
 .tableHeader {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  gap: 16px;
-  padding: 16px 24px;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md) var(--spacing-lg);
   background: var(--bg-light);
   font-weight: 600;
-  font-size: 13px;
+  font-size: 0.8rem;
   text-transform: uppercase;
   color: var(--text-light);
   border-bottom: 1px solid var(--border-color);
@@ -259,7 +242,7 @@
 .tableRow {
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-  gap: 16px;
+  gap: var(--spacing-md);
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
   align-items: center;
@@ -277,7 +260,7 @@
 .dateCell {
   font-weight: 600;
   color: var(--text-dark);
-  font-size: 15px;
+  font-size: 0.95rem;
 }
 
 .plan {
@@ -300,19 +283,19 @@
   align-items: center;
   gap: 6px;
   font-weight: 600;
-  font-size: 13px;
+  font-size: 0.8rem;
   padding: 4px 8px;
   border-radius: 6px;
 }
 
 .statusSuccess {
-  color: var(--status-success);
+  color: var(--secondary-color);
   background: #f0fff4;
 }
 
 .statusError {
   color: var(--status-inactive);
-  background: #edf2f7;
+  background: var(--bg-hover);
 }
 
 .actions {
@@ -321,7 +304,7 @@
 
 .invoiceId {
   font-family: monospace;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: var(--text-light);
   background: var(--bg-light);
   padding: 4px 8px;
@@ -337,26 +320,26 @@
   padding: 40px;
   text-align: center;
   color: var(--text-light);
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .pagination {
   display: flex;
   justify-content: center;
   align-items: center;
-  gap: 16px;
+  gap: var(--spacing-md);
   margin-top: 10px;
 }
 
 .paginationButton {
   padding: 8px 16px;
   border: 1px solid var(--border-color);
-  border-radius: 8px;
+  border-radius: var(--border-radius-sm);
   background: var(--bg-white);
   color: var(--text-dark);
   cursor: pointer;
   transition: var(--transition-default);
-  font-size: 14px;
+  font-size: 0.9rem;
   font-weight: 500;
 }
 
@@ -372,29 +355,9 @@
 }
 
 .paginationInfo {
-  font-size: 14px;
+  font-size: 0.9rem;
   color: var(--text-light);
   font-weight: 500;
-}
-
-.loadingContainer, .errorContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 300px;
-  font-size: 16px;
-  color: var(--text-medium);
-  gap: 16px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid var(--bg-light);
-  border-top: 4px solid var(--primary-light);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
 }
 
 .modalOverlay {
@@ -409,49 +372,40 @@
   justify-content: center;
   z-index: 1000;
   backdrop-filter: blur(4px);
-  animation: fadeIn 0.2s ease;
 }
 
 .modalContent {
-  background: rgba(61, 54, 54, 0.2); 
-
-
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px); 
-
-
+  background: var(--bg-white);
   padding: 32px;
-  border-radius: 16px;
+  border-radius: var(--border-radius-lg);
   width: 100%;
   max-width: 400px;
   text-align: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
-  transform: translateY(0);
-  animation: slideUp 0.3s ease;
+  box-shadow: var(--shadow-modal);
 }
 
 .modalIcon {
   width: 60px;
   height: 60px;
-  color: #e53e3e;
+  color: var(--danger-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 24px;
-  margin: 0 auto 16px;
+  margin: 0 auto var(--spacing-md);
 }
 
 .modalContent h3 {
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
   color: var(--text-dark);
-  margin-bottom: 8px;
+  margin-bottom: var(--spacing-xs);
 }
 
 .modalContent p {
   color: var(--text-medium);
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-lg);
   line-height: 1.5;
 }
 
@@ -464,12 +418,12 @@
 .modalBtnSecondary,
 .modalBtnDanger {
   padding: 10px 20px;
-  border-radius: 8px;
+  border-radius: var(--border-radius-sm);
   font-weight: 600;
   cursor: pointer;
   transition: var(--transition-default);
   border: none;
-  font-size: 14px;
+  font-size: 0.9rem;
   flex: 1;
 }
 
@@ -479,11 +433,11 @@
 }
 
 .modalBtnSecondary:hover {
-  background: #e2e8f0;
+  background: var(--border-color);
 }
 
 .modalBtnDanger {
-  background: var(--status-error);
+  background: var(--danger-color);
   color: white;
   box-shadow: 0 4px 12px rgba(229, 62, 62, 0.3);
 }
@@ -491,16 +445,6 @@
 .modalBtnDanger:hover {
   background: #c53030;
   transform: translateY(-2px);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
 }
 
 @media (max-width: 992px) {
@@ -529,7 +473,7 @@
 
 @media (max-width: 768px) {
   .container {
-    padding: 16px;
+    padding: var(--spacing-md);
   }
 
   .subscriptionInfoCard {
@@ -548,19 +492,19 @@
   .tableRow {
     grid-template-columns: 1fr;
     gap: 12px;
-    padding: 16px;
+    padding: var(--spacing-md);
     border: 1px solid var(--border-color);
-    border-radius: 12px;
+    border-radius: var(--border-radius-md);
     margin-bottom: 12px;
     background: var(--bg-white);
   }
 
   .tableRow:hover {
-    box-shadow: var(--shadow-default);
+    box-shadow: var(--shadow-card);
   }
   
   .dateCell {
-    font-size: 16px;
+    font-size: 1rem;
     margin-bottom: 4px;
   }
   

@@ -70,6 +70,10 @@ import StatsEN from './locales/en/stats.json';
 import StatsPL from './locales/pl/stats.json';
 import StatsUK from './locales/uk/stats.json';
 
+import ComparisonEN from './locales/en/comparison.json';
+import ComparisonPL from './locales/pl/comparison.json';
+import ComparisonUK from './locales/uk/comparison.json';
+
 const resources = {
   ua: { 
     header: headerUK,
@@ -89,6 +93,7 @@ const resources = {
     notFound: NotFoundPageUK,
     rodo : RodoUK,
     stats : StatsUK,
+    comparison :ComparisonUK,
   },
   en: { 
     header: headerEN,
@@ -107,7 +112,8 @@ const resources = {
     terms: termsEN,
     notFound: NotFoundPageEN,
     rodo : RodoEN,
-    stats : StatsPL,
+    stats : StatsEN,
+    comparison :ComparisonEN,
   },
   pl: { 
     header: headerPL,
@@ -126,7 +132,8 @@ const resources = {
     terms: termsPl,
     notFound: NotFoundPagePL,
     rodo : RodoPL,
-    stats : StatsEN,
+    stats : StatsPL,
+    comparison :ComparisonPL,
   },
 };
 
@@ -143,7 +150,7 @@ i18n
     },
     
     ns: ['header', 'footer', 'faq', 'auth', 'select', 'stats',
-       'districts', 'filters', 'profile', 'about', 'rodo',
+       'districts', 'filters', 'profile', 'about', 'rodo', 'comparison',
         'contacts', 'favorites', 'payment', 'subscription', 'terms', 'notFound'], 
     defaultNS: 'header',
 

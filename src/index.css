@@ -47,6 +47,34 @@
   --shadow-modal: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
+/* === GLOBAL SCROLLBAR THEME SUPPORT === */
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #9ca3af transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #9ca3af;
+  border-radius: 20px;
+}
+
+[data-theme='dark'] * {
+  scrollbar-color: #374151 transparent;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background-color: #374151;
+}
+
 body {
   margin: 0;
   min-width: 320px;

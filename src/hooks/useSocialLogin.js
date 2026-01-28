@@ -1,0 +1,29 @@
+import { supabase } from '@supabaseClient';
+import { useTranslation } from 'react-i18next';
+
+export const useSocialLogin = (setIsLoading, setErrors) => {
+  const { t } = useTranslation('auth');
+
+  const socialLogin = async (provider) => {
+    try {
+      setIsLoading(true);
+      setErrors({});
+
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider,
+        options: { 
+          redirectTo: `${window.location.origin}/auth/callback`,
+          skipBrowserRedirect: false
+        }
+      });
+      
+      if (error) throw error;
+    } catch (error) {
+      setErrors({ submit: t('errors.generic') });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return socialLogin;
+};

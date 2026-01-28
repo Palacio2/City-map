@@ -1,78 +1,34 @@
-import React, { useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+
 import Header from '@header/Header';
 import Footer from '@footer/Footer';
-import { supabase } from '../../supabaseClient';
-import RodoModal from '../../components/modals/RodoModal';
-import CookieBanner from '../../components/modals/CookieBanner';
-import { userConsentApi } from '../api/userConsentApi';
-import { useTimeTracker } from '../../hooks/useTimeTracker';
-import styles from './MainLayout.module.css';
+import RodoModal from '@modals/RodoModal';
+import CookieBanner from '@modals/CookieBanner';
 
-const SAFE_ROUTES = ['/terms', '/about', '/faq', '/contacts', '/payment-success'];
+import { useUserConsent } from '@hooks/useUserConsent';
+import { useTimeTracker } from '@hooks/useTimeTracker';
+import styles from './MainLayout.module.css';
 
 export default function MainLayout() {
   const { t } = useTranslation('rodo');
-  const [showRodoModal, setShowRodoModal] = useState(false);
-  const [userId, setUserId] = useState(null);
-  const [hasConsent, setHasConsent] = useState(false);
-  const [authReady, setAuthReady] = useState(false);
-
-  const location = useLocation();
+  
+  const { 
+    showRodoModal, 
+    authReady, 
+    handleAcceptRodo, 
+    handleDeclineRodo 
+  } = useUserConsent();
 
   useTimeTracker();
 
-  const evaluateModalVisibility = (uid, consent) => {
-    if (!uid || consent || SAFE_ROUTES.includes(location.pathname)) {
-      setShowRodoModal(false);
-    } else {
-      setShowRodoModal(true);
+  const onAccept = async () => {
+    try {
+      await handleAcceptRodo();
+    } catch (e) {
+      alert(t('errors.save_failed'));
     }
-  };
-
-  useEffect(() => {
-    const updateState = async (session) => {
-      if (session?.user) {
-        setUserId(session.user.id);
-        const consent = await userConsentApi.checkConsentStatus(session.user.id);
-        setHasConsent(consent);
-        evaluateModalVisibility(session.user.id, consent);
-      } else {
-        setUserId(null);
-        setHasConsent(false);
-        setShowRodoModal(false);
-      }
-      setAuthReady(true);
-    };
-
-    supabase.auth.getSession().then(({ data: { session } }) => updateState(session));
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => {
-      updateState(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  useEffect(() => {
-    if (authReady) evaluateModalVisibility(userId, hasConsent);
-  }, [location.pathname, userId, hasConsent, authReady]);
-
-  const handleAcceptRodo = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return window.location.href = '/login';
-
-    const { error } = await userConsentApi.acceptConsent(user.id);
-    if (!error) {
-      setHasConsent(true);
-      setShowRodoModal(false);
-    } else alert(t('errors.save_failed'));
-  };
-
-  const handleDeclineRodo = async () => {
-    await userConsentApi.signOut();
-    window.location.href = '/';
   };
 
   return (
@@ -87,13 +43,17 @@ export default function MainLayout() {
 
       <Footer />
 
-      {authReady && <CookieBanner />}
-
-      {authReady && showRodoModal && (
-        <RodoModal
-          onAccept={handleAcceptRodo}
-          onDecline={handleDeclineRodo}
-        />
+      {authReady && (
+        <>
+          <CookieBanner />
+          
+          {showRodoModal && (
+            <RodoModal
+              onAccept={onAccept}
+              onDecline={handleDeclineRodo}
+            />
+          )}
+        </>
       )}
     </div>
   );

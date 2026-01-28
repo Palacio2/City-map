@@ -1,6 +1,6 @@
 .footer {
   background: var(--primary-gradient);
-  color: #ffffff; /* Залишаємо білим, бо градієнт темний */
+  color: #ffffff;
   padding: 3rem 0 0;
   margin-top: auto;
   position: relative;

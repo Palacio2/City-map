@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaUser, FaCrown, FaCreditCard, FaSync, FaCheckCircle, FaTimesCircle, FaChartLine, FaLock, FaEdit, FaKey } from 'react-icons/fa';
-import { supabase } from '../../supabaseClient';
-import { useSubscription } from '../../pages/subscription/SubscriptionContext';
-import { formatPhoneNumber } from '../../utils/phoneUtils';
+import { FaUser, FaCrown, FaCreditCard, FaSync, FaCheckCircle, FaTimesCircle, FaChartLine, FaEdit, FaKey } from 'react-icons/fa';
+import { supabase } from '@supabaseClient';
+import { useSubscription } from '@subscription/SubscriptionContext';
+import { formatPhoneNumber } from '@utils/phoneUtils';
 import styles from './Profile.module.css';
 
-const SubscriptionSection = ({ subscription, features, isPremium }) => {
+const SubscriptionSection = React.memo(({ subscription, features, isPremium }) => {
     const { t, i18n } = useTranslation(['profile', 'subscription']);
 
     const statusInfo = useMemo(() => {
@@ -16,7 +16,6 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
         const isFree = subscription.plan === 'free';
         const isExpired = subscription.isExpired;
         const currentLang = i18n.language || 'uk-UA';
-        
         const planKey = subscription.plan || 'free'; 
         
         let status = { 
@@ -58,7 +57,7 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
                 <h2>{t('profile:subscription.title')}</h2>
             </div>
             <div className={styles.subscriptionCard}>
-                {(subscription.status === 'cancelled' || subscription.isExpired) && !subscription.plan === 'free' && (
+                {(subscription.status === 'cancelled' || subscription.isExpired) && subscription.plan !== 'free' && (
                     <div className={`${styles.alertNotice} ${subscription.isExpired ? styles.expiredNotice : styles.cancellationNotice}`}>
                         {subscription.isExpired 
                             ? t('profile:subscription.expired_notice', { date: statusInfo.expires })
@@ -84,10 +83,10 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
                 <div className={styles.featuresList}>
                     <h4>{t('profile:subscription.features_title')}</h4>
                     <div className={styles.featuresGrid}>
-                        {features.map((feature, index) => (
+                        {features.map((featureKey, index) => (
                             <div key={index} className={styles.featureItem}>
                                 <FaCheckCircle className={styles.featureIcon} /> 
-                                <span>{t(`subscription:subscription.features.${feature}`)}</span>
+                                <span>{t(`subscription:subscription.features.${featureKey}`)}</span>
                             </div>
                         ))}
                     </div>
@@ -104,7 +103,7 @@ const SubscriptionSection = ({ subscription, features, isPremium }) => {
             </div>
         </section>
     );
-};
+});
 
 export default function Profile() {
     const { t } = useTranslation(['profile', 'subscription']);
@@ -125,7 +124,7 @@ export default function Profile() {
                     });
                 }
             } catch (e) {
-                // Errors are handled silently
+                console.error(e);
             }
         };
         fetchUserData();
@@ -186,21 +185,15 @@ export default function Profile() {
                 />
 
                 <div className={styles.quickActions}>
-                    <Link 
-                        to={isPremium ? "/profile/stats" : "#"} 
-                        className={`${styles.quickActionCard} ${!isPremium ? styles.lockedCard : ''}`}
-                    >
-                         {!isPremium && (
-                             <div className={styles.lockOverlay}>
-                                 <FaLock className={styles.lockIcon} /> {t('profile:quick_actions.locked')}
-                             </div>
-                         )}
-                        <FaChartLine className={styles.quickActionIcon} />
-                        <div>
-                            <h3>{t('profile:quick_actions.stats_title')}</h3>
-                            <p>{t('profile:quick_actions.stats_desc')}</p>
-                        </div>
-                    </Link>
+                    {isPremium && (
+                        <Link to="/profile/stats" className={styles.quickActionCard}>
+                            <FaChartLine className={styles.quickActionIcon} />
+                            <div>
+                                <h3>{t('profile:quick_actions.stats_title')}</h3>
+                                <p>{t('profile:quick_actions.stats_desc')}</p>
+                            </div>
+                        </Link>
+                    )}
                     
                     <Link to="/profile/billing-history" className={styles.quickActionCard}>
                         <FaCreditCard className={styles.quickActionIcon} />
