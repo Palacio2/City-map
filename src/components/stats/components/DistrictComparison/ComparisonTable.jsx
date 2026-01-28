@@ -1,147 +1,81 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaCheck, FaTimes, FaMapMarkerAlt, FaMinus } from 'react-icons/fa';
+import { FaMapMarkerAlt } from 'react-icons/fa';
+// 👇 ВАЖЛИВО: Підключення конфігурації
+import { DISTRICT_CATEGORIES } from '@config/districtFields'; 
+import { formatPrice, formatNumber, formatRating, formatBool, formatLevel, getValue } from '@utils/comparisonHelpers.jsx';
 import styles from './ComparisonTable.module.css';
 
 export default function ComparisonTable({ districts }) {
   const { t } = useTranslation('comparison');
 
-  if (!districts || districts.length === 0) return null;
+  if (!districts?.length) return null;
 
-  // 👇 ОНОВЛЕНА ЛОГІКА ВАЛЮТ
-  const getCurrencyCode = (countryName) => {
-    if (!countryName) return 'USD';
-    
-    const lowerName = countryName.toLowerCase().trim();
+  const rows = useMemo(() => {
+    // 1. Статична секція (загальні дані, які завжди повинні бути першими)
+    const generalSection = [
+      { type: 'header', title: t('finance_population') },
+      { label: `${t('sale_label')} (${t('units.sqm', 'м²')})`, key: 'filterData.utilities.propertyPricePerSqm', format: (v, d) => formatPrice(v, d.country) },
+      { label: t('rent_label'), key: 'filterData.general.average_rent_price', format: (v, d) => formatPrice(v, d.country) },
+      { label: t('avg_salary'), key: 'filterData.general.averageSalary', format: (v, d) => formatPrice(v, d.country) },
+      { label: t('population'), key: 'filterData.general.population', format: (v) => formatNumber(v) },
+      { label: t('population_density'), key: 'filterData.general.populationDensity', format: (v) => formatNumber(v, ` ${t('units.people_sqkm', 'ос/км²')}`) },
+      { label: t('unemployment'), key: 'filterData.general.unemploymentRate', format: (v) => formatNumber(v, '%') },
+    ];
 
-    // Україна
-    if (['ukraine', 'україна', 'ua', 'ukr'].includes(lowerName)) return 'UAH';
-    
-    // Польща
-    if (['poland', 'polska', 'pl', 'pol', 'польща'].includes(lowerName)) return 'PLN';
-    
-    // Єврозона (основні країни)
-    const euroZone = ['germany', 'france', 'italy', 'spain', 'austria', 'netherlands', 'belgium', 'portugal', 'greece', 'finland', 'ireland', 'slovakia', 'lithuania', 'latvia', 'estonia', 'slovenia', 'cyprus', 'malta', 'luxembourg'];
-    if (euroZone.some(c => lowerName.includes(c))) return 'EUR';
+    // 2. Динамічні секції з districtFields.js
+    const dynamicSections = Object.values(DISTRICT_CATEGORIES).flatMap(category => {
+      const headerRow = { type: 'header', title: t(category.key) }; 
+      
+      const fieldRows = category.fields.map(field => {
+        let formatter;
+        
+        switch (field.type) {
+          case 'price':
+            formatter = (v, d) => formatPrice(v, d.country);
+            break;
+          case 'rating_10':
+            formatter = (v) => v ? <span className={styles.rating}>{formatRating(v)}</span> : '-';
+            break;
+          case 'boolean':
+            formatter = (v) => formatBool(v, true, styles);
+            break;
+          case 'crimeLevel':
+            formatter = (v) => formatNumber(v, '/100');
+            break;
+          case 'text':
+            formatter = (v) => formatLevel(v, t);
+            break;
+          case 'number':
+          default:
+            formatter = (v) => formatNumber(v);
+            break;
+        }
 
-    // Велика Британія
-    if (['uk', 'united kingdom', 'england', 'london', 'great britain'].includes(lowerName)) return 'GBP';
+        // Перевизначення одиниць виміру для специфічних полів
+        if (field.key === 'avgParkSize' || field.key === 'transportAvgDistance') {
+           formatter = (v) => formatNumber(v, ` ${t('units.m', 'м')}`);
+           if (field.key === 'avgParkSize') formatter = (v) => formatNumber(v, ` ${t('units.sqm', 'м²')}`);
+        }
+        if (field.key === 'bikeLanes') {
+           formatter = (v) => formatNumber(v, ` ${t('units.km', 'км')}`);
+        }
+        if (field.key === 'greenSpaces') {
+           formatter = (v) => formatNumber(v, '%');
+        }
 
-    // За замовчуванням
-    return 'USD';
-  };
+        return {
+          label: t(field.key), // Ключ перекладу береться з назви поля (напр. "schools")
+          key: `filterData.${category.key}.${field.key}`,
+          format: formatter
+        };
+      });
 
-  // --- Форматувальники ---
-  const formatPrice = (val, country) => {
-    if (!val || val === 0) return '-';
-    
-    const currency = getCurrencyCode(country);
-    
-    try {
-      return new Intl.NumberFormat('uk-UA', { 
-        style: 'currency', 
-        currency, 
-        maximumFractionDigits: 0 
-      }).format(val);
-    } catch (e) {
-      // Fallback якщо код валюти некоректний
-      return `${val} ${currency}`;
-    }
-  };
+      return [headerRow, ...fieldRows];
+    });
 
-  const formatNumber = (val, unit = '') => {
-    if (val === null || val === undefined) return '-';
-    return `${val}${unit}`;
-  };
-
-  const formatRating = (val) => val ? <span className={styles.rating}>{val}/10</span> : '-';
-  
-  const formatBool = (val) => {
-    if (val === true) return <FaCheck className={styles.check} />;
-    if (val === false) return <FaTimes className={styles.cross} />;
-    return <FaMinus className={styles.dash} />;
-  };
-
-  const formatLevel = (val) => val ? t(`levels.${val}`, { defaultValue: val }) : '-';
-
-  const getValue = (obj, path) => {
-    return path.split('.').reduce((acc, part) => acc && acc[part], obj);
-  };
-
-  // --- Конфігурація рядків ---
-  const rows = [
-    // 1. Фінанси та Населення
-    { type: 'header', title: t('finance_population') },
-    { label: t('rent_label'), key: 'filterData.general.rentalPrice', format: (v, d) => formatPrice(v, d.country) },
-    { label: `${t('sale_label')} (m²)`, key: 'filterData.general.salePriceSqm', format: (v, d) => formatPrice(v, d.country) },
-    { label: t('avg_property_price'), key: 'filterData.general.propertyPrice', format: (v, d) => formatPrice(v, d.country) },
-    { label: t('avg_salary'), key: 'filterData.general.averageSalary', format: (v, d) => formatPrice(v, d.country) },
-    { label: t('population'), key: 'filterData.general.population', format: (v) => formatNumber(v) },
-    { label: t('population_density'), key: 'filterData.general.populationDensity', format: (v) => formatNumber(v, ' ос/км²') },
-    { label: t('unemployment'), key: 'filterData.general.unemploymentRate', format: (v) => formatNumber(v, '%') },
-
-    // 2. Освіта
-    { type: 'header', title: t('education') },
-    { label: t('rating'), key: 'filterData.education.rating', format: formatRating },
-    { label: t('schools'), key: 'filterData.education.schools' },
-    { label: t('kindergartens'), key: 'filterData.education.kindergartens' },
-    { label: t('universities'), key: 'filterData.education.universities' },
-
-    // 3. Медицина
-    { type: 'header', title: t('medicine') },
-    { label: t('rating'), key: 'filterData.medicine.rating', format: formatRating },
-    { label: t('hospitals'), key: 'filterData.medicine.hospitals' },
-    { label: t('clinics'), key: 'filterData.medicine.clinics' },
-    { label: t('pharmacies'), key: 'filterData.medicine.pharmacies' },
-    { label: t('emergency'), key: 'filterData.medicine.emergencyServices' },
-
-    // 4. Транспорт
-    { type: 'header', title: t('transport') },
-    { label: t('rating'), key: 'filterData.transport.rating', format: formatRating },
-    { label: t('metro'), key: 'filterData.transport.metroStations' },
-    { label: t('bus_stops'), key: 'filterData.transport.busStops' },
-    { label: t('tram_stops'), key: 'filterData.transport.tramStops' },
-    { label: t('bike_lanes'), key: 'filterData.transport.bikeLanes', format: (v) => formatNumber(v, ' км') },
-    { label: t('parking'), key: 'filterData.transport.parkingSpots' },
-    { label: t('transport_dist'), key: 'filterData.transport.averageDistance', format: (v) => formatNumber(v, ' м') },
-    { label: t('traffic_freq'), key: 'filterData.transport.frequency', format: formatLevel },
-
-    // 5. Безпека
-    { type: 'header', title: t('safety') },
-    { label: t('rating'), key: 'filterData.safety.rating', format: formatRating },
-    { label: t('crime_level'), key: 'filterData.safety.crimeLevel', format: (v) => formatNumber(v, '/100') },
-    { label: t('police'), key: 'filterData.safety.policeStations' },
-    { label: t('cctv'), key: 'filterData.safety.cctv' },
-    { label: t('lighting'), key: 'filterData.safety.streetLighting', format: formatRating },
-
-    // 6. Соціальна сфера
-    { type: 'header', title: t('social') },
-    { label: t('rating'), key: 'filterData.social.rating', format: formatRating },
-    { label: t('parks'), key: 'filterData.social.parks' },
-    { label: t('green_zones'), key: 'filterData.general.greenSpaces', format: (v) => formatNumber(v, '%') },
-    { label: t('park_size'), key: 'filterData.social.averageParkSize', format: (v) => formatNumber(v, ' м²') },
-    { label: t('playgrounds'), key: 'filterData.social.playgrounds' },
-    { label: t('sports'), key: 'filterData.social.sportsFacilities' },
-    { label: t('culture'), key: 'filterData.social.museums', format: (v, d) => (v || 0) + (getValue(d, 'filterData.social.theaters') || 0) + (getValue(d, 'filterData.social.cinemas') || 0) },
-    { label: t('cafes'), key: 'filterData.social.cafesRestaurants' },
-
-    // 7. Комерція
-    { type: 'header', title: t('commerce') },
-    { label: t('rating'), key: 'filterData.commerce.rating', format: formatRating },
-    { label: t('supermarkets'), key: 'filterData.commerce.groceryStores' },
-    { label: t('malls'), key: 'filterData.commerce.shoppingMalls' },
-    { label: t('banks'), key: 'filterData.commerce.banksATMs' },
-    { label: t('beauty'), key: 'filterData.commerce.beautySalons' },
-    { label: t('shops_density'), key: 'filterData.commerce.density', format: formatLevel },
-
-    // 8. Комунальні послуги
-    { type: 'header', title: t('utilities') },
-    { label: t('util_cost'), key: 'filterData.utilities.costPerSqm', format: (v, d) => formatPrice(v, d.country) + '/м²' },
-    { label: t('water'), key: 'filterData.utilities.hasWaterSupply', format: formatBool },
-    { label: t('heating'), key: 'filterData.utilities.hasHeating', format: formatBool },
-    { label: t('gas'), key: 'filterData.utilities.hasGasSupply', format: formatBool },
-    { label: t('waste'), key: 'filterData.utilities.hasWasteRemoval', format: formatBool },
-  ];
+    return [...generalSection, ...dynamicSections];
+  }, [districts, t]);
 
   return (
     <div className={styles.tableWrapper}>
@@ -150,7 +84,7 @@ export default function ComparisonTable({ districts }) {
           <tr>
             <th className={styles.metricCol}></th>
             {districts.map((d, i) => (
-              <th key={i} className={styles.districtCol}>
+              <th key={d.id || i} className={styles.districtCol}>
                 <div className={styles.districtHeader}>
                   <span className={styles.dName}>{d.name}</span>
                   <span className={styles.dCity}><FaMapMarkerAlt /> {d.city}</span>
@@ -163,17 +97,17 @@ export default function ComparisonTable({ districts }) {
           {rows.map((row, rowIdx) => {
             if (row.type === 'header') {
               return (
-                <tr key={rowIdx} className={styles.sectionHeader}>
+                <tr key={`h-${rowIdx}`} className={styles.sectionHeader}>
                   <td colSpan={districts.length + 1}>{row.title}</td>
                 </tr>
               );
             }
             return (
-              <tr key={rowIdx} className={styles.dataRow}>
+              <tr key={`r-${rowIdx}`} className={styles.dataRow}>
                 <td className={styles.metricName}>{row.label}</td>
                 {districts.map((d, colIdx) => {
                   const rawVal = getValue(d, row.key);
-                  const displayVal = row.format ? row.format(rawVal, d) : (rawVal !== undefined && rawVal !== null ? rawVal : '-');
+                  const displayVal = row.format ? row.format(rawVal, d) : (rawVal ?? '-');
                   return <td key={colIdx}>{displayVal}</td>;
                 })}
               </tr>

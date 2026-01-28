@@ -1,87 +1,72 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaBuilding, FaPhone, FaGlobe } from 'react-icons/fa';
+import { FaPhone, FaGlobe, FaBuilding } from 'react-icons/fa';
+import { DISTRICT_CATEGORIES } from '@config/districtFields'; 
+import { formatPrice, formatNumber, formatBool, getValue, formatRating } from '@utils/comparisonHelpers.jsx';
 import styles from './PdfReportTemplate.module.css';
 
-export default function PdfReportTemplate({ districts, customData }) {
-  const { t } = useTranslation('comparison');
+export default function PdfReportTemplate({ districts, customData, isPremium = true, isRealtor = true }) {
+  const { t, i18n } = useTranslation('comparison');
 
-  if (!districts || districts.length === 0) return null;
+  const sections = useMemo(() => {
+    if (!districts?.length) return [];
 
-  const getCurrencyCode = (countryName) => {
-    if (!countryName) return 'USD';
-    const lower = countryName.toLowerCase().trim();
-    if (['ukraine', 'україна', 'ua'].includes(lower)) return 'UAH';
-    if (['poland', 'polska', 'pl'].includes(lower)) return 'PLN';
-    if (['uk', 'united kingdom'].includes(lower)) return 'GBP';
-    return 'USD';
-  };
-
-  const formatPrice = (val, country) => {
-    if (!val) return '-';
-    try {
-      return new Intl.NumberFormat('uk-UA', { 
-        style: 'currency', currency: getCurrencyCode(country), maximumFractionDigits: 0 
-      }).format(val);
-    } catch { return `${val}`; }
-  };
-
-  const formatNumber = (val, unit = '') => (val !== null && val !== undefined) ? `${val}${unit}` : '-';
-  const formatRating = (val) => val ? `${val}/10` : '-';
-  const formatBool = (val) => val === true ? 'Так' : (val === false ? 'Ні' : '-');
-  
-  const getValue = (obj, path) => path.split('.').reduce((acc, part) => acc && acc[part], obj);
-
-  const sections = [
-    {
+    const staticSection = {
       title: t('finance_population'),
       rows: [
-        { label: t('rent_label'), key: 'filterData.general.rentalPrice', format: (v, d) => formatPrice(v, d.country) },
-        { label: `${t('sale_label')} (m²)`, key: 'filterData.general.salePriceSqm', format: (v, d) => formatPrice(v, d.country) },
+        { label: `${t('sale_label')} (${t('units.sqm', 'м²')})`, key: 'filterData.utilities.propertyPricePerSqm', format: (v, d) => formatPrice(v, d.country) },
+        { label: t('rent_label'), key: 'filterData.general.average_rent_price', format: (v, d) => formatPrice(v, d.country) },
         { label: t('avg_salary'), key: 'filterData.general.averageSalary', format: (v, d) => formatPrice(v, d.country) },
-        { label: t('population_density'), key: 'filterData.general.populationDensity', format: (v) => formatNumber(v, ' ос/км²') },
+        { label: t('population'), key: 'filterData.general.population', format: (v) => formatNumber(v) },
+        { label: t('population_density'), key: 'filterData.general.populationDensity', format: (v) => formatNumber(v, ` ${t('units.people_sqkm', 'ос/км²')}`) },
       ]
-    },
-    {
-      title: t('education'),
-      rows: [
-        { label: t('rating'), key: 'filterData.education.rating', format: formatRating },
-        { label: t('schools'), key: 'filterData.education.schools' },
-        { label: t('kindergartens'), key: 'filterData.education.kindergartens' },
-      ]
-    },
-    {
-      title: t('safety'),
-      rows: [
-        { label: t('rating'), key: 'filterData.safety.rating', format: formatRating },
-        { label: t('crime_level'), key: 'filterData.safety.crimeLevel', format: (v) => formatNumber(v, '/100') },
-        { label: t('lighting'), key: 'filterData.safety.streetLighting', format: formatRating },
-      ]
-    },
-    {
-      title: t('transport'),
-      rows: [
-        { label: t('rating'), key: 'filterData.transport.rating', format: formatRating },
-        { label: t('metro'), key: 'filterData.transport.metroStations' },
-        { label: t('transport_dist'), key: 'filterData.transport.averageDistance', format: (v) => formatNumber(v, ' м') },
-      ]
-    },
-    {
-      title: t('social'),
-      rows: [
-        { label: t('rating'), key: 'filterData.social.rating', format: formatRating },
-        { label: t('parks'), key: 'filterData.social.parks' },
-        { label: t('cafes'), key: 'filterData.social.cafesRestaurants' },
-      ]
-    },
-    {
-      title: t('utilities'),
-      rows: [
-        { label: t('util_cost'), key: 'filterData.utilities.costPerSqm', format: (v, d) => formatPrice(v, d.country) + '/м²' },
-        { label: t('heating'), key: 'filterData.utilities.hasHeating', format: formatBool },
-      ]
-    }
-  ];
+    };
+
+    const dynamicSections = Object.values(DISTRICT_CATEGORIES).map(category => {
+      if (category.isPremium && !isPremium) return null;
+
+      const fields = category.fields
+        .filter(field => {
+            if (field.isPremiumField && !isPremium) return false;
+            if (field.isRealtorOnly && !isRealtor) return false;
+            return true;
+        })
+        .map(field => {
+            let formatter;
+            switch (field.type) {
+                case 'price': formatter = (v, d) => formatPrice(v, d.country); break;
+                case 'boolean': formatter = (v) => formatBool(v, false, {}, t); break; 
+                case 'rating_10': formatter = (v) => formatRating(v); break;
+                case 'crimeLevel': formatter = (v) => formatNumber(v, '/100'); break;
+                case 'text': 
+                  formatter = (v) => v ? t(`levels.${v.toLowerCase()}`, { defaultValue: v }) : '-'; 
+                  break; 
+                case 'number': default: formatter = (v) => formatNumber(v); break;
+            }
+
+            if (field.key === 'avgParkSize') formatter = (v) => formatNumber(v, ` ${t('units.sqm', 'м²')}`);
+            if (field.key === 'transportAvgDistance') formatter = (v) => formatNumber(v, ` ${t('units.m', 'м')}`);
+            if (field.key === 'bikeLanes') formatter = (v) => formatNumber(v, ` ${t('units.km', 'км')}`);
+
+            return {
+                label: t(field.key), 
+                key: `filterData.${category.key}.${field.key}`,
+                format: formatter
+            };
+        });
+
+      if (fields.length === 0) return null;
+
+      return {
+        title: t(category.key),
+        rows: fields
+      };
+    }).filter(Boolean);
+
+    return [staticSection, ...dynamicSections];
+  }, [districts, t, isPremium, isRealtor]);
+
+  if (!districts?.length) return null;
 
   return (
     <div id="pdf-report-template" className={styles.reportContainer}>
@@ -95,12 +80,11 @@ export default function PdfReportTemplate({ districts, customData }) {
             )}
           </div>
           <div>
-            <h1 className={styles.brandName}>{customData?.agencyName || 'PropLens Analytics'}</h1>
-            <p className={styles.reportDate}>Analytics Report • {new Date().toLocaleDateString()}</p>
+            <h1 className={styles.brandName}>{customData?.agencyName || 'GeoAnalyzer'}</h1>
+            <p className={styles.reportDate}>{t('pdf_report.analytics_report', 'Analytics Report')} • {new Date().toLocaleDateString(i18n.language)}</p>
           </div>
         </div>
         <div className={styles.reportTitleBlock}>
-          <h2>{t('subtitle')}</h2>
           <p>{t('results_title')}</p>
         </div>
       </div>
@@ -111,7 +95,7 @@ export default function PdfReportTemplate({ districts, customData }) {
             <tr>
               <th className={styles.metricHeader}>{t('metric', 'Показник')}</th>
               {districts.map((d, i) => (
-                <th key={i} className={styles.districtHeader}>
+                <th key={d.id || i} className={styles.districtHeader}>
                   <div className={styles.dName}>{d.name}</div>
                   <div className={styles.dCity}>{d.city}, {d.country}</div>
                 </th>
@@ -133,7 +117,7 @@ export default function PdfReportTemplate({ districts, customData }) {
                       const val = getValue(d, row.key);
                       return (
                         <td key={dIdx} className={styles.valueCell}>
-                          {row.format ? row.format(val, d) : (val || '-')}
+                          {row.format ? row.format(val, d) : (val ?? '-')}
                         </td>
                       );
                     })}
@@ -147,12 +131,12 @@ export default function PdfReportTemplate({ districts, customData }) {
 
       <div className={styles.footer}>
         <div className={styles.footerInfo}>
-          <span><FaGlobe /> {customData?.website || 'proplens.com'}</span>
+          <span><FaGlobe /> {customData?.website || 'GeoAnalyzer.com'}</span>
           <span><FaPhone /> {customData?.phone || '+380 ...'}</span>
         </div>
         <div className={styles.disclaimer}>
-          Prepared by {customData?.agencyName || 'PropLens'}. <br/> 
-          Data valid as of {new Date().getFullYear()}.
+          {t('pdf_report.prepared_by', 'Prepared by')} {customData?.agencyName || 'GeoAnalyzer'}. <br/> 
+          {t('pdf_report.valid_as_of', 'Data valid as of')} {new Date().getFullYear()}.
         </div>
       </div>
     </div>

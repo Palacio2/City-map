@@ -83,10 +83,10 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
                 <div className={styles.featuresList}>
                     <h4>{t('profile:subscription.features_title')}</h4>
                     <div className={styles.featuresGrid}>
-                        {features.map((feature, index) => (
+                        {features.map((featureKey, index) => (
                             <div key={index} className={styles.featureItem}>
                                 <FaCheckCircle className={styles.featureIcon} /> 
-                                <span>{t(`subscription:subscription.features.${feature}`)}</span>
+                                <span>{t(`subscription:subscription.features.${featureKey}`)}</span>
                             </div>
                         ))}
                     </div>
@@ -124,6 +124,7 @@ export default function Profile() {
                     });
                 }
             } catch (e) {
+                console.error(e);
             }
         };
         fetchUserData();
@@ -184,16 +185,15 @@ export default function Profile() {
                 />
 
                 <div className={styles.quickActions}>
-                    <Link 
-                        to="/profile/stats" 
-                        className={styles.quickActionCard}
-                    >
-                        <FaChartLine className={styles.quickActionIcon} />
-                        <div>
-                            <h3>{t('profile:quick_actions.stats_title')}</h3>
-                            <p>{t('profile:quick_actions.stats_desc')}</p>
-                        </div>
-                    </Link>
+                    {isPremium && (
+                        <Link to="/profile/stats" className={styles.quickActionCard}>
+                            <FaChartLine className={styles.quickActionIcon} />
+                            <div>
+                                <h3>{t('profile:quick_actions.stats_title')}</h3>
+                                <p>{t('profile:quick_actions.stats_desc')}</p>
+                            </div>
+                        </Link>
+                    )}
                     
                     <Link to="/profile/billing-history" className={styles.quickActionCard}>
                         <FaCreditCard className={styles.quickActionIcon} />

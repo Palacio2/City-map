@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaTimes, FaFilePdf, FaUpload } from 'react-icons/fa';
 import styles from './ExportSettingsModal.module.css';
 
 const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
+  const { t } = useTranslation('comparison');
   const [formData, setFormData] = useState({
     agencyName: '',
     phone: '',
@@ -37,7 +39,7 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h3>Налаштування звіту</h3>
+          <h3>{t('export_modal.title', 'Налаштування звіту')}</h3>
           <button className={styles.closeButton} onClick={onClose}>
             <FaTimes />
           </button>
@@ -50,7 +52,7 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
                 <img src={formData.logo} alt="Logo Preview" className={styles.logoPreview} />
               ) : (
                 <>
-                  <FaUpload /> Завантажити логотип
+                  <FaUpload /> {t('export_modal.upload_logo', 'Завантажити логотип')}
                 </>
               )}
             </label>
@@ -64,11 +66,11 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Назва агентства</label>
+            <label>{t('export_modal.agency_name', 'Назва агентства')}</label>
             <input 
               type="text" 
               name="agencyName" 
-              placeholder="Наприклад: Best Estate" 
+              placeholder={t('export_modal.agency_placeholder', 'Наприклад: Best Estate')} 
               value={formData.agencyName}
               onChange={handleChange}
               required
@@ -76,7 +78,7 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Номер телефону</label>
+            <label>{t('export_modal.phone', 'Номер телефону')}</label>
             <input 
               type="text" 
               name="phone" 
@@ -88,7 +90,7 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>Веб-сайт</label>
+            <label>{t('export_modal.website', 'Веб-сайт')}</label>
             <input 
               type="text" 
               name="website" 
@@ -100,10 +102,10 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
 
           <div className={styles.actions}>
             <button type="button" className={styles.cancelBtn} onClick={onClose}>
-              Скасувати
+              {t('actions.cancel', 'Скасувати')}
             </button>
             <button type="submit" className={styles.confirmBtn}>
-              <FaFilePdf /> Експорт PDF
+              <FaFilePdf /> {t('export_modal.export_btn', 'Експорт PDF')}
             </button>
           </div>
         </form>

@@ -78,7 +78,7 @@ export default function AppRoutes() {
               path="compare" 
               element={
                 <PrivateRoute>
-                  <ProtectedRoute requiredPlan="premium">
+                  <ProtectedRoute requiredPlan="realtor">
                     <Comparison />
                   </ProtectedRoute>
                 </PrivateRoute>

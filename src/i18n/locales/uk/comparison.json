@@ -1,6 +1,6 @@
 {
   "title": "Порівняння районів",
-  "subtitle": "Оберіть до 5 районів для детального порівняння цін та показників",
+  "subtitle": "Оберіть до 4 районів для детального порівняння цін та показників",
   "limit_reached": "Максимальна кількість районів для порівняння: {{max}}",
   "selected_count": "Обрано",
   "add_district": "Додати район",
@@ -12,7 +12,12 @@
   "compare_btn": "Порівняти показники",
   "success_saved": "Порівняння збережено!",
   "results_title": "Результати порівняння",
+  "metric": "Показник",
+  "export_pdf": "Експорт PDF",
   
+  "yes": "Так",
+  "no": "Ні",
+
   "finance_population": "Фінанси та Населення",
   "avg_property_price": "Середня ціна нерухомості",
   "avg_salary": "Середня зарплата",
@@ -30,45 +35,55 @@
   "hospitals": "Лікарні",
   "clinics": "Поліклініки",
   "pharmacies": "Аптеки",
-  "emergency": "Швидка допомога",
+  "emergencyServices": "Швидка допомога",
   
   "transport": "Транспорт",
-  "metro": "Станції метро",
-  "bus_stops": "Автобусні зупинки",
-  "tram_stops": "Трамвайні зупинки",
-  "bike_lanes": "Велодоріжки",
-  "parking": "Паркомісця",
-  "transport_dist": "Доступність транспорту",
-  "traffic_freq": "Частота транспорту",
+  "metroStations": "Станції метро",
+  "busStops": "Автобусні зупинки",
+  "tramStops": "Трамвайні зупинки",
+  "bikeLanes": "Велодоріжки",
+  "parkingSpots": "Паркомісця",
+  "transportAvgDistance": "Доступність транспорту",
+  "transportFrequency": "Частота руху",
   
   "safety": "Безпека",
-  "crime_level": "Рівень злочинності",
-  "police": "Відділки поліції",
+  "crimeLevel": "Рівень злочинності",
+  "policeStations": "Відділки поліції",
   "cctv": "Камери спостереження",
-  "lighting": "Освітлення",
+  "streetLighting": "Освітлення",
   
   "social": "Соціальна сфера",
   "green_zones": "Зелені зони",
   "parks": "Парки",
-  "park_size": "Розмір парків",
+  "avgParkSize": "Розмір парків",
   "playgrounds": "Дитячі майданчики",
-  "sports": "Спорткомплекси",
-  "culture": "Культура (музеї, театри)",
-  "cafes": "Кафе та ресторани",
+  "sportsFacilities": "Спорткомплекси",
+  "culture": "Культура",
+  "cinemas": "Кінотеатри",
+  "theaters": "Театри",
+  "museums": "Музеї",
+  "libraries": "Бібліотеки",
+  "cafesRestaurants": "Кафе та ресторани",
+  "airQuality": "Якість повітря",
   
   "commerce": "Комерція",
-  "supermarkets": "Супермаркети",
-  "malls": "Торгові центри",
-  "banks": "Банки та банкомати",
-  "beauty": "Салони краси",
+  "groceryStores": "Супермаркети",
+  "shoppingMalls": "Торгові центри",
+  "banksATMs": "Банки та банкомати",
+  "postOffices": "Поштові відділення",
+  "beautySalons": "Салони краси",
+  "constructionStores": "Будівельні магазини",
+  "clothingStores": "Магазини одягу",
   "shops_density": "Щільність магазинів",
   
   "utilities": "Комунальні послуги",
-  "util_cost": "Вартість ком. послуг",
-  "water": "Водопостачання",
-  "heating": "Опалення",
-  "gas": "Газопостачання",
-  "waste": "Вивіз сміття",
+  "costPerSqm": "Вартість ком. послуг",
+  "propertyPricePerSqm": "Ціна за м² (продаж)",
+  "hasWaterSupply": "Водопостачання",
+  "hasElectricity": "Електропостачання",
+  "hasHeating": "Опалення",
+  "hasGasSupply": "Газопостачання",
+  "hasWasteRemoval": "Вивіз сміття",
 
   "rent_label": "Оренда",
   "sale_label": "Продаж",
@@ -76,6 +91,32 @@
   "levels": {
     "low": "Низька",
     "medium": "Середня",
-    "high": "Висока"
+    "high": "Висока",
+    "good": "Добре",
+    "bad": "Погано",
+    "moderate": "Помірно"
+  },
+
+  "units": {
+    "sqm": "м²",
+    "km": "км",
+    "m": "м",
+    "people_sqkm": "ос/км²"
+  },
+
+  "export_modal": {
+    "title": "Налаштування звіту",
+    "upload_logo": "Завантажити логотип",
+    "agency_name": "Назва агентства",
+    "agency_placeholder": "Наприклад: Best Estate",
+    "phone": "Номер телефону",
+    "website": "Веб-сайт",
+    "export_btn": "Експорт PDF"
+  },
+
+  "pdf_report": {
+    "analytics_report": "Аналітичний звіт",
+    "prepared_by": "Підготовлено",
+    "valid_as_of": "Дані актуальні станом на"
   }
 }

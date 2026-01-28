@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaCheck, FaTimes, FaLock } from 'react-icons/fa';
-import { useSubscription } from '../../pages/subscription/SubscriptionContext'; 
+import { useSubscription } from './SubscriptionContext'; 
 import { subscriptionPlans } from './subscriptionPlans';
 import styles from './Subscription.module.css';
 
@@ -38,8 +38,9 @@ export default function Subscription() {
   };
 
   const getPlanDetails = (key) => ({
-    name: subscriptionPlans[key].name, // Беремо ім'я прямо з конфігу
-    price: t(`subscription.plans.${key}.price`) // Ціну лишаємо в перекладах для валют
+    // ВИПРАВЛЕННЯ 1: Перекладаємо назву плану через t()
+    name: t(`subscription.plans.${key}.name`), 
+    price: t(`subscription.plans.${key}.price`)
   });
 
   const selectedPlanDetails = getPlanDetails(selectedPlan);
@@ -65,7 +66,8 @@ export default function Subscription() {
               >
                 <div className={styles.buttonContent}>
                     <PlanIcon className={styles.planIcon} />
-                    <span className={styles.planName}>{planConfig.name}</span>
+                    {/* ВИПРАВЛЕННЯ 2: Назва плану в кнопках перемикання */}
+                    <span className={styles.planName}>{t(`subscription.plans.${key}.name`)}</span>
                 </div>
               </button>
             );
@@ -85,9 +87,10 @@ export default function Subscription() {
           
           <div className={styles.features}>
             <h3>{t('subscription.included_title')}</h3>
-            {currentPlanConfig.features.map((featureText, i) => (
+            {/* ВИПРАВЛЕННЯ 3: featureKey - це ключ, ми передаємо його в t() */}
+            {currentPlanConfig.features.map((featureKey, i) => (
               <div key={i} className={styles.featureItem}>
-                <FaCheck className={styles.checkIcon} /> {featureText}
+                <FaCheck className={styles.checkIcon} /> {t(`subscription.features.${featureKey}`)}
               </div>
             ))}
           </div>
@@ -95,9 +98,10 @@ export default function Subscription() {
           {currentPlanConfig.disabledFeatures?.length > 0 && (
             <div className={styles.disabledFeatures}>
               <h3>{t('subscription.disabled_title')}</h3>
-              {currentPlanConfig.disabledFeatures.map((disabledText, i) => (
+              {/* ВИПРАВЛЕННЯ 4: те саме для disabledFeatures */}
+              {currentPlanConfig.disabledFeatures.map((featureKey, i) => (
                 <div key={i} className={styles.disabledFeature}>
-                    <FaTimes className={styles.timesIcon} /> {disabledText}
+                    <FaTimes className={styles.timesIcon} /> {t(`subscription.features.${featureKey}`)}
                 </div>
               ))}
             </div>

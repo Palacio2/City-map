@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaUser, FaEnvelope, FaComment, FaPaperPlane, FaPhone, FaCheckCircle } from 'react-icons/fa';
-import { contactsAPI } from '../../components/api/contactsAPI';
+import { contactsAPI } from '@api/contactsAPI';
 import styles from './Contacts.module.css';
 
 export default function Contacts() {

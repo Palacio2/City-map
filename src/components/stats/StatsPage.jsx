@@ -9,17 +9,16 @@ import styles from './StatsPage.module.css';
 
 export default function StatsPage() {
   const { t } = useTranslation('stats');
-  const { isPremium } = useSubscription();
+  const { isPremium, isRealtor } = useSubscription();
   
-  // 👇 Отримуємо trackedDistricts (збережені райони) з хука
   const { 
     stats, 
     weeklyActivity, 
-    trackedDistricts, // Це поле необхідне для відображення списку моніторингу
+    trackedDistricts, 
     loading, 
     error, 
     reload 
-  } = useStatsData(isPremium);
+  } = useStatsData(isPremium, isRealtor);
 
   if (!isPremium) {
     return <Navigate to="/subscription" replace />;
@@ -62,7 +61,7 @@ export default function StatsPage() {
         <StatsOverview 
           stats={stats} 
           weeklyActivity={weeklyActivity} 
-          trackedDistricts={trackedDistricts} // 👇 Передаємо це в StatsOverview
+          trackedDistricts={trackedDistricts || []} 
         />
       )}
     </div>

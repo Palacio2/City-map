@@ -4,8 +4,8 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import { FaCheckCircle, FaArrowLeft, FaShieldAlt, FaSync, FaTag } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next'; 
-import { subscriptionPlans } from '../subscription/subscriptionPlans';
-import { processPayment, activateSubscription } from '../../components/api/paymentApi';
+import { subscriptionPlans } from '@subscription/subscriptionPlans';
+import { processPayment, activateSubscription } from '@api/paymentApi';
 import styles from './Payment.module.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);

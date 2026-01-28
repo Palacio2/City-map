@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { supabase } from '../../supabaseClient';
-import { fetchSubscriptionStatus, FREE_PLAN_DATA } from '../../components/api/subscriptionApi';
+import { supabase } from '@supabaseClient';
+import { fetchSubscriptionStatus, FREE_PLAN_DATA } from '@api/subscriptionApi';
 
 const SubscriptionContext = createContext();
 

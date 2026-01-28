@@ -1,13 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaChevronDown, FaChartBar, FaMapMarkerAlt, FaHistory, FaBookmark } from 'react-icons/fa';
+import { FaChevronDown, FaChartBar, FaMapMarkerAlt, FaHistory, FaBookmark, FaCalculator } from 'react-icons/fa';
+import { useSubscription } from '@subscription/SubscriptionContext';
 import styles from './StatsPage.module.css';
 import StatsCards from './components/StatsCards/StatsCards';
 import WeeklyChart from './components/WeeklyChart/WeeklyChart';
 import PopularDistricts from './components/PopularDistricts/PopularDistricts';
 import TrackedDistricts from './components/TrackedDistricts/TrackedDistricts';
 import LastActivity from './components/LastActivity/LastActivity';
+import InvestmentCalculator from './components/InvestmentCalculato/InvestmentCalculator';
 
 const STORAGE_KEY = 'stats_page_sections_state';
 
@@ -36,13 +38,20 @@ const CollapsibleSection = ({ id, title, icon: Icon, children, isOpen, onToggle 
 export default function StatsOverview({ stats, weeklyActivity, trackedDistricts }) {
   const { t } = useTranslation('stats');
   const navigate = useNavigate();
+  const { isRealtor } = useSubscription();
 
   const [openSections, setOpenSections] = useState(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : {};
+      return saved ? JSON.parse(saved) : {
+        weekly_activity: true,
+        investment_calculator: false,
+        saved_districts: false,
+        popular_districts: false,
+        last_activity: false
+      };
     } catch {
-      return {};
+      return { investment_calculator: false };
     }
   });
 
@@ -54,16 +63,15 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
     });
   };
 
-  const handleNavigateToSearches = () => {
-    navigate('/');
-  };
-
-  const handleNavigateToSaved = () => {
-    navigate('/favorites');
-  };
+  const handleNavigateToSearches = () => navigate('/');
+  const handleNavigateToSaved = () => navigate('/favorites');
 
   const handleNavigateToCompare = () => {
-    navigate('/profile/stats/compare');
+    if (isRealtor) {
+      navigate('/profile/stats/compare');
+    } else {
+      navigate('/subscription');
+    }
   };
 
   return (
@@ -73,19 +81,34 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
           stats={stats} 
           onSearchesClick={handleNavigateToSearches}
           onSavedClick={handleNavigateToSaved}
-          onCompareClick={handleNavigateToCompare} 
+          onCompareClick={handleNavigateToCompare}
+          showCompare={isRealtor}
         />
       </div>
 
-      <CollapsibleSection 
-        id="saved_districts"
-        title={t('stats_page.saved_districts')} 
-        icon={FaBookmark}
-        isOpen={!!openSections['saved_districts']}
-        onToggle={toggleSection}
-      >
-         <TrackedDistricts districts={trackedDistricts || []} />
-      </CollapsibleSection>
+      {isRealtor && (
+        <CollapsibleSection 
+          id="investment_calculator"
+          title={t('calculator.title')}
+          icon={FaCalculator}
+          isOpen={!!openSections['investment_calculator']}
+          onToggle={toggleSection}
+        >
+          <InvestmentCalculator />
+        </CollapsibleSection>
+      )}
+
+      {isRealtor && (
+        <CollapsibleSection 
+          id="saved_districts"
+          title={t('stats_page.saved_districts')} 
+          icon={FaBookmark}
+          isOpen={!!openSections['saved_districts']}
+          onToggle={toggleSection}
+        >
+          <TrackedDistricts districts={trackedDistricts || []} />
+        </CollapsibleSection>
+      )}
 
       <CollapsibleSection 
         id="weekly_activity"
@@ -94,18 +117,20 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
         isOpen={!!openSections['weekly_activity']}
         onToggle={toggleSection}
       >
-         <WeeklyChart data={weeklyActivity || []} />
+        <WeeklyChart data={weeklyActivity || []} />
       </CollapsibleSection>
 
-      <CollapsibleSection 
-        id="popular_districts"
-        title={t('stats_page.popular_districts')} 
-        icon={FaMapMarkerAlt}
-        isOpen={!!openSections['popular_districts']}
-        onToggle={toggleSection}
-      >
-         <PopularDistricts /> 
-      </CollapsibleSection>
+      {isRealtor && (
+        <CollapsibleSection 
+          id="popular_districts"
+          title={t('stats_page.popular_districts')} 
+          icon={FaMapMarkerAlt}
+          isOpen={!!openSections['popular_districts']}
+          onToggle={toggleSection}
+        >
+          <PopularDistricts /> 
+        </CollapsibleSection>
+      )}
 
       <CollapsibleSection 
         id="last_activity"

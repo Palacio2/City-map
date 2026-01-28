@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaTimes, FaMapMarkerAlt, FaGlobe, FaCity, FaMap, FaCheck } from 'react-icons/fa';
 import styles from './LocationSelectorModal.module.css';
-import { fetchCountries, fetchCitiesByCountry } from '../../../api/cityCountrySelect'; 
-import { fetchDistrictsWithFilters } from '../../../api/districtsApi';
+import { fetchCountries, fetchCitiesByCountry } from '@api/cityCountrySelect'; 
+import { fetchDistrictsWithFilters } from '@api/districtsApi';
 
 // 👇 Додано props: maxSelection (максимум) та currentCount (скільки вже є на сторінці)
 export default function LocationSelectorModal({ 

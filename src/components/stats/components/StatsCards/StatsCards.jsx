@@ -10,7 +10,7 @@ const formatDuration = (seconds, t) => {
   return `${hours} ${t('stats_page.hours')} ${minutes} ${t('stats_page.minutes')}`;
 };
 
-export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCompareClick }) {
+export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCompareClick, showCompare }) {
   const { t } = useTranslation('stats');
 
   const cards = [
@@ -33,7 +33,8 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
       color: 'purple', 
       label: t('stats_page.comparisons'), 
       value: stats?.comparisons || 0,
-      onClick: onCompareClick
+      onClick: onCompareClick,
+      hidden: !showCompare
     },
     { 
       icon: FaClock, 
@@ -44,9 +45,11 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
     },
   ];
 
+  const visibleCards = cards.filter(card => !card.hidden);
+
   return (
     <div className={styles.grid}>
-      {cards.map((item, index) => (
+      {visibleCards.map((item, index) => (
         <div 
           key={index} 
           className={`${styles.card} ${item.onClick ? styles.clickable : ''}`}

@@ -4,7 +4,7 @@ import { fetchDashboardData } from '../../api/statsApi';
 
 const CACHE_KEY = 'user_stats_cache';
 
-export function useStatsData(isPremium) {
+export function useStatsData(isPremium, isRealtor) {
   const { t } = useTranslation('stats');
   
   const [data, setData] = useState(() => {
@@ -13,23 +13,27 @@ export function useStatsData(isPremium) {
       return cached ? JSON.parse(cached) : {
         stats: null,
         weeklyActivity: [],
-        popularDistricts: []
+        popularDistricts: [],
+        trackedDistricts: [] 
       };
     } catch {
-      return { stats: null, weeklyActivity: [], popularDistricts: [] };
+      return { stats: null, weeklyActivity: [], popularDistricts: [], trackedDistricts: [] };
     }
   });
 
   const [loading, setLoading] = useState(!data.stats);
   const [error, setError] = useState(null);
 
-  const loadStats = useCallback(async () => {
+  const loadStats = useCallback(async (forceReload = false) => {
     if (!isPremium) return;
 
+    if (data.stats && !forceReload) {
+        setLoading(false);
+        return;
+    }
+
     try {
-      // Якщо даних немає взагалі - показуємо лоадер.
-      // Якщо дані є (з кешу) - оновлюємо "тихо" фоном.
-      if (!data.stats) setLoading(true);
+      setLoading(true);
       setError(null);
 
       const result = await fetchDashboardData();
@@ -37,27 +41,27 @@ export function useStatsData(isPremium) {
       const newData = {
         stats: result.stats,
         weeklyActivity: Array.isArray(result.weeklyActivity) ? result.weeklyActivity : [],
-        popularDistricts: Array.isArray(result.popularDistricts) ? result.popularDistricts : []
+        popularDistricts: Array.isArray(result.popularDistricts) ? result.popularDistricts : [],
+        trackedDistricts: (isRealtor && Array.isArray(result.trackedDistricts)) 
+          ? result.trackedDistricts 
+          : []
       };
 
       setData(newData);
       sessionStorage.setItem(CACHE_KEY, JSON.stringify(newData));
 
     } catch (err) {
-      // Показуємо помилку тільки якщо немає кешованих даних.
-      // Якщо старі дані є - краще показати їх, ніж екран помилки.
       if (!data.stats) {
         setError(err.message || t('stats_page.error_unknown'));
       }
     } finally {
       setLoading(false);
     }
-  }, [isPremium, t, data.stats]);
+  }, [isPremium, isRealtor, t, data.stats]); 
 
   useEffect(() => {
     loadStats();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [loadStats]);
 
-  return { ...data, loading, error, reload: loadStats };
+  return { ...data, loading, error, reload: () => loadStats(true) };
 }

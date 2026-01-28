@@ -3,7 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FaFire, FaMapMarkerAlt, FaHome, FaKey, FaClock, FaPen } from 'react-icons/fa';
 import LocationSelectorModal from './LocationSelectorModal';
-import { fetchDistrictsWithFilters } from '../../../api/districtsApi';
+import { fetchDistrictsWithFilters } from '@api/districtsApi';
+import { transformDistrictsForDisplay } from '@utils/dataTransformers';
 import styles from './PopularDistricts.module.css';
 
 const getCurrencyCode = (countryName) => {
@@ -48,7 +49,9 @@ export default function PopularDistricts() {
         setLoading(true);
         try {
           const data = await fetchDistrictsWithFilters(selectedLocation.country, selectedLocation.city);
-          setDistricts(Array.isArray(data) ? data.slice(0, 5) : []);
+          // 👇 2. Використання трансформера
+          const transformedData = transformDistrictsForDisplay(data);
+          setDistricts(Array.isArray(transformedData) ? transformedData.slice(0, 5) : []);
         } catch { /* silent */ } 
         finally { setLoading(false); }
       };
@@ -102,8 +105,11 @@ export default function PopularDistricts() {
           <div className={styles.grid}>
             {districts.map((district, index) => {
               const generalStats = district.filterData?.general || {};
-              const salePrice = generalStats.salePriceSqm || generalStats.propertyPrice || district.sale_price || district.avg_price_sqm;
-              const rentPrice = generalStats.rentalPrice || district.rental_price || district.avg_price_rent;
+              
+              // 👇 3. Оновлені ключі відповідно до dataTransformers.js
+              const salePrice = generalStats.propertyPrice || generalStats.salePriceSqm || district.sale_price;
+              const rentPrice = generalStats.average_rent_price || generalStats.rentalPrice || district.rental_price;
+              
               const isSalePriceValid = salePrice && salePrice !== 0;
 
               return (
@@ -130,7 +136,7 @@ export default function PopularDistricts() {
                   </div>
                   <div className={styles.cardFooter}>
                       <FaClock className={styles.clockIcon} />
-                      <span>{t('updated_label')} {formatDate(district.updated_at || district.created_at, t('date_unknown'))}</span>
+                      <span>{t('updated_label')} {formatDate(district.updated_at, t('date_unknown'))}</span>
                   </div>
                 </div>
               );

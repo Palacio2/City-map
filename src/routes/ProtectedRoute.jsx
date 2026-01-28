@@ -3,17 +3,17 @@ import { Navigate } from 'react-router-dom';
 import { useSubscription } from '../pages/subscription/SubscriptionContext';
 
 const ProtectedRoute = ({ children, requiredPlan = 'premium' }) => {
-  const { isLoading, isPremium, isPro } = useSubscription();
+  const { isLoading, isPremium, isRealtor } = useSubscription();
 
   if (isLoading) {
     return null;
   }
 
-  if (requiredPlan === 'premium' && !isPremium) {
+  if (requiredPlan === 'realtor' && !isRealtor) {
     return <Navigate to="/subscription" replace />;
   }
 
-  if (requiredPlan === 'pro' && !isPro && !isPremium) {
+  if (requiredPlan === 'premium' && !isPremium) {
     return <Navigate to="/subscription" replace />;
   }
 

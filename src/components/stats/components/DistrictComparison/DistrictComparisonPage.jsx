@@ -6,17 +6,18 @@ import LocationSelectorModal from '../PopularDistricts/LocationSelectorModal';
 import ComparisonTable from './ComparisonTable';
 import PdfReportTemplate from './PdfReportTemplate';
 import ExportSettingsModal from './ExportSettingsModal';
-import { saveComparison } from '../../../api/comparisonApi';
-import { exportToPDF } from '../../../../utils/pdfExport';
+import { saveComparison } from '@api/comparisonApi';
+import { exportToPDF } from '@utils/pdfExport';
+// 👇 ВАЖЛИВО: Імпорт трансформера
+import { transformDistrictsForDisplay } from '@utils/dataTransformers';
 import styles from './DistrictComparisonPage.module.css';
 
-const MAX_SELECTION = 5;
+const MAX_SELECTION = 4;
 const STORAGE_KEY = 'comparison_selected_districts';
 
 export default function DistrictComparisonPage() {
   const { t } = useTranslation(['comparison', 'stats']);
   
-  // Ініціалізація стану з sessionStorage
   const [selectedDistricts, setSelectedDistricts] = useState(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY);
@@ -35,7 +36,6 @@ export default function DistrictComparisonPage() {
   
   const [showResults, setShowResults] = useState(false);
 
-  // Збереження в sessionStorage при зміні списку
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(selectedDistricts));
   }, [selectedDistricts]);
@@ -78,7 +78,7 @@ export default function DistrictComparisonPage() {
   };
 
   const handleReset = () => {
-    if (window.confirm(t('stats:actions.confirm_reset') || 'Очистити список?')) {
+    if (window.confirm(t('stats:actions.confirm_reset'))) {
       setSelectedDistricts([]);
       setShowResults(false);
     }
@@ -114,14 +114,23 @@ export default function DistrictComparisonPage() {
     setIsExporting(true);
 
     setTimeout(async () => {
-      await exportToPDF(
-        'pdf-report-template', 
-        t('results_title'), 
-        `PropLens_Report_${new Date().toISOString().slice(0,10)}.pdf`
-      );
-      setIsExporting(false);
-    }, 500); // Трохи більше часу на рендер картинки
+      try {
+        await exportToPDF(
+          'pdf-report-template', 
+          t('results_title'), 
+          `GeoAnalyzer_Report_${new Date().toISOString().slice(0,10)}.pdf`
+        );
+      } catch (error) {
+        console.error("PDF Export failed:", error);
+        alert(t('stats:error_export'));
+      } finally {
+        setIsExporting(false);
+      }
+    }, 800); 
   };
+
+  // 👇 Трансформація даних перед рендером
+  const displayDistricts = showResults ? transformDistrictsForDisplay(selectedDistricts) : [];
 
   return (
     <div className={styles.container}>
@@ -143,7 +152,7 @@ export default function DistrictComparisonPage() {
           
           {selectedDistricts.length > 0 && (
             <button className={styles.resetBtn} onClick={handleReset} disabled={isSaving}>
-              <FaTrashAlt /> {t('stats:actions.clear_all') || 'Очистити'}
+              <FaTrashAlt /> {t('stats:actions.clear_all')}
             </button>
           )}
         </div>
@@ -218,13 +227,13 @@ export default function DistrictComparisonPage() {
             </button>
           </div>
           
-          <ComparisonTable districts={selectedDistricts} />
+          <ComparisonTable districts={displayDistricts} />
         </div>
       )}
 
       <div style={{ position: 'fixed', top: 0, left: '-10000px', zIndex: -1 }}>
         <PdfReportTemplate 
-            districts={selectedDistricts} 
+            districts={displayDistricts} 
             customData={exportData} 
         />
       </div>
