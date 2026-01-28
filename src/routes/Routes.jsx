@@ -23,7 +23,7 @@ const FaqPage = lazy(() => import('../pages/faq/FaqPage'));
 const NotFoundPage = lazy(() => import("../pages/notFound/NotFoundPage"));
 const StatsPage = lazy(() => import("../components/stats/StatsPage"));
 const Comparison = lazy(() => import("../components/stats/components/DistrictComparison/DistrictComparisonPage"));
-const Admin = lazy(() => import("../pages/admin/index"));
+// const Admin = lazy(() => import("../pages/admin/index"));
 const BillingHistoryPage = lazy(() => import("../components/profile/BillingHistoryPage"));
 const ProfileEditPage = lazy(() => import("../components/profile/ProfileEditPage"));
 const PasswordChangePage = lazy(() => import("../components/profile/PasswordChangePage"));
@@ -49,7 +49,7 @@ export default function AppRoutes() {
           <Route path="register-success" element={<RegisterSuccess />} />
           <Route path="auth/callback" element={<AuthCallback />} />
 
-          <Route path="parser" element={<Admin />} />
+          {/* <Route path="parser" element={<Admin />} /> */}
 
           <Route 
             path="favorites"
