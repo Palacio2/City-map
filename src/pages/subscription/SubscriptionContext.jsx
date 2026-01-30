@@ -14,21 +14,18 @@ export const SubscriptionProvider = ({ children }) => {
   const [subscription, setSubscription] = useState(FREE_PLAN_DATA);
   const [isLoading, setIsLoading] = useState(true);
 
-  // forceReload=true передаємо, якщо ми точно знаємо, що щось змінилося (наприклад, після оплати)
   const updateSubscription = useCallback(async (waitForPlan = null) => {
     setIsLoading(true);
     try {
-      // Якщо чекаємо новий план - значить точно треба ігнорувати кеш
       const forceReload = !!waitForPlan; 
       
       let sub = await fetchSubscriptionStatus(forceReload);
       
       if (waitForPlan && waitForPlan !== 'free') {
         let attempts = 0;
-        // Тут ми вже форсуємо оновлення в циклі
         while (attempts < 5 && sub.plan !== waitForPlan) {
-          await new Promise(r => setTimeout(r, 1500)); // Трохи збільшив затримку
-          sub = await fetchSubscriptionStatus(true); // true = ігнорувати кеш
+          await new Promise(r => setTimeout(r, 1500));
+          sub = await fetchSubscriptionStatus(true);
           attempts++;
         }
       }
@@ -42,27 +39,52 @@ export const SubscriptionProvider = ({ children }) => {
 
   useEffect(() => {
     let mounted = true;
-    
-    // Ініціалізація (використає кеш, якщо є)
-    const init = async () => { if (mounted) await updateSubscription(); };
+    let channel = null;
+
+    const init = async () => {
+      if (mounted) await updateSubscription();
+
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (user) {
+         channel = supabase
+          .channel('subscription-updates')
+          .on(
+            'postgres_changes',
+            {
+              event: '*',
+              schema: 'public',
+              table: 'user_subscriptions',
+              filter: `user_id=eq.${user.id}`,
+            },
+            () => {
+              updateSubscription(null);
+            }
+          )
+          .subscribe();
+      }
+    };
+
     init();
 
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((event) => {
-       // 1. ІГНОРУЄМО TOKEN_REFRESHED - це головна причина спаму запитами
        if (event === 'TOKEN_REFRESHED') return;
 
        if (event === 'SIGNED_IN') {
-         // При вході форсуємо оновлення, щоб не підтягнуло кеш попереднього юзера (хоча в API є перевірка ID)
          updateSubscription(null); 
        } else if (event === 'SIGNED_OUT') {
          setSubscription(FREE_PLAN_DATA);
          setIsLoading(false);
-         // Очищаємо кеш при виході
          localStorage.removeItem('user_subscription_cache');
+         if (channel) supabase.removeChannel(channel);
        }
     });
 
-    return () => { mounted = false; authSub.unsubscribe(); };
+    return () => { 
+      mounted = false; 
+      authSub.unsubscribe();
+      if (channel) supabase.removeChannel(channel);
+    };
   }, [updateSubscription]);
 
   const value = useMemo(() => {
