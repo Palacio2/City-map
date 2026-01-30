@@ -14,19 +14,29 @@ export const transformDistrictForDisplay = (district) => {
     };
   }
 
-  let filterData = Array.isArray(district.filterData) 
-    ? district.filterData[0] 
-    : district.filterData;
-    
-  if (!filterData) return district;
+  let rawData = null;
+
+  if (Array.isArray(district.filterData)) {
+    rawData = district.filterData[0];
+  } else if (district.filterData && typeof district.filterData === 'object') {
+    rawData = district.filterData;
+  } else if (district.district_data) { 
+    rawData = Array.isArray(district.district_data) ? district.district_data[0] : district.district_data;
+  } else {
+    if (district.population !== undefined || district.average_salary !== undefined) {
+        rawData = district;
+    }
+  }
+
+  const filterData = rawData || {};
 
   return {
     ...district,
-    updated_at: filterData.data_updated_at || filterData.last_updated || district.updated_at,
+    updated_at: filterData.data_updated_at || filterData.last_updated || district.updated_at || null,
 
     filterData: {
       general: {
-        propertyPrice: safeParseFloat(filterData.average_property_price),
+        propertyPrice: safeParseFloat(filterData.average_sale_price_sqm),
         populationDensity: safeParseInt(filterData.population_density),
         greenSpaces: safeParseFloat(filterData.green_spaces_percent),
         population: safeParseInt(filterData.population),
@@ -55,7 +65,7 @@ export const transformDistrictForDisplay = (district) => {
         metroStations: safeParseInt(filterData.metro_stations_count),
         tramStops: safeParseInt(filterData.tram_stops_count),
         bikeLanes: safeParseInt(filterData.bike_lanes_km),
-        transportFrequency: filterData.transport_frequency,
+        transportFrequency: filterData.transport_frequency || null,
         transportAvgDistance: safeParseInt(filterData.transport_average_distance_m) 
       },
       social: {
@@ -63,7 +73,7 @@ export const transformDistrictForDisplay = (district) => {
         parks: safeParseInt(filterData.parks_count),
         playgrounds: safeParseInt(filterData.playgrounds_count),
         avgParkSize: safeParseInt(filterData.average_park_size_sqm),
-        airQuality: filterData.air_quality,
+        airQuality: filterData.air_quality || null,
         
         sportsFacilities: safeParseInt(filterData.sports_facilities_count),
         cinemas: safeParseInt(filterData.cinemas_count),
@@ -94,11 +104,11 @@ export const transformDistrictForDisplay = (district) => {
         propertyPricePerSqm: safeParseFloat(filterData.average_sale_price_sqm),
         costPerSqm: safeParseFloat(filterData.utilities_cost_per_sqm),
         
-        hasWaterSupply: filterData.has_water_supply, 
-        hasHeating: filterData.has_heating,
-        hasElectricity: filterData.has_electricity,
-        hasGasSupply: filterData.has_gas_supply,
-        hasWasteRemoval: filterData.has_waste_removal
+        hasWaterSupply: Boolean(filterData.has_water_supply), 
+        hasHeating: Boolean(filterData.has_heating),
+        hasElectricity: Boolean(filterData.has_electricity),
+        hasGasSupply: Boolean(filterData.has_gas_supply),
+        hasWasteRemoval: Boolean(filterData.has_waste_removal)
       }
     }
   };

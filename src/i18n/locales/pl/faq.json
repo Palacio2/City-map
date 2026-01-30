@@ -1,50 +1,66 @@
 {
-  "title": "Często zadawane pytania",
-  "subtitle": "Znajdź odpowiedzi na popularne pytania dotyczące GeoAnalyzer",
+  "title": "Centrum wsparcia",
+  "subtitle": "Odpowiedzi na najczęstsze pytania o GeoAnalyzer",
   "categories": {
-    "general": "Ogólne",
-    "subscription": "Subskrypcja i płatności",
-    "data": "Dane i dokładność",
-    "account": "Konto użytkownika"
+    "general": "Pytania ogólne",
+    "subscription": "Cennik i subskrypcje",
+    "data": "Dane i algorytmy",
+    "account": "Konto i bezpieczeństwo"
   },
   "questions": {
     "general": [
       {
-        "q": "Czym jest GeoAnalyzer?",
-        "a": "GeoAnalyzer to narzędzie do analizy jakości życia w różnych dzielnicach miasta. Zbieramy dane dotyczące bezpieczeństwa, środowiska, transportu i infrastruktury, aby pomóc Ci wybrać idealne miejsce do życia."
+        "q": "Czym GeoAnalyzer różni się od konkurencji?",
+        "a": "Jesteśmy unikalni w swoim podejściu. Konkurencja pokazuje „gdzie”, a my odpowiadamy na pytanie „jak się tam żyje”. Nie tylko wyświetlamy obiekty, ale agregujemy je w rankingi bezpieczeństwa, komfortu i atrakcyjności inwestycyjnej, oszczędzając Ci dziesiątki godzin samodzielnych poszukiwań."
       },
       {
-        "q": "Jakie miasta są dostępne?",
-        "a": "Obecnie obsługujemy duże miasta Ukrainy i Polski. Stale pracujemy nad rozszerzeniem geografii."
+        "q": "Jaki zasięg ma serwis?",
+        "a": "Obecnie wchodzimy na rynek polski. Stale staramy się dodawać nowe lokalizacje. Jeśli nie znalazłeś potrzebnego miasta, prosimy o chwilę cierpliwości. Naszym celem jest objęcie jak największej liczby miejscowości, aby każdy mógł znaleźć dokładnie to, czego szuka."
+      },
+      {
+        "q": "Czy mogę korzystać z serwisu na telefonie?",
+        "a": "Tak, nasz interfejs jest w pełni responsywny. Możesz badać dzielnice zarówno z laptopa w domu, jak i ze smartfona, będąc bezpośrednio na oględzinach nieruchomości."
       }
     ],
     "subscription": [
       {
-        "q": "Czym różni się Premium od wersji bezpłatnej?",
-        "a": "Premium zapewnia dostęp do zaawansowanych filtrów, szczegółowych statystyk dla każdego kryterium, porównania dzielnic oraz możliwości zapisywania nieograniczonej liczby ulubionych miejsc."
+        "q": "Dla kogo jest plan „Tygodniowy”?",
+        "a": "To unikalna oferta dla osób w aktywnej fazie poszukiwania mieszkania. Otrzymujesz pełną funkcjonalność Premium za symboliczną opłatą na 7 dni, co zazwyczaj wystarcza na wybór lokum."
       },
       {
-        "q": "Jak anulować subskrypcję?",
-        "a": "Subskrypcję możesz anulować w dowolnym momencie w swoim Profilu w sekcji 'Historia płatności'. Dostęp do funkcji Premium zostanie zachowany do końca opłaconego okresu."
+        "q": "Czy mogę anulować subskrypcję?",
+        "a": "Tak, oczywiście. Możesz wyłączyć automatyczne odnawianie w dowolnym momencie w ustawieniach profilu. Dostęp do płatnych funkcji zostanie zachowany do końca opłaconego okresu."
+      },
+      {
+        "q": "Czym są raporty White Label w planie Realtor Pro?",
+        "a": "Ta funkcja pozwala agentom nieruchomości generować raporty PDF o dzielnicy bez logo GeoAnalyzer. Możesz dodać własne dane kontaktowe i markę, dostarczając klientom profesjonalną analizę w swoim imieniu."
       }
     ],
     "data": [
       {
-        "q": "Skąd pochodzą dane?",
-        "a": "Agregujemy informacje z otwartych rejestrów państwowych, Google Maps API, stacji monitoringu środowiska oraz opinii użytkowników."
+        "q": "Jak dokładne są Wasze dane?",
+        "a": "Stosujemy weryfikację krzyżową danych z kilku autorytatywnych źródeł. Jednak miasto to żywy organizm i zmiany zachodzą codziennie. Jeśli potrzebujesz szczegółowej metodologii zbierania danych dla konkretnej dzielnicy, wyślij zapytanie na nasz adres e-mail."
       },
       {
-        "q": "Jak często aktualizowane są informacje?",
-        "a": "Dane dotyczące cen nieruchomości i środowiska są aktualizowane co tydzień. Informacje o infrastrukturze są weryfikowane raz w miesiącu."
+        "q": "Skąd pochodzą informacje o bezpieczeństwie?",
+        "a": "Indeks bezpieczeństwa powstaje na podstawie oficjalnych statystyk przestępczości, danych o oświetleniu ulicznym, obecności kamer monitoringu oraz bliskości posterunków policji."
+      },
+      {
+        "q": "Jak często aktualizowana jest baza?",
+        "a": "Ceny nieruchomości i wskaźniki ekologiczne są aktualizowane w czasie niemal rzeczywistym. Zmiany infrastrukturalne (nowe sklepy, przystanki) są wprowadzane zgodnie z harmonogramem aktualizacji rejestrów pierwotnych."
       }
     ],
     "account": [
       {
-        "q": "Jak zmienić hasło?",
-        "a": "Przejdź do Profil -> Zmień hasło. Wymagane będzie dwukrotne wprowadzenie nowego hasła w celu potwierdzenia."
+        "q": "Jak skontaktować się z pomocą techniczną?",
+        "a": "W celu szybkiego rozwiązania problemów skorzystaj z formularza na stronie „Kontakt” lub napisz do nas na youworkday@gmail.com. Odpowiadamy w ciągu 24 godzin."
+      },
+      {
+        "q": "Czy moje dane płatnicze są bezpieczne?",
+        "a": "Nie przechowujemy danych Twoich kart. Wszystkie płatności są przetwarzane przez międzynarodowego dostawcę Stripe, który posiada najwyższy poziom certyfikacji bezpieczeństwa PCI DSS."
       }
     ]
   },
-  "still_have_questions": "Nie znalazłeś odpowiedzi?",
+  "still_have_questions": "Potrzebujesz więcej informacji?",
   "contact_support": "Napisz do wsparcia"
 }

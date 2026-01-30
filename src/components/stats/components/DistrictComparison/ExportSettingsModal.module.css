@@ -14,75 +14,84 @@
 }
 
 .modal {
-  background: var(--bg-white, #ffffff);
-  padding: 30px;
-  border-radius: 16px;
+  background-color: var(--bg-white);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
   width: 90%;
   max-width: 450px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  border: 1px solid var(--border-color, #e2e8f0);
+  box-shadow: var(--shadow-modal);
+  border: 1px solid var(--border-color);
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  max-height: 90vh;
+  overflow-y: auto;
+  color: var(--text-dark);
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 24px;
+  margin-bottom: var(--spacing-lg);
 }
 
 .header h3 {
   margin: 0;
   font-size: 1.25rem;
-  color: var(--text-dark, #2d3748);
+  color: var(--text-dark);
+  font-weight: 700;
 }
 
 .closeButton {
   background: none;
   border: none;
   cursor: pointer;
-  color: var(--text-light, #a0aec0);
+  color: var(--text-light);
   font-size: 1.2rem;
-  transition: color 0.2s;
-  padding: 4px;
+  transition: var(--transition-default);
+  padding: var(--spacing-xs);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .closeButton:hover {
-  color: var(--danger-color, #e53e3e);
+  color: var(--danger-color);
+  transform: rotate(90deg);
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-lg);
 }
 
 .logoUploadSection {
   display: flex;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: var(--spacing-sm);
 }
 
 .logoUploadLabel {
   width: 100%;
-  height: 80px;
-  border: 2px dashed var(--border-color, #cbd5e0);
-  border-radius: 8px;
+  height: 100px;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius-md);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-medium, #718096);
+  color: var(--text-medium);
   font-size: 0.9rem;
-  gap: 8px;
-  transition: all 0.2s;
-  background: var(--bg-light, #f7fafc);
+  gap: var(--spacing-sm);
+  transition: var(--transition-default);
+  background-color: var(--bg-light);
 }
 
 .logoUploadLabel:hover {
-  border-color: var(--primary-color, #667eea);
-  color: var(--primary-color, #667eea);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  background-color: var(--bg-hover);
 }
 
 .logoPreview {
@@ -98,65 +107,83 @@
 .inputGroup {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .inputGroup label {
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--text-dark, #4a5568);
+  color: var(--text-dark);
 }
 
-.inputGroup input {
-  padding: 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color, #cbd5e0);
-  background: var(--bg-light, #f7fafc);
+.inputGroup input,
+.inputGroup textarea {
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-light);
   font-size: 1rem;
-  color: var(--text-dark, #2d3748);
-  transition: all 0.2s;
+  color: var(--text-dark);
+  transition: var(--transition-default);
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.inputGroup input:focus {
+.inputGroup textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.inputGroup input:focus,
+.inputGroup textarea:focus {
   outline: none;
-  border-color: var(--primary-color, #667eea);
+  border-color: var(--primary-color);
+  background-color: var(--bg-white);
   box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
 .actions {
   display: flex;
   justify-content: flex-end;
-  gap: 12px;
-  margin-top: 16px;
+  gap: var(--spacing-md);
+  margin-top: var(--spacing-sm);
 }
 
 .cancelBtn {
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: 1px solid var(--border-color, #cbd5e0);
+  padding: 0.6em 1.2em;
+  border-radius: var(--border-radius-sm);
+  border: 1px solid var(--border-color);
   background: transparent;
-  color: var(--text-medium, #718096);
+  color: var(--text-medium);
   font-weight: 600;
   cursor: pointer;
+  transition: var(--transition-default);
+}
+
+.cancelBtn:hover {
+  background-color: var(--bg-hover);
+  color: var(--text-dark);
 }
 
 .confirmBtn {
-  padding: 10px 24px;
-  border-radius: 8px;
+  padding: 0.6em 1.2em;
+  border-radius: var(--border-radius-sm);
   border: none;
-  background: linear-gradient(135deg, var(--primary-color, #667eea) 0%, var(--primary-dark, #5a67d8) 100%);
+  background: var(--primary-gradient);
   color: white;
   font-weight: 600;
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  gap: var(--spacing-sm);
+  box-shadow: var(--shadow-card);
+  transition: var(--transition-default);
 }
 
 .confirmBtn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
 }
 
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }

@@ -1,211 +1,262 @@
-/* Змінні для "дорогого" вигляду */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap');
+
 :root {
-  --color-primary: #1a202c; /* Глибокий графіт */
-  --color-accent: #c5a572;  /* Приглушене золото/бронза */
+  --color-primary: #1a202c;
+  --color-accent: #c5a572;
   --color-text: #2d3748;
-  --color-text-light: #718096;
-  --bg-header: #f7fafc;
-  --border-light: #e2e8f0;
+  --color-border: #e2e8f0;
 }
 
 .reportContainer {
-  width: 210mm;
-  min-height: 297mm;
+  /* ВАЖЛИВО: Точна ширина А4 у пікселях. Не змінюйте це. */
+  width: 794px; 
+  min-height: 1123px; /* Висота А4 */
+  
   background: #ffffff;
-  padding: 40px 50px; /* Більші відступи по боках */
-  font-family: 'Georgia', 'Times New Roman', serif; /* Serif виглядає дорожче для звітів */
+  padding: 40px; /* Це і є ваші поля (margins) */
+  
+  font-family: 'Inter', sans-serif;
   color: var(--color-text);
   box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
   position: relative;
+  
+  /* Покращує рендеринг шрифтів при експорті */
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* --- Header --- */
+/* === HEADER === */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: 3px solid var(--color-primary); /* Жирна лінія знизу */
-  padding-bottom: 25px;
-  margin-bottom: 40px;
+  border-bottom: 2px solid var(--color-primary);
+  padding-bottom: 20px;
+  margin-bottom: 25px;
 }
 
 .brandSection {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 15px;
 }
 
 .logoPlaceholder {
-  width: 60px;
-  height: 60px;
-  background: var(--color-primary);
-  color: var(--color-accent);
-  border-radius: 0; /* Гострі кути виглядають суворіше */
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 22px;
+  color: var(--color-primary);
+  background: #edf2f7;
+  border-radius: 8px;
+}
+
+.hasLogo {
+  padding: 0;
+  background: transparent;
+}
+
+.logoImage {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .brandName {
-  font-family: 'Helvetica Neue', 'Arial', sans-serif;
-  font-size: 26px;
-  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  font-size: 20px;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 1px;
-  margin: 0;
+  letter-spacing: 0.5px;
   color: var(--color-primary);
-  line-height: 1;
+  margin: 0;
+  line-height: 1.1;
 }
 
 .reportDate {
-  margin: 6px 0 0;
-  color: var(--color-accent);
-  font-family: 'Helvetica Neue', 'Arial', sans-serif;
-  font-size: 12px;
-  font-weight: 600;
+  margin: 4px 0 0;
+  font-size: 10px;
+  color: #718096;
   text-transform: uppercase;
-  letter-spacing: 1.5px;
-}
-
-.reportTitleBlock {
-  text-align: right;
-}
-
-.reportTitleBlock h2 {
-  font-family: 'Helvetica Neue', 'Arial', sans-serif;
-  font-size: 14px;
-  margin: 0;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--color-text-light);
-  font-weight: 600;
+  letter-spacing: 1px;
+  font-weight: 500;
 }
 
 .reportTitleBlock p {
-  margin: 8px 0 0;
-  font-size: 32px;
-  font-weight: 400; /* Тонкий шрифт для елегантності */
-  color: var(--color-primary);
-  line-height: 1;
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  color: var(--color-accent);
+  margin: 0;
+  font-style: italic;
+  font-weight: 600;
 }
 
-/* --- Table --- */
+/* === COMMENTS === */
+.commentsSection {
+  margin-bottom: 25px;
+  padding: 16px 20px;
+  background-color: #fdfbf7;
+  border-left: 3px solid var(--color-accent);
+  border-radius: 0 6px 6px 0;
+}
+
+.commentsSection h3 {
+  color: var(--color-accent);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin: 0 0 8px 0;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+
+.commentsSection p {
+  font-family: 'Playfair Display', serif;
+  font-size: 13px;
+  line-height: 1.5;
+  color: #2d3748;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
+/* === TABLE === */
 .tableWrapper {
-  margin-bottom: 50px;
+  flex: 1 0 auto;
+  margin-bottom: 40px;
+  width: 100%;
 }
 
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'Helvetica Neue', 'Arial', sans-serif; /* Дані краще читаються в Sans-Serif */
+  /* Важливо: prevent page break inside rows (хоча html2canvas це ігнорує, це корисно для друку) */
+  page-break-inside: auto; 
 }
 
-/* Заголовки стовпців */
+.table tr {
+  page-break-inside: avoid;
+  page-break-after: auto;
+}
+
+.table thead th {
+  background-color: var(--color-primary);
+  color: #ffffff;
+  padding: 10px 8px;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  border: 1px solid var(--color-primary);
+}
+
 .metricHeader {
   text-align: left;
-  padding: 16px 12px;
-  border-bottom: 1px solid var(--color-primary);
-  font-size: 11px;
-  color: var(--color-text-light);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  font-weight: 600;
-  vertical-align: bottom;
+  width: 30%;
+  border-top-left-radius: 6px;
+  padding-left: 12px !important;
 }
 
 .districtHeader {
-  padding: 16px 12px;
-  border-bottom: 1px solid var(--color-primary);
   text-align: center;
-  vertical-align: bottom;
-  background: rgba(197, 165, 114, 0.05); /* Легкий фон колонки */
-  border-top: 3px solid var(--color-accent); /* Золота "шапка" */
 }
 
 .dName {
-  font-size: 15px;
+  font-size: 12px;
   font-weight: 700;
-  color: var(--color-primary);
-  margin-bottom: 4px;
+  color: #ffffff;
+  /* Запобігаємо розриву слів у заголовках */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 .dCity {
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  color: var(--color-text-light);
+  font-size: 9px;
+  opacity: 0.8;
+  font-weight: 400;
 }
 
-/* Рядки розділів */
 .sectionRow td {
-  padding: 24px 12px 12px; /* Відступ зверху для розділення */
-  font-family: 'Georgia', serif;
+  padding: 12px 12px 6px;
+  font-family: 'Playfair Display', serif;
   font-weight: 700;
-  font-size: 16px;
-  color: var(--color-accent); /* Золотий колір заголовків */
-  border-bottom: 1px solid var(--border-light);
-  text-transform: none;
+  font-size: 14px;
+  color: var(--color-primary);
+  border-bottom: 2px solid var(--color-accent);
+  background-color: #ffffff;
 }
 
-/* Рядки даних */
 .dataRow td {
-  padding: 14px 12px;
-  border-bottom: 1px solid #edf2f7;
-  font-size: 13px;
-  color: var(--color-text);
+  padding: 8px 6px;
+  font-size: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  height: 32px;
+  vertical-align: middle;
 }
 
-.dataRow:last-child td {
-  border-bottom: 1px solid var(--color-primary); /* Завершальна лінія розділу */
+/* Зебра - робить читання легшим */
+.dataRow:nth-child(even) td {
+  background-color: #f8fafc;
 }
 
 .labelCell {
+  color: #4a5568;
   font-weight: 500;
-  color: var(--color-text);
+  padding-left: 12px !important;
 }
 
 .valueCell {
   text-align: center;
-  font-weight: 600; /* Трохи жирніше для цифр */
-  color: var(--color-primary);
-  background: rgba(197, 165, 114, 0.02); /* Дуже ледь помітний фон для колонок даних */
+  font-weight: 500;
+  color: #2d3748;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
 }
 
-/* --- Footer --- */
+.winnerCell {
+  color: #15803d !important;
+  font-weight: 700 !important;
+  background-color: rgba(34, 197, 94, 0.1) !important;
+  border-radius: 4px;
+}
+
+/* === FOOTER === */
 .footer {
-  position: absolute;
-  bottom: 40px;
-  left: 50px;
-  right: 50px;
-  padding-top: 20px;
-  border-top: 1px solid var(--border-light);
+  /* margin-top: auto притискає футер вниз */
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid #e2e8f0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-family: 'Helvetica Neue', 'Arial', sans-serif;
-  font-size: 10px;
-  color: var(--color-text-light);
-  text-transform: uppercase;
-  letter-spacing: 1px;
+  font-size: 9px;
+  color: #a0aec0;
+  width: 100%;
 }
 
 .footerInfo {
   display: flex;
-  gap: 30px;
+  gap: 20px;
 }
 
 .footerInfo span {
   display: flex;
   align-items: center;
-  gap: 8px;
-  color: var(--color-primary);
+  gap: 6px;
+  color: #4a5568;
   font-weight: 600;
 }
 
 .disclaimer {
-  max-width: 40%;
   text-align: right;
-  line-height: 1.4;
-  opacity: 0.7;
+  max-width: 250px;
 }

@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft, FaPlus, FaTimes, FaMapMarkerAlt, FaBalanceScale, FaTrashAlt, FaFilePdf } from 'react-icons/fa';
+import { fetchDistrictsByIds } from '@api/districtsApi'; 
 import LocationSelectorModal from '../PopularDistricts/LocationSelectorModal';
 import ComparisonTable from './ComparisonTable';
 import PdfReportTemplate from './PdfReportTemplate';
 import ExportSettingsModal from './ExportSettingsModal';
 import { saveComparison } from '@api/comparisonApi';
 import { exportToPDF } from '@utils/pdfExport';
-// 👇 ВАЖЛИВО: Імпорт трансформера
 import { transformDistrictsForDisplay } from '@utils/dataTransformers';
 import styles from './DistrictComparisonPage.module.css';
 
@@ -48,28 +48,58 @@ export default function DistrictComparisonPage() {
     setIsModalOpen(true);
   };
 
-  const handleAddDistricts = (country, city, districtsArray) => {
+  const handleAddDistricts = async (country, city, districtsArray) => {
     const availableSlots = MAX_SELECTION - selectedDistricts.length;
     
-    const newDistricts = districtsArray
+    const candidates = districtsArray
       .filter(d => !selectedDistricts.some(
         existing => existing.name === (d.name || d) && existing.city === city && existing.country === country
       ))
-      .slice(0, availableSlots)
-      .map(d => ({
-        ...d,
-        id: d.id || `${city}-${d.name}-${Date.now()}`,
-        name: d.name || d,
-        city,
-        country
-      }));
+      .slice(0, availableSlots);
 
-    if (newDistricts.length > 0) {
-      setSelectedDistricts(prev => [...prev, ...newDistricts]);
-      setShowResults(false);
+    if (candidates.length === 0) {
+      setIsModalOpen(false);
+      return;
     }
-    
-    setIsModalOpen(false);
+
+    setIsSaving(true);
+
+    try {
+        const idsToFetch = candidates
+            .map(d => d.id)
+            .filter(id => id && typeof id === 'string' && id.length > 10);
+
+        let enrichedDistricts = [];
+
+        if (idsToFetch.length > 0) {
+            try {
+                enrichedDistricts = await fetchDistrictsByIds(idsToFetch);
+            } catch (error) {
+                console.error("API Error fetching details:", error);
+            }
+        }
+
+        const finalDistricts = candidates.map(candidate => {
+            const fullVer = enrichedDistricts.find(fd => fd.id === candidate.id);
+            
+            return {
+                ...(fullVer || candidate),
+                city: city,
+                country: country,
+                id: candidate.id || `${city}-${candidate.name}-${Date.now()}` 
+            };
+        });
+
+        setSelectedDistricts(prev => [...prev, ...finalDistricts]);
+        setShowResults(false);
+
+    } catch (err) {
+        console.error("Failed to add districts:", err);
+        alert(t('stats:error_loading_details') || "Failed to load district details");
+    } finally {
+        setIsSaving(false);
+        setIsModalOpen(false);
+    }
   };
 
   const handleRemoveDistrict = (indexToRemove) => {
@@ -126,11 +156,12 @@ export default function DistrictComparisonPage() {
       } finally {
         setIsExporting(false);
       }
-    }, 800); 
+    }, 1000); 
   };
 
-  // 👇 Трансформація даних перед рендером
-  const displayDistricts = showResults ? transformDistrictsForDisplay(selectedDistricts) : [];
+  const displayDistricts = useMemo(() => {
+    return transformDistrictsForDisplay(selectedDistricts);
+  }, [selectedDistricts]);
 
   return (
     <div className={styles.container}>
@@ -231,7 +262,14 @@ export default function DistrictComparisonPage() {
         </div>
       )}
 
-      <div style={{ position: 'fixed', top: 0, left: '-10000px', zIndex: -1 }}>
+      <div style={{ 
+        position: 'fixed', 
+        top: 0, 
+        left: '-10000px', 
+        zIndex: -1,
+        width: '794px',  
+        minHeight: '1123px'
+      }}>
         <PdfReportTemplate 
             districts={displayDistricts} 
             customData={exportData} 

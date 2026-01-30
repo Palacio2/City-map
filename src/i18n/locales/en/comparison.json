@@ -1,42 +1,42 @@
 {
   "title": "District Comparison",
-  "subtitle": "Select up to 4 districts for detailed price and metric comparison",
-  "limit_reached": "Maximum number of districts for comparison: {{max}}",
+  "subtitle": "Select up to 4 districts for a detailed comparison of prices and indicators",
+  "limit_reached": "Maximum number of districts to compare: {{max}}",
   "selected_count": "Selected",
   "add_district": "Add District",
-  "empty_title": "Comparison list is empty",
+  "empty_title": "Comparison List is Empty",
   "empty_desc": "Add districts from different cities to compare rental costs and quality of life.",
   "start_btn": "Start Selection",
   "add_another": "Add Another",
-  "ready_message": "Districts selected. Click the button below for analysis.",
-  "compare_btn": "Compare Metrics",
+  "ready_message": "Districts selected. Click the button below to analyze.",
+  "compare_btn": "Compare Indicators",
   "success_saved": "Comparison saved!",
   "results_title": "Comparison Results",
   "metric": "Metric",
   "export_pdf": "Export PDF",
-
+  
   "yes": "Yes",
   "no": "No",
 
   "finance_population": "Finance & Population",
   "avg_property_price": "Avg. Property Price",
-  "avg_salary": "Avg. Salary",
+  "avg_salary": "Average Salary",
   "population": "Population",
   "population_density": "Population Density",
   "unemployment": "Unemployment Rate",
-
+  
   "education": "Education",
   "schools": "Schools",
   "kindergartens": "Kindergartens",
   "universities": "Universities",
   "rating": "Rating",
-
+  
   "medicine": "Medicine",
   "hospitals": "Hospitals",
   "clinics": "Clinics",
   "pharmacies": "Pharmacies",
   "emergencyServices": "Emergency Services",
-
+  
   "transport": "Transport",
   "metroStations": "Metro Stations",
   "busStops": "Bus Stops",
@@ -44,18 +44,18 @@
   "bikeLanes": "Bike Lanes",
   "parkingSpots": "Parking Spots",
   "transportAvgDistance": "Transport Accessibility",
-  "transportFrequency": "Traffic Frequency",
-
+  "transportFrequency": "Frequency",
+  
   "safety": "Safety",
   "crimeLevel": "Crime Level",
   "policeStations": "Police Stations",
-  "cctv": "CCTV Cameras",
+  "cctv": "Surveillance Cameras",
   "streetLighting": "Street Lighting",
-
+  
   "social": "Social Sphere",
   "green_zones": "Green Zones",
   "parks": "Parks",
-  "avgParkSize": "Avg. Park Size",
+  "avgParkSize": "Park Size",
   "playgrounds": "Playgrounds",
   "sportsFacilities": "Sports Facilities",
   "culture": "Culture",
@@ -65,20 +65,20 @@
   "libraries": "Libraries",
   "cafesRestaurants": "Cafes & Restaurants",
   "airQuality": "Air Quality",
-
+  
   "commerce": "Commerce",
   "groceryStores": "Supermarkets",
   "shoppingMalls": "Shopping Malls",
   "banksATMs": "Banks & ATMs",
   "postOffices": "Post Offices",
   "beautySalons": "Beauty Salons",
-  "constructionStores": "Construction Stores",
+  "constructionStores": "Hardware Stores",
   "clothingStores": "Clothing Stores",
-  "shops_density": "Shops Density",
-
+  "shops_density": "Shop Density",
+  
   "utilities": "Utilities",
   "costPerSqm": "Utility Cost",
-  "propertyPricePerSqm": "Property Price (m²)",
+  "propertyPricePerSqm": "Price per m² (Sale)",
   "hasWaterSupply": "Water Supply",
   "hasElectricity": "Electricity",
   "hasHeating": "Heating",
@@ -111,12 +111,17 @@
     "agency_placeholder": "E.g.: Best Estate",
     "phone": "Phone Number",
     "website": "Website",
-    "export_btn": "Export PDF"
+    "export_btn": "Export PDF",
+    "comments": "Client Comments",
+    "comments_placeholder": "Write your conclusions or recommendations here...",
+    "phone_placeholder": "+1 ...",
+    "website_placeholder": "www.example.com"
   },
 
   "pdf_report": {
     "analytics_report": "Analytics Report",
     "prepared_by": "Prepared by",
-    "valid_as_of": "Data valid as of"
+    "valid_as_of": "Data valid as of",
+    "analyst_notes": "Analyst Notes"
   }
 }

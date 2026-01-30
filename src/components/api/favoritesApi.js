@@ -7,7 +7,7 @@ export const favoritesApi = {
     const { data: { session } } = await supabase.auth.getSession();
     
     if (!session) {
-      throw new Error('Будь ласка, увійдіть в систему');
+      throw new Error('Authorization required');
     }
 
     const url = `${API_BASE_URL}/${endpoint}`;
@@ -25,9 +25,9 @@ export const favoritesApi = {
       const errorText = await response.text();
       try {
         const errorJson = JSON.parse(errorText);
-        throw new Error(errorJson.error || `Помилка ${response.status}`);
+        throw new Error(errorJson.error || response.status);
       } catch {
-        throw new Error(`Помилка ${response.status}: ${errorText}`);
+        throw new Error(`${response.status}: ${errorText}`);
       }
     }
 
@@ -55,26 +55,5 @@ export const favoritesApi = {
       method: 'POST',
       body: JSON.stringify({ districtId })
     });
-  },
-
-  async checkFavorite(districtId) {
-    try {
-      const favorites = await this.getFavorites();
-      return favorites.some(f => f.district_id === districtId || f.id === districtId);
-    } catch (e) {
-      console.error(e);
-      return false;
-    }
-  },
-
-  async toggleFavorite(districtId) {
-    const isFav = await this.checkFavorite(districtId);
-    if (isFav) {
-      await this.removeFavorite(districtId);
-      return false;
-    } else {
-      await this.addFavorite(districtId);
-      return true;
-    }
   }
 };

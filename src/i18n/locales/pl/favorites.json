@@ -24,5 +24,8 @@
     "ecology": "Ekologia",
     "medicine": "Medycyna",
     "shopping": "Zakupy"
+  },
+  "favorites": {
+    "price_label": ""
   }
 }

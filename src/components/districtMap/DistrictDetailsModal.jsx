@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import styles from './DistrictDetailsModal.module.css';
 import { HeaderSection, ModalFooter } from './modal/HeaderFooter';
 import StatsGrid from './modal/StatsGrid';
-import { checkIsFavorite, toggleFavorite } from '@utils/favorites';
 import { formatNumber, formatPrice, getCurrencyInfo } from '@utils/formatters';
 import { trackDistrictVisit } from '@api/statsApi';
 import { useSubscription } from '@subscription/SubscriptionContext';
@@ -14,8 +13,7 @@ import DistrictPdfTemplate from './DistrictPdfTemplate';
 export default function DistrictDetailsModal({ 
   district, 
   isOpen, 
-  onClose, 
-  onToggleFavorite 
+  onClose
 }) {
   const { t } = useTranslation('districts');
   const { country: paramCountry } = useParams();
@@ -24,39 +22,17 @@ export default function DistrictDetailsModal({
   const fileName = district ? `${district.name}_report` : 'district_report';
   const { isDownloading, downloadPdf } = usePdfExport(fileName);
 
-  const [isFavorite, setIsFavorite] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
-  const currencyInfo = getCurrencyInfo(paramCountry);
+  const effectiveCountry = paramCountry || district?.country || district?.cities?.countries?.name;
+  const currencyInfo = getCurrencyInfo(effectiveCountry);
 
-  useEffect(() => {
-    if (district && isOpen) {
-      trackDistrictVisit(district.id);
-      
-      const checkStatus = async () => {
-        setIsLoading(true);
-        const status = await checkIsFavorite(district.id);
-        setIsFavorite(status);
-        setIsLoading(false);
-      };
-      checkStatus();
-    }
-  }, [district, isOpen]);
+useEffect(() => {
+  if (district && isOpen) {
+    console.log("🚀 Відправляємо ID району:", district.id); 
+    trackDistrictVisit(district.id);
+  }
+}, [district, isOpen]);
 
-  const handleToggleFavorite = async () => {
-    setIsLoading(true);
-    try {
-      const newStatus = await toggleFavorite(district.id);
-      setIsFavorite(newStatus);
-      onToggleFavorite?.(district.id, newStatus);
-    } catch (e) {
-      if (e.message && e.message.includes('увійдіть')) {
-          alert(t('modal.login_alert') || "Будь ласка, увійдіть в акаунт");
-      }
-    } finally {
-      setIsLoading(false);
-    }
-  };
 
   if (!isOpen || !district) return null;
 
@@ -68,9 +44,6 @@ export default function DistrictDetailsModal({
             district={district}
             updatedAt={district.updated_at}
             filterData={district.filterData}
-            isFavorite={isFavorite}
-            onToggleFavorite={handleToggleFavorite}
-            isLoading={isLoading}
             onClose={onClose}
             formatPrice={formatPrice}
             formatNumber={formatNumber}
@@ -84,11 +57,11 @@ export default function DistrictDetailsModal({
           <div className={styles.mainContent}>
             {district.filterData ? (
              <StatsGrid 
-      filterData={district.filterData} 
-      currencyInfo={currencyInfo}
-      isFree={isFree}
-      isRealtor={isRealtor}
-    />
+                filterData={district.filterData} 
+                currencyInfo={currencyInfo}
+                isFree={isFree}
+                isRealtor={isRealtor}
+              />
             ) : (
               <div className={styles.noData}>
                 <div className={styles.noDataIcon}>📊</div>

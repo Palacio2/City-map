@@ -1,16 +1,16 @@
-/* About.module.css */
+/* ================== About.module.css ================== */
 
 .container {
   min-height: 100vh;
   background: var(--bg-light);
   color: var(--text-dark);
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   padding-bottom: 3rem;
 }
 
+/* ---------- HERO ---------- */
 .heroSection {
   background: var(--primary-gradient);
-  color: white;
+  color: #fff;
   padding: 5rem 1.5rem 4rem;
   text-align: center;
   border-radius: 0 0 32px 32px;
@@ -31,32 +31,17 @@
   font-size: 1.25rem;
   opacity: 0.9;
   max-width: 700px;
-  margin: 0 auto 2rem;
+  margin: 0 auto;
 }
 
-.heroStats {
-  display: flex;
-  justify-content: center;
-  gap: 3rem;
-  flex-wrap: wrap;
-}
-
-.statNumber {
-  font-size: 2.2rem;
-  font-weight: 700;
-}
-
-.statLabel {
-  font-size: 0.9rem;
-  opacity: 0.8;
-}
-
+/* ---------- CONTENT ---------- */
 .content {
   max-width: 1100px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
 }
 
+/* ---------- SECTIONS ---------- */
 .section {
   background: var(--bg-white);
   border: 1px solid var(--border-color);
@@ -65,6 +50,7 @@
   margin-bottom: 2rem;
 }
 
+/* ---------- HEADERS ---------- */
 .sectionHeader {
   display: flex;
   align-items: center;
@@ -89,25 +75,35 @@
   color: var(--text-medium);
 }
 
+/* ---------- GRIDS ---------- */
 .featuresGrid,
 .howItWorks,
 .targetAudience,
-.dataSources,
-.technologies {
+.dataSources {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.25rem;
   margin-top: 1.5rem;
 }
 
+/* ---------- CARDS ---------- */
 .featureCard,
 .audienceGroup,
-.step {
+.step,
+.sourceCategory {
   background: var(--bg-light);
   border: 1px solid var(--border-color);
   border-radius: 16px;
   padding: 1.5rem;
   text-align: center;
+  transition: box-shadow 0.25s ease; /* ТІЛЬКИ ТІНЬ */
+}
+
+.featureCard:hover,
+.audienceGroup:hover,
+.step:hover,
+.sourceCategory:hover {
+  box-shadow: var(--shadow-hover);
 }
 
 .featureIcon,
@@ -131,6 +127,7 @@
   color: var(--text-medium);
 }
 
+/* ---------- STEPS ---------- */
 .step {
   display: flex;
   gap: 1rem;
@@ -143,14 +140,20 @@
   font-weight: 700;
   width: 36px;
   height: 36px;
+  min-width: 36px;
+  min-height: 36px;
   border-radius: 10px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  align-self: flex-start; /* 🔥 НЕ дає розтягуватись */
 }
 
-.sourceCategory h3,
-.techCategory h3 {
+
+/* ---------- SOURCES ---------- */
+.sourceCategory h3 {
   font-size: 1.1rem;
   margin-bottom: 0.75rem;
 }
@@ -158,31 +161,15 @@
 .sourceCategory ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 .sourceCategory li {
-  padding: 0.4rem 0;
+  padding: 0.35rem 0;
   color: var(--text-medium);
 }
 
-.team {
-  text-align: center;
-}
-
-.team ul {
-  list-style: none;
-  padding: 0;
-}
-
-.team li {
-  display: inline-block;
-  margin: 0.25rem 0.5rem;
-  padding: 0.4rem 1rem;
-  border-radius: 16px;
-  background: var(--bg-light);
-  border: 1px solid var(--border-color);
-}
-
+/* ---------- CTA ---------- */
 .ctaSection {
   background: var(--primary-gradient);
   color: white;
@@ -200,100 +187,56 @@
   margin-top: 2rem;
 }
 
+/* 👉 НОВІ КНОПКИ */
 .ctaButton {
-  padding: 0.75rem 2rem;
-  border-radius: 999px;
+  min-width: 180px;
+  padding: 0.85rem 2.2rem;
+  border-radius: 12px;
   font-weight: 600;
+  font-size: 1rem;
+  letter-spacing: 0.02em;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease;
 }
 
 .primary {
-  background: white;
+  background: #fff;
   color: var(--primary-color);
 }
 
+.primary:hover {
+  box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+}
+
 .secondary {
-  border: 1px solid white;
-  color: white;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.5);
+  color: #fff;
+}
+
+.secondary:hover {
+  background: rgba(255,255,255,0.25);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.25);
 }
 
 .tertiary {
-  color: rgba(255,255,255,0.85);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.4);
+  color: rgba(255,255,255,0.9);
 }
 
+.tertiary:hover {
+  background: rgba(255,255,255,0.15);
+  box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+}
+
+/* ---------- RESPONSIVE ---------- */
 @media (max-width: 768px) {
   .heroTitle { font-size: 2.2rem; }
-  .heroStats { gap: 1.5rem; }
   .section { padding: 1.5rem; }
   .step { flex-direction: column; text-align: center; }
-}
-
-/* ======= Subtle Animations ======= */
-
-/* Загальна анімація появи */
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.heroSection {
-  animation: fadeUp 0.8s ease-out both;
-}
-
-.section {
-  animation: fadeUp 0.6s ease-out both;
-}
-
-/* Картки */
-.featureCard,
-.audienceGroup,
-.step,
-.sourceCategory,
-.techCategory {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.featureCard:hover,
-.audienceGroup:hover,
-.step:hover,
-.sourceCategory:hover,
-.techCategory:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-}
-
-/* Кнопки CTA */
-.ctaButton {
-  transition: transform 0.25s ease, box-shadow 0.25s ease, opacity 0.25s ease;
-}
-
-.ctaButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.15);
-  opacity: 0.95;
-}
-
-/* Заголовки */
-.sectionHeader h2 {
-  transition: letter-spacing 0.3s ease;
-}
-
-.sectionHeader h2:hover {
-  letter-spacing: 0.03em;
-}
-
-/* Статистика в hero */
-.statNumber {
-  transition: transform 0.3s ease;
-}
-
-.statNumber:hover {
-  transform: scale(1.08);
 }
 

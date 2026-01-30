@@ -111,12 +111,17 @@
     "agency_placeholder": "Наприклад: Best Estate",
     "phone": "Номер телефону",
     "website": "Веб-сайт",
-    "export_btn": "Експорт PDF"
+    "export_btn": "Експорт PDF",
+    "comments": "Коментар для клієнта",
+    "comments_placeholder": "Напишіть ваші висновки або рекомендації тут...",
+    "phone_placeholder": "+380 ...",
+    "website_placeholder": "www.example.com"
   },
 
   "pdf_report": {
     "analytics_report": "Аналітичний звіт",
     "prepared_by": "Підготовлено",
-    "valid_as_of": "Дані актуальні станом на"
+    "valid_as_of": "Дані актуальні станом на",
+    "analyst_notes": "Коментар експерта"
   }
 }

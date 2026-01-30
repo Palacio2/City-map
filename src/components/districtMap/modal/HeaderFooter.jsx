@@ -5,6 +5,8 @@ import { CloseButton, FavoriteButton } from './Buttons';
 import { FiDownload, FiUsers, FiBriefcase, FiTrendingUp, FiHome, FiDollarSign } from 'react-icons/fi';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 
+import { useFavorites } from '@pages/favorites/FavoritesContext'; 
+
 const getStatIcon = (key) => {
   switch (key) {
     case 'population': return <FiUsers />;
@@ -24,18 +26,24 @@ export function HeaderSection({
   formatNumber,
   formatPrice,
   isRealtor,
-  isFavorite,
-  onToggleFavorite,
   onDownloadPdf,
   isDownloading,
   isFree,
   currencyInfo
 }) {
   const { t, i18n } = useTranslation('districts');
+  
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   if (!district) return null;
 
   const { name, photo_url } = district;
+
+  const isFav = isFavorite(district.id);
+  
+  const handleHeartClick = async () => {
+    await toggleFavorite(district);
+  };
 
   const dateToFormat = updatedAt || district.updated_at;
   const formattedDate = dateToFormat 
@@ -104,8 +112,8 @@ export function HeaderSection({
                   </button>
 
                   <FavoriteButton 
-                    isFavorite={isFavorite} 
-                    onToggle={() => onToggleFavorite(district.id, !isFavorite)} 
+                    isFavorite={isFav} 
+                    onToggle={handleHeartClick} 
                     className={styles.glassBtn} 
                   />
                 </>

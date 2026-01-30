@@ -243,8 +243,7 @@
 }
 
 .subscribeButton.free {
-  background: white;
-  color: var(--text-dark);
+  background: var(--primary-gradient);
   border: 1px solid var(--border-color);
   box-shadow: none;
 }

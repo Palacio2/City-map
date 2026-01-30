@@ -1,9 +1,7 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { favoritesApi } from '@api/favoritesApi'; 
-import { supabase } from '@supabaseClient';
-import { transformDistrictsForDisplay } from '@utils/dataTransformers'; 
+import { useFavorites } from './FavoritesContext';
 import DistrictDetailsModal from '@components/districtMap/DistrictDetailsModal';
 import styles from './FavoritesPage.module.css'; 
 import { formatPrice, getCurrencyInfo } from '@utils/formatters';
@@ -99,67 +97,31 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
 
 export default function FavoritesPage() {
     const { t } = useTranslation('favorites');
-    const [favorites, setFavorites] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState('');
-    const [removeError, setRemoveError] = useState('');
+    const navigate = useNavigate();
+    
+    const { favorites, loading, removeFavorite, toggleFavorite, isFavorite } = useFavorites();
+    
     const [selectedDistrict, setSelectedDistrict] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     
-    const dataLoadedRef = useRef(false);
-    
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 6;
-
-    const navigate = useNavigate();
-
-    const loadFavorites = useCallback(async () => {
-        if (dataLoadedRef.current) return;
-
-        try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) {
-                setError(t('errors.auth_required'));
-                setLoading(false);
-                return;
-            }
-
-            const rawData = await favoritesApi.getFavorites();
-            setFavorites(transformDistrictsForDisplay(rawData || []));
-            
-            dataLoadedRef.current = true;
-        } catch (err) {
-            console.error(err);
-            setError(err.message || t('errors.load_failed'));
-        } finally {
-            setLoading(false);
-        }
-    }, [t]);
-
-    useEffect(() => {
-        loadFavorites();
-    }, []);
 
     useEffect(() => {
         const totalPages = Math.ceil(favorites.length / itemsPerPage) || 1;
         if (currentPage > totalPages) {
             setCurrentPage(totalPages);
         }
-    }, [favorites.length, itemsPerPage]);
+    }, [favorites.length, itemsPerPage, currentPage]);
 
     const handleRemove = async (districtId, e) => {
         if (e) e.stopPropagation();
         if (!window.confirm(t('confirm_remove'))) return;
         
-        const previousFavorites = [...favorites];
-        setFavorites(prev => prev.filter(d => d.id !== districtId));
-        setRemoveError('');
-
         try {
-            await favoritesApi.removeFavorite(districtId);
+            await removeFavorite(districtId);
         } catch (err) {
-            setFavorites(previousFavorites);
-            setRemoveError(t('errors.delete_failed'));
+            alert(t('errors.delete_failed'));
         }
     };
 
@@ -173,25 +135,7 @@ export default function FavoritesPage() {
         setSelectedDistrict(null);
     }, []);
     
-    const handleToggleFavorite = useCallback((districtId, isFavorite) => {
-        if (!isFavorite) {
-            setFavorites(prev => prev.filter(d => d.id !== districtId));
-        }
-    }, []);
-
     if (loading) return <div className={styles.loaderContainer}><div className={styles.spinner}></div></div>;
-
-    if (error) {
-        return (
-            <div className={styles.stateContainer}>
-                <div className={styles.stateIcon}>⚠️</div>
-                <p className={styles.stateTitle}>{error}</p>
-                <button onClick={() => navigate('/login')} className={styles.primaryButton}>
-                    {t('buttons.login')}
-                </button>
-            </div>
-        );
-    }
 
     if (favorites.length === 0) {
         return (
@@ -220,8 +164,6 @@ export default function FavoritesPage() {
                         <h1 className={styles.title}>{t('title')}</h1>
                     </div>
                 </header>
-
-                {removeError && <div className={styles.errorMessage}>{removeError}</div>}
 
                 <div className={styles.favoritesGrid}>
                     {paginatedFavorites.map(district => (
@@ -257,7 +199,8 @@ export default function FavoritesPage() {
                 district={selectedDistrict}
                 isOpen={isModalOpen}
                 onClose={closeModal}
-                onToggleFavorite={handleToggleFavorite} 
+                onToggleFavorite={() => toggleFavorite(selectedDistrict)} 
+                isFavorite={selectedDistrict ? isFavorite(selectedDistrict.id) : false}
             />
         </>
     );

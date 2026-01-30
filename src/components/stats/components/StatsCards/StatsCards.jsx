@@ -18,7 +18,7 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
       icon: FaSearch, 
       color: 'blue', 
       label: t('stats_page.searches'), 
-      value: stats?.searches || 0,
+      value: stats?.viewed_districts_count || stats?.viewedDistricts || 0,
       onClick: onSearchesClick
     },
     { 

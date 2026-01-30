@@ -1,12 +1,14 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { fetchDashboardData } from '../../api/statsApi';
+// Переконайтесь, що шлях правильний
+import { fetchDashboardData } from '@api/statsApi'; 
 
 const CACHE_KEY = 'user_stats_cache';
 
 export function useStatsData(isPremium, isRealtor) {
   const { t } = useTranslation('stats');
   
+  // 1. Початковий стан беремо з кешу, щоб сторінка не "мигала"
   const [data, setData] = useState(() => {
     try {
       const cached = sessionStorage.getItem(CACHE_KEY);
@@ -27,15 +29,21 @@ export function useStatsData(isPremium, isRealtor) {
   const loadStats = useCallback(async (forceReload = false) => {
     if (!isPremium) return;
 
-    if (data.stats && !forceReload) {
+    // 🔥 ВИДАЛЯЄМО АБО КОМЕНТУЄМО ЦЕЙ БЛОК 🔥
+    // Раніше він забороняв оновлення, якщо дані вже були
+    /* if (data.stats && !forceReload) {
         setLoading(false);
         return;
     }
+    */
 
     try {
-      setLoading(true);
+      // Якщо даних немає взагалі - показуємо лоадер. 
+      // Якщо є (з кешу) - оновлюємо їх у фоні без лоадера (SWR патерн)
+      if (!data.stats) setLoading(true);
       setError(null);
 
+      console.log("Fetching fresh stats..."); // Для дебагу
       const result = await fetchDashboardData();
       
       const newData = {
@@ -51,13 +59,15 @@ export function useStatsData(isPremium, isRealtor) {
       sessionStorage.setItem(CACHE_KEY, JSON.stringify(newData));
 
     } catch (err) {
+      console.error("Stats load error:", err);
+      // Якщо сталася помилка, але у нас є старі дані - не лякаємо користувача
       if (!data.stats) {
         setError(err.message || t('stats_page.error_unknown'));
       }
     } finally {
       setLoading(false);
     }
-  }, [isPremium, isRealtor, t, data.stats]); 
+  }, [isPremium, isRealtor, t]); // Прибрав data.stats із залежностей
 
   useEffect(() => {
     loadStats();

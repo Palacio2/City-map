@@ -1,50 +1,66 @@
 {
-  "title": "Frequently Asked Questions",
-  "subtitle": "Find answers to common questions about GeoAnalyzer",
+  "title": "Support Center",
+  "subtitle": "Answers to the most common questions about GeoAnalyzer",
   "categories": {
-    "general": "General",
-    "subscription": "Subscription & Payment",
-    "data": "Data & Accuracy",
-    "account": "Account"
+    "general": "General Questions",
+    "subscription": "Pricing & Billing",
+    "data": "Data & Algorithms",
+    "account": "Account & Security"
   },
   "questions": {
     "general": [
       {
-        "q": "What is GeoAnalyzer?",
-        "a": "GeoAnalyzer is a tool for analyzing the quality of life in different city districts. We collect data on safety, environment, transport, and infrastructure to help you choose the perfect place to live."
+        "q": "How does GeoAnalyzer differ from competitors?",
+        "a": "We are unique in our approach. Competitors show 'where', while we answer the question 'how is it to live there?'. We don't just display objects; we aggregate them into ratings of safety, comfort, and investment attractiveness, saving you dozens of hours of independent research."
       },
       {
-        "q": "Which cities are available?",
-        "a": "We currently support major cities in Ukraine and Poland. We are continuously working to expand our geographic coverage."
+        "q": "What coverage does the service have?",
+        "a": "Currently, we are entering the Polish market. We are constantly striving to add new locations. If you haven't found the city you need, please wait a little while. Our goal is to cover as many settlements as possible so everyone can find exactly what they are looking for."
+      },
+      {
+        "q": "Can I use the service on mobile?",
+        "a": "Yes, our interface is fully responsive. You can explore neighborhoods from your laptop at home or from your smartphone while visiting a property."
       }
     ],
     "subscription": [
       {
-        "q": "What is the difference between Premium and the free version?",
-        "a": "Premium provides access to advanced filters, detailed statistics for each criterion, district comparison, and the ability to save an unlimited number of favorite places."
+        "q": "Who is the 'Weekly' plan for?",
+        "a": "This is a unique offer for those in the active phase of house hunting. You get full Premium functionality for a symbolic fee for 7 days, which is usually enough to choose an apartment."
       },
       {
-        "q": "How do I cancel my subscription?",
-        "a": "You can cancel your subscription at any time in your Profile under the 'Payment History' section. Access to Premium features will remain until the end of the paid period."
+        "q": "Can I cancel my subscription?",
+        "a": "Yes, absolutely. You can turn off auto-renewal at any time in your profile settings. Access to paid features will remain until the end of the paid period."
+      },
+      {
+        "q": "What are White Label reports in the Realtor Pro plan?",
+        "a": "This feature allows real estate agents to generate PDF reports about a neighborhood without the GeoAnalyzer logo. You can add your own contacts and branding, providing clients with professional analytics under your own name."
       }
     ],
     "data": [
       {
-        "q": "Where do you get the data from?",
-        "a": "We aggregate information from open government registers, Google Maps API, environmental monitoring stations, and user reviews."
+        "q": "How accurate is your data?",
+        "a": "We use cross-verification of data from multiple authoritative sources. However, a city is a living organism, and changes happen daily. If you need a detailed data collection methodology for a specific district, please send a request to our email."
       },
       {
-        "q": "How often is the information updated?",
-        "a": "Real estate price and environmental data are updated weekly. Infrastructure data is verified once a month."
+        "q": "Where does the safety information come from?",
+        "a": "The safety index is formed based on official crime statistics, street lighting data, the presence of CCTV cameras, and proximity to police stations."
+      },
+      {
+        "q": "How often is the database updated?",
+        "a": "Real estate prices and environmental indicators are updated in near real-time. Infrastructural changes (new shops, bus stops) are updated according to the schedule of primary registries."
       }
     ],
     "account": [
       {
-        "q": "How do I change my password?",
-        "a": "Go to Profile -> Change Password. You will need to enter your new password twice for confirmation."
+        "q": "How do I contact technical support?",
+        "a": "For prompt resolution of issues, use the feedback form on the 'Contacts' page or email us at youworkday@gmail.com. We respond within 24 hours."
+      },
+      {
+        "q": "Are my payment details safe?",
+        "a": "We do not store your card details. All payments are processed by the international provider Stripe, which has the highest level of PCI DSS security certification."
       }
     ]
   },
-  "still_have_questions": "Still have questions?",
+  "still_have_questions": "Need more information?",
   "contact_support": "Contact Support"
 }

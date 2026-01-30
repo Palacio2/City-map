@@ -7,32 +7,35 @@ export const exportToPDF = async (elementId, title = 'Report', fileName = 'repor
 
   try {
     const canvas = await html2canvas(element, {
-      scale: 2,
+      scale: 3, // Підвищена якість тексту
       useCORS: true,
       logging: false,
       backgroundColor: '#ffffff',
-      windowWidth: element.scrollWidth,
+      windowWidth: 794, 
+      windowHeight: element.scrollHeight,
     });
 
     const imgData = canvas.toDataURL('image/png');
+    
     const pdf = new jsPDF('p', 'mm', 'a4');
     
-    const pdfWidth = pdf.internal.pageSize.getWidth();
-    const pdfHeight = pdf.internal.pageSize.getHeight();
+    const pdfWidth = pdf.internal.pageSize.getWidth();   // 210 mm
+    const pdfHeight = pdf.internal.pageSize.getHeight(); // 297 mm
     
-    const imgWidth = pdfWidth - 20; 
+    // Розтягуємо зображення на всю ширину PDF, оскільки відступи (padding) вже є всередині картинки (з CSS)
+    const imgWidth = pdfWidth; 
     const imgHeight = (canvas.height * imgWidth) / canvas.width;
 
     let heightLeft = imgHeight;
-    let position = 10; 
+    let position = 0;
 
-    pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-    heightLeft -= (pdfHeight - 20);
+    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+    heightLeft -= pdfHeight;
 
     while (heightLeft > 0) {
-      position = heightLeft - imgHeight; 
+      position = heightLeft - imgHeight;
       pdf.addPage();
-      pdf.addImage(imgData, 'PNG', 10, position - 10, imgWidth, imgHeight); 
+      pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
       heightLeft -= pdfHeight;
     }
 
@@ -40,7 +43,7 @@ export const exportToPDF = async (elementId, title = 'Report', fileName = 'repor
     return true;
 
   } catch (error) {
-    console.error(error);
+    console.error('PDF Export Error:', error);
     return false;
   }
 };

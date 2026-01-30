@@ -1,28 +1,31 @@
 {
-  "title": "Улюблені райони",
-  "remove_tooltip": "Видалити з улюблених",
-  "confirm_remove": "Видалити з улюблених?",
-  "na": "н/д",
-  "price_label": "Ціна:",
+  "title": "Favorite Districts",
+  "remove_tooltip": "Remove from favorites",
+  "confirm_remove": "Remove from favorites?",
+  "na": "N/A",
+  "price_label": "Price:",
   "empty": {
-    "title": "Список порожній",
-    "description": "Додайте райони до улюблених на карті"
+    "title": "Your list is empty",
+    "description": "Add districts to favorites via the map"
   },
   "errors": {
-    "auth_required": "Будь ласка, увійдіть в систему",
-    "load_failed": "Помилка завантаження",
-    "delete_failed": "Помилка видалення"
+    "auth_required": "Please log in",
+    "load_failed": "Failed to load",
+    "delete_failed": "Failed to delete"
   },
   "buttons": {
-    "login": "Увійти",
-    "go_to_map": "Перейти до карти"
+    "login": "Log in",
+    "go_to_map": "Go to map"
   },
   "stats": {
-    "education": "Освіта",
-    "transport": "Транспорт",
-    "safety": "Безпека",
-    "ecology": "Екологія",
-    "medicine": "Медицина",
-    "shopping": "Магазини"
+    "education": "Education",
+    "transport": "Transport",
+    "safety": "Safety",
+    "ecology": "Ecology",
+    "medicine": "Healthcare",
+    "shopping": "Shopping"
+  },
+  "favorites": {
+    "price_label": ""
   }
 }

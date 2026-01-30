@@ -14,16 +14,21 @@ export const SubscriptionProvider = ({ children }) => {
   const [subscription, setSubscription] = useState(FREE_PLAN_DATA);
   const [isLoading, setIsLoading] = useState(true);
 
+  // forceReload=true передаємо, якщо ми точно знаємо, що щось змінилося (наприклад, після оплати)
   const updateSubscription = useCallback(async (waitForPlan = null) => {
     setIsLoading(true);
     try {
-      let sub = await fetchSubscriptionStatus();
+      // Якщо чекаємо новий план - значить точно треба ігнорувати кеш
+      const forceReload = !!waitForPlan; 
+      
+      let sub = await fetchSubscriptionStatus(forceReload);
       
       if (waitForPlan && waitForPlan !== 'free') {
         let attempts = 0;
+        // Тут ми вже форсуємо оновлення в циклі
         while (attempts < 5 && sub.plan !== waitForPlan) {
-          await new Promise(r => setTimeout(r, 1000));
-          sub = await fetchSubscriptionStatus();
+          await new Promise(r => setTimeout(r, 1500)); // Трохи збільшив затримку
+          sub = await fetchSubscriptionStatus(true); // true = ігнорувати кеш
           attempts++;
         }
       }
@@ -37,16 +42,26 @@ export const SubscriptionProvider = ({ children }) => {
 
   useEffect(() => {
     let mounted = true;
+    
+    // Ініціалізація (використає кеш, якщо є)
     const init = async () => { if (mounted) await updateSubscription(); };
     init();
 
     const { data: { subscription: authSub } } = supabase.auth.onAuthStateChange((event) => {
-       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') updateSubscription();
-       else if (event === 'SIGNED_OUT') {
-          setSubscription(FREE_PLAN_DATA);
-          setIsLoading(false);
+       // 1. ІГНОРУЄМО TOKEN_REFRESHED - це головна причина спаму запитами
+       if (event === 'TOKEN_REFRESHED') return;
+
+       if (event === 'SIGNED_IN') {
+         // При вході форсуємо оновлення, щоб не підтягнуло кеш попереднього юзера (хоча в API є перевірка ID)
+         updateSubscription(null); 
+       } else if (event === 'SIGNED_OUT') {
+         setSubscription(FREE_PLAN_DATA);
+         setIsLoading(false);
+         // Очищаємо кеш при виході
+         localStorage.removeItem('user_subscription_cache');
        }
     });
+
     return () => { mounted = false; authSub.unsubscribe(); };
   }, [updateSubscription]);
 

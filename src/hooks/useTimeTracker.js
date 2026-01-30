@@ -2,30 +2,36 @@ import { useEffect, useRef } from 'react';
 import { useSubscription } from '../pages/subscription/SubscriptionContext';
 import { updateUserTime } from '../components/api/statsApi';
 
-const INTERVAL_MS = 30000; // 30 секунд
-const SECONDS_TO_ADD = 30;
+const SEND_INTERVAL = 60000;
+const ACCUMULATE_INTERVAL = 1000;
 
 export const useTimeTracker = () => {
-  // Трекаємо час тільки для авторизованих (преміум або ні - залежить від вашої логіки, тут беремо всіх хто має підписку/акаунт)
   const { isPremium, isPro } = useSubscription(); 
-  const intervalRef = useRef(null);
+  const timeAccumulator = useRef(0);
 
   useEffect(() => {
-    // Якщо треба трекати всіх авторизованих, можна перевіряти session з AuthContext замість isPremium
     const isActiveUser = isPremium || isPro; 
-    
     if (!isActiveUser) return;
 
-    const track = () => {
-      if (document.visibilityState === 'visible') {
-        updateUserTime(SECONDS_TO_ADD);
-      }
-    };
+    const countTimer = setInterval(() => {
+       if (document.visibilityState === 'visible') {
+          timeAccumulator.current += 1;
+       }
+    }, ACCUMULATE_INTERVAL);
 
-    intervalRef.current = setInterval(track, INTERVAL_MS);
+    const sendTimer = setInterval(() => {
+       if (timeAccumulator.current > 0) {
+          updateUserTime(timeAccumulator.current); 
+          timeAccumulator.current = 0;
+       }
+    }, SEND_INTERVAL);
 
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      clearInterval(countTimer);
+      clearInterval(sendTimer);
+      if (timeAccumulator.current > 0) {
+         updateUserTime(timeAccumulator.current);
+      }
     };
   }, [isPremium, isPro]);
 };

@@ -1,16 +1,33 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaTimes, FaFilePdf, FaUpload } from 'react-icons/fa';
 import styles from './ExportSettingsModal.module.css';
 
+const STORAGE_KEY = 'geo_analyzer_export_settings';
+
 const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
   const { t } = useTranslation('comparison');
-  const [formData, setFormData] = useState({
-    agencyName: '',
-    phone: '',
-    website: '',
-    logo: null 
+  
+  const [formData, setFormData] = useState(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      return saved ? JSON.parse(saved) : {
+        agencyName: '',
+        phone: '',
+        website: '',
+        comments: '',
+        logo: null 
+      };
+    } catch {
+      return { agencyName: '', phone: '', website: '', comments: '', logo: null };
+    }
   });
+
+  useEffect(() => {
+    if (isOpen) {
+      setFormData(prev => ({ ...prev, comments: '' }));
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
@@ -32,6 +49,10 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    
+    const settingsToSave = { ...formData, comments: '' };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(settingsToSave));
+    
     onConfirm(formData);
   };
 
@@ -78,11 +99,22 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           <div className={styles.inputGroup}>
+            <label>{t('export_modal.comments', 'Коментар клієнту')}</label>
+            <textarea 
+              name="comments" 
+              rows="4"
+              placeholder={t('export_modal.comments_placeholder', 'Ваші висновки та рекомендації...')} 
+              value={formData.comments}
+              onChange={handleChange}
+            />
+          </div>
+
+          <div className={styles.inputGroup}>
             <label>{t('export_modal.phone', 'Номер телефону')}</label>
             <input 
               type="text" 
               name="phone" 
-              placeholder="+380 ..." 
+              placeholder={t('export_modal.phone_placeholder', '+380 ...')} 
               value={formData.phone}
               onChange={handleChange}
               required
@@ -94,7 +126,7 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
             <input 
               type="text" 
               name="website" 
-              placeholder="www.example.com" 
+              placeholder={t('export_modal.website_placeholder', 'www.example.com')} 
               value={formData.website}
               onChange={handleChange}
             />

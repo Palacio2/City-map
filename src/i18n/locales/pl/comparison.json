@@ -1,6 +1,6 @@
 {
   "title": "Porównanie Dzielnic",
-  "subtitle": "Wybierz do 4 dzielnic, aby porównać ceny i wskaźniki",
+  "subtitle": "Wybierz do 4 dzielnic, aby szczegółowo porównać ceny i wskaźniki",
   "limit_reached": "Maksymalna liczba dzielnic do porównania: {{max}}",
   "selected_count": "Wybrano",
   "add_district": "Dodaj dzielnicę",
@@ -14,29 +14,29 @@
   "results_title": "Wyniki porównania",
   "metric": "Wskaźnik",
   "export_pdf": "Eksportuj PDF",
-
+  
   "yes": "Tak",
   "no": "Nie",
 
   "finance_population": "Finanse i Ludność",
-  "avg_property_price": "Śr. cena nieruchomości",
+  "avg_property_price": "Średnia cena nieruchomości",
   "avg_salary": "Średnie wynagrodzenie",
-  "population": "Ludność",
+  "population": "Populacja",
   "population_density": "Gęstość zaludnienia",
   "unemployment": "Stopa bezrobocia",
-
+  
   "education": "Edukacja",
   "schools": "Szkoły",
   "kindergartens": "Przedszkola",
-  "universities": "Uniwersytety",
+  "universities": "Uczelnie",
   "rating": "Ocena",
-
+  
   "medicine": "Medycyna",
   "hospitals": "Szpitale",
   "clinics": "Przychodnie",
   "pharmacies": "Apteki",
   "emergencyServices": "Pogotowie ratunkowe",
-
+  
   "transport": "Transport",
   "metroStations": "Stacje metra",
   "busStops": "Przystanki autobusowe",
@@ -44,18 +44,18 @@
   "bikeLanes": "Ścieżki rowerowe",
   "parkingSpots": "Miejsca parkingowe",
   "transportAvgDistance": "Dostępność transportu",
-  "transportFrequency": "Częstotliwość transportu",
-
+  "transportFrequency": "Częstotliwość kursowania",
+  
   "safety": "Bezpieczeństwo",
   "crimeLevel": "Poziom przestępczości",
-  "policeStations": "Posterunki policji",
+  "policeStations": "Komisariaty policji",
   "cctv": "Monitoring",
   "streetLighting": "Oświetlenie uliczne",
-
-  "social": "Sfera socjalna",
+  
+  "social": "Strefa społeczna",
   "green_zones": "Tereny zielone",
   "parks": "Parki",
-  "avgParkSize": "Śr. wielkość parku",
+  "avgParkSize": "Wielkość parków",
   "playgrounds": "Place zabaw",
   "sportsFacilities": "Obiekty sportowe",
   "culture": "Kultura",
@@ -65,19 +65,19 @@
   "libraries": "Biblioteki",
   "cafesRestaurants": "Kawiarnie i restauracje",
   "airQuality": "Jakość powietrza",
-
-  "commerce": "Handel",
+  
+  "commerce": "Handel i Usługi",
   "groceryStores": "Supermarkety",
   "shoppingMalls": "Centra handlowe",
   "banksATMs": "Banki i bankomaty",
-  "postOffices": "Urzędy pocztowe",
+  "postOffices": "Poczta",
   "beautySalons": "Salony urody",
   "constructionStores": "Sklepy budowlane",
   "clothingStores": "Sklepy odzieżowe",
-  "shops_density": "Gęstość sklepów",
-
-  "utilities": "Media",
-  "costPerSqm": "Koszt mediów",
+  "shops_density": "Zagęszczenie sklepów",
+  
+  "utilities": "Media i usługi komunalne",
+  "costPerSqm": "Koszt usług komunalnych",
   "propertyPricePerSqm": "Cena za m² (sprzedaż)",
   "hasWaterSupply": "Wodociągi",
   "hasElectricity": "Energia elektryczna",
@@ -89,12 +89,12 @@
   "sale_label": "Sprzedaż",
 
   "levels": {
-    "low": "Niska",
-    "medium": "Średnia",
-    "high": "Wysoka",
-    "good": "Dobra",
-    "bad": "Zła",
-    "moderate": "Umiarkowana"
+    "low": "Niski",
+    "medium": "Średni",
+    "high": "Wysoki",
+    "good": "Dobry",
+    "bad": "Zły",
+    "moderate": "Umiarkowany"
   },
 
   "units": {
@@ -106,17 +106,22 @@
 
   "export_modal": {
     "title": "Ustawienia raportu",
-    "upload_logo": "Wgraj logo",
+    "upload_logo": "Prześlij logo",
     "agency_name": "Nazwa agencji",
     "agency_placeholder": "Np.: Best Estate",
     "phone": "Numer telefonu",
     "website": "Strona internetowa",
-    "export_btn": "Eksportuj PDF"
+    "export_btn": "Eksportuj PDF",
+    "comments": "Komentarz dla klienta",
+    "comments_placeholder": "Wpisz tutaj swoje wnioski lub rekomendacje...",
+    "phone_placeholder": "+48 ...",
+    "website_placeholder": "www.example.com"
   },
 
   "pdf_report": {
     "analytics_report": "Raport Analityczny",
     "prepared_by": "Przygotowano przez",
-    "valid_as_of": "Dane aktualne na dzień"
+    "valid_as_of": "Dane aktualne na dzień",
+    "analyst_notes": "Komentarz eksperta"
   }
 }

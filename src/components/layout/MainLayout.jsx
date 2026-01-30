@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { supabase } from '@supabaseClient';
 
 import Header from '@header/Header';
 import Footer from '@footer/Footer';
@@ -14,6 +15,8 @@ import styles from './MainLayout.module.css';
 export default function MainLayout() {
   const { t } = useTranslation('rodo');
   
+  const [session, setSession] = useState(null);
+
   const { 
     showRodoModal, 
     authReady, 
@@ -23,10 +26,23 @@ export default function MainLayout() {
 
   useTimeTracker();
 
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+    });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
   const onAccept = async () => {
     try {
       await handleAcceptRodo();
     } catch (e) {
+      console.error(e);
       alert(t('errors.save_failed'));
     }
   };
@@ -47,7 +63,7 @@ export default function MainLayout() {
         <>
           <CookieBanner />
           
-          {showRodoModal && (
+          {session && showRodoModal && (
             <RodoModal
               onAccept={onAccept}
               onDecline={handleDeclineRodo}

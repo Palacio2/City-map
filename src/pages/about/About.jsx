@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { 
   FaChartLine, FaUsers, FaRocket, FaLightbulb, FaShieldAlt,
-  FaDatabase, FaMobile, FaMapMarkedAlt, FaHeart, FaCity, FaLaptopCode
+  FaDatabase, FaMobile, FaMapMarkedAlt, FaHeart, FaCity
 } from 'react-icons/fa';
 import styles from './About.module.css';
 
@@ -15,9 +15,7 @@ export default function About() {
     features: { icon: FaLightbulb, title: t('sections.features') },
     process: { icon: FaMapMarkedAlt, title: t('sections.process') },
     data: { icon: FaDatabase, title: t('sections.data') },
-    audience: { icon: FaUsers, title: t('sections.audience') },
-    tech: { icon: FaLaptopCode, title: t('sections.tech') },
-    team: { icon: FaUsers, title: t('sections.team') }
+    audience: { icon: FaUsers, title: t('sections.audience') }
   }), [t]);
 
   const featuresList = useMemo(() => {
@@ -41,13 +39,6 @@ export default function About() {
     const icons = [FaHeart, FaCity, FaChartLine, FaMapMarkedAlt];
     return Array.isArray(data) ? data.map((item, i) => ({ ...item, icon: icons[i] || FaUsers })) : [];
   }, [t]);
-
-  const technologiesList = useMemo(() => {
-    const data = t('tech', { returnObjects: true });
-    return Array.isArray(data) ? data : [];
-  }, [t]);
-
-  const teamData = useMemo(() => t('team', { returnObjects: true }), [t]);
 
   return (
     <div className={styles.container}>
@@ -91,26 +82,6 @@ export default function About() {
           </div>
         </Section>
 
-        <Section config={sectionConfig.tech}>
-          <div className={styles.technologies}>
-            {technologiesList.map((tech, index) => (
-              <TechCategory key={index} {...tech} />
-            ))}
-          </div>
-        </Section>
-
-        <Section config={sectionConfig.team}>
-          <div className={styles.team}>
-            <p>{teamData.intro}</p>
-            <ul>
-              {Array.isArray(teamData.list) && teamData.list.map((item, i) => (
-                <li key={i}>{item}</li>
-              ))}
-            </ul>
-            <p>{teamData.outro}</p>
-          </div>
-        </Section>
-
         <CTASection t={t} />
       </div>
     </div>
@@ -122,18 +93,6 @@ const HeroSection = ({ t }) => (
     <div className={styles.heroContent}>
       <h1 className={styles.heroTitle}>{t('hero.title')}</h1>
       <p className={styles.heroSubtitle}>{t('hero.subtitle')}</p>
-      <div className={styles.heroStats}>
-        {[
-          { number: '6', label: t('hero.stats.categories') },
-          { number: '24/7', label: t('hero.stats.access') },
-          { number: '100%', label: t('hero.stats.convenience') }
-        ].map((stat, index) => (
-          <div key={index} className={styles.stat}>
-            <span className={styles.statNumber}>{stat.number}</span>
-            <span className={styles.statLabel}>{stat.label}</span>
-          </div>
-        ))}
-      </div>
     </div>
   </div>
 );
@@ -179,13 +138,6 @@ const SourceCategory = ({ title, items }) => (
 const AudienceGroup = ({ icon: Icon, title, text }) => (
   <div className={styles.audienceGroup}>
     <Icon className={styles.audienceIcon} />
-    <h3>{title}</h3>
-    <p>{text}</p>
-  </div>
-);
-
-const TechCategory = ({ title, text }) => (
-  <div className={styles.techCategory}>
     <h3>{title}</h3>
     <p>{text}</p>
   </div>

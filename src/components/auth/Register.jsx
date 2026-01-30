@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@supabaseClient';
@@ -17,6 +17,8 @@ export default function Register() {
   const { t } = useTranslation('auth');
   const navigate = useNavigate();
   const isAutoLoginAttempted = useAuthRedirect();
+
+  const isSubmittingRef = useRef(false);
 
   const [formData, setFormData] = useState({
     name: '', email: '', password: '', confirmPassword: ''
@@ -43,12 +45,15 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (isSubmittingRef.current) return;
+
     const formErrors = validateRegisterForm(formData, t);
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
     }
 
+    isSubmittingRef.current = true;
     setIsLoading(true);
     
     try {
@@ -79,6 +84,7 @@ export default function Register() {
       setErrors({ submit: errorMessage });
     } finally {
       setIsLoading(false);
+      isSubmittingRef.current = false;
     }
   };
 

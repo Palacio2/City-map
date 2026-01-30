@@ -1,86 +1,65 @@
 {
   "hero": {
-    "title": "About GeoAnalyzer",
-    "subtitle": "Intelligent platform for finding the perfect neighborhood to live in",
-    "stats": {
-      "categories": "Evaluation categories",
-      "access": "Data access",
-      "convenience": "Convenience"
-    }
+    "title": "GeoAnalyzer",
+    "subtitle": "Intelligent urban environment analysis system for informed decision-making"
   },
   "sections": {
-    "mission": "Our Mission",
-    "features": "GeoAnalyzer Features",
-    "process": "How It Works",
-    "data": "Our Data",
-    "audience": "Who Is This For?",
-    "tech": "Technologies",
-    "team": "Team"
+    "mission": "Our Story",
+    "features": "Key Features",
+    "process": "Analysis Algorithm",
+    "data": "Data & Verification",
+    "audience": "Who We Serve"
   },
   "mission": {
-    "text_1": "GeoAnalyzer is a modern tool for urban environment analysis. We believe that choosing a place to live should be based on verified facts, not guesswork.",
-    "text_2": "Our goal is to provide users with simple and convenient access to comprehensive district analytics, helping to find the perfect balance between comfort, safety, and cost of living."
+    "text_1": "This is an intelligent answer to real estate market opacity. We prove that quality of life and comfort are not subjective feelings, but concrete metrics that can be measured. Our platform transforms millions of raw urban data points into precise analytical ratings.",
+    "text_2": "We are creating a new standard for urban analytics. Our goal is to provide every user, from tenants to strategic investors, with a tool for a deep understanding of infrastructure, safety, and the potential of any neighborhood."
   },
   "features": [
-    { "title": "Detailed Analytics", "text": "District evaluation by 6 key indicators: education, transport, safety, ecology, medicine, and commerce." },
-    { "title": "Up-to-date Data", "text": "We aggregate information from open sources and structure it for easy understanding." },
-    { "title": "Favorites", "text": "Save interesting districts in your personal account for quick access and comparison." },
-    { "title": "Safe Choice", "text": "Make moving decisions based on objective figures, not just emotions." },
-    { "title": "Convenience", "text": "Adaptive interface allows exploring cities from both computer and smartphone." },
-    { "title": "Scaling", "text": "We constantly add new cities and expand the district database." }
+    { "title": "Social Infrastructure", "text": "Deep analysis of the educational and medical network. We evaluate not only the number of schools and hospitals but also their real accessibility and density per capita." },
+    { "title": "Transport & Logistics", "text": "Comprehensive mobility assessment: from proximity to metro and tram lines to the length of bike lanes and parking zone availability." },
+    { "title": "Safety & Security", "text": "Monitoring of crime rates, street lighting quality, and CCTV density to ensure your peace of mind." },
+    { "title": "Ecology & Environment", "text": "Objective data on air quality, noise pollution levels, percentage of green spaces, and availability of recreation zones within walking distance." },
+    { "title": "Commercial Potential", "text": "Market saturation analysis: from grocery chains and shopping malls to bank branches and dining establishments." },
+    { "title": "Economic Indicators", "text": "Analytics of price per square meter, rental price dynamics, and average salary in the district for precise ROI calculation." }
   ],
   "process": [
-    { "title": "Choose Location", "text": "Select the country and city you are interested in using convenient filters." },
-    { "title": "Analyze Indicators", "text": "View district ratings by criteria important to you (schools, transport, parks)." },
-    { "title": "Add to Favorites", "text": "Create your own shortlist of the best places to live." },
-    { "title": "Make Decisions", "text": "Use comprehensive data to choose the perfect place for your home." }
+    { "title": "Location Selection", "text": "Use the interactive map to instantly select a city or outline a specific search zone within Poland." },
+    { "title": "Smart Scoring", "text": "The algorithm automatically analyzes the location using 50+ Big Data parameters and forms detailed environmental quality ratings." },
+    { "title": "Comparative Analysis", "text": "Compare metrics of several districts side-by-side to reveal hidden advantages and critical drawbacks of each location." },
+    { "title": "Final Assessment & Report", "text": "Receive a comprehensive analysis of costs, infrastructure, and risks in a convenient format for making a weighted decision." }
   ],
   "data_sources": [
     {
-      "title": "Infrastructure Data:",
+      "title": "Information Sources:",
       "items": [
-        "Location of educational institutions and hospitals",
-        "Transport interchanges and stops",
-        "Shopping centers and supermarkets",
-        "Parks and recreation areas"
+        "Official government registries",
+        "International environmental monitoring systems",
+        "Open geodata and mapping services",
+        "Partner networks of real estate aggregators"
       ]
     },
     {
-      "title": "Statistics & Analysis:",
+      "title": "Methodology & Data Processing:",
       "items": [
-        "Safety rating calculation",
-        "Ecological situation assessment",
-        "Transport accessibility analysis",
-        "Aggregated city services data"
+        "Multi-level verification and cleaning of raw data",
+        "Automatic aggregation of indicators using proprietary algorithms",
+        "Daily updates of dynamic indicators (prices, ecology)",
+        "Geospatial mapping of infrastructure objects to district boundaries",
+        "Intelligent anomaly detection and result validation by analysts"
       ]
     }
   ],
   "audience": [
-    { "title": "For Families", "text": "Find districts with the best schools, kindergartens, and safe courtyards." },
-    { "title": "For Tenants", "text": "Evaluate location convenience before signing a lease agreement." },
-    { "title": "For Investors", "text": "Analyze district attractiveness for purchasing real estate." },
-    { "title": "For New Residents", "text": "Quickly orient yourself in a new city and find a comfortable environment." }
+    { "title": "Private Individuals", "text": "For those seeking the perfect balance of price and quality of life. Find a quiet neighborhood with a school or a vibrant center for youth." },
+    { "title": "Private Investors", "text": "Minimize risks by relying on hard facts, not intuition. Assess the potential for neighborhood capitalization growth." },
+    { "title": "Realtors & Agencies", "text": "Increase expertise in the eyes of clients. Use our professional White Label reports." },
+    { "title": "Developers", "text": "Analyze the competitive environment and infrastructure needs of a district before starting construction." }
   ],
-  "tech": [
-    { "title": "Frontend:", "text": "Modern React SPA for fast performance and smooth animation." },
-    { "title": "Backend & Data:", "text": "Supabase for reliable data storage and secure user authorization." },
-    { "title": "Maps & Viz:", "text": "Interactive maps and charts for visual statistics representation." },
-    { "title": "Security:", "text": "Secure data transmission protocols and safe payment processing." }
-  ],
-  "team": {
-    "intro": "GeoAnalyzer is created by a team of enthusiasts passionate about urbanism and modern technologies.",
-    "list": [
-      "We constantly work on improving evaluation algorithms.",
-      "Regularly updating city and district data.",
-      "Open to suggestions and feedback from our users."
-    ],
-    "outro": "We build a product that we use ourselves."
-  },
   "cta": {
-    "title": "Find your perfect district today",
-    "text": "Start a free analysis and discover new opportunities",
+    "title": "Make decisions based on facts",
+    "text": "Join thousands of users who have already found their perfect space",
     "map_btn": "Go to Map",
-    "plans_btn": "Plans",
-    "support_btn": "Support"
+    "plans_btn": "Choose Plan",
+    "support_btn": "Contact Us"
   }
 }
