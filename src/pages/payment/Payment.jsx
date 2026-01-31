@@ -17,7 +17,7 @@ const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => {
   const [message, setMessage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
     setIsProcessing(true);
@@ -27,10 +27,11 @@ const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => {
 
     try {
         let result;
+        // Логіка вибору між Списанням грошей та Налаштуванням картки (0 грн)
         if (mode === 'setup') {
             result = await stripe.confirmSetup({
                 elements,
-                redirect: 'if_required',
+                redirect: 'if_required', // Важливо для UX
                 confirmParams: { return_url: returnUrl },
             });
         } else {
@@ -44,11 +45,6 @@ const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => {
         if (result.error) {
             throw new Error(result.error.message);
         }
-
-        if (subscriptionId) {
-            await activateSubscription(subscriptionId);
-        }
-
         window.location.href = returnUrl;
 
     } catch (err) {
