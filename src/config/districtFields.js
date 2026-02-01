@@ -17,7 +17,7 @@ export const DISTRICT_CATEGORIES = {
       { key: 'hospitals', type: 'number' },
       { key: 'pharmacies', type: 'number' },
       { key: 'clinics', type: 'number', isPremiumField: true },
-      { key: 'emergencyServices', type: 'number', isPremiumField: true },
+      // emergencyServices видалено
     ]
   },
   transport: {
@@ -26,12 +26,14 @@ export const DISTRICT_CATEGORIES = {
     isPremium: false,
     fields: [
       { key: 'busStops', type: 'number' },
-      { key: 'parkingSpots', type: 'number' },
-      { key: 'metroStations', type: 'number', isPremiumField: true },
       { key: 'tramStops', type: 'number', isPremiumField: true },
+      { key: 'metroStations', type: 'number', isPremiumField: true },
+      { key: 'parkingSpots', type: 'number' },
+      { key: 'bikeLanes', type: 'number', isPremiumField: true },
+      { key: 'bikeRental', type: 'number', isPremiumField: true }, // 🆕 Велопрокат
+      { key: 'evCharging', type: 'number', isPremiumField: true }, // 🆕 Зарядки авто
       { key: 'transportFrequency', type: 'text', isPremiumField: true },
       { key: 'transportAvgDistance', type: 'number', isPremiumField: true },
-      { key: 'bikeLanes', type: 'number', isPremiumField: true },
     ]
   },
   commerce: {
@@ -40,13 +42,17 @@ export const DISTRICT_CATEGORIES = {
     isPremium: false,
     fields: [
       { key: 'groceryStores', type: 'number' },
+      { key: 'markets', type: 'number' }, // 🆕 Ринки
       { key: 'shoppingMalls', type: 'number' },
+      { key: 'parcelLockers', type: 'number', isPremiumField: true }, // 🆕 Поштомати
+      { key: 'coworking', type: 'number', isPremiumField: true },     // 🆕 Коворкінги
       { key: 'banksATMs', type: 'number', isPremiumField: true },
       { key: 'postOffices', type: 'number', isPremiumField: true },
       { key: 'cafesRestaurants', type: 'number', isPremiumField: true },
       { key: 'beautySalons', type: 'number', isPremiumField: true },
-      { key: 'constructionStores', type: 'number', isPremiumField: true },
-      { key: 'clothingStores', type: 'number', isPremiumField: true },
+      { key: 'petStores', type: 'number', isPremiumField: true },     // 🆕 Зоомагазини
+      { key: 'vetClinics', type: 'number', isPremiumField: true },    // 🆕 Ветклініки
+      // constructionStores та clothingStores видалено
     ]
   },
   safety: {
@@ -80,14 +86,17 @@ export const DISTRICT_CATEGORIES = {
     isPremium: true,
     fields: [
       { key: 'parks', type: 'number' },
-      { key: 'avgParkSize', type: 'number', isPremiumField: true },
       { key: 'playgrounds', type: 'number' },
-      { key: 'airQuality', type: 'text', isPremiumField: true },
-      { key: 'sportsFacilities', type: 'number' },
+      { key: 'avgParkSize', type: 'number', isPremiumField: true },
+      { key: 'gyms', type: 'number' },           // 🆕 Спортзали
+      { key: 'swimmingPools', type: 'number' },  // 🆕 Басейни
+      { key: 'outdoorGyms', type: 'number' },    // 🆕 Воркаут
       { key: 'cinemas', type: 'number', isPremiumField: true },
       { key: 'theaters', type: 'number', isPremiumField: true },
       { key: 'museums', type: 'number', isPremiumField: true },
       { key: 'libraries', type: 'number', isPremiumField: true },
+      { key: 'churches', type: 'number', isPremiumField: true }, // 🆕 Церкви
+      { key: 'airQuality', type: 'text', isPremiumField: true },
     ]
   }
 };

@@ -8,75 +8,7 @@
       "clear": "Очистити"
     },
     "options": {
-      "any": "Будь-який",
-      "high": "Високий",
-      "medium": "Середній",
-      "low": "Низький"
-    },
-    "categories": {
-      "education": {
-        "label": "Освіта",
-        "schools": "Школи",
-        "kindergartens": "Дитячі садки",
-        "universities": "Університети"
-      },
-      "medicine": {
-        "label": "Медицина",
-        "hospitals": "Лікарні",
-        "pharmacies": "Аптеки",
-        "clinics": "Поліклініки",
-        "emergencyServices": "Швидка допомога"
-      },
-      "transport": {
-        "label": "Транспорт",
-        "busStops": "Автобусні зупинки",
-        "parkingSpots": "Паркомісця",
-        "metroStations": "Станції метро",
-        "tramStops": "Трамвайні зупинки",
-        "bikeLanes": "Велодоріжки",
-        "transportFrequency": "Частота транспорту",
-        "transportAvgDistance": "Відстань до транспорту"
-      },
-      "commerce": {
-        "label": "Комерція",
-        "groceryStores": "Продуктові магазини",
-        "banksATMs": "Банки та банкомати",
-        "shoppingMalls": "Торгові центри",
-        "postOffices": "Поштові відділення",
-        "constructionStores": "Будівельні магазини",
-        "clothingStores": "Магазини одягу",
-        "beautySalons": "Салони краси",
-        "cafesRestaurants": "Кафе та ресторани"
-      },
-      "safety": {
-        "label": "Безпека",
-        "crimeLevel": "Рівень злочинності",
-        "policeStations": "Поліцейські дільниці",
-        "cctv": "Камери нагляду",
-        "streetLighting": "Вуличне освітлення"
-      },
-      "utilities": {
-        "label": "Комунальні послуги",
-        "costPerSqm": "Вартість за м²",
-        "propertyPricePerSqm": "Ціна продажу за м²",
-        "hasWaterSupply": "Водопостачання",
-        "hasElectricity": "Електрика",
-        "hasHeating": "Опалення",
-        "hasGasSupply": "Газ",
-        "hasWasteRemoval": "Вивіз сміття"
-      },
-      "social": {
-        "label": "Соціальна сфера",
-        "parks": "Парки",
-        "avgParkSize": "Середній розмір парку",
-        "playgrounds": "Дитячі майданчики",
-        "cinemas": "Кінотеатри",
-        "theaters": "Театри",
-        "museums": "Музеї",
-        "libraries": "Бібліотеки",
-        "sportsFacilities": "Спортивні заклади",
-        "airQuality": "Якість повітря"
-      }
+      "any": "Будь-який"
     }
   }
 }

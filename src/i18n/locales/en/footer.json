@@ -1,14 +1,11 @@
 {
-  "description": "Analysis of geospatial data for decision making",
+  "description": "Geospatial data analysis for decision-making",
   "nav_title": "Navigation",
   "contacts_title": "Contacts",
   "rights": "All rights reserved",
-  "home": "Home",
-  "about": "About",
-  "contacts": "Contacts",
-  "faq" : "FAQ",
-  "terms": "Policies",
+  "terms": "Terms of Use",
+  "faq": "FAQ",
   "email": "youworkday@gmail.com",
-  "phone": "tel: +48 698 991 398",
-  "phone_raw": "+48698991398"
+  "phone": "+44 20 7946 0958",
+  "phone_raw": "+442079460958"
 }

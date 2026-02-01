@@ -12,13 +12,13 @@ import {
 } from '@utils/formatters';
 
 export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor }) {
-  const { t } = useTranslation('districts');
+  const { t } = useTranslation(['districts', 'common']);
 
   const formatValue = (value, type, fieldKey) => {
-    if (value === null || value === undefined) return t('na');
+    if (value === null || value === undefined) return t('districts:na');
 
     if (type === 'price') return formatPrice(value, currencyInfo);
-    if (type === 'boolean') return formatBoolean(value, t);
+    if (type === 'boolean') return formatBoolean(value, t, true, styles);
     
     if (type === 'crimeLevel') {
       const labelKey = getCrimeLevelText(value);
@@ -26,12 +26,26 @@ export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor 
       return <span className={className}>{t(labelKey)}</span>;
     }
     
-    if (type === 'number') return formatNumber(value);
+    if (type === 'number') {
+      let formatted = formatNumber(value);
+      
+      if (fieldKey === 'avgParkSize' || fieldKey === 'transportAvgDistance' || fieldKey === 'propertyPricePerSqm' || fieldKey === 'costPerSqm') {
+         if (fieldKey === 'transportAvgDistance') formatted += ` ${t('common:units.m')}`;
+         else formatted += ` ${t('common:units.sqm')}`;
+      }
+      if (fieldKey === 'bikeLanes') {
+         formatted += ` ${t('common:units.km')}`;
+      }
+      if (fieldKey === 'greenSpaces' || fieldKey === 'unemploymentRate') {
+         formatted += '%';
+      }
+      
+      return formatted;
+    }
     
     if (type === 'text') {
-      const translationKey = `values.${value}`;
-      const translated = t(translationKey);
-      return translated !== translationKey ? translated : value;
+      const translated = t(`common:enums.${value.toLowerCase()}`);
+      return translated !== `common:enums.${value.toLowerCase()}` ? translated : value;
     }
     
     return value;
@@ -55,7 +69,7 @@ export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor 
         return (
           <StatCard 
             key={category.key} 
-            title={t(`categories.${category.key}`)} 
+            title={t(`common:categories.${category.key}`)} 
             icon={category.icon} 
             rating={rating}
           >
@@ -75,8 +89,10 @@ export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor 
                   borderBottom: '1px dashed #eee', 
                   fontSize: '14px' 
                 }}>
-                  <span style={{ color: '#666' }}>{t(`fields.${field.key}`)}:</span>
-                  <strong style={{ color: '#333' }}>{formatValue(val, field.type, field.key)}</strong>
+                  <span style={{ color: '#666' }}>{t(`common:fields.${field.key}`)}:</span>
+                  <strong style={{ color: 'var(--text-color)' }}>
+                    {formatValue(val, field.type, field.key)}
+                  </strong>
                 </div>
               );
             })}

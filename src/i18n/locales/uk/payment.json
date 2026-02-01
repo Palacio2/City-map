@@ -1,6 +1,5 @@
 {
   "title": "Оплата підписки {{plan}}",
-  "back": "Назад",
   "tariff_label": "Тариф",
   "promo_label": "Промокод",
   "promo_placeholder": "Код...",
@@ -11,7 +10,6 @@
   "pay_btn": "Сплатити {{amount}}",
   "processing": "Обробка...",
   "security": "Дані захищено шифруванням Stripe SSL",
-  "loading": "Завантаження...",
   "errors": {
     "payment_create": "Помилка створення платежу",
     "card_length": "Номер картки має містити 16 цифр",

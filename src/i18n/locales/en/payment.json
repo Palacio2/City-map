@@ -1,28 +1,26 @@
 {
-  "title": "Pay for {{plan}} Subscription",
-  "back": "Back",
+  "title": "Payment for {{plan}} plan",
   "tariff_label": "Plan",
   "promo_label": "Promo Code",
   "promo_placeholder": "Code...",
-  "promo_apply": "Apply",
+  "promo_apply": "OK",
   "promo_success": "Promo code applied!",
   "activate_btn": "Activate",
   "activating": "Activating...",
   "pay_btn": "Pay {{amount}}",
   "processing": "Processing...",
-  "security": "Secured by Stripe SSL encryption",
-  "loading": "Loading...",
+  "security": "Data protected by Stripe SSL encryption",
   "errors": {
-    "payment_create": "Error creating payment",
+    "payment_create": "Payment creation error",
     "card_length": "Card number must contain 16 digits",
-    "expiry_format": "Invalid date format (MM/YY)",
+    "expiry_format": "Invalid expiry format (MM/YY)",
     "cvv_length": "CVV must contain 3 digits",
     "holder_required": "Enter cardholder name"
   },
   "success": {
-    "title": "Payment Successful!",
-    "back_to_profile": "Dashboard",
-    "access_granted": "Access Granted",
+    "title": "Payment successful!",
+    "back_to_profile": "Account",
+    "access_granted": "Access granted",
     "subscription_active": "Your subscription has been successfully activated.",
     "status_label": "Status",
     "status_success": "Success",
@@ -30,8 +28,8 @@
     "tx_label": "Transaction",
     "to_map": "To Map",
     "details_title": "Order Details",
-    "plan_label": "Plan:",
-    "date_label": "Payment Date:",
+    "plan_label": "Subscription plan:",
+    "date_label": "Payment date:",
     "period_label": "Period:"
   }
 }

@@ -1,18 +1,18 @@
 {
   "city_title": "Wybierz miasto w {{country}}",
   "country_missing": "Kraj nie został określony",
-  "country_not_found": "Kraj nie znaleziony",
+  "country_not_found": "Nie znaleziono kraju",
   "cities_not_found": "Nie znaleziono miast",
-  "error": "Błąd",
   "go_to_map": "Przejdź do mapy →",
   "unavailable": "Niedostępne",
-  "loading": "Ładowanie...",
-  "retry": "Spróbuj ponownie",
-  "back": "← Wstecz",
+  "back": "← Wróć",
   "continue": "Kontynuuj",
   "select_placeholder": "-- Wybierz z listy --",
-  "type_placeholder": "-- Zacznij pisać --",
-  "no_results": "Nie znaleziono",
+  "type_placeholder": "-- Zacznij wpisywać nazwę --",
+  "no_results": "Brak wyników",
   "country_title": "Wybierz kraj",
-  "country_subtitle": "Dostępne kierunki rezerwacji"
+  "country_subtitle": "Dostępne kierunki",
+  "loading": "Ładowanie...",
+  "error": "Błąd",
+  "retry": "Spróbuj ponownie"
 }

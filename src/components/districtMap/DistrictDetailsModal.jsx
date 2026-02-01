@@ -28,8 +28,7 @@ export default function DistrictDetailsModal({
 
 useEffect(() => {
   if (district && isOpen) {
-    console.log("🚀 Відправляємо ID району:", district.id); 
-    trackDistrictVisit(district.id);
+    trackDistrictVisit(district); 
   }
 }, [district, isOpen]);
 

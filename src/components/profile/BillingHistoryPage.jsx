@@ -54,17 +54,48 @@ export default function BillingHistoryPage() {
   const confirmCancellation = async () => {
     if (isCancelling) return;
     setIsCancelling(true);
-    setShowCancelModal(false);
     setCancellationError(null);
+    
+    // НЕ закриваємо модалку відразу, щоб бачити помилки, якщо вони будуть
+    // setShowCancelModal(false); 
+
     try {
-      if (!subscription.id) throw new Error('No subscription ID');
-      await cancelUserSubscription(subscription.id);
+      console.log("Attempting to cancel. Context subscription:", subscription);
+
+      // 1. Спробуємо знайти ID. Спочатку з контексту, якщо немає - шукаємо в історії.
+      let subIdToCancel = subscription.id;
+
+      if (!subIdToCancel) {
+          console.log("ID missing in context. Searching in billing history...");
+          const activeSubInHistory = billingHistory.find(sub => sub.status === 'active');
+          if (activeSubInHistory) {
+              subIdToCancel = activeSubInHistory.id;
+              console.log("Found ID in history:", subIdToCancel);
+          }
+      }
+
+      if (!subIdToCancel) {
+          throw new Error('Could not find Active Subscription ID');
+      }
+
+      // 2. Викликаємо API
+      console.log("Sending cancel request for ID:", subIdToCancel);
+      await cancelUserSubscription(subIdToCancel);
+      
+      console.log("Cancellation successful. Updating context...");
       await updateSubscription(); 
+      
+      // Оновлюємо таблицю
       const { subscriptions, count } = await fetchUserBillingHistory(currentPage, ITEMS_PER_PAGE);
       setBillingHistory(subscriptions || []);
       setTotalCount(count);
+
+      // Закриваємо модалку тільки після успіху
+      setShowCancelModal(false);
+
     } catch (error) {
-      setCancellationError(t('profile:billing_page.error_cancel'));
+      console.error("Cancellation Failed:", error);
+      setCancellationError(error.message || t('profile:billing_page.error_cancel'));
     } finally {
       setIsCancelling(false);
     }
@@ -79,6 +110,11 @@ export default function BillingHistoryPage() {
 
   const tableData = useMemo(() => billingHistory.map(sub => {
     const planKey = sub.plan_name === 'pro' ? 'premium' : (sub.plan_name || 'free');
+    
+    // Додаємо перевірку, чи скасована підписка (якщо є дата cancel_at)
+    // Stripe не міняє статус відразу, але ми можемо показати це в інтерфейсі
+    const isScheduledForCancel = sub.cancel_at && new Date(sub.cancel_at) > new Date();
+
     return {
       id: sub.id,
       date: new Date(sub.created_at).toLocaleDateString('uk-UA'),
@@ -87,7 +123,8 @@ export default function BillingHistoryPage() {
       planName: t(`subscription:subscription.plans.${planKey}.name`),
       method: t('profile:billing_page.method_online'),
       invoiceId: sub.payment_id ? sub.payment_id.replace('TX_', '').replace('SUB_', '').slice(-8).toUpperCase() : '---',
-      expiresAt: sub.ends_at ? new Date(sub.ends_at).toLocaleDateString('uk-UA') : t('profile:stats_page.never')
+      expiresAt: sub.ends_at ? new Date(sub.ends_at).toLocaleDateString('uk-UA') : t('profile:stats_page.never'),
+      isScheduledForCancel
     };
   }), [billingHistory, t]);
 
@@ -146,6 +183,14 @@ export default function BillingHistoryPage() {
                     </div>
                 )}
               </div>
+              
+              {/* Відображаємо помилку тут, якщо вона є */}
+              {cancellationError && (
+                  <div style={{color: 'red', marginBottom: '10px', padding: '10px', background: '#fff0f0', borderRadius: '4px'}}>
+                      Error: {cancellationError}
+                  </div>
+              )}
+
               <button 
                 className={`${styles.manageButton} ${subscriptionInfo.isActive ? styles.cancelButton : styles.upgradeButton}`} 
                 onClick={handleManageButton}
@@ -155,7 +200,6 @@ export default function BillingHistoryPage() {
                   subscriptionInfo.isActive ? t('profile:billing_page.cancel_sub') : t('profile:billing_page.update_plan')
                 )}
               </button>
-              {cancellationError && <div className={styles.cancellationError}>{cancellationError}</div>}
             </div>
           )}
 
@@ -179,9 +223,14 @@ export default function BillingHistoryPage() {
                 <div className={styles.tableBody}>
                 {tableData.length > 0 ? (
                     tableData.map((item) => {
-                    const isErrorStatus = item.status === 'cancelled' || item.status === 'inactive';
+                    // Логіка для відображення статусу (якщо скасовано - червоним)
+                    const isErrorStatus = item.status === 'cancelled' || item.status === 'inactive' || item.isScheduledForCancel;
                     const StatusIcon = isErrorStatus ? FaTimesCircle : FaCheckCircle;
                     const statusClass = isErrorStatus ? styles.statusError : styles.statusSuccess;
+
+                    // Текст статусу
+                    let statusText = item.status;
+                    if (item.isScheduledForCancel) statusText = 'Скасовується...'; // Можна додати в переклад
 
                     return (
                         <div key={item.id} className={styles.tableRow}>
@@ -193,9 +242,7 @@ export default function BillingHistoryPage() {
                         <div className={styles.statusCell}>
                             <span className={`${styles.status} ${statusClass}`}>
                             <StatusIcon />
-                            {t(`profile:subscription.status.${item.status}`) !== `profile:subscription.status.${item.status}` 
-                                ? t(`profile:subscription.status.${item.status}`) 
-                                : item.status}
+                            {statusText}
                             </span>
                         </div>
                         <div className={styles.actions}>
@@ -245,18 +292,23 @@ export default function BillingHistoryPage() {
             </div>
             <h3>{t('profile:billing_page.cancel_sub')}</h3>
             <p>{t('profile:billing_page.cancel_confirm')}</p>
+            {/* Показуємо помилку і в модалці */}
+            {cancellationError && <p style={{color: 'red', fontSize: '14px'}}>{cancellationError}</p>}
+            
             <div className={styles.modalActions}>
               <button 
                 className={styles.modalBtnSecondary}
                 onClick={() => setShowCancelModal(false)}
+                disabled={isCancelling}
               >
                 {t('profile:actions.back_to_profile')}
               </button>
               <button 
                 className={styles.modalBtnDanger}
                 onClick={confirmCancellation}
+                disabled={isCancelling}
               >
-                {t('profile:billing_page.cancel_btn')}
+                {isCancelling ? 'Processing...' : t('profile:billing_page.cancel_btn')}
               </button>
             </div>
           </div>

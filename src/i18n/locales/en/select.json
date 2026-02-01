@@ -2,17 +2,17 @@
   "city_title": "Select a city in {{country}}",
   "country_missing": "Country not specified",
   "country_not_found": "Country not found",
-  "cities_not_found": "No cities found",
-  "error": "Error",
+  "cities_not_found": "Cities not found",
   "go_to_map": "Go to map →",
   "unavailable": "Unavailable",
-  "loading": "Loading...",
-  "retry": "Try again",
   "back": "← Back",
   "continue": "Continue",
   "select_placeholder": "-- Select from list --",
-  "type_placeholder": "-- Start typing --",
+  "type_placeholder": "-- Start typing name --",
   "no_results": "No results",
   "country_title": "Select country",
-  "country_subtitle": "Available booking destinations"
+  "country_subtitle": "Available destinations",
+  "loading": "Loading...",
+  "error": "Error",
+  "retry": "Try again"
 }

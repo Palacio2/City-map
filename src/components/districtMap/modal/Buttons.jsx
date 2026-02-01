@@ -5,14 +5,15 @@ import { AiFillHeart, AiOutlineLoading3Quarters } from 'react-icons/ai';
 import styles from './styles/buttons.module.css';
 
 export function CloseButton({ onClose }) {
-  const { t } = useTranslation('districts');
+  // 👇 Використовуємо 'common' для загальних кнопок
+  const { t } = useTranslation('common');
   
   return (
     <button 
       className={styles.closeButton} 
       onClick={onClose} 
-      aria-label={t('buttons.close')}
-      title={t('buttons.close')}
+      aria-label={t('actions.close')}
+      title={t('actions.close')}
     >
       <FiX /> 
     </button>
@@ -20,8 +21,8 @@ export function CloseButton({ onClose }) {
 }
 
 export function FavoriteButton({ isFavorite, onToggle, isLoading = false }) {
-  const { t } = useTranslation('districts');
-  const label = isFavorite ? t('buttons.remove_favorite') : t('buttons.add_favorite');
+  const { t } = useTranslation('common');
+  const label = isFavorite ? t('actions.remove_favorite') : t('actions.add_favorite');
 
   return (
     <button 

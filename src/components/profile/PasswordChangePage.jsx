@@ -20,7 +20,8 @@ const StatusMessage = ({ type, text }) => {
 };
 
 export default function PasswordChangePage() {
-    const { t } = useTranslation(['profile', 'auth']);
+    // 👇 Додано 'common'
+    const { t } = useTranslation(['profile', 'auth', 'common']);
     const [formData, setFormData] = useState({ newPassword: '', confirmPassword: '' });
     const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
     const [isTipsOpen, setIsTipsOpen] = useState(false);
@@ -164,12 +165,14 @@ export default function PasswordChangePage() {
                                 className={`${styles.baseButton} ${styles.primaryButton}`}
                             >
                                 <FaSave className={styles.buttonIcon} />
-                                {isSaving ? t('profile:actions.saving') : t('profile:actions.change_password')}
+                                {/* 👇 Використовуємо common для saving */}
+                                {isSaving ? t('common:actions.saving') : t('profile:actions.change_password')}
                             </button>
 
                             <Link to="/profile" className={`${styles.baseButton} ${styles.secondaryButton}`}>
                                 <FaTimes className={styles.buttonIcon} />
-                                {t('profile:actions.cancel')}
+                                {/* 👇 Використовуємо common для cancel */}
+                                {t('common:actions.cancel')}
                             </Link>
                         </div>
 

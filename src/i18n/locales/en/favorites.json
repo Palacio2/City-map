@@ -2,7 +2,7 @@
   "title": "Favorite Districts",
   "remove_tooltip": "Remove from favorites",
   "confirm_remove": "Remove from favorites?",
-  "na": "N/A",
+  "na": "n/a",
   "price_label": "Price:",
   "empty": {
     "title": "Your list is empty",
@@ -14,18 +14,7 @@
     "delete_failed": "Failed to delete"
   },
   "buttons": {
-    "login": "Log in",
-    "go_to_map": "Go to map"
-  },
-  "stats": {
-    "education": "Education",
-    "transport": "Transport",
-    "safety": "Safety",
-    "ecology": "Ecology",
-    "medicine": "Healthcare",
-    "shopping": "Shopping"
-  },
-  "favorites": {
-    "price_label": ""
+    "login": "Log In",
+    "go_to_map": "Go to Map"
   }
 }

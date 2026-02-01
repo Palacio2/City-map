@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaUser, FaCrown, FaCreditCard, FaSync, FaCheckCircle, FaTimesCircle, FaChartLine, FaEdit, FaKey } from 'react-icons/fa';
+import { FaUser, FaCrown, FaCreditCard, FaSync, FaCheckCircle, FaTimesCircle, FaChartLine, FaEdit, FaKey, FaExclamationTriangle } from 'react-icons/fa';
 import { supabase } from '@supabaseClient';
 import { useSubscription } from '@subscription/SubscriptionContext';
 import { formatPhoneNumber } from '@utils/phoneUtils';
@@ -17,7 +17,12 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
         const isExpired = subscription.isExpired;
         const currentLang = i18n.language || 'uk-UA';
         const planKey = subscription.plan || 'free'; 
+        const isScheduledForCancel = subscription.cancel_at && new Date(subscription.cancel_at) > new Date();
         
+        const formattedExpires = subscription.expiresAt 
+            ? new Date(subscription.expiresAt).toLocaleDateString(currentLang) 
+            : null;
+
         let status = { 
             icon: <FaCheckCircle />, 
             text: t('profile:subscription.status.active'), 
@@ -36,15 +41,19 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
                 text: t('profile:subscription.status.free'), 
                 class: styles.inactive 
             };
+        } else if (isScheduledForCancel) {
+            status = { 
+                icon: <FaExclamationTriangle />, 
+                text: `${t('profile:subscription.status.active')} (до ${formattedExpires})`, 
+                class: styles.active 
+            };
         }
 
         return {
             status,
             name: t(`subscription:subscription.plans.${planKey}.name`),
             price: t(`subscription:subscription.plans.${planKey}.price`),
-            expires: subscription.expiresAt 
-                ? new Date(subscription.expiresAt).toLocaleDateString(currentLang) 
-                : null
+            expires: formattedExpires
         };
     }, [subscription, t, i18n.language]);
 

@@ -8,7 +8,7 @@ import { validateProfileForm } from '@utils/profileValidation';
 import styles from './ProfileEditPages.module.css';
 
 export default function ProfileEditPage() {
-  const { t } = useTranslation('profile');
+  const { t } = useTranslation(['profile', 'common']);
   const navigate = useNavigate();
 
   const [state, setState] = useState({
@@ -44,7 +44,7 @@ export default function ProfileEditPage() {
     } catch (error) {
       setStatusMessage({ 
         type: 'error', 
-        text: t('edit_page.errors.load_failed') 
+        text: t('profile:edit_page.errors.load_failed') 
       });
     }
   };
@@ -52,23 +52,23 @@ export default function ProfileEditPage() {
 const mapErrorToMessage = (error) => {
     const msg = (error?.message || '').toLowerCase();
 
-    if (msg.includes('invalid refresh token') || msg.includes('jwt')) return t('errors.auth_error');
-    if (msg.includes('networkerror') || msg.includes('failed to fetch')) return t('errors.network_error');
-    if (msg.includes('user not found')) return t('errors.user_not_found');
+    if (msg.includes('invalid refresh token') || msg.includes('jwt')) return t('profile:errors.auth_error');
+    if (msg.includes('networkerror') || msg.includes('failed to fetch')) return t('profile:errors.network_error');
+    if (msg.includes('user not found')) return t('profile:errors.user_not_found');
     
     if (msg.includes('already registered') || msg.includes('already been registered') || msg.includes('unique constraint')) {
-        return t('errors.email_taken');
+        return t('profile:errors.email_taken');
     }
     
     if (msg.includes('rate limit') || msg.includes('security purposes') || msg.includes('try again after')) {
-        return t('errors.too_many_requests');
+        return t('profile:errors.too_many_requests');
     }
     
     if (msg.includes('is invalid') || (msg.includes('email') && msg.includes('invalid'))) {
-        return t('errors.email_invalid_format');
+        return t('profile:errors.email_invalid_format');
     }
 
-    return error.message || t('errors.unknown_error');
+    return error.message || t('profile:errors.unknown_error');
   };
 
   const handleInputChange = useCallback((e) => {
@@ -108,11 +108,11 @@ const mapErrorToMessage = (error) => {
         
         setStatusMessage({ 
             type: 'success', 
-            text: t('edit_page.email_update_sent') 
+            text: t('profile:edit_page.email_update_sent') 
         });
         updateState('originalEmail', state.email.trim());
       } else {
-        setStatusMessage({ type: 'success', text: t('edit_page.success') });
+        setStatusMessage({ type: 'success', text: t('profile:edit_page.success') });
         setTimeout(() => navigate('/profile'), 1500);
       }
     } catch (error) {
@@ -129,11 +129,11 @@ const mapErrorToMessage = (error) => {
     <div className={styles.container}>
       <div className={styles.header}>
         <Link to="/profile" className={styles.backButton}>
-          <FaArrowLeft /> {t('actions.back_to_profile')}
+          <FaArrowLeft /> {t('profile:actions.back_to_profile')}
         </Link>
         <div className={styles.titleSection}>
-          <h1 className={styles.title}>{t('edit_page.title')}</h1>
-          <p className={styles.subtitle}>{t('edit_page.subtitle')}</p>
+          <h1 className={styles.title}>{t('profile:edit_page.title')}</h1>
+          <p className={styles.subtitle}>{t('profile:edit_page.subtitle')}</p>
         </div>
       </div>
       
@@ -141,8 +141,8 @@ const mapErrorToMessage = (error) => {
         <div className={styles.section}>
           <form onSubmit={handleSubmit} className={styles.form} noValidate>
             <div className={styles.formHeader}>
-              <h2 className={styles.formTitle}>{t('edit_page.main_info')}</h2>
-              <p className={styles.formSubtitle}>{t('edit_page.enter_data')}</p>
+              <h2 className={styles.formTitle}>{t('profile:edit_page.main_info')}</h2>
+              <p className={styles.formSubtitle}>{t('profile:edit_page.enter_data')}</p>
             </div>
             
             {statusMessage.text && (
@@ -163,7 +163,7 @@ const mapErrorToMessage = (error) => {
             <div className={styles.formGroup}>
               <label htmlFor="name" className={styles.formLabel}>
                 <FaUser className={styles.labelIcon} />
-                {t('labels.full_name')} *
+                {t('profile:labels.full_name')} *
               </label>
               <input
                 id="name"
@@ -172,7 +172,7 @@ const mapErrorToMessage = (error) => {
                 value={state.name}
                 onChange={handleInputChange}
                 className={styles.formInput}
-                placeholder={t('edit_page.placeholders.name')}
+                placeholder={t('profile:edit_page.placeholders.name')}
                 required
                 disabled={state.isSaving}
                 maxLength={30}
@@ -182,7 +182,7 @@ const mapErrorToMessage = (error) => {
             <div className={styles.formGroup}>
               <label htmlFor="email" className={styles.formLabel}>
                 <FaEnvelope className={styles.labelIcon} />
-                {t('labels.email')} *
+                {t('profile:labels.email')} *
               </label>
               <input
                 id="email"
@@ -191,7 +191,7 @@ const mapErrorToMessage = (error) => {
                 value={state.email}
                 onChange={handleInputChange}
                 className={styles.formInput}
-                placeholder={t('edit_page.placeholders.email')}
+                placeholder={t('profile:edit_page.placeholders.email')}
                 required
                 disabled={state.isSaving}
                 maxLength={60} 
@@ -201,7 +201,7 @@ const mapErrorToMessage = (error) => {
                 <div className={styles.emailWarning} role="note">
                   <FaExclamationTriangle className={styles.warningIcon} />
                   <span className={styles.warningText}>
-                    {t('edit_page.email_warning')}
+                    {t('profile:edit_page.email_warning')}
                   </span>
                 </div>
               )}
@@ -210,7 +210,7 @@ const mapErrorToMessage = (error) => {
             <div className={styles.formGroup}>
               <label htmlFor="phone" className={styles.formLabel}>
                 <FaPhone className={styles.labelIcon} />
-                {t('labels.phone')}
+                {t('profile:labels.phone')}
               </label>
               <div className={styles.phoneInputContainer}>
                 <select
@@ -233,7 +233,7 @@ const mapErrorToMessage = (error) => {
                   value={state.phone}
                   onChange={handleInputChange}
                   className={styles.formInput}
-                  placeholder={t('edit_page.placeholders.phone')}
+                  placeholder={t('profile:edit_page.placeholders.phone')}
                   disabled={state.isSaving}
                 />
               </div>
@@ -246,12 +246,12 @@ const mapErrorToMessage = (error) => {
                 disabled={state.isSaving}
               >
                 <FaSave className={styles.buttonIcon} />
-                {state.isSaving ? t('actions.saving') : t('actions.save')}
+                {state.isSaving ? t('common:actions.saving') : t('common:actions.save')}
               </button>
               
               <Link to="/profile" className={styles.secondaryButton}>
                 <FaTimes className={styles.buttonIcon} />
-                {t('actions.cancel')}
+                {t('common:actions.cancel')}
               </Link>
             </div>
           </form>

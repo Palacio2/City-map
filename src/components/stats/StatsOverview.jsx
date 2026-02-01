@@ -36,7 +36,7 @@ const CollapsibleSection = ({ id, title, icon: Icon, children, isOpen, onToggle 
 };
 
 export default function StatsOverview({ stats, weeklyActivity, trackedDistricts }) {
-  const { t } = useTranslation('stats');
+  const { t } = useTranslation(['stats', 'common']);
   const navigate = useNavigate();
   const { isRealtor } = useSubscription();
 
@@ -89,7 +89,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
       {isRealtor && (
         <CollapsibleSection 
           id="investment_calculator"
-          title={t('calculator.title')}
+          title={t('stats:calculator.title')}
           icon={FaCalculator}
           isOpen={!!openSections['investment_calculator']}
           onToggle={toggleSection}
@@ -101,7 +101,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
       {isRealtor && (
         <CollapsibleSection 
           id="saved_districts"
-          title={t('stats_page.saved_districts')} 
+          title={t('stats:stats_page.saved_districts')} 
           icon={FaBookmark}
           isOpen={!!openSections['saved_districts']}
           onToggle={toggleSection}
@@ -112,7 +112,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
 
       <CollapsibleSection 
         id="weekly_activity"
-        title={t('stats_page.weekly_activity')} 
+        title={t('stats:stats_page.weekly_activity')} 
         icon={FaChartBar}
         isOpen={!!openSections['weekly_activity']}
         onToggle={toggleSection}
@@ -123,7 +123,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
       {isRealtor && (
         <CollapsibleSection 
           id="popular_districts"
-          title={t('stats_page.popular_districts')} 
+          title={t('stats:stats_page.popular_districts')} 
           icon={FaMapMarkerAlt}
           isOpen={!!openSections['popular_districts']}
           onToggle={toggleSection}
@@ -134,7 +134,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
 
       <CollapsibleSection 
         id="last_activity"
-        title={t('stats_page.last_activity')} 
+        title={t('stats:stats_page.last_activity')} 
         icon={FaHistory}
         isOpen={!!openSections['last_activity']}
         onToggle={toggleSection}

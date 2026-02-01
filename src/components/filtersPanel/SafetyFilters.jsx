@@ -4,7 +4,7 @@ import styles from './Filters.module.css';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
 
 const SafetyFilters = memo(({ values = {}, onChange }) => {
-  const { t } = useTranslation('filters');
+  const { t } = useTranslation(['filters', 'common']);
   const config = DISTRICT_CATEGORIES.safety;
 
   const checkboxFilters = useMemo(() => {
@@ -27,22 +27,22 @@ const SafetyFilters = memo(({ values = {}, onChange }) => {
   return (
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>
-        {t('filter.categories.safety.label')}
+        {t('common:categories.safety')}
       </h3>
       <div className={styles.filterGroup}>
         <div className={styles.ratingFilter}>
           <span className={styles.ratingLabel}>
-            {t('filter.categories.safety.crimeLevel')}
+            {t('common:fields.crimeLevel')}
           </span>
           <select 
             className={styles.select}
             value={values.crimeLevel || 'any'}
             onChange={handleCrimeLevelChange}
           >
-            <option value="any">{t('filter.options.any')}</option>
-            <option value="low">{t('filter.options.low')}</option>
-            <option value="medium">{t('filter.options.medium')}</option>
-            <option value="high">{t('filter.options.high')}</option>
+            <option value="any">{t('filters:filter.options.any')}</option>
+            <option value="low">{t('common:enums.low')}</option>
+            <option value="medium">{t('common:enums.medium')}</option>
+            <option value="high">{t('common:enums.high')}</option>
           </select>
         </div>
         
@@ -55,7 +55,7 @@ const SafetyFilters = memo(({ values = {}, onChange }) => {
               onChange={handleCheckboxChange}
             />
             <span>
-              {t(`filter.categories.safety.${filter.name}`)}
+              {t(`common:fields.${filter.name}`)}
             </span>
           </label>
         ))}

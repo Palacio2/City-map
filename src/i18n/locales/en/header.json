@@ -1,14 +1,13 @@
 {
   "home": "Home",
-  "about": "About",
+  "about": "About Project",
   "contacts": "Contacts",
   "subscription": "Subscription",
   "profile": "Profile",
-  "login": "Log In",
-  "logout": "Log Out",
-  "loading": "Loading...",
-  "favorites_title": "My favorites",
-  "language_title": "Change language",
-  "light_mode": "Light mode",
-  "dark_mode": "Dark mode"
+  "login": "Login",
+  "logout": "Logout",
+  "favorites_title": "My Saved Items",
+  "language_title": "Change Language",
+  "light_mode": "Light Mode",
+  "dark_mode": "Dark Mode"
 }

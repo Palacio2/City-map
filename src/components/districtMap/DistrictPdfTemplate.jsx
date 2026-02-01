@@ -1,11 +1,10 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictPdfTemplate.module.css';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
 import { 
   formatNumber, 
   formatPrice, 
-  formatBoolean, 
   getCrimeLevelText 
 } from '@utils/formatters';
 
@@ -23,7 +22,7 @@ const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
     <div className={styles.categorySection}>
       <div className={styles.categoryHeader}>
         <span className={styles.categoryIcon}>{categoryConfig.icon}</span>
-        <h3 className={styles.categoryTitle}>{t(`categories.${categoryConfig.key}`)}</h3>
+        <h3 className={styles.categoryTitle}>{t(`common:categories.${categoryConfig.key}`)}</h3>
         <span className={styles.categoryRating}>
            {(data.rating || data.qualityRating || 0).toFixed(1)}
         </span>
@@ -38,7 +37,7 @@ const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
            return (
              <StatRow 
                key={field.key}
-               label={t(`fields.${field.key}`)}
+               label={t(`common:fields.${field.key}`)}
                value={formatValue(val, field.type)}
              />
            );
@@ -51,11 +50,9 @@ const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
 export default function DistrictPdfTemplate({ 
   district, 
   currencyInfo, 
-  formatNumber, 
-  formatPrice,
   isRealtor 
 }) {
-  const { t } = useTranslation('districts');
+  const { t } = useTranslation(['districts', 'common']);
 
   const formatValue = (value, type) => {
     if (value === null || value === undefined) return '-';
@@ -63,7 +60,7 @@ export default function DistrictPdfTemplate({
     if (type === 'price') return formatPrice(value, currencyInfo);
     
     if (type === 'boolean') {
-        return value ? t('enums.yes') : t('enums.no');
+        return value ? t('common:enums.yes') : t('common:enums.no');
     }
     
     if (type === 'crimeLevel') {
@@ -74,7 +71,7 @@ export default function DistrictPdfTemplate({
     if (type === 'number') return formatNumber(value);
 
     if (type === 'text') {
-        const translationKey = `values.${value}`;
+        const translationKey = `common:enums.${value.toLowerCase()}`;
         const translated = t(translationKey);
         return translated !== translationKey ? translated : value;
     }
@@ -98,7 +95,7 @@ export default function DistrictPdfTemplate({
         <div className={styles.headerInfo}>
            <h1 className={styles.districtName}>{name}</h1>
            <p className={styles.reportDate}>
-             {t('pdf.report_date')}: {new Date().toLocaleDateString('uk-UA')}
+             {t('districts:pdf.report_date')}: {new Date().toLocaleDateString('uk-UA')}
            </p>
         </div>
         <div className={styles.logo}>
@@ -113,28 +110,28 @@ export default function DistrictPdfTemplate({
         
         {filterData?.general && isRealtor && (
           <div className={styles.quickStatsCard}>
-             <h3 className={styles.quickStatsTitle}>{t('pdf.general_info')}</h3>
+             <h3 className={styles.quickStatsTitle}>{t('districts:pdf.general_info')}</h3>
              <div className={styles.quickStatsList}>
                 <StatRow 
-                  label={t('details.population')} 
+                  label={t('common:fields.population')} 
                   value={formatNumber(filterData.general.population)} 
                   highlight 
                 />
                 <StatRow 
-                  label={t('details.salary')} 
+                  label={t('common:fields.averageSalary')} 
                   value={formatPrice(filterData.general.averageSalary, safeCurrencyInfo)} 
                   highlight 
                 />
                 <StatRow 
-                  label={t('details.unemployment')} 
+                  label={t('common:fields.unemploymentRate')} 
                   value={filterData.general.unemploymentRate ? `${filterData.general.unemploymentRate}%` : '-'} 
                 />
                 <StatRow 
-                  label={t('details.price')} 
+                  label={t('common:fields.propertyPricePerSqm')} 
                   value={formatPrice(filterData.general.propertyPrice, safeCurrencyInfo)} 
                 />
                 <StatRow 
-                  label={t('pdf.rent')} 
+                  label={t('common:fields.average_rent_price')} 
                   value={formatPrice(filterData.general.average_rent_price, safeCurrencyInfo)} 
                 />
              </div>
@@ -172,7 +169,7 @@ export default function DistrictPdfTemplate({
       </div>
 
       <div className={styles.footer}>
-        <p>{t('pdf.generated_auto')} <strong>GeoAnalyzer</strong></p>
+        <p>{t('districts:pdf.generated_auto')} <strong>GeoAnalyzer</strong></p>
       </div>
     </div>
   );

@@ -15,11 +15,8 @@
     "login_alert": "Будь ласка, увійдіть в систему, щоб додавати улюблені"
   },
   "buttons": {
-    "close": "Закрити",
     "add_favorite": "Додати до улюблених",
-    "remove_favorite": "Видалити з улюблених",
-    "download_pdf": "Завантажити PDF",
-    "share": "Поділитися"
+    "remove_favorite": "Видалити з улюблених"
   },
   "details": {
     "updated": "Оновлено",
@@ -28,73 +25,6 @@
     "unemployment": "Безробіття",
     "density": "Щільність",
     "price": "Ціна за м²"
-  },
-  "fields": {
-    "schools": "Школи",
-    "kindergartens": "Дитячі садки",
-    "universities": "Університети",
-    "hospitals": "Лікарні",
-    "pharmacies": "Аптеки",
-    "clinics": "Поліклініки",
-    "emergencyServices": "Швидка допомога",
-    "busStops": "Автобусні зупинки",
-    "parkingSpots": "Паркомісця",
-    "metroStations": "Станції метро",
-    "tramStops": "Трамвайні зупинки",
-    "bikeLanes": "Велодоріжки (км)",
-    "transportFrequency": "Частота транспорту",
-    "transportAvgDistance": "Відстань до транспорту",
-    "groceryStores": "Продуктові магазини",
-    "banksATMs": "Банки та банкомати",
-    "shoppingMalls": "Торгові центри",
-    "postOffices": "Поштові відділення",
-    "constructionStores": "Будівельні магазини",
-    "clothingStores": "Магазини одягу",
-    "beautySalons": "Салони краси",
-    "cafesRestaurants": "Кафе та ресторани",
-    "crimeLevel": "Рівень злочинності",
-    "policeStations": "Поліцейські дільниці",
-    "cctv": "Камери нагляду",
-    "streetLighting": "Вуличне освітлення",
-    "avgParkSize": "Середній розмір парку",
-    "propertyPricePerSqm": "Ціна продажу (Realtor)",
-    "airQuality": "Якість повітря",
-    "costPerSqm": "Вартість ком. послуг",
-    "hasWaterSupply": "Водопостачання",
-    "hasElectricity": "Електрика",
-    "hasHeating": "Опалення",
-    "hasGasSupply": "Газ",
-    "hasWasteRemoval": "Вивіз сміття",
-    "parks": "Парки",
-    "playgrounds": "Дитячі майданчики",
-    "sportsFacilities": "Спортивні заклади",
-    "cinemas": "Кінотеатри",
-    "theaters": "Театри",
-    "museums": "Музеї",
-    "libraries": "Бібліотеки"
-  },
-  "categories": {
-    "education": "Освіта",
-    "medicine": "Медицина",
-    "transport": "Транспорт",
-    "commerce": "Комерція",
-    "safety": "Безпека",
-    "utilities": "Комунальні послуги",
-    "social": "Соціальна сфера"
-  },
-  "enums": {
-    "yes": "Так",
-    "no": "Ні",
-    "crime_low": "Низький",
-    "crime_medium": "Середній",
-    "crime_high": "Високий"
-  },
-  "values": {
-    "high": "Висока",
-    "medium": "Середня",
-    "low": "Низька",
-    "good": "Добра",
-    "bad": "Погана"
   },
   "pdf": {
     "report_date": "Дата формування звіту",

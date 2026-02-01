@@ -6,7 +6,7 @@ import styles from './ExportSettingsModal.module.css';
 const STORAGE_KEY = 'geo_analyzer_export_settings';
 
 const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
-  const { t } = useTranslation('comparison');
+  const { t } = useTranslation(['comparison', 'common']);
   
   const [formData, setFormData] = useState(() => {
     try {
@@ -60,7 +60,7 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h3>{t('export_modal.title', 'Налаштування звіту')}</h3>
+          <h3>{t('comparison:export_modal.title')}</h3>
           <button className={styles.closeButton} onClick={onClose}>
             <FaTimes />
           </button>
@@ -73,7 +73,7 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
                 <img src={formData.logo} alt="Logo Preview" className={styles.logoPreview} />
               ) : (
                 <>
-                  <FaUpload /> {t('export_modal.upload_logo', 'Завантажити логотип')}
+                  <FaUpload /> {t('comparison:export_modal.upload_logo')}
                 </>
               )}
             </label>
@@ -87,11 +87,11 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>{t('export_modal.agency_name', 'Назва агентства')}</label>
+            <label>{t('comparison:export_modal.agency_name')}</label>
             <input 
               type="text" 
               name="agencyName" 
-              placeholder={t('export_modal.agency_placeholder', 'Наприклад: Best Estate')} 
+              placeholder={t('comparison:export_modal.agency_placeholder')} 
               value={formData.agencyName}
               onChange={handleChange}
               required
@@ -99,22 +99,22 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>{t('export_modal.comments', 'Коментар клієнту')}</label>
+            <label>{t('comparison:export_modal.comments')}</label>
             <textarea 
               name="comments" 
               rows="4"
-              placeholder={t('export_modal.comments_placeholder', 'Ваші висновки та рекомендації...')} 
+              placeholder={t('comparison:export_modal.comments_placeholder')} 
               value={formData.comments}
               onChange={handleChange}
             />
           </div>
 
           <div className={styles.inputGroup}>
-            <label>{t('export_modal.phone', 'Номер телефону')}</label>
+            <label>{t('comparison:export_modal.phone')}</label>
             <input 
               type="text" 
               name="phone" 
-              placeholder={t('export_modal.phone_placeholder', '+380 ...')} 
+              placeholder={t('comparison:export_modal.phone_placeholder')} 
               value={formData.phone}
               onChange={handleChange}
               required
@@ -122,11 +122,11 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>{t('export_modal.website', 'Веб-сайт')}</label>
+            <label>{t('comparison:export_modal.website')}</label>
             <input 
               type="text" 
               name="website" 
-              placeholder={t('export_modal.website_placeholder', 'www.example.com')} 
+              placeholder={t('comparison:export_modal.website_placeholder', 'www.example.com')} 
               value={formData.website}
               onChange={handleChange}
             />
@@ -134,10 +134,10 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
 
           <div className={styles.actions}>
             <button type="button" className={styles.cancelBtn} onClick={onClose}>
-              {t('actions.cancel', 'Скасувати')}
+              {t('common:actions.cancel', 'Скасувати')}
             </button>
             <button type="submit" className={styles.confirmBtn}>
-              <FaFilePdf /> {t('export_modal.export_btn', 'Експорт PDF')}
+              <FaFilePdf /> {t('comparison:export_modal.export_btn')}
             </button>
           </div>
         </form>

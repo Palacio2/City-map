@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FaBookmark, FaKey, FaHome, FaArrowRight, FaTrash, FaChevronLeft, FaChevronRight, FaPlus, FaClock } from 'react-icons/fa';
-import { fetchTrackedDistrictsWithStats, removeTrackedDistrict, addTrackedDistrict } from '../../../api/trackedDistrictsApi';
+import { fetchTrackedDistrictsWithStats, removeTrackedDistrict, addTrackedDistrict } from '@api/trackedDistrictsApi';
+import { formatPrice } from '@utils/formatters.jsx';
 import LocationSelectorModal from '../PopularDistricts/LocationSelectorModal';
 import ConfirmationModal from './ConfirmationModal';
 import styles from './TrackedDistricts.module.css';
@@ -11,31 +12,13 @@ const ITEMS_PER_PAGE = 3;
 const STORAGE_KEY_PAGE = 'tracked_districts_page';
 const STORAGE_KEY_DATA = 'tracked_districts_data';
 
-const getCurrencyCode = (countryName) => {
-  if (!countryName) return 'USD';
-  const name = countryName.toLowerCase().trim();
-  if (['ukraine', 'україна', 'ua'].includes(name)) return 'UAH';
-  if (['poland', 'polska', 'pl'].includes(name)) return 'PLN';
-  if (name.includes('germany') || name.includes('france') || name.includes('italy') || name.includes('spain')) return 'EUR';
-  return 'USD';
-};
-
-const formatPrice = (price, country) => {
-  const numericPrice = Number(price);
-  if (Number.isNaN(numericPrice) || numericPrice === 0) return 'N/A';
-  const currency = getCurrencyCode(country);
-  return new Intl.NumberFormat('uk-UA', { 
-      style: 'currency', currency, maximumFractionDigits: 0 
-  }).format(numericPrice);
-};
-
 const formatDate = (dateString, defaultText) => {
   if (!dateString) return defaultText;
   return new Date(dateString).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short', year: 'numeric' });
 };
 
 export default function TrackedDistricts() {
-  const { t } = useTranslation('stats');
+  const { t } = useTranslation(['stats', 'common']);
   const navigate = useNavigate();
   
   const [trackedItems, setTrackedItems] = useState(() => {
@@ -117,7 +100,7 @@ export default function TrackedDistricts() {
       const maxPage = Math.ceil(newItems.length / ITEMS_PER_PAGE) - 1;
       if (currentPage > maxPage && maxPage >= 0) setCurrentPage(maxPage);
     } catch (err) {
-      alert(t('error_delete'));
+      alert(t('stats:error_delete'));
     } finally {
       setDeleteModalOpen(false);
       setDistrictToDelete(null);
@@ -142,7 +125,7 @@ export default function TrackedDistricts() {
         await loadTrackedData(); 
         setIsModalOpen(false);
     } catch (error) {
-        alert(t('error_add_multiple_districts'));
+        alert(t('stats:error_add_multiple_districts'));
     } finally {
         setIsAdding(false);
     }
@@ -152,14 +135,14 @@ export default function TrackedDistricts() {
   const startIndex = currentPage * ITEMS_PER_PAGE;
   const visibleItems = trackedItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  if (loading && trackedItems.length === 0) return <div className={styles.loader}>{t('loading')}...</div>;
+  if (loading && trackedItems.length === 0) return <div className={styles.loader}>{t('stats:loading')}...</div>;
 
   return (
     <div className={styles.section}>
       <div className={styles.header}>
         <div className={styles.titleWrapper}>
           <FaBookmark className={styles.icon} />
-          <h2 className={styles.title}>{t('stats_page.saved_districts_prices')}</h2>
+          <h2 className={styles.title}>{t('stats:stats_page.saved_districts_prices')}</h2>
         </div>
         <div className={styles.actions}>
           {trackedItems.length > ITEMS_PER_PAGE && (
@@ -184,14 +167,14 @@ export default function TrackedDistricts() {
             </div>
           )}
           <button className={styles.addBtn} onClick={() => setIsModalOpen(true)} disabled={isAdding}>
-            <FaPlus /> {isAdding ? '...' : t('add_button')}
+            <FaPlus /> {isAdding ? '...' : t('stats:add_button')}
           </button>
         </div>
       </div>
 
       {trackedItems.length === 0 ? (
         <div className={styles.empty}>
-          <p>{t('empty_tracked_list')}</p>
+          <p>{t('stats:empty_tracked_list')}</p>
         </div>
       ) : (
         <div className={styles.grid}>
@@ -209,7 +192,7 @@ export default function TrackedDistricts() {
                 <div className={styles.prices}>
                   <div className={styles.priceRow}>
                     <div className={styles.priceLabel}>
-                      <FaKey className={styles.rentIcon} /> <span>{t('rent_label')}</span>
+                      <FaKey className={styles.rentIcon} /> <span>{t('common:fields.average_rent_price')}</span>
                     </div>
                     <span className={styles.priceValue}>
                         {formatPrice(item.rental_price || item.avg_price_rent, item.country)}
@@ -217,7 +200,7 @@ export default function TrackedDistricts() {
                   </div>
                   <div className={styles.priceRow}>
                     <div className={styles.priceLabel}>
-                      <FaHome className={styles.saleIcon} /> <span>{t('sale_label')}</span>
+                      <FaHome className={styles.saleIcon} /> <span>{t('common:fields.propertyPricePerSqm')}</span>
                     </div>
                     <span className={styles.priceValue}>
                         {formatPrice(item.sale_price || item.avg_price_sqm, item.country)}
@@ -227,7 +210,7 @@ export default function TrackedDistricts() {
                 <div className={styles.cardFooter}>
                     <div className={styles.updatedAt}>
                       <FaClock className={styles.clockIcon} />
-                      <span>{formatDate(item.updated_at || item.created_at, t('date_unknown'))}</span>
+                      <span>{t('stats:updated_label')} {formatDate(item.updated_at || item.created_at, t('stats:date_unknown'))}</span>
                     </div>
                     <span className={styles.detailsLink}><FaArrowRight /></span>
                 </div>
@@ -249,8 +232,8 @@ export default function TrackedDistricts() {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        title={t('delete_modal_title')}
-        message={t('confirm_delete_district')}
+        title={t('stats:delete_modal_title')}
+        message={t('stats:confirm_delete_district')}
       />
     </div>
   );

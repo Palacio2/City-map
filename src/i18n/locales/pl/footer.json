@@ -3,12 +3,9 @@
   "nav_title": "Nawigacja",
   "contacts_title": "Kontakt",
   "rights": "Wszelkie prawa zastrzeżone",
-  "home": "Strona główna",
-  "about": "O projekcie",
-  "contacts": "Kontakt",
-  "faq" : "FAQ",
-  "terms": "Polityka prywatności",
+  "terms": "Regulamin",
+  "faq": "Często zadawane pytania",
   "email": "youworkday@gmail.com",
-  "phone": "tel: +48 698 991 398",
+  "phone": "+48 698 991 398",
   "phone_raw": "+48698991398"
 }

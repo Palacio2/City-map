@@ -35,13 +35,23 @@ export async function trackSearch() {
   await trackActivity('search');
 }
 
-export async function trackDistrictVisit(districtId) {
+export async function trackDistrictVisit(district) {
+  if (!district || !district.id) return;
+
+  const districtData = {
+    id: district.id,
+    name: district.name,
+    city: district.city || district.cities?.name,
+    country: district.country || district.cities?.countries?.name
+  };
+
   try {
-    const { error } = await supabase.rpc('track_district_visit', { did: districtId });
+    const { error } = await supabase.rpc('track_district_visit', { 
+      district_data: districtData 
+    });
+    
     if (error) throw error;
   } catch (err) {
-    if (err.message && !err.message.includes('unique')) {
-        console.error("Failed to track visit:", err);
-    }
+    console.error("Failed to track visit:", err);
   }
 }

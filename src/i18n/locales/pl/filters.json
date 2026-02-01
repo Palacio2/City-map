@@ -2,81 +2,13 @@
   "filter": {
     "panel": {
       "title": "Filtry",
-      "banner_title": "Uzyskaj więcej możliwości!",
+      "banner_title": "Zyskaj więcej możliwości!",
       "banner_text": "Odblokuj wszystkie filtry dzięki subskrypcji",
-      "view_tariffs": "Zobacz plany",
+      "view_tariffs": "Zobacz cennik",
       "clear": "Wyczyść"
     },
     "options": {
-      "any": "Dowolny",
-      "high": "Wysoki",
-      "medium": "Średni",
-      "low": "Niski"
-    },
-    "categories": {
-      "education": {
-        "label": "Edukacja",
-        "schools": "Szkoły",
-        "kindergartens": "Przedszkola",
-        "universities": "Uczelnie"
-      },
-      "medicine": {
-        "label": "Medycyna",
-        "hospitals": "Szpitale",
-        "pharmacies": "Apteki",
-        "clinics": "Przychodnie",
-        "emergencyServices": "Pogotowie ratunkowe"
-      },
-      "transport": {
-        "label": "Transport",
-        "busStops": "Przystanki autobusowe",
-        "parkingSpots": "Miejsca parkingowe",
-        "metroStations": "Stacje metra",
-        "tramStops": "Przystanki tramwajowe",
-        "bikeLanes": "Ścieżki rowerowe",
-        "transportFrequency": "Częstotliwość transportu",
-        "transportAvgDistance": "Odległość do transportu"
-      },
-      "commerce": {
-        "label": "Handel",
-        "groceryStores": "Sklepy spożywcze",
-        "banksATMs": "Banki i bankomaty",
-        "shoppingMalls": "Centra handlowe",
-        "postOffices": "Placówki pocztowe",
-        "constructionStores": "Sklepy budowlane",
-        "clothingStores": "Sklepy odzieżowe",
-        "beautySalons": "Salony urody",
-        "cafesRestaurants": "Kawiarnie i restauracje"
-      },
-      "safety": {
-        "label": "Bezpieczeństwo",
-        "crimeLevel": "Poziom przestępczości",
-        "policeStations": "Komisariaty policji",
-        "cctv": "Kamery monitoringu",
-        "streetLighting": "Oświetlenie uliczne"
-      },
-      "utilities": {
-        "label": "Media",
-        "costPerSqm": "Koszt za m²",
-        "propertyPricePerSqm": "Cena za m²",
-        "hasWaterSupply": "Wodociągi",
-        "hasElectricity": "Elektryczność",
-        "hasHeating": "Ogrzewanie",
-        "hasGasSupply": "Gaz",
-        "hasWasteRemoval": "Wywóz śmieci"
-      },
-      "social": {
-        "label": "Społeczeństwo",
-        "parks": "Parki",
-        "avgParkSize": "Śr. wielkość parku",
-        "playgrounds": "Place zabaw",
-        "cinemas": "Kina",
-        "theaters": "Teatry",
-        "museums": "Muzea",
-        "libraries": "Biblioteki",
-        "sportsFacilities": "Obiekty sportowe",
-        "airQuality": "Jakość powietrza"
-      }
+      "any": "Dowolny"
     }
   }
 }

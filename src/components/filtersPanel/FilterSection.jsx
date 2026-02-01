@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './Filters.module.css';
-import { FaBus, FaHospital, FaShoppingCart, FaSchool, FaTree, FaShieldAlt } from 'react-icons/fa';
+import { FaBus, FaHospital, FaShoppingCart, FaSchool, FaTree, FaBolt, FaShieldAlt } from 'react-icons/fa';
 
 const ICONS = {
   transport: <FaBus />,
@@ -9,11 +9,12 @@ const ICONS = {
   commerce: <FaShoppingCart />,
   education: <FaSchool />,
   social: <FaTree />,
-  safety: <FaShieldAlt />
+  safety: <FaShieldAlt />,
+  utilities: <FaBolt />
 };
 
 const FilterSection = memo(({ categoryKey, filters = [], values = {}, onChange }) => {
-  const { t } = useTranslation('filters');
+  const { t } = useTranslation(['filters', 'common']);
 
   const handleCheckboxChange = (event) => {
     const { name, checked } = event.target;
@@ -24,7 +25,7 @@ const FilterSection = memo(({ categoryKey, filters = [], values = {}, onChange }
     <div className={styles.section}>
       <h3 className={styles.sectionTitle}>
         <span className={styles.sectionIcon}>{ICONS[categoryKey]}</span>
-        {t(`filter.categories.${categoryKey}.label`)}
+        {t(`common:categories.${categoryKey}`)}
       </h3>
 
       <div className={styles.filterGroup}>
@@ -36,7 +37,7 @@ const FilterSection = memo(({ categoryKey, filters = [], values = {}, onChange }
               checked={values[filter.name] || false}
               onChange={handleCheckboxChange}
             />
-            <span>{t(`filter.categories.${categoryKey}.${filter.name}`)}</span>
+            <span>{t(`common:fields.${filter.name}`)}</span>
           </label>
         ))}
       </div>

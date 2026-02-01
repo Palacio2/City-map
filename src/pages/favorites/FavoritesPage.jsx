@@ -14,7 +14,7 @@ const TrashIcon = () => (
 );
 
 const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
-    const { t } = useTranslation('favorites');
+    const { t } = useTranslation(['favorites', 'common']);
     const filterData = district.filterData;
     const na = '-';
     
@@ -40,7 +40,7 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
                 <button 
                     className={styles.removeButton} 
                     onClick={(e) => { e.stopPropagation(); onRemove(district.id, e); }}
-                    title={t('remove_tooltip')}
+                    title={t('favorites:remove_tooltip')}
                 >
                     <TrashIcon />
                 </button>
@@ -52,7 +52,7 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
 
             <div className={styles.cardContent}>
                 <div className={styles.priceRow}>
-                    <span className={styles.priceLabel}>{t('price_label')}</span>
+                    <span className={styles.priceLabel}>{t('favorites:price_label')}</span>
                     {filterData?.general?.propertyPrice ? (
                         <span className={styles.priceValue}>
                             {formatPrice(filterData.general.propertyPrice, currencyInfo)}
@@ -64,27 +64,27 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
 
                 {filterData && (
                     <div className={styles.statsGrid}>
-                        <div className={styles.statItem} title={t('stats.education')}>
+                        <div className={styles.statItem} title={t('common:categories.education')}>
                             <span className={styles.statIcon}>🏫</span>
                             <span className={styles.statValue}>{filterData.education?.rating?.toFixed(1) || na}</span>
                         </div>
-                        <div className={styles.statItem} title={t('stats.transport')}>
+                        <div className={styles.statItem} title={t('common:categories.transport')}>
                             <span className={styles.statIcon}>🚍</span>
                             <span className={styles.statValue}>{filterData.transport?.rating?.toFixed(1) || na}</span>
                         </div>
-                        <div className={styles.statItem} title={t('stats.safety')}>
+                        <div className={styles.statItem} title={t('common:categories.safety')}>
                             <span className={styles.statIcon}>🛡️</span>
                             <span className={styles.statValue}>{filterData.safety?.rating?.toFixed(1) || na}</span>
                         </div>
-                        <div className={styles.statItem} title={t('stats.ecology')}>
+                        <div className={styles.statItem} title={t('common:categories.social')}>
                             <span className={styles.statIcon}>🌳</span>
                             <span className={styles.statValue}>{filterData.social?.rating?.toFixed(1) || na}</span>
                         </div>
-                        <div className={styles.statItem} title={t('stats.medicine')}>
+                        <div className={styles.statItem} title={t('common:categories.medicine')}>
                             <span className={styles.statIcon}>🏥</span>
                             <span className={styles.statValue}>{filterData.medicine?.rating?.toFixed(1) || na}</span>
                         </div>
-                        <div className={styles.statItem} title={t('stats.shopping')}>
+                        <div className={styles.statItem} title={t('common:categories.commerce')}>
                             <span className={styles.statIcon}>🛒</span>
                             <span className={styles.statValue}>{filterData.commerce?.rating?.toFixed(1) || na}</span>
                         </div>
@@ -96,7 +96,7 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onRemove }) => {
 });
 
 export default function FavoritesPage() {
-    const { t } = useTranslation('favorites');
+    const { t } = useTranslation(['favorites', 'common']);
     const navigate = useNavigate();
     
     const { favorites, loading, removeFavorite, toggleFavorite, isFavorite } = useFavorites();
@@ -116,12 +116,12 @@ export default function FavoritesPage() {
 
     const handleRemove = async (districtId, e) => {
         if (e) e.stopPropagation();
-        if (!window.confirm(t('confirm_remove'))) return;
+        if (!window.confirm(t('favorites:confirm_remove'))) return;
         
         try {
             await removeFavorite(districtId);
         } catch (err) {
-            alert(t('errors.delete_failed'));
+            alert(t('favorites:errors.delete_failed'));
         }
     };
 
@@ -141,10 +141,10 @@ export default function FavoritesPage() {
         return (
             <div className={styles.stateContainer}>
                 <div className={styles.stateIcon}>⭐</div>
-                <h2 className={styles.stateTitle}>{t('empty.title')}</h2>
-                <p className={styles.stateDescription}>{t('empty.description')}</p>
+                <h2 className={styles.stateTitle}>{t('favorites:empty.title')}</h2>
+                <p className={styles.stateDescription}>{t('favorites:empty.description')}</p>
                 <button onClick={() => navigate('/')} className={styles.primaryButton} style={{marginTop: '20px'}}>
-                    {t('buttons.go_to_map')}
+                    {t('favorites:buttons.go_to_map')}
                 </button>
             </div>
         );
@@ -161,7 +161,7 @@ export default function FavoritesPage() {
             <div className={styles.container}>
                 <header className={styles.header}>
                     <div className={styles.headerContent}>
-                        <h1 className={styles.title}>{t('title')}</h1>
+                        <h1 className={styles.title}>{t('favorites:title')}</h1>
                     </div>
                 </header>
 

@@ -31,7 +31,7 @@ export function HeaderSection({
   isFree,
   currencyInfo
 }) {
-  const { t, i18n } = useTranslation('districts');
+  const { t, i18n } = useTranslation(['districts', 'common']);
   
   const { isFavorite, toggleFavorite } = useFavorites();
 
@@ -55,27 +55,27 @@ export function HeaderSection({
   const quickStatsConfig = [
     { 
       key: 'population', 
-      label: 'details.population', 
+      label: 'districts:details.population',
       formatter: formatNumber 
     },
     { 
       key: 'averageSalary', 
-      label: 'details.salary', 
+      label: 'districts:details.salary', 
       formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val 
     },
     { 
       key: 'unemploymentRate', 
-      label: 'details.unemployment', 
+      label: 'districts:details.unemployment', 
       formatter: (val) => `${val}%` 
     },
     { 
       key: 'propertyPrice', 
-      label: 'details.price', 
+      label: 'districts:details.price', 
       formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val
     },
     { 
       key: 'average_rent_price', 
-      label: 'pdf.rent', 
+      label: 'districts:pdf.rent', 
       formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val
     }
   ];
@@ -95,30 +95,30 @@ export function HeaderSection({
            {formattedDate ? (
              <div className={styles.updateBadge}>
                <span className={styles.dot}></span>
-               {t('details.updated')}: {formattedDate}
+               {t('districts:details.updated')}: {formattedDate}
              </div>
            ) : <div />}
 
            <div className={styles.actionButtons}>
-              {!isFree && (
-                <>
-                  <button 
-                    className={styles.glassBtn}
-                    onClick={onDownloadPdf}
-                    disabled={isDownloading}
-                    title={t('buttons.download_pdf')}
-                  >
-                    {isDownloading ? <AiOutlineLoading3Quarters className={styles.spinner} /> : <FiDownload size={18} />}
-                  </button>
+             {!isFree && (
+               <>
+                 <button 
+                   className={styles.glassBtn}
+                   onClick={onDownloadPdf}
+                   disabled={isDownloading}
+                   title={t('common:actions.download_pdf')}
+                 >
+                   {isDownloading ? <AiOutlineLoading3Quarters className={styles.spinner} /> : <FiDownload size={18} />}
+                 </button>
 
-                  <FavoriteButton 
-                    isFavorite={isFav} 
-                    onToggle={handleHeartClick} 
-                    className={styles.glassBtn} 
-                  />
-                </>
-              )}
-              <CloseButton onClose={onClose} />
+                 <FavoriteButton 
+                   isFavorite={isFav} 
+                   onToggle={handleHeartClick} 
+                   className={styles.glassBtn} 
+                 />
+               </>
+             )}
+             <CloseButton onClose={onClose} />
            </div>
         </div>
 
@@ -154,11 +154,11 @@ export function HeaderSection({
 }
 
 export function ModalFooter({ onClose }) {
-  const { t } = useTranslation('districts');
+  const { t } = useTranslation('common');
   return (
     <div className={styles.modalFooter}>
       <button className={styles.closeFooterBtn} onClick={onClose}>
-        {t('buttons.close')}
+        {t('actions.close')}
       </button>
     </div>
   );

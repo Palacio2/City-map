@@ -18,7 +18,7 @@ import { useTheme } from './ThemeContext';
 export default function Header() {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation();
+  const { t, i18n } = useTranslation(['header', 'common']);
   const { isPremium } = useSubscription();
   
   const { theme, toggleTheme } = useTheme(); 
@@ -98,38 +98,50 @@ export default function Header() {
 
         <div className={`${styles.navWrapper} ${isMenuOpen ? styles.navOpen : ''}`}>
           <nav className={styles.nav}>
-            <Link to="/" className={`${styles.navLink} ${isActive('/')}`}>{t('home')}</Link>
-            <Link to="/about" className={`${styles.navLink} ${isActive('/about')}`}>{t('about')}</Link>
-            <Link to="/contacts" className={`${styles.navLink} ${isActive('/contacts')}`}>{t('contacts')}</Link>
-            <Link to="/subscription" className={`${styles.navLink} ${isActive('/subscription')}`}>{t('subscription')}</Link>
+            <Link to="/" className={`${styles.navLink} ${isActive('/')}`}>
+              {t('header:home')}
+            </Link>
+            <Link to="/about" className={`${styles.navLink} ${isActive('/about')}`}>
+              {t('header:about')}
+            </Link>
+            <Link to="/contacts" className={`${styles.navLink} ${isActive('/contacts')}`}>
+              {t('header:contacts')}
+            </Link>
+            <Link to="/subscription" className={`${styles.navLink} ${isActive('/subscription')}`}>
+              {t('header:subscription')}
+            </Link>
             {isAuthenticated && (
-              <Link to="/profile" className={`${styles.navLink} ${isActive('/profile')}`}>{t('profile')}</Link>
+              <Link to="/profile" className={`${styles.navLink} ${isActive('/profile')}`}>
+                {t('header:profile')}
+              </Link>
             )}
           </nav>
 
           <div className={styles.userControls}>
             <button className={`${styles.navButton} ${styles.themeToggle}`} onClick={toggleTheme}>
               {isDarkMode ? <FaSun className={styles.icon} /> : <FaMoon className={styles.icon} />}
-              <span className={styles.buttonText}>{isDarkMode ? t('light_mode') : t('dark_mode')}</span>
+              <span className={styles.buttonText}>
+                {isDarkMode ? t('header:light_mode') : t('header:dark_mode')}
+              </span>
             </button>
 
             {isAuthenticated && isPremium && (
               <button className={`${styles.navButton} ${styles.favoritesButton}`} onClick={() => navigate('/favorites')}>
                 <FaHeart className={styles.icon} />
-                <span className={styles.buttonText}>{t('favorites_title')}</span>
+                <span className={styles.buttonText}>{t('header:favorites_title')}</span>
               </button>
             )}
 
             <div className={styles.languageContainer}>
               <button className={`${styles.navButton} ${styles.languageButton}`} onClick={toggleLanguageDropdown}>
                 <FaGlobe className={styles.icon} />
-                <span className={styles.buttonText}>{t('language_title')}</span>
+                <span className={styles.buttonText}>{t('header:language_title')}</span>
                 <FaChevronDown className={styles.chevron} />
               </button>
 
               {showLanguageDropdown && (
                 <div className={styles.languageDropdown}>
-                  <button onClick={() => changeLanguage('ua')} className={styles.languageOption}>Українська</button>
+                  <button onClick={() => changeLanguage('uk')} className={styles.languageOption}>Українська</button>
                   <button onClick={() => changeLanguage('en')} className={styles.languageOption}>English</button>
                   <button onClick={() => changeLanguage('pl')} className={styles.languageOption}>Polski</button>
                 </div>
@@ -137,7 +149,7 @@ export default function Header() {
             </div>
 
             <button className={isAuthenticated ? styles.logoutButton : styles.authButton} onClick={handleAuthClick}>
-              {isAuthenticated ? t('logout') : t('login')}
+              {isAuthenticated ? t('header:logout') : t('header:login')}
             </button>
           </div>
         </div>

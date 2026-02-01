@@ -1,31 +1,20 @@
 {
   "title": "Ulubione dzielnice",
   "remove_tooltip": "Usuń z ulubionych",
-  "confirm_remove": "Usunąć z ulubionych?",
-  "na": "b/d",
+  "confirm_remove": "Usunąć з ulubionych?",
+  "na": "brak danych",
   "price_label": "Cena:",
   "empty": {
-    "title": "Lista jest pusta",
-    "description": "Dodaj dzielnice do ulubionych na mapie"
+    "title": "Twoja lista jest pusta",
+    "description": "Dodaj dzielnice do ulubionych za pomocą mapy"
   },
   "errors": {
     "auth_required": "Proszę się zalogować",
-    "load_failed": "Błąd ładowania",
-    "delete_failed": "Błąd usuwania"
+    "load_failed": "Nie udało się załadować",
+    "delete_failed": "Nie udało się usunąć"
   },
   "buttons": {
     "login": "Zaloguj się",
     "go_to_map": "Przejdź do mapy"
-  },
-  "stats": {
-    "education": "Edukacja",
-    "transport": "Transport",
-    "safety": "Bezpieczeństwo",
-    "ecology": "Ekologia",
-    "medicine": "Medycyna",
-    "shopping": "Zakupy"
-  },
-  "favorites": {
-    "price_label": ""
   }
 }

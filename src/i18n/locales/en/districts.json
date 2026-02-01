@@ -11,98 +11,28 @@
   "no_data_text": "District information has not been loaded yet",
   "modal": {
     "no_data_title": "No data available",
-    "no_data_text": "Information about this district has not been added to the system yet",
-    "login_alert": "Please log in to add favorites"
+    "no_data_text": "Information about this district hasn't been added to the system yet",
+    "login_alert": "Please log in to add to favorites"
   },
   "buttons": {
-    "close": "Close",
     "add_favorite": "Add to favorites",
-    "remove_favorite": "Remove from favorites",
-    "download_pdf": "Download PDF",
-    "share": "Share"
+    "remove_favorite": "Remove from favorites"
   },
   "details": {
     "updated": "Updated",
     "population": "Population",
-    "salary": "Avg. Salary",
+    "salary": "Average salary",
     "unemployment": "Unemployment",
     "density": "Density",
     "price": "Price per m²"
   },
-  "fields": {
-    "schools": "Schools",
-    "kindergartens": "Kindergartens",
-    "universities": "Universities",
-    "hospitals": "Hospitals",
-    "pharmacies": "Pharmacies",
-    "clinics": "Clinics",
-    "emergencyServices": "Emergency Services",
-    "busStops": "Bus Stops",
-    "parkingSpots": "Parking Spots",
-    "metroStations": "Metro Stations",
-    "tramStops": "Tram Stops",
-    "bikeLanes": "Bike Lanes (km)",
-    "transportFrequency": "Transport Frequency",
-    "transportAvgDistance": "Distance to Transport",
-    "groceryStores": "Grocery Stores",
-    "banksATMs": "Banks & ATMs",
-    "shoppingMalls": "Shopping Malls",
-    "postOffices": "Post Offices",
-    "constructionStores": "Hardware Stores",
-    "clothingStores": "Clothing Stores",
-    "beautySalons": "Beauty Salons",
-    "cafesRestaurants": "Cafes & Restaurants",
-    "crimeLevel": "Crime Level",
-    "policeStations": "Police Stations",
-    "cctv": "CCTV Cameras",
-    "streetLighting": "Street Lighting",
-    "avgParkSize": "Avg. Park Size",
-    "propertyPricePerSqm": "Sale Price (Realtor)",
-    "airQuality": "Air Quality",
-    "costPerSqm": "Utility Costs per m²",
-    "hasWaterSupply": "Water Supply",
-    "hasElectricity": "Electricity",
-    "hasHeating": "Heating",
-    "hasGasSupply": "Gas Supply",
-    "hasWasteRemoval": "Waste Removal",
-    "parks": "Parks",
-    "playgrounds": "Playgrounds",
-    "sportsFacilities": "Sports Facilities",
-    "cinemas": "Cinemas",
-    "theaters": "Theaters",
-    "museums": "Museums",
-    "libraries": "Libraries"
-  },
-  "categories": {
-    "education": "Education",
-    "medicine": "Medicine",
-    "transport": "Transport",
-    "commerce": "Commerce",
-    "safety": "Safety",
-    "utilities": "Utilities",
-    "social": "Social Sphere"
-  },
-  "enums": {
-    "yes": "Yes",
-    "no": "No",
-    "crime_low": "Low",
-    "crime_medium": "Medium",
-    "crime_high": "High"
-  },
-  "values": {
-    "high": "High",
-    "medium": "Medium",
-    "low": "Low",
-    "good": "Good",
-    "bad": "Bad"
-  },
   "pdf": {
-    "report_date": "Report Date",
-    "report_subtitle": "District Report",
+    "report_date": "Report generation date",
+    "report_subtitle": "District report",
     "rating_label": "Rating",
-    "general_info": "General Statistics",
-    "rent": "Rent Price",
-    "generated_auto": "Report generated automatically by"
+    "general_info": "General statistics",
+    "rent": "Rental cost",
+    "generated_auto": "Report generated automatically by the platform"
   },
   "premium": {
     "hidden_districts_title": "{{count}} more districts hidden",

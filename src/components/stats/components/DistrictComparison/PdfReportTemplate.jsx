@@ -2,7 +2,8 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaPhone, FaGlobe, FaBuilding, FaQuoteLeft, FaMapMarkerAlt } from 'react-icons/fa';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
-import { formatPrice, formatNumber, formatBool, getValue, formatRating } from '@utils/comparisonHelpers.jsx';
+import { getValue } from '@utils/comparisonHelpers.jsx';
+import { formatPrice, formatNumber, formatBoolean, formatLevel, renderRating } from '@utils/formatters.jsx';
 import styles from './PdfReportTemplate.module.css';
 
 const DEFAULTS = {
@@ -21,16 +22,16 @@ const LOW_IS_BETTER = [
 ];
 
 const getFieldFormatter = (field, t) => {
-  if (field.key === 'avgParkSize') return (v) => formatNumber(v, ` ${t('units.sqm', 'м²')}`);
-  if (field.key === 'transportAvgDistance') return (v) => formatNumber(v, ` ${t('units.m', 'м')}`);
-  if (field.key === 'bikeLanes') return (v) => formatNumber(v, ` ${t('units.km', 'км')}`);
+  if (field.key === 'avgParkSize') return (v) => formatNumber(v, ` ${t('common:units.sqm')}`);
+  if (field.key === 'transportAvgDistance') return (v) => formatNumber(v, ` ${t('common:units.m')}`);
+  if (field.key === 'bikeLanes') return (v) => formatNumber(v, ` ${t('common:units.km')}`);
 
   switch (field.type) {
     case 'price': return (v, d) => formatPrice(v, d.country);
-    case 'boolean': return (v) => formatBool(v, false, {}, t);
-    case 'rating_10': return (v) => formatRating(v);
-    case 'crimeLevel': return (v) => formatNumber(v, '/100');
-    case 'text': return (v) => v ? t(`levels.${v.toLowerCase()}`, { defaultValue: v }) : '-';
+    case 'boolean': return (v) => formatBoolean(v, t, false); // false = текст (Так/Ні) для PDF
+    case 'rating_10': return (v) => v ? v.toFixed(1) : '-';
+    case 'crimeLevel': return (v) => formatNumber(v) + '/10';
+    case 'text': return (v) => formatLevel(v, t);
     case 'number': 
     default: return (v) => formatNumber(v);
   }
@@ -50,19 +51,19 @@ const getBestValue = (key, districts) => {
 };
 
 export default function PdfReportTemplate({ districts, customData, isPremium = true, isRealtor = true }) {
-  const { t, i18n } = useTranslation('comparison');
+  const { t, i18n } = useTranslation(['comparison', 'common']);
 
   const sections = useMemo(() => {
     if (!districts?.length) return [];
 
     const staticSection = {
-      title: t('finance_population'),
+      title: t('common:categories.finance_population'),
       rows: [
-        { label: `${t('sale_label')} (${t('units.sqm', 'м²')})`, key: 'filterData.utilities.propertyPricePerSqm', format: (v, d) => formatPrice(v, d.country) },
-        { label: t('rent_label'), key: 'filterData.general.average_rent_price', format: (v, d) => formatPrice(v, d.country) },
-        { label: t('avg_salary'), key: 'filterData.general.averageSalary', format: (v, d) => formatPrice(v, d.country) },
-        { label: t('population'), key: 'filterData.general.population', format: (v) => formatNumber(v) },
-        { label: t('population_density'), key: 'filterData.general.populationDensity', format: (v) => formatNumber(v, ` ${t('units.people_sqkm', 'ос/км²')}`) },
+        { label: `${t('common:fields.propertyPricePerSqm')} (${t('common:units.sqm')})`, key: 'filterData.utilities.propertyPricePerSqm', format: (v, d) => formatPrice(v, d.country) },
+        { label: t('common:fields.average_rent_price'), key: 'filterData.general.average_rent_price', format: (v, d) => formatPrice(v, d.country) },
+        { label: t('common:fields.averageSalary'), key: 'filterData.general.averageSalary', format: (v, d) => formatPrice(v, d.country) },
+        { label: t('common:fields.population'), key: 'filterData.general.population', format: (v) => formatNumber(v) },
+        { label: t('common:fields.unemploymentRate'), key: 'filterData.general.unemploymentRate', format: (v) => formatNumber(v, '%') },
       ]
     };
 
@@ -76,14 +77,14 @@ export default function PdfReportTemplate({ districts, customData, isPremium = t
           return true;
         })
         .map(field => ({
-          label: t(field.key),
+          label: t(`common:fields.${field.key}`),
           key: `filterData.${category.key}.${field.key}`,
           format: getFieldFormatter(field, t)
         }));
 
       if (fields.length === 0) return null;
 
-      return { title: t(category.key), rows: fields };
+      return { title: t(`common:categories.${category.key}`), rows: fields };
     }).filter(Boolean);
 
     return [staticSection, ...dynamicSections];
@@ -116,13 +117,13 @@ export default function PdfReportTemplate({ districts, customData, isPremium = t
           </div>
         </div>
         <div className={styles.reportTitleBlock}>
-          <p>{t('results_title')}</p>
+          <p>{t('comparison:results_title')}</p>
         </div>
       </div>
 
       {comments && (
         <div className={styles.commentsSection}>
-          <h3><FaQuoteLeft size={12} /> {t('pdf_report.analyst_notes')}</h3>
+          <h3><FaQuoteLeft size={12} /> {t('comparison:pdf_report.analyst_notes')}</h3>
           <p>{comments}</p>
         </div>
       )}
@@ -131,7 +132,7 @@ export default function PdfReportTemplate({ districts, customData, isPremium = t
         <table className={styles.table}>
           <thead>
             <tr>
-              <th className={styles.metricHeader}>{t('metric')}</th>
+              <th className={styles.metricHeader}>{t('comparison:metric')}</th>
               {districts.map((d, i) => (
                 <th key={d.id || i} className={styles.districtHeader}>
                   <div className={styles.dName}>{d.name}</div>
@@ -180,8 +181,8 @@ export default function PdfReportTemplate({ districts, customData, isPremium = t
           {phone && <span><FaPhone /> {phone}</span>}
         </div>
         <div className={styles.disclaimer}>
-          {t('pdf_report.prepared_by')} <strong>{agencyName}</strong>. <br/>
-          {t('pdf_report.valid_as_of')} {new Date().getFullYear()}.
+          {t('comparison:pdf_report.prepared_by')} <strong>{agencyName}</strong>. <br/>
+          {t('comparison:pdf_report.valid_as_of')} {new Date().getFullYear()}.
         </div>
       </div>
     </div>

@@ -1,109 +1,19 @@
 {
-  "title": "Porównanie Dzielnic",
+  "title": "Porównanie dzielnic",
   "subtitle": "Wybierz do 4 dzielnic, aby szczegółowo porównać ceny i wskaźniki",
   "limit_reached": "Maksymalna liczba dzielnic do porównania: {{max}}",
   "selected_count": "Wybrano",
   "add_district": "Dodaj dzielnicę",
   "empty_title": "Lista porównania jest pusta",
   "empty_desc": "Dodaj dzielnice z różnych miast, aby porównać koszty wynajmu i jakość życia.",
-  "start_btn": "Rozpocznij wybór",
+  "start_btn": "Zacznij wybierać",
   "add_another": "Dodaj kolejną",
-  "ready_message": "Dzielnice wybrane. Kliknij przycisk poniżej, aby przeanalizować.",
+  "ready_message": "Dzielnice wybrane. Kliknij poniżej, aby przeanalizować.",
   "compare_btn": "Porównaj wskaźniki",
   "success_saved": "Porównanie zapisane!",
   "results_title": "Wyniki porównania",
   "metric": "Wskaźnik",
-  "export_pdf": "Eksportuj PDF",
-  
-  "yes": "Tak",
-  "no": "Nie",
-
-  "finance_population": "Finanse i Ludność",
-  "avg_property_price": "Średnia cena nieruchomości",
-  "avg_salary": "Średnie wynagrodzenie",
-  "population": "Populacja",
-  "population_density": "Gęstość zaludnienia",
-  "unemployment": "Stopa bezrobocia",
-  
-  "education": "Edukacja",
-  "schools": "Szkoły",
-  "kindergartens": "Przedszkola",
-  "universities": "Uczelnie",
-  "rating": "Ocena",
-  
-  "medicine": "Medycyna",
-  "hospitals": "Szpitale",
-  "clinics": "Przychodnie",
-  "pharmacies": "Apteki",
-  "emergencyServices": "Pogotowie ratunkowe",
-  
-  "transport": "Transport",
-  "metroStations": "Stacje metra",
-  "busStops": "Przystanki autobusowe",
-  "tramStops": "Przystanki tramwajowe",
-  "bikeLanes": "Ścieżki rowerowe",
-  "parkingSpots": "Miejsca parkingowe",
-  "transportAvgDistance": "Dostępność transportu",
-  "transportFrequency": "Częstotliwość kursowania",
-  
-  "safety": "Bezpieczeństwo",
-  "crimeLevel": "Poziom przestępczości",
-  "policeStations": "Komisariaty policji",
-  "cctv": "Monitoring",
-  "streetLighting": "Oświetlenie uliczne",
-  
-  "social": "Strefa społeczna",
-  "green_zones": "Tereny zielone",
-  "parks": "Parki",
-  "avgParkSize": "Wielkość parków",
-  "playgrounds": "Place zabaw",
-  "sportsFacilities": "Obiekty sportowe",
-  "culture": "Kultura",
-  "cinemas": "Kina",
-  "theaters": "Teatry",
-  "museums": "Muzea",
-  "libraries": "Biblioteki",
-  "cafesRestaurants": "Kawiarnie i restauracje",
-  "airQuality": "Jakość powietrza",
-  
-  "commerce": "Handel i Usługi",
-  "groceryStores": "Supermarkety",
-  "shoppingMalls": "Centra handlowe",
-  "banksATMs": "Banki i bankomaty",
-  "postOffices": "Poczta",
-  "beautySalons": "Salony urody",
-  "constructionStores": "Sklepy budowlane",
-  "clothingStores": "Sklepy odzieżowe",
-  "shops_density": "Zagęszczenie sklepów",
-  
-  "utilities": "Media i usługi komunalne",
-  "costPerSqm": "Koszt usług komunalnych",
-  "propertyPricePerSqm": "Cena za m² (sprzedaż)",
-  "hasWaterSupply": "Wodociągi",
-  "hasElectricity": "Energia elektryczna",
-  "hasHeating": "Ogrzewanie",
-  "hasGasSupply": "Gaz",
-  "hasWasteRemoval": "Wywóz śmieci",
-
-  "rent_label": "Wynajem",
-  "sale_label": "Sprzedaż",
-
-  "levels": {
-    "low": "Niski",
-    "medium": "Średni",
-    "high": "Wysoki",
-    "good": "Dobry",
-    "bad": "Zły",
-    "moderate": "Umiarkowany"
-  },
-
-  "units": {
-    "sqm": "m²",
-    "km": "km",
-    "m": "m",
-    "people_sqkm": "os./km²"
-  },
-
+  "export_pdf": "Eksportuj PDF", 
   "export_modal": {
     "title": "Ustawienia raportu",
     "upload_logo": "Prześlij logo",
@@ -113,13 +23,12 @@
     "website": "Strona internetowa",
     "export_btn": "Eksportuj PDF",
     "comments": "Komentarz dla klienta",
-    "comments_placeholder": "Wpisz tutaj swoje wnioski lub rekomendacje...",
+    "comments_placeholder": "Wpisz swoje wnioski lub rekomendacje tutaj...",
     "phone_placeholder": "+48 ...",
-    "website_placeholder": "www.example.com"
+    "website_placeholder": "www.przyklad.pl"
   },
-
   "pdf_report": {
-    "analytics_report": "Raport Analityczny",
+    "analytics_report": "Raport analityczny",
     "prepared_by": "Przygotowano przez",
     "valid_as_of": "Dane aktualne na dzień",
     "analyst_notes": "Komentarz eksperta"

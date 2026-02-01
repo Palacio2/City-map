@@ -1,31 +1,20 @@
 {
-  "title": "Favorite Districts",
-  "remove_tooltip": "Remove from favorites",
-  "confirm_remove": "Remove from favorites?",
-  "na": "N/A",
-  "price_label": "Price:",
+  "title": "Улюблені райони",
+  "remove_tooltip": "Видалити з улюблених",
+  "confirm_remove": "Видалити з улюблених?",
+  "na": "н/д",
+  "price_label": "Ціна:",
   "empty": {
-    "title": "Your list is empty",
-    "description": "Add districts to favorites via the map"
+    "title": "Ваш список порожній",
+    "description": "Додавайте райони до улюблених через карту"
   },
   "errors": {
-    "auth_required": "Please log in",
-    "load_failed": "Failed to load",
-    "delete_failed": "Failed to delete"
+    "auth_required": "Будь ласка, увійдіть",
+    "load_failed": "Не вдалося завантажити",
+    "delete_failed": "Не вдалося видалити"
   },
   "buttons": {
-    "login": "Log in",
-    "go_to_map": "Go to map"
-  },
-  "stats": {
-    "education": "Education",
-    "transport": "Transport",
-    "safety": "Safety",
-    "ecology": "Ecology",
-    "medicine": "Healthcare",
-    "shopping": "Shopping"
-  },
-  "favorites": {
-    "price_label": ""
+    "login": "Увійти",
+    "go_to_map": "Перейти до карти"
   }
 }

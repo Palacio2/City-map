@@ -4,79 +4,11 @@
       "title": "Filters",
       "banner_title": "Get more features!",
       "banner_text": "Unlock all filters with a subscription",
-      "view_tariffs": "View Plans",
+      "view_tariffs": "View pricing",
       "clear": "Clear"
     },
     "options": {
-      "any": "Any",
-      "high": "High",
-      "medium": "Medium",
-      "low": "Low"
-    },
-    "categories": {
-      "education": {
-        "label": "Education",
-        "schools": "Schools",
-        "kindergartens": "Kindergartens",
-        "universities": "Universities"
-      },
-      "medicine": {
-        "label": "Medicine",
-        "hospitals": "Hospitals",
-        "pharmacies": "Pharmacies",
-        "clinics": "Clinics",
-        "emergencyServices": "Emergency Services"
-      },
-      "transport": {
-        "label": "Transport",
-        "busStops": "Bus stops",
-        "parkingSpots": "Parking spots",
-        "metroStations": "Metro stations",
-        "tramStops": "Tram stops",
-        "bikeLanes": "Bike lanes",
-        "transportFrequency": "Transport frequency",
-        "transportAvgDistance": "Distance to transport"
-      },
-      "commerce": {
-        "label": "Commerce",
-        "groceryStores": "Grocery stores",
-        "banksATMs": "Banks & ATMs",
-        "shoppingMalls": "Shopping malls",
-        "postOffices": "Post offices",
-        "constructionStores": "Hardware stores",
-        "clothingStores": "Clothing stores",
-        "beautySalons": "Beauty salons",
-        "cafesRestaurants": "Cafes & Restaurants"
-      },
-      "safety": {
-        "label": "Safety",
-        "crimeLevel": "Crime level",
-        "policeStations": "Police stations",
-        "cctv": "CCTV cameras",
-        "streetLighting": "Street lighting"
-      },
-      "utilities": {
-        "label": "Utilities",
-        "costPerSqm": "Cost per m²",
-        "propertyPricePerSqm": "Price per m²",
-        "hasWaterSupply": "Water supply",
-        "hasElectricity": "Electricity",
-        "hasHeating": "Heating",
-        "hasGasSupply": "Gas",
-        "hasWasteRemoval": "Waste removal"
-      },
-      "social": {
-        "label": "Social",
-        "parks": "Parks",
-        "avgParkSize": "Avg park size",
-        "playgrounds": "Playgrounds",
-        "cinemas": "Cinemas",
-        "theaters": "Theaters",
-        "museums": "Museums",
-        "libraries": "Libraries",
-        "sportsFacilities": "Sports facilities",
-        "airQuality": "Air Quality"
-      }
+      "any": "Any"
     }
   }
 }

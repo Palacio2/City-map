@@ -7,6 +7,7 @@ const safeParseInt = (value) =>
 export const transformDistrictForDisplay = (district) => {
   if (!district) return null;
 
+  // Якщо дані вже структуровані (рідкісний кейс, але залишаємо)
   if (district.filterData && district.filterData.general && district.filterData.education) {
     return {
         ...district,
@@ -14,6 +15,7 @@ export const transformDistrictForDisplay = (district) => {
     };
   }
 
+  // Витягуємо "сирі" дані з різних можливих структур Supabase
   let rawData = null;
 
   if (Array.isArray(district.filterData)) {
@@ -23,6 +25,7 @@ export const transformDistrictForDisplay = (district) => {
   } else if (district.district_data) { 
     rawData = Array.isArray(district.district_data) ? district.district_data[0] : district.district_data;
   } else {
+    // Fallback, якщо filterData лежить прямо в корені об'єкта (іноді буває при join)
     if (district.population !== undefined || district.average_salary !== undefined) {
         rawData = district;
     }
@@ -43,7 +46,7 @@ export const transformDistrictForDisplay = (district) => {
         averageSalary: safeParseFloat(filterData.average_salary),
         unemploymentRate: safeParseFloat(filterData.unemployment_rate),
         average_rent_price: safeParseFloat(filterData.average_rent_price),
-        totalScore: safeParseFloat(filterData.total_score)
+        // totalScore можна додати пізніше, якщо буде колонка в БД
       },
       education: {
         rating: safeParseFloat(filterData.education_rating),
@@ -56,15 +59,17 @@ export const transformDistrictForDisplay = (district) => {
         hospitals: safeParseInt(filterData.hospitals_count),
         pharmacies: safeParseInt(filterData.pharmacies_count),
         clinics: safeParseInt(filterData.clinics_count),
-        emergencyServices: safeParseInt(filterData.emergency_services_count)
+        // emergencyServices видалено
       },
       transport: {
         rating: safeParseFloat(filterData.transport_rating),
         busStops: safeParseInt(filterData.bus_stops_count),
-        parkingSpots: safeParseInt(filterData.parking_spots_count),
-        metroStations: safeParseInt(filterData.metro_stations_count),
         tramStops: safeParseInt(filterData.tram_stops_count),
-        bikeLanes: safeParseInt(filterData.bike_lanes_km),
+        metroStations: safeParseInt(filterData.metro_stations_count),
+        parkingSpots: safeParseInt(filterData.parking_spots_count),
+        bikeLanes: safeParseFloat(filterData.bike_lanes_km), // float для км
+        bikeRental: safeParseInt(filterData.bike_rental_stations_count), // 🆕
+        evCharging: safeParseInt(filterData.ev_charging_stations_count), // 🆕
         transportFrequency: filterData.transport_frequency || null,
         transportAvgDistance: safeParseInt(filterData.transport_average_distance_m) 
       },
@@ -75,11 +80,17 @@ export const transformDistrictForDisplay = (district) => {
         avgParkSize: safeParseInt(filterData.average_park_size_sqm),
         airQuality: filterData.air_quality || null,
         
-        sportsFacilities: safeParseInt(filterData.sports_facilities_count),
+        // Спорт та культура
+        gyms: safeParseInt(filterData.gyms_count),                     // 🆕
+        outdoorGyms: safeParseInt(filterData.outdoor_gyms_count),       // 🆕
+        swimmingPools: safeParseInt(filterData.swimming_pools_count),   // 🆕
+        sportsFacilities: safeParseInt(filterData.sports_facilities_count), // Загальне, якщо ще треба
+        
         cinemas: safeParseInt(filterData.cinemas_count),
         theaters: safeParseInt(filterData.theaters_count),
         museums: safeParseInt(filterData.museums_count),
-        libraries: safeParseInt(filterData.libraries_count)
+        libraries: safeParseInt(filterData.libraries_count),
+        churches: safeParseInt(filterData.churches_count)               // 🆕
       },
       safety: {
         rating: safeParseFloat(filterData.safety_rating),
@@ -91,13 +102,22 @@ export const transformDistrictForDisplay = (district) => {
       commerce: {
         rating: safeParseFloat(filterData.commerce_rating),
         groceryStores: safeParseInt(filterData.grocery_stores_count),
+        markets: safeParseInt(filterData.markets_count),                // 🆕
         shoppingMalls: safeParseInt(filterData.shopping_malls_count),
+        
+        parcelLockers: safeParseInt(filterData.parcel_lockers_count),   // 🆕
+        coworking: safeParseInt(filterData.coworking_spaces_count),     // 🆕
+        
         banksATMs: safeParseInt(filterData.banks_atms_count),
         postOffices: safeParseInt(filterData.post_offices_count),
+        
         beautySalons: safeParseInt(filterData.beauty_salons_count),
         cafesRestaurants: safeParseInt(filterData.cafes_restaurants_count),
-        constructionStores: safeParseInt(filterData.construction_stores_count),
-        clothingStores: safeParseInt(filterData.clothing_stores_count)
+        
+        petStores: safeParseInt(filterData.pet_stores_count),           // 🆕
+        vetClinics: safeParseInt(filterData.vet_clinics_count)          // 🆕
+        
+        // constructionStores та clothingStores видалено
       },
       utilities: {
         qualityRating: safeParseFloat(filterData.utilities_quality_rating),

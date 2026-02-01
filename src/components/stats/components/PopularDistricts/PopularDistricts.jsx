@@ -3,26 +3,11 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FaFire, FaMapMarkerAlt, FaHome, FaKey, FaClock, FaPen } from 'react-icons/fa';
 import LocationSelectorModal from './LocationSelectorModal';
+import DistrictDetailsModal from '@components/districtMap/DistrictDetailsModal'; 
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import { transformDistrictsForDisplay } from '@utils/dataTransformers';
+import { formatPrice } from '@utils/formatters.jsx';
 import styles from './PopularDistricts.module.css';
-
-const getCurrencyCode = (countryName) => {
-  if (!countryName) return 'USD';
-  const name = countryName.toLowerCase().trim();
-  if (['ukraine', 'україна', 'ua'].includes(name)) return 'UAH';
-  if (['poland', 'polska', 'pl'].includes(name)) return 'PLN';
-  if (name.includes('germany') || name.includes('france') || name.includes('italy') || name.includes('spain')) return 'EUR';
-  return 'USD';
-};
-
-const formatPrice = (price, country) => {
-  if (!price || price === 0) return 'N/A';
-  const currency = getCurrencyCode(country);
-  return new Intl.NumberFormat('uk-UA', { 
-    style: 'currency', currency, maximumFractionDigits: 0 
-  }).format(price);
-};
 
 const formatDate = (dateString, defaultText) => {
   if (!dateString) return defaultText;
@@ -30,11 +15,13 @@ const formatDate = (dateString, defaultText) => {
 };
 
 export default function PopularDistricts() {
-  const { t } = useTranslation('stats');
+  const { t } = useTranslation(['stats', 'common']);
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [districts, setDistricts] = useState([]);
   const [loading, setLoading] = useState(false);
+  
+  const [viewingDistrict, setViewingDistrict] = useState(null);
   
   const [selectedLocation, setSelectedLocation] = useState(() => {
     try {
@@ -49,7 +36,6 @@ export default function PopularDistricts() {
         setLoading(true);
         try {
           const data = await fetchDistrictsWithFilters(selectedLocation.country, selectedLocation.city);
-          // 👇 2. Використання трансформера
           const transformedData = transformDistrictsForDisplay(data);
           setDistricts(Array.isArray(transformedData) ? transformedData.slice(0, 5) : []);
         } catch { /* silent */ } 
@@ -66,9 +52,13 @@ export default function PopularDistricts() {
     setIsModalOpen(false);
   };
 
-  const handleNavigate = (district) => {
-    if (selectedLocation && district.name) {
-      navigate(`/map/${encodeURIComponent(selectedLocation.country)}/${encodeURIComponent(selectedLocation.city)}?district=${encodeURIComponent(district.name)}`);
+  const handleCardClick = (district) => {
+    if (district) {
+      setViewingDistrict({
+        ...district,
+        country: selectedLocation?.country,
+        city: selectedLocation?.city
+      });
     }
   };
 
@@ -79,8 +69,8 @@ export default function PopularDistricts() {
           <FaFire className={styles.icon} />
           <h2 className={styles.title}>
             {selectedLocation 
-              ? `${t('popular_in')} ${selectedLocation.city}`
-              : t('popular_districts')
+              ? `${t('stats:popular_in')} ${selectedLocation.city}`
+              : t('stats:popular_districts')
             }
           </h2>
         </div>
@@ -94,26 +84,29 @@ export default function PopularDistricts() {
       <div className={styles.contentArea}>
         {!selectedLocation ? (
           <div className={styles.placeholderState}>
-            <p>{t('select_city_prompt')}</p>
+            <p>{t('stats:select_city_prompt')}</p>
             <button className={styles.mainActionBtn} onClick={() => setIsModalOpen(true)}>
-              {t('start_select')}
+              {t('stats:start_select')}
             </button>
           </div>
         ) : loading ? (
-          <div className={styles.loader}>{t('loading')}...</div>
+          <div className={styles.loader}>{t('stats:loading')}...</div>
         ) : districts.length > 0 ? (
           <div className={styles.grid}>
             {districts.map((district, index) => {
               const generalStats = district.filterData?.general || {};
               
-              // 👇 3. Оновлені ключі відповідно до dataTransformers.js
               const salePrice = generalStats.propertyPrice || generalStats.salePriceSqm || district.sale_price;
               const rentPrice = generalStats.average_rent_price || generalStats.rentalPrice || district.rental_price;
               
               const isSalePriceValid = salePrice && salePrice !== 0;
 
               return (
-                <div key={district.id || index} className={styles.richCard} onClick={() => handleNavigate(district)}>
+                <div 
+                  key={district.id || index} 
+                  className={styles.richCard} 
+                  onClick={() => handleCardClick(district)} 
+                >
                   <div className={styles.cardTop}>
                       <span className={styles.locationBadge}>
                           <FaMapMarkerAlt /> {selectedLocation.country}, {selectedLocation.city}
@@ -123,11 +116,11 @@ export default function PopularDistricts() {
                   <h3 className={styles.districtName}>{district.name}</h3>
                   <div className={styles.statsRow}>
                       <div className={styles.statItem}>
-                          <div className={styles.statLabel}><FaKey className={styles.rentIcon} /> <span>{t('rent_label')}</span></div>
+                          <div className={styles.statLabel}><FaKey className={styles.rentIcon} /> <span>{t('common:fields.average_rent_price')}</span></div>
                           <div className={styles.statValue}>{formatPrice(rentPrice, selectedLocation.country)}</div>
                       </div>
                       <div className={styles.statItem}>
-                          <div className={styles.statLabel}><FaHome className={styles.saleIcon} /> <span>{t('sale_label')}</span></div>
+                          <div className={styles.statLabel}><FaHome className={styles.saleIcon} /> <span>{t('common:fields.propertyPricePerSqm')}</span></div>
                           <div className={styles.statValue}>
                               {formatPrice(salePrice, selectedLocation.country)}
                               {isSalePriceValid && <span className={styles.unit}> / м²</span>}
@@ -136,17 +129,24 @@ export default function PopularDistricts() {
                   </div>
                   <div className={styles.cardFooter}>
                       <FaClock className={styles.clockIcon} />
-                      <span>{t('updated_label')} {formatDate(district.updated_at, t('date_unknown'))}</span>
+                      <span>{t('stats:updated_label')} {formatDate(district.updated_at, t('stats:date_unknown'))}</span>
                   </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          <div className={styles.emptyState}>{t('no_popular_data')}</div>
+          <div className={styles.emptyState}>{t('stats:no_popular_data')}</div>
         )}
       </div>
+      
       {isModalOpen && <LocationSelectorModal onClose={() => setIsModalOpen(false)} onSubmit={handleLocationSubmit} />}
+
+      <DistrictDetailsModal 
+        district={viewingDistrict}
+        isOpen={!!viewingDistrict}
+        onClose={() => setViewingDistrict(null)}
+      />
     </div>
   );
 }

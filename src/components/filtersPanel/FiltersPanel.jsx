@@ -12,7 +12,7 @@ const FiltersPanel = React.memo(({
   selectedFilters = {},
   allowedCategories = null 
 }) => {
-  const { t } = useTranslation('filters');
+  const { t } = useTranslation(['filters', 'common']);
   const navigate = useNavigate();
   
   const { isFree, isRealtor } = useSubscription(); 
@@ -53,7 +53,7 @@ const FiltersPanel = React.memo(({
   return (
     <div className={styles.panel}>
       <div className={styles.panelHeader}>
-        <h2 className={styles.panelTitle}>{t('filter.panel.title')}</h2>
+        <h2 className={styles.panelTitle}>{t('filters:filter.panel.title')}</h2>
       </div>
 
       <div className={styles.content}>
@@ -92,10 +92,10 @@ const FiltersPanel = React.memo(({
         {isFree && (
           <div className={styles.upgradeBanner}>
             <div className={styles.bannerContent}>
-              <h4>{t('filter.panel.banner_title')}</h4>
-              <p>{t('filter.panel.banner_text')}</p>
+              <h4>{t('filters:filter.panel.banner_title')}</h4>
+              <p>{t('filters:filter.panel.banner_text')}</p>
               <button className={styles.bannerButton} onClick={handleUpgradeClick}>
-                {t('filter.panel.view_tariffs')}
+                {t('filters:filter.panel.view_tariffs')}
               </button>
             </div>
           </div>
@@ -104,7 +104,7 @@ const FiltersPanel = React.memo(({
       
       <div className={styles.actions}>
         <button className={styles.clearButton} onClick={handleClearFilters}>
-          {t('filter.panel.clear')}
+          {t('filters:filter.panel.clear')}
         </button>
       </div>
     </div>

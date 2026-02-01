@@ -15,12 +15,7 @@
     "change_password": "Змінити пароль",
     "manage_subscription": "Керувати підпискою",
     "choose_plan": "Обрати тариф",
-    "save": "Зберегти зміни",
-    "saving": "Збереження...",
-    "cancel": "Скасувати",
     "back_to_profile": "Назад до профілю",
-    "prev": "Попередня",
-    "next": "Наступна",
     "hide_password": "Приховати пароль",
     "show_password": "Показати пароль"
   },
@@ -137,8 +132,5 @@
       "status": "Статус",
       "invoice": "Інвойс"
     }
-  },
-  "stats_page": {
-    "never": "ніколи"
   }
 }

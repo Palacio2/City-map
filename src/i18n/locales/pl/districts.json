@@ -2,9 +2,9 @@
   "loading": "Ładowanie analityki dzielnic...",
   "error_prefix": "Błąd: {{error}}",
   "retry": "Spróbuj ponownie",
-  "load_failed": "Nie udało się pobrać danych",
-  "stats_shown": "Wyświetlono {{shown}} z {{total}} dzielnic",
-  "na": "b/d",
+  "load_failed": "Nie udało się załadować danych",
+  "stats_shown": "Pokazano {{shown}} z {{total}} dzielnic",
+  "na": "brak danych",
   "not_found_title": "Nic nie znaleziono",
   "not_found_text": "Spróbuj zmienić parametry filtrów",
   "no_data_title": "Brak danych",
@@ -15,98 +15,28 @@
     "login_alert": "Zaloguj się, aby dodać do ulubionych"
   },
   "buttons": {
-    "close": "Zamknij",
     "add_favorite": "Dodaj do ulubionych",
-    "remove_favorite": "Usuń z ulubionych",
-    "download_pdf": "Pobierz PDF",
-    "share": "Udostępnij"
+    "remove_favorite": "Usuń z ulubionych"
   },
   "details": {
     "updated": "Zaktualizowano",
     "population": "Populacja",
-    "salary": "Średnia pensja",
+    "salary": "Średnie zarobki",
     "unemployment": "Bezrobocie",
     "density": "Gęstość",
     "price": "Cena za m²"
   },
-  "fields": {
-    "schools": "Szkoły",
-    "kindergartens": "Przedszkola",
-    "universities": "Uczelnie",
-    "hospitals": "Szpitale",
-    "pharmacies": "Apteki",
-    "clinics": "Przychodnie",
-    "emergencyServices": "Pogotowie ratunkowe",
-    "busStops": "Przystanki autobusowe",
-    "parkingSpots": "Miejsca parkingowe",
-    "metroStations": "Stacje metra",
-    "tramStops": "Przystanki tramwajowe",
-    "bikeLanes": "Ścieżki rowerowe (km)",
-    "transportFrequency": "Częstotliwość transportu",
-    "transportAvgDistance": "Odległość do transportu",
-    "groceryStores": "Sklepy spożywcze",
-    "banksATMs": "Banki i bankomaty",
-    "shoppingMalls": "Centra handlowe",
-    "postOffices": "Placówki pocztowe",
-    "constructionStores": "Markety budowlane",
-    "clothingStores": "Sklepy odzieżowe",
-    "beautySalons": "Salony urody",
-    "cafesRestaurants": "Kawiarnie i restauracje",
-    "crimeLevel": "Poziom przestępczości",
-    "policeStations": "Posterunki policji",
-    "cctv": "Kamery monitoringu",
-    "streetLighting": "Oświetlenie uliczne",
-    "avgParkSize": "Śr. wielkość parku",
-    "propertyPricePerSqm": "Cena sprzedaży (Realtor)",
-    "airQuality": "Jakość powietrza",
-    "costPerSqm": "Koszty mediów",
-    "hasWaterSupply": "Wodociągi",
-    "hasElectricity": "Elektryczność",
-    "hasHeating": "Ogrzewanie",
-    "hasGasSupply": "Gaz",
-    "hasWasteRemoval": "Wywóz śmieci",
-    "parks": "Parki",
-    "playgrounds": "Place zabaw",
-    "sportsFacilities": "Obiekty sportowe",
-    "cinemas": "Kina",
-    "theaters": "Teatry",
-    "museums": "Muzea",
-    "libraries": "Biblioteki"
-  },
-  "categories": {
-    "education": "Edukacja",
-    "medicine": "Medycyna",
-    "transport": "Transport",
-    "commerce": "Handel",
-    "safety": "Bezpieczeństwo",
-    "utilities": "Media komunalne",
-    "social": "Sfera socjalna"
-  },
-  "enums": {
-    "yes": "Tak",
-    "no": "Nie",
-    "crime_low": "Niski",
-    "crime_medium": "Średni",
-    "crime_high": "Wysoki"
-  },
-  "values": {
-    "high": "Wysoka",
-    "medium": "Średnia",
-    "low": "Niska",
-    "good": "Dobra",
-    "bad": "Zła"
-  },
   "pdf": {
-    "report_date": "Data raportu",
+    "report_date": "Data wygenerowania raportu",
     "report_subtitle": "Raport o dzielnicy",
-    "rating_label": "Ocena",
+    "rating_label": "Ranking",
     "general_info": "Statystyki ogólne",
     "rent": "Koszt wynajmu",
-    "generated_auto": "Raport wygenerowany automatycznie przez"
+    "generated_auto": "Raport wygenerowany automatycznie przez platformę"
   },
   "premium": {
     "hidden_districts_title": "Ukryto jeszcze {{count}} dzielnic",
-    "hidden_districts_desc": "Kup Premium, aby zobaczyć wszystkie dzielnice i szczegółowe analizy",
-    "upgrade_button": "Uzyskaj Premium"
+    "hidden_districts_desc": "Wykup Premium, aby zobaczyć wszystkie dzielnice i pełną analitykę",
+    "upgrade_button": "Przejdź na Premium"
   }
 }

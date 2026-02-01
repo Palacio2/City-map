@@ -1,7 +1,7 @@
 {
-  "title": "Moje Konto",
+  "title": "Moje konto",
   "subtitle": "Zarządzaj swoją subskrypcją i ustawieniami",
-  "user_profile": "Profil Użytkownika",
+  "user_profile": "Profil użytkownika",
   "labels": {
     "name": "Imię:",
     "email": "Email:",
@@ -14,22 +14,17 @@
     "edit": "Edytuj profil",
     "change_password": "Zmień hasło",
     "manage_subscription": "Zarządzaj subskrypcją",
-    "choose_plan": "Wybierz plan",
-    "save": "Zapisz zmiany",
-    "saving": "Zapisywanie...",
-    "cancel": "Anuluj",
-    "back_to_profile": "Wróć do profilu",
-    "prev": "Poprzednia",
-    "next": "Następna",
+    "choose_plan": "Wybierz taryfę",
+    "back_to_profile": "Powrót do profilu",
     "hide_password": "Ukryj hasło",
     "show_password": "Pokaż hasło"
   },
   "subscription": {
     "title": "Subskrypcja",
-    "plan": "Plan: {{plan}}",
+    "plan": "Taryfa: {{plan}}",
     "expires": "Wygasa: {{date}}",
-    "cancelled_notice": "Subskrypcja anulowana, ważna do {{date}}",
-    "expired_notice": "Subskrypcja wygasła {{date}}",
+    "cancelled_notice": "Subskrypcja anulowana, ale aktywna do {{date}}",
+    "expired_notice": "Subskrypcja wygasła w dniu {{date}}",
     "features_title": "Dostępne funkcje:",
     "status": {
       "active": "Aktywna",
@@ -40,34 +35,34 @@
     }
   },
   "quick_actions": {
-    "stats_title": "Statystyki użycia",
+    "stats_title": "Statystyki użytkowania",
     "stats_desc": "Zobacz swoją aktywność",
     "billing_title": "Historia płatności",
     "billing_desc": "Zobacz wszystkie transakcje",
     "locked": "Wymagana subskrypcja Premium"
   },
   "edit_page": {
-    "title": "Edycja Profilu",
+    "title": "Edycja profilu",
     "subtitle": "Zaktualizuj swoje dane osobowe",
     "main_info": "Informacje podstawowe",
-    "enter_data": "Wprowadź swoje dane",
+    "enter_data": "Wpisz swoje dane osobowe",
     "placeholders": {
       "name": "Wpisz swoje imię",
       "email": "Wpisz swój email",
       "phone": "991234567"
     },
-    "email_warning": "Po zapisaniu na ten adres zostanie wysłany link potwierdzający",
-    "email_update_sent": "Profil zaktualizowany. Link potwierdzający został wysłany na nowy adres.",
+    "email_warning": "Po zapisaniu na ten adres zostanie wysłany e-mail potwierdzający",
+    "email_update_sent": "Profil zaktualizowany. E-mail potwierdzający został wysłany na nowy adres.",
     "errors": {
       "load_failed": "Nie udało się załadować danych profilu",
       "name_long": "Imię jest za długie (maks. 30 znaków)",
       "name_required": "Proszę podać imię",
-      "name_latin_only": "Imię może zawierać tylko litery łacińskie",
+      "name_latin_only": "Imię musi zawierać tylko litery alfabetu łacińskiego", 
       "email_required": "Proszę podać email",
       "email_invalid": "Nieprawidłowy format email",
       "save_error": "Błąd podczas zapisywania",
-      "phone_length": "Numer jest za krótki (min. {{count}} cyfr)",
-      "email_invalid_format": "Nieprawidłowy format email",
+      "phone_length": "Numer jest za krótki (minimum {{count}} cyfr)",
+      "email_invalid_format": "Niepoprawny format email",
       "phone_too_long": "Numer jest za długi"
     },
     "success": "Profil został pomyślnie zaktualizowany"
@@ -75,9 +70,9 @@
   "errors": {
     "auth_error": "Błąd autoryzacji. Zaloguj się ponownie.",
     "network_error": "Problemy z połączeniem internetowym.",
-    "user_not_found": "Nie znaleziono użytkownika.",
-    "email_taken": "Ten adres email jest już zajęty.",
-    "email_invalid_format": "Nieprawidłowy format email (odrzucony przez serwer).",
+    "user_not_found": "Użytkownik nie został znaleziony.",
+    "email_taken": "Ten email jest już używany przez innego użytkownika.",
+    "email_invalid_format": "Niepoprawny format email (odrzucony przez serwer).",
     "too_many_requests": "Zbyt wiele prób. Spróbuj później.",
     "unknown_error": "Wystąpił nieznany błąd."
   },
@@ -85,27 +80,27 @@
     "title": "Zmiana hasła",
     "subtitle": "Zaktualizuj hasło, aby zwiększyć bezpieczeństwo konta",
     "form_title": "Bezpieczeństwo konta",
-    "form_subtitle": "Wprowadź nowe hasło",
+    "form_subtitle": "Wpisz nowe hasło",
     "new_pass": "Nowe hasło",
     "confirm_pass": "Potwierdź nowe hasło",
     "tips_title": "Wskazówki dotyczące bezpiecznego hasła",
     "tips": [
       "Użyj co najmniej 8 znaków",
-      "Dodaj duże litery, cyfry i znaki specjalne",
+      "Dodaj wielkie litery, cyfry i znaki specjalne",
       "Unikaj danych osobowych",
       "Nie używaj tego samego hasła w różnych serwisach",
       "Unikaj sekwencji (123456, qwerty)",
-      "Zalecane jest używanie menedżera haseł",
-      "Okresowo zmieniaj swoje hasła",
+      "Zaleca się korzystanie z menedżera haseł",
+      "Okresowo aktualizuj swoje hasła",
       "Włącz uwierzytelnianie dwuskładnikowe"
     ],
     "placeholders": {
-      "new": "Wprowadź nowe hasło (min. 8 znaków)",
+      "new": "Wpisz nowe hasło (min. 8 znaków)",
       "confirm": "Powtórz nowe hasło"
     },
     "errors": {
-      "length": "Nowe hasło musi zawierać co najmniej 8 znaków",
-      "mismatch": "Nowe hasła nie są identyczne",
+      "length": "Nowe hasło musi mieć co najmniej 8 znaków",
+      "mismatch": "Hasła nie są identyczne",
       "regex": "Hasło musi zawierać wielkie/małe litery, cyfry i znaki specjalne",
       "unknown": "Wystąpił nieznany błąd"
     },
@@ -114,8 +109,8 @@
   "billing_page": {
     "title": "Subskrypcja i Płatności",
     "subtitle": "Zarządzanie i historia transakcji",
-    "current_sub": "Obecna subskrypcja",
-    "plan_label": "Plan:",
+    "current_sub": "Aktualna subskrypcja",
+    "plan_label": "Taryfa:",
     "price_label": "Cena:",
     "next_payment": "Następna płatność:",
     "update_plan": "Zmień plan",
@@ -126,19 +121,16 @@
     "method_online": "Karta",
     "no_history": "Historia płatności jest pusta",
     "error_load": "Nie udało się załadować historii",
-    "cancel_confirm": "Czy na pewno chcesz anulować subskrypcję? Stracisz dostęp do funkcji Premium po zakończeniu obecnego okresu.",
+    "cancel_confirm": "Czy na pewno chcesz anulować? Stracisz dostęp do funkcji Premium po zakończeniu obecnego okresu.",
     "error_cancel": "Nie udało się anulować subskrypcji",
     "processing": "Przetwarzanie...",
     "table": {
       "date": "Data",
-      "plan": "Plan",
+      "plan": "Taryfa",
       "amount": "Kwota",
       "method": "Metoda",
       "status": "Status",
       "invoice": "Faktura"
     }
-  },
-  "stats_page": {
-    "never": "nigdy"
   }
 }

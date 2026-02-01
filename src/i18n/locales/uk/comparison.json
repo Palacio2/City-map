@@ -13,97 +13,7 @@
   "success_saved": "Порівняння збережено!",
   "results_title": "Результати порівняння",
   "metric": "Показник",
-  "export_pdf": "Експорт PDF",
-  
-  "yes": "Так",
-  "no": "Ні",
-
-  "finance_population": "Фінанси та Населення",
-  "avg_property_price": "Середня ціна нерухомості",
-  "avg_salary": "Середня зарплата",
-  "population": "Населення",
-  "population_density": "Щільність населення",
-  "unemployment": "Рівень безробіття",
-  
-  "education": "Освіта",
-  "schools": "Школи",
-  "kindergartens": "Дитячі садки",
-  "universities": "Університети",
-  "rating": "Рейтинг",
-  
-  "medicine": "Медицина",
-  "hospitals": "Лікарні",
-  "clinics": "Поліклініки",
-  "pharmacies": "Аптеки",
-  "emergencyServices": "Швидка допомога",
-  
-  "transport": "Транспорт",
-  "metroStations": "Станції метро",
-  "busStops": "Автобусні зупинки",
-  "tramStops": "Трамвайні зупинки",
-  "bikeLanes": "Велодоріжки",
-  "parkingSpots": "Паркомісця",
-  "transportAvgDistance": "Доступність транспорту",
-  "transportFrequency": "Частота руху",
-  
-  "safety": "Безпека",
-  "crimeLevel": "Рівень злочинності",
-  "policeStations": "Відділки поліції",
-  "cctv": "Камери спостереження",
-  "streetLighting": "Освітлення",
-  
-  "social": "Соціальна сфера",
-  "green_zones": "Зелені зони",
-  "parks": "Парки",
-  "avgParkSize": "Розмір парків",
-  "playgrounds": "Дитячі майданчики",
-  "sportsFacilities": "Спорткомплекси",
-  "culture": "Культура",
-  "cinemas": "Кінотеатри",
-  "theaters": "Театри",
-  "museums": "Музеї",
-  "libraries": "Бібліотеки",
-  "cafesRestaurants": "Кафе та ресторани",
-  "airQuality": "Якість повітря",
-  
-  "commerce": "Комерція",
-  "groceryStores": "Супермаркети",
-  "shoppingMalls": "Торгові центри",
-  "banksATMs": "Банки та банкомати",
-  "postOffices": "Поштові відділення",
-  "beautySalons": "Салони краси",
-  "constructionStores": "Будівельні магазини",
-  "clothingStores": "Магазини одягу",
-  "shops_density": "Щільність магазинів",
-  
-  "utilities": "Комунальні послуги",
-  "costPerSqm": "Вартість ком. послуг",
-  "propertyPricePerSqm": "Ціна за м² (продаж)",
-  "hasWaterSupply": "Водопостачання",
-  "hasElectricity": "Електропостачання",
-  "hasHeating": "Опалення",
-  "hasGasSupply": "Газопостачання",
-  "hasWasteRemoval": "Вивіз сміття",
-
-  "rent_label": "Оренда",
-  "sale_label": "Продаж",
-
-  "levels": {
-    "low": "Низька",
-    "medium": "Середня",
-    "high": "Висока",
-    "good": "Добре",
-    "bad": "Погано",
-    "moderate": "Помірно"
-  },
-
-  "units": {
-    "sqm": "м²",
-    "km": "км",
-    "m": "м",
-    "people_sqkm": "ос/км²"
-  },
-
+  "export_pdf": "Експорт PDF", 
   "export_modal": {
     "title": "Налаштування звіту",
     "upload_logo": "Завантажити логотип",
@@ -117,7 +27,6 @@
     "phone_placeholder": "+380 ...",
     "website_placeholder": "www.example.com"
   },
-
   "pdf_report": {
     "analytics_report": "Аналітичний звіт",
     "prepared_by": "Підготовлено",

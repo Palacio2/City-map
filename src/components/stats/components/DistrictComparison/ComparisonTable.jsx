@@ -1,31 +1,28 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaMapMarkerAlt } from 'react-icons/fa';
-// 👇 ВАЖЛИВО: Підключення конфігурації
 import { DISTRICT_CATEGORIES } from '@config/districtFields'; 
-import { formatPrice, formatNumber, formatRating, formatBool, formatLevel, getValue } from '@utils/comparisonHelpers.jsx';
+import { getValue } from '@utils/comparisonHelpers.jsx';
+import { formatPrice, formatNumber, formatBoolean, formatLevel, renderRating } from '@utils/formatters.jsx';
 import styles from './ComparisonTable.module.css';
 
 export default function ComparisonTable({ districts }) {
-  const { t } = useTranslation('comparison');
+  const { t } = useTranslation(['comparison', 'common']);
 
   if (!districts?.length) return null;
 
   const rows = useMemo(() => {
-    // 1. Статична секція (загальні дані, які завжди повинні бути першими)
     const generalSection = [
-      { type: 'header', title: t('finance_population') },
-      { label: `${t('sale_label')} (${t('units.sqm', 'м²')})`, key: 'filterData.utilities.propertyPricePerSqm', format: (v, d) => formatPrice(v, d.country) },
-      { label: t('rent_label'), key: 'filterData.general.average_rent_price', format: (v, d) => formatPrice(v, d.country) },
-      { label: t('avg_salary'), key: 'filterData.general.averageSalary', format: (v, d) => formatPrice(v, d.country) },
-      { label: t('population'), key: 'filterData.general.population', format: (v) => formatNumber(v) },
-      { label: t('population_density'), key: 'filterData.general.populationDensity', format: (v) => formatNumber(v, ` ${t('units.people_sqkm', 'ос/км²')}`) },
-      { label: t('unemployment'), key: 'filterData.general.unemploymentRate', format: (v) => formatNumber(v, '%') },
+      { type: 'header', title: t('common:categories.finance_population') },
+      { label: `${t('common:fields.propertyPricePerSqm')} (${t('common:units.sqm')})`, key: 'filterData.utilities.propertyPricePerSqm', format: (v, d) => formatPrice(v, d.country) },
+      { label: t('common:fields.average_rent_price'), key: 'filterData.general.average_rent_price', format: (v, d) => formatPrice(v, d.country) },
+      { label: t('common:fields.averageSalary'), key: 'filterData.general.averageSalary', format: (v, d) => formatPrice(v, d.country) },
+      { label: t('common:fields.population'), key: 'filterData.general.population', format: (v) => formatNumber(v) },
+      { label: t('common:fields.unemploymentRate'), key: 'filterData.general.unemploymentRate', format: (v) => formatNumber(v) + '%' },
     ];
 
-    // 2. Динамічні секції з districtFields.js
     const dynamicSections = Object.values(DISTRICT_CATEGORIES).flatMap(category => {
-      const headerRow = { type: 'header', title: t(category.key) }; 
+      const headerRow = { type: 'header', title: t(`common:categories.${category.key}`) }; 
       
       const fieldRows = category.fields.map(field => {
         let formatter;
@@ -35,13 +32,14 @@ export default function ComparisonTable({ districts }) {
             formatter = (v, d) => formatPrice(v, d.country);
             break;
           case 'rating_10':
-            formatter = (v) => v ? <span className={styles.rating}>{formatRating(v)}</span> : '-';
+            formatter = (v) => v ? <span className={styles.rating}>{renderRating(v)}</span> : '-';
             break;
           case 'boolean':
-            formatter = (v) => formatBool(v, true, styles);
+            // Використовуємо іконки для таблиці
+            formatter = (v) => formatBoolean(v, t, true, styles);
             break;
           case 'crimeLevel':
-            formatter = (v) => formatNumber(v, '/100');
+            formatter = (v) => formatNumber(v) + '/10';
             break;
           case 'text':
             formatter = (v) => formatLevel(v, t);
@@ -52,20 +50,20 @@ export default function ComparisonTable({ districts }) {
             break;
         }
 
-        // Перевизначення одиниць виміру для специфічних полів
+        // Спеціальне форматування одиниць виміру
         if (field.key === 'avgParkSize' || field.key === 'transportAvgDistance') {
-           formatter = (v) => formatNumber(v, ` ${t('units.m', 'м')}`);
-           if (field.key === 'avgParkSize') formatter = (v) => formatNumber(v, ` ${t('units.sqm', 'м²')}`);
+           formatter = (v) => formatNumber(v, ` ${t('common:units.m')}`);
+           if (field.key === 'avgParkSize') formatter = (v) => formatNumber(v, ` ${t('common:units.sqm')}`);
         }
         if (field.key === 'bikeLanes') {
-           formatter = (v) => formatNumber(v, ` ${t('units.km', 'км')}`);
+           formatter = (v) => formatNumber(v, ` ${t('common:units.km')}`);
         }
         if (field.key === 'greenSpaces') {
            formatter = (v) => formatNumber(v, '%');
         }
 
         return {
-          label: t(field.key), // Ключ перекладу береться з назви поля (напр. "schools")
+          label: t(`common:fields.${field.key}`),
           key: `filterData.${category.key}.${field.key}`,
           format: formatter
         };
