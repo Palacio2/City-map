@@ -1,82 +1,74 @@
-:root {
-  --transition-default: all 0.3s ease;
-  --shadow-default: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-hover: 0 8px 16px rgba(0, 0, 0, 0.12);
-  --color-purple: #667eea;
-  --color-green: #48bb78;
-  --color-blue: #4299e1;
-  --color-orange: #ed8936;
-  --color-red: #e53e3e;
-  --bg-light: #f7fafc;
-  --bg-white: #ffffff;
-  --bg-hover: #edf2f7;
-  --text-dark: #2d3748;
-  --text-medium: #718096;
-  --text-light: #a0aec0;
-  --border-light: #e2e8f0;
-}
-
-[data-theme='dark'] {
-  --bg-light: #0f172a;
-  --bg-white: #1e293b;
-  --bg-hover: #334155;
-  --text-dark: rgba(255,255,255,0.92);
-  --text-medium: rgba(255,255,255,0.7);
-  --text-light: rgba(255,255,255,0.5);
-  --border-light: #334155;
-  --shadow-default: 0 8px 24px rgba(0,0,0,0.4);
-  --shadow-hover: 0 12px 32px rgba(0,0,0,0.5);
-  --color-purple: #818cf8;
-  --color-green: #4ade80;
-  --color-blue: #60a5fa;
-  --color-orange: #fb923c;
-  --color-red: #f87171;
-}
-
 .container {
   min-height: 100vh;
-  background: var(--bg-light);
-  padding: 24px;
-  font-family: 'Segoe UI', sans-serif;
-  color: var(--text-dark);
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  padding: var(--spacing-lg) var(--spacing-md);
+  font-family: var(--font-body);
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .header {
-  margin-bottom: 32px;
   max-width: 1200px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto 3rem;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+  animation: fadeInUp 0.5s ease-out forwards;
 }
 
 .backButton {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  color: var(--text-medium);
+  gap: var(--spacing-sm);
+  color: var(--text-secondary);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  width: fit-content;
   text-decoration: none;
-  font-weight: 500;
-  margin-bottom: 16px;
-  transition: var(--transition-default);
 }
 
 .backButton:hover {
-  color: var(--color-purple);
+  color: var(--accent-color);
   transform: translateX(-4px);
 }
 
-.titleSection { margin-left: 4px; }
+.backButton:active {
+  transform: translateX(-6px);
+}
+
+.titleSection {
+  margin-top: var(--spacing-sm);
+}
 
 .title {
-  font-size: 32px;
-  font-weight: 800;
-  color: var(--text-dark);
-  margin: 0 0 8px 0;
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  color: var(--text-main);
+  margin-bottom: var(--spacing-xs);
+  background: var(--primary-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: inline-block;
 }
 
 .subtitle {
-  color: var(--text-medium);
-  font-size: 16px;
-  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  max-width: 600px;
 }
 
 .content {
@@ -84,55 +76,81 @@
   margin: 0 auto;
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 2rem;
+  animation: fadeInUp 0.6s ease-out forwards;
+  animation-delay: 0.1s;
+  opacity: 0; 
 }
 
-.cardsSection { width: 100%; }
+.cardsSection {
+  width: 100%;
+}
 
 .loading {
   text-align: center;
-  padding: 40px;
-  color: var(--text-medium);
-  font-size: 18px;
+  padding: 4rem;
+  color: var(--text-secondary);
+  font-size: 1.1rem;
+  font-family: var(--font-heading);
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% { opacity: 0.6; }
+  50% { opacity: 1; }
+  100% { opacity: 0.6; }
 }
 
 .errorState {
-  background: rgba(239,68,68,0.1);
-  border: 1px solid var(--color-red);
-  padding: 20px;
-  border-radius: 12px;
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid var(--danger-color);
+  padding: 2rem;
+  border-radius: var(--radius-md);
   text-align: center;
   max-width: 500px;
-  margin: 0 auto;
-  color: var(--text-dark);
+  margin: 2rem auto;
+  color: var(--text-main);
+  animation: fadeInUp 0.4s ease-out;
 }
 
 .retryButton {
-  margin-top: 12px;
-  padding: 8px 16px;
-  background: var(--color-purple);
-  color: white;
+  margin-top: 1rem;
+  padding: 0.8rem 1.5rem;
+  background: var(--accent-color);
+  color: #fff;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   cursor: pointer;
   font-weight: 600;
-  transition: opacity 0.2s;
+  font-family: var(--font-heading);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.retryButton:hover { opacity: 0.9; }
+
+.retryButton:hover {
+  background: var(--accent-hover);
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.retryButton:active {
+  transform: translateY(0);
+}
 
 .sectionWrapper {
   width: 100%;
-  background: var(--bg-white);
-  border-radius: 16px;
-  box-shadow: var(--shadow-default);
-  border: 1px solid var(--border-light);
+  background: var(--bg-surface);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  border: 1px solid var(--border-color);
   overflow: hidden;
-  transition: var(--transition-default);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .sectionWrapper.open {
   box-shadow: var(--shadow-hover);
-  border-color: var(--color-purple);
+  border-color: var(--border-accent);
 }
 
 .sectionHeader {
@@ -140,11 +158,11 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 24px;
-  background: var(--bg-white);
+  padding: 1.5rem 2rem;
+  background: var(--bg-surface);
   border: none;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease;
   text-align: left;
 }
 
@@ -155,46 +173,96 @@
 .headerTitle {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-dark);
+  gap: 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-family: var(--font-heading);
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  transition: color 0.3s ease;
+}
+
+.sectionWrapper.open .headerTitle {
+  color: var(--accent-color);
 }
 
 .headerIcon {
-  color: var(--color-purple);
-  font-size: 20px;
+  color: var(--accent-color);
+  font-size: 1.2rem;
+  transition: transform 0.3s ease;
+}
+
+.sectionHeader:hover .headerIcon {
+  transform: scale(1.1);
 }
 
 .chevron {
-  color: var(--text-medium);
-  font-size: 16px;
-  transition: transform 0.3s ease, color 0.3s ease;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), color 0.3s ease;
 }
 
 .rotate {
   transform: rotate(180deg);
-  color: var(--color-purple);
+  color: var(--accent-color);
 }
 
 .sectionContent {
-  max-height: 0;
+  display: grid;
+  grid-template-rows: 0fr;
   opacity: 0;
-  overflow: hidden;
-  transition: all 0.3s ease-in-out;
+  visibility: hidden;
+  border-top: 1px solid transparent;
+  transition: 
+    grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.4s ease-out,
+    visibility 0.5s step-end,
+    border-top-color 0.5s step-end;
 }
 
 .contentVisible {
-  max-height: 2000px;
+  grid-template-rows: 1fr;
   opacity: 1;
-  padding: 24px;
-  border-top: 1px solid var(--border-light);
+  visibility: visible;
+  border-top-color: var(--border-color);
+  transition: 
+    grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.5s ease-in,
+    visibility 0s step-start,
+    border-top-color 0s step-start;
 }
 
-@media (max-width: 600px) {
-  .container { padding: 16px; }
-  .title { font-size: 24px; }
-  .sectionHeader { padding: 16px; }
-  .headerTitle { font-size: 16px; }
-  .contentVisible { padding: 16px; }
+.innerContent {
+  overflow: hidden;
+  min-height: 0;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(-10px);
+}
+
+.contentVisible .innerContent {
+  transform: translateY(0);
+  padding: 2rem;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: var(--spacing-md);
+  }
+
+  .title {
+    font-size: 2rem;
+  }
+
+  .sectionHeader {
+    padding: 1.2rem 1.5rem;
+  }
+
+  .headerTitle {
+    font-size: 1rem;
+  }
+
+  .contentVisible .innerContent {
+    padding: 1.5rem;
+  }
 }

@@ -1,11 +1,13 @@
 .layout {
   display: flex;
   flex-direction: column;
-  min-height: 100dvh;
+  min-height: 100vh;
+  min-height: 100dvh; 
   width: 100%;
-  background-color: var(--bg-light);
-  color: var(--text-dark);
+  background-color: var(--bg-body);
+  color: var(--text-main);
   transition: background-color 0.3s ease, color 0.3s ease;
+  overflow-x: hidden;
 }
 
 .mainContent {
@@ -13,34 +15,40 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; 
-  align-items: center;
-  padding: 20px 0;
-  background-color: var(--bg-light);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  position: relative;
+  
+  padding-top: calc(var(--header-height) + var(--spacing-lg));
+  padding-bottom: var(--spacing-lg);
+  
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
 
 .contentWrapper {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
+  flex: 1;
   display: flex;
-  justify-content: center;
   flex-direction: column;
-  margin: auto 0;
-  padding: 0 16px; 
-  box-sizing: border-box; 
+  
+  justify-content: flex-start; 
 }
 
-@media (min-width: 768px) {
-  .contentWrapper {
-    padding: 0 24px;
+@media (max-width: 768px) {
+  .layout {
+    height: auto;
+    min-height: 100dvh;
   }
-}
 
-.card,
-.button,
-.backButton,
-.select,
-.navLink {
-  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  .mainContent {
+    padding-top: calc(var(--header-height) + var(--spacing-md));
+    padding-bottom: var(--spacing-md);
+  }
+
+  .contentWrapper {
+    padding: 0 1rem;
+    width: 100%;
+  }
 }

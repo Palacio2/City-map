@@ -2,11 +2,11 @@
 .errorContainer {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; 
   width: 100%;
-  padding: var(--spacing-md);
-  box-sizing: border-box; 
-  /* Ensures the form takes full height if needed, or at least respects the layout */
+  padding: 1rem 0;
+  flex: 1; 
+  
   min-height: 100%; 
 }
 
@@ -16,46 +16,51 @@
 }
 
 .card {
-  background-color: var(--bg-white); /* Will turn dark in dark mode */
-  border-radius: var(--border-radius-lg);
-  padding: var(--spacing-xl);
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
   width: 100%;
   max-width: 500px;
-  box-shadow: var(--shadow-card);
-  border: 1px solid var(--border-color); /* Will adapt to dark border */
+  box-shadow: var(--shadow-glass);
+  border: 1px solid var(--border-color);
   position: relative;
-  transition: var(--transition-default);
-  box-sizing: border-box; 
+  transition: var(--transition);
+  margin: auto; 
 }
 
-.card:hover {
-  box-shadow: var(--shadow-hover);
-  border-color: var(--primary-light);
+:global([data-theme='dark']) .card {
+  background-color: #232730;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .header {
-  margin-bottom: var(--spacing-lg);
+  margin-bottom: 1.25rem;
   text-align: center;
 }
 
 .title {
-  color: var(--text-dark); /* Will turn white in dark mode */
-  font-size: 2rem;
-  margin: 0 0 var(--spacing-xs) 0;
-  font-weight: 700;
-  line-height: 1.2;
+  color: var(--text-main);
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+  font-weight: 600;
 }
 
 .subtitle {
-  color: var(--text-medium);
-  font-size: 1rem;
-  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.errorMessage {
+  color: var(--danger-color);
+  margin-top: 1rem;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg);
+  gap: 1.25rem;
 }
 
 .selectWrapper {
@@ -65,35 +70,39 @@
 
 .select {
   appearance: none;
-  background-color: var(--bg-white);
-  border: var(--border-width) solid var(--border-color);
-  border-radius: var(--border-radius-md);
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
   display: block;
-  font-size: 1.1rem;
-  padding: var(--spacing-md) 3rem var(--spacing-md) var(--spacing-md);
+  font-size: 1rem;
+  padding: 0.85rem 2.5rem 0.85rem 1rem;
   width: 100%;
-  color: var(--text-dark);
+  color: var(--text-main);
   cursor: pointer;
   outline: none;
-  transition: var(--transition-default);
-  box-sizing: border-box;
+  transition: var(--transition);
+  font-family: var(--font-body);
 }
 
 .select:hover:not(:disabled) {
-  border-color: var(--primary-light);
-  background-color: var(--bg-hover);
+  border-color: var(--accent-color);
 }
 
 .select:focus {
-  border-color: var(--primary-dark);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 1px var(--accent-color);
+}
+
+:global([data-theme='dark']) .select option {
+  background-color: #1e293b;
+  color: #ffffff;
 }
 
 .selectArrow {
-  color: var(--text-light);
-  font-size: 1.2rem;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
   position: absolute;
-  right: var(--spacing-md);
+  right: 1rem;
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
@@ -105,142 +114,162 @@
   cursor: pointer;
 }
 
-.searchInput + .selectArrow:hover {
-  color: var(--primary-dark);
-}
-
 .suggestionsList {
   position: absolute;
-  top: calc(100% + var(--spacing-xs));
+  top: calc(100% + 5px);
   left: 0;
   right: 0;
-  z-index: 20;
-  background-color: var(--bg-white);
+  z-index: 100;
+  background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-modal);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-card);
   max-height: 250px;
   overflow-y: auto;
   list-style: none;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
+  padding: 0.25rem;
+}
+
+:global([data-theme='dark']) .suggestionsList {
+  background-color: #1a1d24; 
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .suggestionItem {
-  padding: var(--spacing-md);
-  font-size: 1rem;
-  color: var(--text-dark);
+  padding: 0.75rem 1rem;
+  font-size: 0.95rem;
+  color: var(--text-main);
   cursor: pointer;
-  border-bottom: 1px solid var(--border-color);
+  border-radius: 4px;
   transition: background-color 0.2s;
 }
 
-.suggestionItem:last-child {
-  border-bottom: none;
+:global([data-theme='dark']) .suggestionItem {
+  color: #ffffff;
 }
 
 .suggestionItem:hover {
-  background-color: var(--bg-hover);
-  color: var(--primary-dark);
+  background-color: rgba(197, 164, 126, 0.1);
+  color: var(--accent-color);
+}
+
+:global([data-theme='dark']) .suggestionItem:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--accent-color);
 }
 
 .noResults {
-  padding: var(--spacing-md);
-  color: var(--text-light);
+  padding: 1rem;
   text-align: center;
-  font-style: italic;
+  color: var(--text-secondary);
 }
 
 .buttonsContainer {
   display: flex;
   justify-content: space-between;
-  gap: var(--spacing-md);
-  margin-top: var(--spacing-sm);
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.centeredButtons {
+  justify-content: center;
+  margin-top: 1.5rem;
 }
 
 .button,
 .backButton {
-  padding: var(--spacing-md);
+  padding: 0.85rem 1.5rem;
   border: none;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
-  transition: var(--transition-default);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: var(--transition);
   display: flex;
   align-items: center;
   justify-content: center;
+  font-family: var(--font-heading);
 }
 
 .button {
   flex: 1;
-  background: var(--primary-gradient);
-  color: white;
-  box-shadow: var(--shadow-card);
+  background-color: var(--text-main);
+  color: var(--bg-surface);
+  border: 1px solid var(--text-main);
 }
 
 .button:hover:not(:disabled) {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: #fff;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-hover);
-  opacity: 0.9;
+  box-shadow: var(--shadow-sm);
 }
 
 .backButton {
-  background-color: var(--bg-light); /* Will be dark blue in dark mode */
-  color: var(--text-medium);
-  border: 1px solid transparent; 
-  flex: 0 0 100px;
+  background-color: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  flex: 0 0 auto;
+  min-width: 90px;
 }
 
 .backButton:hover:not(:disabled) {
-  background-color: var(--bg-hover);
-  color: var(--text-dark);
-  border-color: var(--border-color);
-  transform: translateY(-2px);
+  border-color: var(--text-main);
+  color: var(--text-main);
+}
+
+:global([data-theme='dark']) .backButton:hover:not(:disabled) {
+  color: #fff;
+  border-color: #fff;
 }
 
 .button:disabled,
 .backButton:disabled,
 .select:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
   transform: none;
   box-shadow: none;
-  filter: grayscale(0.5);
 }
 
 .select:disabled {
-  background-color: var(--bg-light);
-  color: var(--text-light);
+  background-color: rgba(0,0,0,0.03);
+  color: var(--text-secondary);
 }
 
 @media (max-width: 600px) {
-  .card {
-    padding: var(--spacing-lg);
-  }
-  
-  .title {
-    font-size: 1.5rem;
-  }
-  
-  .buttonsContainer {
-    flex-direction: column;
-    gap: var(--spacing-md);
+  .container {
+    padding: 1rem;
+    align-items: flex-start;
   }
 
-  .backButton {
-    order: 2; 
-    flex: 1;
+  .card {
+    padding: 1.25rem;
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .select {
+    background-color: var(--bg-surface);
+  }
+
+  .buttonsContainer {
+    flex-direction: column;
+  }
+
+  .backButton, .button {
     width: 100%;
+  }
+  
+  .backButton {
+    order: 2;
   }
   
   .button {
     order: 1;
-    width: 100%;
-  }
-  
-  .select {
-    padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) var(--spacing-sm);
   }
 }

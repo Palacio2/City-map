@@ -5,7 +5,7 @@ import MainLayout from "@layout/MainLayout";
 import PrivateRoute from "./PrivateRoute";
 import ProtectedRoute from "./ProtectedRoute";
 
-const DistrictMap = lazy(() => import("@maps/DistrictMap"));
+const DistrictMap = lazy(() => import("../components/districtMap/DistrictMap"));
 const Contacts = lazy(() => import("@pages/contacts/Contacts"));
 const Subscription = lazy(() => import("@pages/subscription/Subscription"));
 const Login = lazy(() => import("@auth/Login"));
@@ -24,7 +24,7 @@ const NotFoundPage = lazy(() => import("../pages/notFound/NotFoundPage"));
 const StatsPage = lazy(() => import("../components/stats/StatsPage"));
 const Comparison = lazy(() => import("../components/stats/components/DistrictComparison/DistrictComparisonPage"));
 // const Admin = lazy(() => import("../pages/admin/index"));
-const BillingHistoryPage = lazy(() => import("../components/profile/BillingHistoryPage"));
+const BillingHistoryPage = lazy(() => import("../components/profile/BillingHistory/BillingHistoryPage"));
 const ProfileEditPage = lazy(() => import("../components/profile/ProfileEditPage"));
 const PasswordChangePage = lazy(() => import("../components/profile/PasswordChangePage"));
 

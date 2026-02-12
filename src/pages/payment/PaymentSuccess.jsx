@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
-import { FaCheckCircle, FaArrowLeft } from 'react-icons/fa';
+import { FaCheckCircle } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import { useSubscription } from '@subscription/SubscriptionContext';
 import styles from './PaymentSuccess.module.css';
@@ -26,11 +26,11 @@ export default function PaymentSuccess() {
     }).format(amount);
   };
 
-  const [displayData] = useState({
+  const [displayData] = useState(() => ({
     plan: location.state?.plan || 'Premium', 
     amount: initialAmount,
     txId: realTxId || `TX-${Date.now().toString().substr(-8)}`
-  });
+  }));
 
   useEffect(() => {
     updateSubscription(); 
@@ -38,34 +38,26 @@ export default function PaymentSuccess() {
 
   return (
     <div className={styles.container}>
-      <div className={styles.header}>
-        <button onClick={() => navigate('/profile')} className={styles.backButton}>
-            <FaArrowLeft /> {t('success.back_to_profile')}
-        </button>
-        <h1>{t('success.title')}</h1>
-      </div>
-
       <div className={styles.content}>
-        <div className={styles.section}>
-          <div className={styles.successHeader}>
-             <div className={styles.successIcon}>
-               <FaCheckCircle />
-             </div>
-             <div className={styles.successText}>
-               <h2>{t('success.access_granted')}</h2>
-               <p>{t('success.subscription_active')}</p>
-             </div>
-          </div>
+        
+        <div className={styles.header}>
+           <div className={styles.successIcon}>
+             <FaCheckCircle />
+           </div>
+           <div className={styles.successText}>
+             <h2>{t('success.access_granted')}</h2>
+             <p>{t('success.subscription_active')}</p>
+           </div>
         </div>
 
         <div className={styles.section}>
           <div className={styles.sectionHeader}>
-             <h2>{t('success.details_title')}</h2>
+              <h2>{t('success.details_title')}</h2>
           </div>
           <div className={styles.orderDetails}>
             <div className={styles.detailRow}>
                 <span>{t('success.status_label')}</span>
-                <span style={{color: '#48bb78'}}>{t('success.status_success')}</span>
+                <span className={styles.statusSuccess}>{t('success.status_success')}</span>
             </div>
             
             {displayData.amount !== undefined && (
@@ -77,7 +69,7 @@ export default function PaymentSuccess() {
             
             <div className={styles.detailRow}>
                 <span>{t('success.tx_label')}</span>
-                <span style={{ fontFamily: 'monospace', fontSize: '13px' }}>
+                <span style={{ fontFamily: 'monospace', letterSpacing: '1px' }}>
                     {displayData.txId}
                 </span>
             </div>

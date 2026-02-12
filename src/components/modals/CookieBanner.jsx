@@ -9,8 +9,9 @@ export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    if (!localStorage.getItem('cookie_consent')) {
-      const timer = setTimeout(() => setVisible(true), 600);
+    const consent = localStorage.getItem('cookie_consent');
+    if (!consent) {
+      const timer = setTimeout(() => setVisible(true), 1000);
       return () => clearTimeout(timer);
     }
   }, []);
@@ -25,15 +26,30 @@ export default function CookieBanner() {
   return (
     <div className={styles.banner}>
       <div className={styles.content}>
-        <div className={styles.iconWrapper}><FaCookieBite className={styles.icon} /></div>
+        <div className={styles.iconWrapper}>
+          <FaCookieBite className={styles.icon} />
+        </div>
         <div className={styles.text}>
-          <p>{t('cookies.text')} <Link to="/terms" className={styles.link}>{t('cookies.link')}</Link></p>
+          <p>
+            {t('cookies.text')}{' '}
+            <Link to="/terms" className={styles.link}>
+              {t('cookies.link')}
+            </Link>
+          </p>
         </div>
       </div>
 
       <div className={styles.actions}>
-        <button className={styles.acceptBtn} onClick={accept}>{t('cookies.accept')}</button>
-        <button className={styles.closeBtn} onClick={() => setVisible(false)}><FaTimes/></button>
+        <button className={styles.acceptBtn} onClick={accept}>
+          {t('cookies.accept')}
+        </button>
+        <button 
+          className={styles.closeBtn} 
+          onClick={() => setVisible(false)}
+          aria-label="Close"
+        >
+          <FaTimes />
+        </button>
       </div>
     </div>
   );

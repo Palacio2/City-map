@@ -1,30 +1,34 @@
-/* ================== About.module.css ================== */
-
 .container {
   min-height: 100vh;
-  background: var(--bg-light);
-  color: var(--text-dark);
-  padding-bottom: 3rem;
+  background: var(--bg-body);
+  color: var(--text-main);
+  padding-bottom: 4rem;
 }
 
-/* ---------- HERO ---------- */
 .heroSection {
   background: var(--primary-gradient);
-  color: #fff;
-  padding: 5rem 1.5rem 4rem;
+  color: var(--text-inverse);
+  padding: 6rem 1.5rem 5rem;
   text-align: center;
-  border-radius: 0 0 32px 32px;
+  position: relative;
+  overflow: hidden;
 }
 
 .heroContent {
   max-width: 900px;
   margin: 0 auto;
+  position: relative;
+  z-index: 2;
 }
 
 .heroTitle {
-  font-size: 3rem;
-  font-weight: 800;
-  margin-bottom: 1rem;
+  font-family: var(--font-heading);
+  font-size: 3.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  letter-spacing: -0.02em;
+  color: var(--text-inverse);
+  text-shadow: 0 4px 20px rgba(0,0,0,0.3);
 }
 
 .heroSubtitle {
@@ -32,130 +36,152 @@
   opacity: 0.9;
   max-width: 700px;
   margin: 0 auto;
+  font-weight: 300;
+  line-height: 1.6;
 }
 
-/* ---------- CONTENT ---------- */
 .content {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
+  max-width: 1200px;
+  margin: -3rem auto 0;
+  padding: 0 1.5rem;
+  position: relative;
+  z-index: 3;
 }
 
-/* ---------- SECTIONS ---------- */
 .section {
-  background: var(--bg-white);
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: 20px;
-  padding: 2.5rem;
-  margin-bottom: 2rem;
+  border-radius: var(--radius-lg);
+  padding: 3rem;
+  margin-bottom: 2.5rem;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
 }
 
-/* ---------- HEADERS ---------- */
 .sectionHeader {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-bottom: 1.5rem;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .sectionHeader h2 {
+  font-family: var(--font-heading);
   font-size: 1.8rem;
-  font-weight: 700;
+  color: var(--text-main);
+  margin: 0;
 }
 
 .sectionIcon {
-  width: 28px;
-  height: 28px;
-  color: var(--primary-color);
+  width: 32px;
+  height: 32px;
+  color: var(--accent-color);
 }
 
 .sectionContent {
   font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--text-medium);
+  line-height: 1.8;
+  color: var(--text-secondary);
 }
 
-/* ---------- GRIDS ---------- */
 .featuresGrid,
 .howItWorks,
 .targetAudience,
 .dataSources {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  gap: 1.25rem;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
   margin-top: 1.5rem;
 }
 
-/* ---------- CARDS ---------- */
 .featureCard,
 .audienceGroup,
 .step,
 .sourceCategory {
-  background: var(--bg-light);
+  background: var(--bg-body);
   border: 1px solid var(--border-color);
-  border-radius: 16px;
-  padding: 1.5rem;
+  border-radius: var(--radius-md);
+  padding: 2rem;
   text-align: center;
-  transition: box-shadow 0.25s ease; /* ТІЛЬКИ ТІНЬ */
+  transition: var(--transition);
 }
 
 .featureCard:hover,
 .audienceGroup:hover,
 .step:hover,
 .sourceCategory:hover {
+  transform: translateY(-4px);
+  border-color: var(--accent-color);
   box-shadow: var(--shadow-hover);
+  background: var(--bg-surface);
 }
 
 .featureIcon,
 .audienceIcon {
-  width: 36px;
-  height: 36px;
-  color: var(--primary-color);
-  margin-bottom: 0.75rem;
+  width: 40px;
+  height: 40px;
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+  padding: 8px;
+  background: rgba(197, 164, 126, 0.1);
+  border-radius: var(--radius-sm);
 }
 
 .featureCard h3,
 .audienceGroup h3 {
-  font-size: 1.15rem;
-  margin-bottom: 0.5rem;
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+  color: var(--text-main);
 }
 
 .featureCard p,
 .audienceGroup p,
 .stepContent p {
   font-size: 0.95rem;
-  color: var(--text-medium);
+  color: var(--text-secondary);
+  line-height: 1.6;
 }
 
-/* ---------- STEPS ---------- */
 .step {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   text-align: left;
+  align-items: flex-start;
 }
 
 .stepNumber {
-  background: var(--primary-gradient);
-  color: white;
+  background: var(--accent-color);
+  color: var(--text-inverse);
+  font-family: var(--font-heading);
   font-weight: 700;
-  width: 36px;
-  height: 36px;
-  min-width: 36px;
-  min-height: 36px;
-  border-radius: 10px;
-
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  min-height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-
-  align-self: flex-start; /* 🔥 НЕ дає розтягуватись */
+  box-shadow: 0 4px 10px rgba(197, 164, 126, 0.4);
 }
 
+.stepContent h3 {
+  font-family: var(--font-heading);
+  font-size: 1.2rem;
+  margin: 0 0 0.5rem 0;
+  color: var(--text-main);
+}
 
-/* ---------- SOURCES ---------- */
 .sourceCategory h3 {
+  font-family: var(--font-heading);
   font-size: 1.1rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  color: var(--text-main);
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.5rem;
 }
 
 .sourceCategory ul {
@@ -165,41 +191,57 @@
 }
 
 .sourceCategory li {
-  padding: 0.35rem 0;
-  color: var(--text-medium);
+  padding: 0.5rem 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
 }
 
-/* ---------- CTA ---------- */
 .ctaSection {
   background: var(--primary-gradient);
-  color: white;
-  padding: 3.5rem 1.5rem;
-  border-radius: 24px;
+  color: var(--text-inverse);
+  padding: 4rem 2rem;
+  border-radius: var(--radius-lg);
   text-align: center;
-  margin-top: 3rem;
+  margin-top: 4rem;
+  box-shadow: var(--shadow-glass);
+  position: relative;
+  overflow: hidden;
+}
+
+.ctaSection h2 {
+  font-family: var(--font-heading);
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.ctaSection p {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto 2.5rem;
 }
 
 .ctaButtons {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   justify-content: center;
   flex-wrap: wrap;
-  margin-top: 2rem;
 }
 
-/* 👉 НОВІ КНОПКИ */
 .ctaButton {
   min-width: 180px;
-  padding: 0.85rem 2.2rem;
-  border-radius: 12px;
+  padding: 1rem 2.5rem;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
   font-weight: 600;
-  font-size: 1rem;
-  letter-spacing: 0.02em;
+  font-size: 0.95rem;
+  letter-spacing: 0.05em;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  transition: box-shadow 0.25s ease, background 0.25s ease, color 0.25s ease;
+  text-transform: uppercase;
+  transition: var(--transition);
 }
 
 .primary {
@@ -208,35 +250,36 @@
 }
 
 .primary:hover {
-  box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+  background: var(--accent-color);
+  color: var(--text-inverse);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
 }
 
 .secondary {
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.5);
+  background: transparent;
+  border: 1px solid rgba(255,255,255,0.4);
   color: #fff;
 }
 
 .secondary:hover {
-  background: rgba(255,255,255,0.25);
-  box-shadow: 0 8px 22px rgba(0,0,0,0.25);
+  background: rgba(255,255,255,0.1);
+  border-color: #fff;
 }
 
 .tertiary {
   background: transparent;
-  border: 1px solid rgba(255,255,255,0.4);
-  color: rgba(255,255,255,0.9);
+  color: rgba(255,255,255,0.8);
+  border: 1px solid transparent;
 }
 
 .tertiary:hover {
-  background: rgba(255,255,255,0.15);
-  box-shadow: 0 8px 22px rgba(0,0,0,0.2);
+  color: #fff;
+  text-decoration: underline;
 }
 
-/* ---------- RESPONSIVE ---------- */
 @media (max-width: 768px) {
-  .heroTitle { font-size: 2.2rem; }
+  .heroTitle { font-size: 2.5rem; }
   .section { padding: 1.5rem; }
-  .step { flex-direction: column; text-align: center; }
+  .step { flex-direction: column; text-align: center; align-items: center; }
+  .content { margin-top: -2rem; }
 }
-

@@ -39,7 +39,6 @@ export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor 
       if (fieldKey === 'greenSpaces' || fieldKey === 'unemploymentRate') {
          formatted += '%';
       }
-      
       return formatted;
     }
     
@@ -52,12 +51,7 @@ export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor 
   };
 
   return (
-    <div className={styles.statsGrid} style={{ 
-      display: 'grid', 
-      gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', 
-      gap: '20px', 
-      width: '100%' 
-    }}>
+    <div className={styles.statsGridContainer}>
       {Object.values(DISTRICT_CATEGORIES).map((category) => {
         if (isFree && category.isPremium) return null;
 
@@ -82,15 +76,9 @@ export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor 
               if (val === null || val === undefined) return null;
 
               return (
-                <div key={field.key} className={styles.statRow} style={{ 
-                  display: 'flex', 
-                  justifyContent: 'space-between', 
-                  padding: '8px 0', 
-                  borderBottom: '1px dashed #eee', 
-                  fontSize: '14px' 
-                }}>
-                  <span style={{ color: '#666' }}>{t(`common:fields.${field.key}`)}:</span>
-                  <strong style={{ color: 'var(--text-color)' }}>
+                <div key={field.key} className={styles.statRow}>
+                  <span className={styles.statLabel}>{t(`common:fields.${field.key}`)}</span>
+                  <strong className={styles.statValue}>
                     {formatValue(val, field.type, field.key)}
                   </strong>
                 </div>

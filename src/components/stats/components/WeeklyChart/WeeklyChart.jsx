@@ -32,7 +32,9 @@ export default function WeeklyChart({ data = [] }) {
     <div className={styles.section}>
       <div className={styles.header}>
         <div className={styles.titleWrapper}>
-           <FaHistory className={styles.icon} />
+           <div className={styles.iconWrapper}>
+             <FaHistory className={styles.icon} />
+           </div>
            <h2 className={styles.title}>{t('stats_page.weekly_activity')}</h2>
         </div>
       </div>
@@ -45,19 +47,21 @@ export default function WeeklyChart({ data = [] }) {
               
               <div className={styles.activityBars}>
                 <div 
-                  className={`${styles.activityBar} ${styles.barPurple}`} 
-                  style={{ height: `${Math.max((day.searches || 0) * scale, 4)}px` }}
-                  title={`${t('stats_page.searches')}: ${day.searches}`}
+                  className={`${styles.activityBar} ${styles.barPrimary}`} 
+                  style={{ height: `${Math.max((day.searches || 0) * scale, 6)}%` }}
                 >
-                  {day.searches > 0 && <span className={styles.barLabel}>{day.searches}</span>}
+                  <div className={styles.tooltip}>
+                    {t('stats_page.searches')}: {day.searches}
+                  </div>
                 </div>
 
                 <div 
-                  className={`${styles.activityBar} ${styles.barOrange}`} 
-                  style={{ height: `${Math.max((day.comparisons || 0) * scale, 4)}px` }}
-                  title={`${t('stats_page.comparisons')}: ${day.comparisons}`}
+                  className={`${styles.activityBar} ${styles.barSecondary}`} 
+                  style={{ height: `${Math.max((day.comparisons || 0) * scale, 6)}%` }}
                 >
-                  {day.comparisons > 0 && <span className={styles.barLabel}>{day.comparisons}</span>}
+                  <div className={styles.tooltip}>
+                    {t('stats_page.comparisons')}: {day.comparisons}
+                  </div>
                 </div>
               </div>
             </div>
@@ -71,11 +75,11 @@ export default function WeeklyChart({ data = [] }) {
 
       <div className={styles.legend}>
         <div className={styles.legendItem}>
-          <div className={`${styles.legendColor} ${styles.bgPurple}`}></div>
+          <div className={`${styles.legendColor} ${styles.bgPrimary}`}></div>
           <span>{t('stats_page.legend_searches')}</span>
         </div>
         <div className={styles.legendItem}>
-          <div className={`${styles.legendColor} ${styles.bgOrange}`}></div>
+          <div className={`${styles.legendColor} ${styles.bgSecondary}`}></div>
           <span>{t('stats_page.legend_comparisons')}</span>
         </div>
       </div>

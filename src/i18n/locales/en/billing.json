@@ -1,0 +1,42 @@
+{
+  "page_title": "Subscription & Payments",
+  "page_subtitle": "Management and transaction history",
+  "current_sub": "Current Subscription",
+  "plan_label": "Plan",
+  "price_label": "Price",
+  "next_payment": "Next payment",
+  "update_plan": "Change plan",
+  "cancel_sub": "Cancel subscription",
+  "history_title": "Payment History",
+  "transactions": "transactions",
+  "cancel_btn": "Cancel subscription",
+  "no_history": "Payment history is empty",
+  "error_load": "Failed to load history",
+  "cancel_confirm": "Are you sure you want to cancel your subscription? You will lose access to Premium features after the current period ends.",
+  "error_cancel": "Failed to cancel subscription",
+  "processing": "Processing...",
+  "download_invoice": "Download invoice",
+  "ending_soon": "Cancelling",
+  "actions": {
+    "prev": "Back",
+    "next": "Next"
+  },
+  "table": {
+    "date": "Date",
+    "plan": "Plan",
+    "amount": "Amount",
+    "method": "Method",
+    "status": "Status",
+    "invoice": "Invoice"
+  },
+  "status_map": {
+    "active": "Active",
+    "cancelled": "Cancelled",
+    "canceled": "Cancelled",
+    "incomplete_expired": "Unpaid",
+    "incomplete": "Incomplete",
+    "past_due": "Past due",
+    "unpaid": "Unpaid",
+    "trialing": "Trial period"
+  }
+}

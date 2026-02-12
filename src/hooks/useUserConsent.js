@@ -10,74 +10,94 @@ export const useUserConsent = () => {
   const [hasConsent, setHasConsent] = useState(false);
   const [authReady, setAuthReady] = useState(false);
   
-  const consentChecked = useRef(false);
+  const isSafeRoute = SAFE_ROUTES.includes(location.pathname);
+  const checkRunning = useRef(false);
 
   useEffect(() => {
-    const checkConsent = async () => {
-      if (sessionStorage.getItem('rodo_accepted') === 'true') {
-        setHasConsent(true);
-        setAuthReady(true);
-        return;
-      }
+    let mounted = true;
+
+    const runCheck = async () => {
+      if (checkRunning.current) return;
+      checkRunning.current = true;
 
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session?.user) {
-        if (consentChecked.current) return;
+        const metaConsent = session.user.user_metadata?.rodo_accepted;
         
-        try {
-            const status = await userConsentApi.checkConsentStatus(session.user.id);
-            if (status) {
-                setHasConsent(true);
-                sessionStorage.setItem('rodo_accepted', 'true');
-            }
-        } catch (e) {
-            console.error(e);
-        } finally {
-            consentChecked.current = true;
+        if (metaConsent) {
+          if (mounted) setHasConsent(true);
         }
+
+        try {
+          const dbStatus = await userConsentApi.checkConsentStatus(session.user.id);
+          
+          if (mounted) {
+            if (dbStatus === false) {
+              setHasConsent(false);
+              localStorage.removeItem('rodo_accepted');
+            } else {
+              setHasConsent(true);
+            }
+          }
+        } catch (e) {
+          console.error(e);
+          if (mounted && metaConsent) setHasConsent(true);
+        }
+      } else {
+        const localConsent = localStorage.getItem('rodo_accepted');
+        if (mounted) setHasConsent(localConsent === 'true');
       }
-      setAuthReady(true);
+      
+      if (mounted) setAuthReady(true);
+      checkRunning.current = false;
     };
 
-    checkConsent();
+    runCheck();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN') {
-         consentChecked.current = false;
-         checkConsent();
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        runCheck();
       } else if (event === 'SIGNED_OUT') {
-         setHasConsent(false);
-         sessionStorage.removeItem('rodo_accepted');
+        setHasConsent(false);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
-
-  const isSafeRoute = SAFE_ROUTES.includes(location.pathname);
-  const showRodoModal = authReady && !hasConsent && !isSafeRoute;
 
   const handleAcceptRodo = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    
+    setHasConsent(true);
+    localStorage.setItem('rodo_accepted', 'true');
 
-    const { error } = await userConsentApi.acceptConsent(user.id);
-    if (!error) {
-      setHasConsent(true);
-      sessionStorage.setItem('rodo_accepted', 'true');
-    } else {
-      throw new Error('Failed to save consent');
+    if (user) {
+      const { error } = await userConsentApi.acceptConsent(user.id);
+      
+      if (!error) {
+        await supabase.auth.updateUser({
+          data: { rodo_accepted: true }
+        });
+      } else {
+        setHasConsent(false);
+        localStorage.removeItem('rodo_accepted');
+        throw new Error('Failed to save consent');
+      }
     }
   };
 
   const handleDeclineRodo = async () => {
     await userConsentApi.signOut();
+    localStorage.removeItem('rodo_accepted');
     window.location.href = '/';
   };
 
   return { 
-    showRodoModal, 
+    showRodoModal: authReady && !hasConsent && !isSafeRoute,
     authReady, 
     handleAcceptRodo, 
     handleDeclineRodo 

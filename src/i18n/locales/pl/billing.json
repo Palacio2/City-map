@@ -1,0 +1,42 @@
+{
+  "page_title": "Subskrypcja i Płatności",
+  "page_subtitle": "Zarządzanie i historia transakcji",
+  "current_sub": "Obecna subskrypcja",
+  "plan_label": "Plan",
+  "price_label": "Cena",
+  "next_payment": "Następna płatność",
+  "update_plan": "Zmień plan",
+  "cancel_sub": "Anuluj subskrypcję",
+  "history_title": "Historia płatności",
+  "transactions": "transakcji",
+  "cancel_btn": "Anuluj subskrypcję",
+  "no_history": "Historia płatności jest pusta",
+  "error_load": "Nie udało się pobrać historii",
+  "cancel_confirm": "Czy na pewno chcesz anulować subskrypcję? Utracisz dostęp do funkcji Premium po zakończeniu obecnego okresu.",
+  "error_cancel": "Nie udało się anulować subskrypcji",
+  "processing": "Przetwarzanie...",
+  "download_invoice": "Pobierz fakturę",
+  "ending_soon": "Anulowanie",
+  "actions": {
+    "prev": "Wstecz",
+    "next": "Dalej"
+  },
+  "table": {
+    "date": "Data",
+    "plan": "Plan",
+    "amount": "Kwota",
+    "method": "Metoda",
+    "status": "Status",
+    "invoice": "Faktura"
+  },
+  "status_map": {
+    "active": "Aktywna",
+    "cancelled": "Anulowana",
+    "canceled": "Anulowana",
+    "incomplete_expired": "Nieopłacona",
+    "incomplete": "Niedokończona",
+    "past_due": "Zaległa",
+    "unpaid": "Nieopłacona",
+    "trialing": "Okres próbny"
+  }
+}

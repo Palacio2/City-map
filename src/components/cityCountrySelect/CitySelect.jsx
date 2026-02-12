@@ -1,43 +1,59 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SelectForm, { StatusView } from '@ui/selectForm/SelectForm';
 import { fetchCitiesByCountry, createSelectOptions } from '@api/cityCountrySelect';
 
-export default function CitySelect() {
+export default function CitySelect({ country: propCountry }) {
   const { t } = useTranslation('select');
-  const { country } = useParams();
-  const decodedCountry = decodeURIComponent(country || '');
+  const { country: paramCountry } = useParams();
+  const navigate = useNavigate();
+
+  const effectiveCountry = propCountry || paramCountry;
+  
+  const decodedCountry = useMemo(() => 
+    effectiveCountry ? decodeURIComponent(effectiveCountry) : '', 
+  [effectiveCountry]);
   
   const [cities, setCities] = useState([]);
   const [selected, setSelected] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(!!decodedCountry);
+  const [fetchError, setFetchError] = useState(null);
+
+  const validationError = !decodedCountry && !propCountry ? t('country_missing') : null;
+  const displayError = fetchError || validationError;
 
   useEffect(() => {
-    if (!decodedCountry) {
-      setError(t('country_missing'));
-      setLoading(false);
-      return;
-    }
+    if (!decodedCountry) return;
 
-    setLoading(true);
+    let isMounted = true;
+    
     fetchCitiesByCountry(decodedCountry)
-      .then(data => setCities(data.map(c => ({ ...c, name: c.name || c.value }))))
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
-  }, [decodedCountry, t]);
+      .then(data => {
+        if (isMounted) {
+          setCities(data.map(c => ({ ...c, name: c.name || c.value })));
+        }
+      })
+      .catch(err => {
+        if (isMounted) setFetchError(err.message);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => { isMounted = false; };
+  }, [decodedCountry]);
 
   const handleBack = () => navigate(-1);
 
-  if (error || !decodedCountry) {
+  if (displayError) {
     return (
       <StatusView 
         title={t('error')} 
-        error={error || t('country_not_found')} 
+        error={displayError || t('country_not_found')} 
         onBack={handleBack} 
-        showRetry={!!error} 
+        showRetry={!!fetchError}
+        onRetry={() => window.location.reload()}
       />
     );
   }
@@ -52,7 +68,9 @@ export default function CitySelect() {
       onValueChange={setSelected}
       onSubmit={(e) => {
         e.preventDefault();
-        if (selected) navigate(`/map/${encodeURIComponent(country)}/${encodeURIComponent(selected)}`);
+        if (selected) {
+             navigate(`/map/${encodeURIComponent(decodedCountry)}/${encodeURIComponent(selected)}`);
+        }
       }}
       onBack={handleBack}
       showBackButton

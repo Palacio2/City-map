@@ -1,32 +1,31 @@
-html, body {
-  width: 100%;
-  overflow-x: hidden;
-}
-
 .banner {
   position: fixed;
   left: 50%;
   bottom: 20px;
   transform: translateX(-50%);
-  width: min(800px, calc(100% - 40px));
-  background: var(--bg-white);
-  backdrop-filter: blur(10px);
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  padding: 16px 24px;
+  width: min(900px, calc(100% - 40px));
+  
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  
+  border: 1px solid var(--border-accent);
+  border-radius: var(--radius-md);
+  padding: 1.25rem 2rem;
+  
   display: flex;
-  gap: 20px;
+  gap: 1.5rem;
   align-items: center;
   justify-content: space-between;
+  
   z-index: 9999;
   box-shadow: var(--shadow-modal);
   box-sizing: border-box;
-  animation: slideUpPC .4s ease-out forwards;
-  transition: background-color 0.3s ease, border-color 0.3s ease;
+  animation: slideUpPC .4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 [data-theme='dark'] .banner {
-  background: rgba(30, 30, 30, 0.98);
+  background: rgba(18, 18, 18, 0.95);
 }
 
 @keyframes slideUpPC {
@@ -36,83 +35,111 @@ html, body {
 
 .content { 
   display: flex; 
-  gap: 14px; 
+  gap: 1rem; 
   flex: 1; 
   align-items: center; 
 }
 
 .iconWrapper { 
-  background: rgba(255, 165, 0, 0.12); 
-  padding: 10px; 
-  border-radius: 50%; 
+  background: rgba(197, 164, 126, 0.15); /* Accent tint */
+  width: 46px;
+  height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  
+  border-radius: 50%;
+  flex-shrink: 0;
+  
+  /* Можна додати тонкий бордер, якщо потрібно */
+  border: 1px solid rgba(197, 164, 126, 0.2);
 }
 
 .icon { 
-  color: #ffa500; 
-  font-size: 1.4rem; 
+  color: var(--accent-color); 
+  font-size: 1.4rem;
+  line-height: 1;
+  display: block;
 }
 
 .text p { 
   margin: 0; 
-  color: var(--text-dark); 
-  font-size: .95rem; 
-  line-height: 1.45; 
+  color: var(--text-main); 
+  font-size: 0.95rem; 
+  line-height: 1.5; 
+  font-family: var(--font-body);
 }
 
 .link { 
-  color: var(--primary-light); 
+  color: var(--accent-color); 
   text-decoration: underline; 
+  text-decoration-color: var(--border-accent);
   white-space: nowrap; 
+  transition: var(--transition);
+}
+
+.link:hover {
+  color: var(--accent-hover);
 }
 
 .actions { 
   display: flex; 
-  gap: 12px; 
+  gap: 1rem; 
+  align-items: center;
 }
 
 .acceptBtn { 
-  background: var(--primary-light); 
+  background: var(--text-main); 
   border: none; 
-  padding: 10px 20px; 
-  color: white; 
-  border-radius: 6px; 
+  padding: 0.7rem 1.5rem; 
+  color: var(--bg-surface); 
+  border-radius: var(--radius-sm); 
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
   font-weight: 600; 
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: var(--transition);
+  white-space: nowrap;
 }
 
 .acceptBtn:hover {
+  background: var(--accent-color);
+  color: #fff;
   transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .closeBtn { 
   background: none; 
   border: none; 
-  color: var(--text-light); 
+  color: var(--text-secondary); 
   font-size: 1.2rem; 
   cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
 }
 
-@media (max-width: 600px) {
+.closeBtn:hover {
+  color: var(--text-main);
+  transform: rotate(90deg);
+}
+
+@media (max-width: 768px) {
   .banner {
-    position: fixed !important;
-    inset: auto 0 0 0 !important;
-    width: 100vw !important;
-    max-width: 100vw !important;
-    margin: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    bottom: 0;
+    left: 0;
     transform: none !important;
-
     border-radius: 20px 20px 0 0;
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-
-    padding: 16px 14px;
-    padding-bottom: calc(14px + env(safe-area-inset-bottom));
-
+    border: none;
+    border-top: 1px solid var(--border-color);
+    padding: 1.5rem;
     flex-direction: column;
-    gap: 12px;
-
+    align-items: stretch;
     animation: slideUpMobile .35s cubic-bezier(.4, 0, .2, 1) forwards;
   }
 
@@ -121,13 +148,17 @@ html, body {
     to   { transform: translateY(0); opacity: 1; }
   }
 
-  .content { width: 100%; justify-content: center; }
-  .text p { text-align: center; font-size: .85rem; }
-  .actions { width: 100%; }
-  .acceptBtn { flex: 1; padding: 12px; }
-  .closeBtn {
-    background: var(--bg-hover);
-    border-radius: 10px;
-    padding: 12px;
+  .content { 
+    align-items: flex-start;
+  }
+  
+  .actions { 
+    width: 100%; 
+    justify-content: space-between;
+  }
+  
+  .acceptBtn { 
+    flex: 1; 
+    padding: 1rem; 
   }
 }

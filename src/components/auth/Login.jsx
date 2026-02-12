@@ -1,15 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@supabaseClient';
 import AuthForm from '@ui/authForm/AuthForm';
 import useAuthRedirect from '@hooks/useAuthRedirect'; 
 import { useSocialLogin } from '@hooks/useSocialLogin';
-import { validateLoginForm } from './validation';
+import { validateLoginForm, sanitizePassword } from './validation';
+import styles from '@ui/authForm/AuthForm.module.css';
 
 const LoadingScreen = () => (
-  <div className="loading-container">
-    <div className="spinner">...</div>
+  <div className={styles.container}>
+    <div className={styles.spinner} style={{ borderTopColor: 'var(--accent-color)', width: '40px', height: '40px' }}></div>
   </div>
 );
 
@@ -18,39 +19,52 @@ export default function Login() {
   const navigate = useNavigate();
   const isAutoLoginAttempted = useAuthRedirect();
   
-  const [formData, setFormData] = useState({ 
-    email: '', 
-    password: '',
-    rememberMe: false
+  const [formData, setFormData] = useState(() => {
+    const rememberMe = localStorage.getItem('rememberMe') === 'true';
+    const savedEmail = localStorage.getItem('userEmail') || '';
+    return { 
+      email: rememberMe ? savedEmail : '', 
+      password: '',
+      rememberMe: rememberMe
+    };
   });
+
   const [passwordVisibility, setPasswordVisibility] = useState({});
   const [isLoading, setIsLoading] = useState(false);
   const [errors, setErrors] = useState({});
 
   const socialLogin = useSocialLogin(setIsLoading, setErrors);
   
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const handleChange = useCallback((e) => {
+    let { name, value, type, checked } = e.target;
+    
+    if (type !== 'checkbox') {
+        if (name === 'password') value = sanitizePassword(value);
+    }
+
     setFormData(prev => ({ 
       ...prev, 
       [name]: type === 'checkbox' ? checked : value 
     }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
-  };
+    
+    setErrors(prev => (prev[name] ? { ...prev, [name]: '' } : prev));
+  }, []);
 
-  const handleTogglePassword = (fieldName) => {
-    setPasswordVisibility(prev => ({
-      ...prev,
-      [fieldName]: !prev[fieldName]
-    }));
-  };
+  const handleTogglePassword = useCallback((fieldName) => {
+    setPasswordVisibility(prev => ({ ...prev, [fieldName]: !prev[fieldName] }));
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
     setIsLoading(true);
     setErrors({});
 
-    const validationErrors = validateLoginForm(formData, t);
+    const formToSubmit = {
+      ...formData,
+      email: formData.email.trim()
+    };
+
+    const validationErrors = validateLoginForm(formToSubmit, t);
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
       setIsLoading(false);
@@ -58,11 +72,8 @@ export default function Login() {
     }
 
     try {
-      const { email, password, rememberMe } = formData;
-      const { error } = await supabase.auth.signInWithPassword({ 
-        email, 
-        password 
-      });
+      const { email, password, rememberMe } = formToSubmit;
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
 
       if (error) throw error;
       
@@ -81,22 +92,7 @@ export default function Login() {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  useEffect(() => {
-    if (isAutoLoginAttempted) {
-      const rememberMe = localStorage.getItem('rememberMe');
-      const savedEmail = localStorage.getItem('userEmail');
-      
-      if (rememberMe === 'true' && savedEmail) {
-        setFormData(prev => ({ 
-          ...prev, 
-          email: savedEmail,
-          rememberMe: true 
-        }));
-      }
-    }
-  }, [isAutoLoginAttempted]);
+  }, [formData, navigate, t]);
 
   if (!isAutoLoginAttempted) {
     return <LoadingScreen />;

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictsMap.module.css';
@@ -81,10 +81,6 @@ export default function DistrictsMap({
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
-
-  useEffect(() => {
-    setCurrentPage(1);
-  }, [districts.length, selectedFilters]);
 
   const paginatedDistricts = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;

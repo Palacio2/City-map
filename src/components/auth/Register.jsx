@@ -1,15 +1,16 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@supabaseClient';
 import AuthForm from '@ui/authForm/AuthForm';
 import useAuthRedirect from '@hooks/useAuthRedirect';
 import { useSocialLogin } from '@hooks/useSocialLogin';
-import { validateRegisterForm } from './validation';
+import { validateRegisterForm, sanitizeName, sanitizePassword } from './validation';
+import styles from '@ui/authForm/AuthForm.module.css';
 
 const LoadingScreen = () => (
-  <div className="loading-container">
-    <div className="spinner">...</div>
+  <div className={styles.container}>
+    <div className={styles.spinner} style={{ borderTopColor: 'var(--accent-color)', width: '40px', height: '40px' }}></div>
   </div>
 );
 
@@ -17,7 +18,6 @@ export default function Register() {
   const { t } = useTranslation('auth');
   const navigate = useNavigate();
   const isAutoLoginAttempted = useAuthRedirect();
-
   const isSubmittingRef = useRef(false);
 
   const [formData, setFormData] = useState({
@@ -29,25 +29,30 @@ export default function Register() {
 
   const socialLogin = useSocialLogin(setIsLoading, setErrors);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  const handleChange = useCallback((e) => {
+    let { name, value } = e.target;
+
+    if (name === 'name') value = sanitizeName(value);
+    if (name === 'password' || name === 'confirmPassword') value = sanitizePassword(value);
+
     setFormData(prev => ({ ...prev, [name]: value }));
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
-  };
+    setErrors(prev => (prev[name] ? { ...prev, [name]: '' } : prev));
+  }, []);
 
-  const handleTogglePassword = (fieldName) => {
-    setPasswordVisibility(prev => ({
-      ...prev,
-      [fieldName]: !prev[fieldName]
-    }));
-  };
+  const handleTogglePassword = useCallback((fieldName) => {
+    setPasswordVisibility(prev => ({ ...prev, [fieldName]: !prev[fieldName] }));
+  }, []);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = useCallback(async (e) => {
     e.preventDefault();
-    
     if (isSubmittingRef.current) return;
 
-    const formErrors = validateRegisterForm(formData, t);
+    const formToSubmit = {
+      ...formData,
+      email: formData.email.trim()
+    };
+
+    const formErrors = validateRegisterForm(formToSubmit, t);
     if (Object.keys(formErrors).length > 0) {
       setErrors(formErrors);
       return;
@@ -58,12 +63,10 @@ export default function Register() {
     
     try {
       const { data, error } = await supabase.auth.signUp({
-        email: formData.email.trim(),
-        password: formData.password,
+        email: formToSubmit.email,
+        password: formToSubmit.password,
         options: {
-          data: {
-            full_name: formData.name.trim(),
-          },
+          data: { full_name: formToSubmit.name.trim() },
           emailRedirectTo: `${window.location.origin}/auth/callback`
         }
       });
@@ -73,20 +76,22 @@ export default function Register() {
       if (data.user && data.user.identities && data.user.identities.length === 0) {
         setErrors({ submit: t('errors.user_exists') });
       } else {
-        navigate('/register-success', { state: { email: formData.email } });
+        navigate('/register-success', { state: { email: formToSubmit.email } });
       }
 
     } catch (error) {
       let errorMessage = t('errors.generic');
-      if (error.message && error.message.includes('already registered')) errorMessage = t('errors.user_exists');
-      if (error.message && error.message.includes('password')) errorMessage = t('errors.password_short');
+      const msg = error.message?.toLowerCase() || '';
+      
+      if (msg.includes('already registered')) errorMessage = t('errors.user_exists');
+      else if (msg.includes('password')) errorMessage = t('errors.password_short');
       
       setErrors({ submit: errorMessage });
     } finally {
       setIsLoading(false);
       isSubmittingRef.current = false;
     }
-  };
+  }, [formData, navigate, t]);
 
   if (!isAutoLoginAttempted) {
     return <LoadingScreen />;

@@ -9,9 +9,9 @@ import styles from './ComparisonTable.module.css';
 export default function ComparisonTable({ districts }) {
   const { t } = useTranslation(['comparison', 'common']);
 
-  if (!districts?.length) return null;
-
   const rows = useMemo(() => {
+    if (!districts?.length) return [];
+
     const generalSection = [
       { type: 'header', title: t('common:categories.finance_population') },
       { label: `${t('common:fields.propertyPricePerSqm')} (${t('common:units.sqm')})`, key: 'filterData.utilities.propertyPricePerSqm', format: (v, d) => formatPrice(v, d.country) },
@@ -35,7 +35,6 @@ export default function ComparisonTable({ districts }) {
             formatter = (v) => v ? <span className={styles.rating}>{renderRating(v)}</span> : '-';
             break;
           case 'boolean':
-            // Використовуємо іконки для таблиці
             formatter = (v) => formatBoolean(v, t, true, styles);
             break;
           case 'crimeLevel':
@@ -50,7 +49,6 @@ export default function ComparisonTable({ districts }) {
             break;
         }
 
-        // Спеціальне форматування одиниць виміру
         if (field.key === 'avgParkSize' || field.key === 'transportAvgDistance') {
            formatter = (v) => formatNumber(v, ` ${t('common:units.m')}`);
            if (field.key === 'avgParkSize') formatter = (v) => formatNumber(v, ` ${t('common:units.sqm')}`);
@@ -75,14 +73,16 @@ export default function ComparisonTable({ districts }) {
     return [...generalSection, ...dynamicSections];
   }, [districts, t]);
 
+  if (!districts?.length) return null;
+
   return (
     <div className={styles.tableWrapper}>
       <table className={styles.table}>
         <thead>
           <tr>
-            <th className={styles.metricCol}></th>
+            <th className={`${styles.th} ${styles.firstCol}`}></th>
             {districts.map((d, i) => (
-              <th key={d.id || i} className={styles.districtCol}>
+              <th key={d.id || i} className={styles.th}>
                 <div className={styles.districtHeader}>
                   <span className={styles.dName}>{d.name}</span>
                   <span className={styles.dCity}><FaMapMarkerAlt /> {d.city}</span>
@@ -96,17 +96,18 @@ export default function ComparisonTable({ districts }) {
             if (row.type === 'header') {
               return (
                 <tr key={`h-${rowIdx}`} className={styles.sectionHeader}>
-                  <td colSpan={districts.length + 1}>{row.title}</td>
+                  <td className={`${styles.td} ${styles.firstCol}`}>{row.title}</td>
+                  {districts.map((_, i) => <td key={i} className={styles.headerSpacer}></td>)}
                 </tr>
               );
             }
             return (
               <tr key={`r-${rowIdx}`} className={styles.dataRow}>
-                <td className={styles.metricName}>{row.label}</td>
+                <td className={`${styles.td} ${styles.firstCol} ${styles.metricName}`}>{row.label}</td>
                 {districts.map((d, colIdx) => {
                   const rawVal = getValue(d, row.key);
                   const displayVal = row.format ? row.format(rawVal, d) : (rawVal ?? '-');
-                  return <td key={colIdx}>{displayVal}</td>;
+                  return <td key={colIdx} className={styles.td}>{displayVal}</td>;
                 })}
               </tr>
             );

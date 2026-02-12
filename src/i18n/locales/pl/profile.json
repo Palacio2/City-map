@@ -1,6 +1,7 @@
 {
   "title": "Moje konto",
-  "subtitle": "Zarządzaj swoją subskrypcją i ustawieniami",
+  "expires": "Wygasa: {{date}}",
+  "subtitle": "Zarządzaj ustawieniami profilu",
   "user_profile": "Profil użytkownika",
   "labels": {
     "name": "Imię:",
@@ -12,87 +13,52 @@
   },
   "actions": {
     "edit": "Edytuj profil",
-    "change_password": "Zmień hasło",
     "manage_subscription": "Zarządzaj subskrypcją",
-    "choose_plan": "Wybierz taryfę",
+    "hide_details": "Ukryj szczegóły",
+    "show_details": "Pokaż szczegóły",
+    "change_password": "Zmień hasło",
     "back_to_profile": "Powrót do profilu",
     "hide_password": "Ukryj hasło",
     "show_password": "Pokaż hasło"
-  },
-  "subscription": {
-    "title": "Subskrypcja",
-    "plan": "Taryfa: {{plan}}",
-    "expires": "Wygasa: {{date}}",
-    "cancelled_notice": "Subskrypcja anulowana, ale aktywna do {{date}}",
-    "expired_notice": "Subskrypcja wygasła w dniu {{date}}",
-    "features_title": "Dostępne funkcje:",
-    "status": {
-      "active": "Aktywna",
-      "inactive": "Nieaktywna",
-      "cancelled": "Anulowana",
-      "expired": "Wygasła",
-      "free": "Darmowa"
-    }
-  },
-  "quick_actions": {
-    "stats_title": "Statystyki użytkowania",
-    "stats_desc": "Zobacz swoją aktywność",
-    "billing_title": "Historia płatności",
-    "billing_desc": "Zobacz wszystkie transakcje",
-    "locked": "Wymagana subskrypcja Premium"
   },
   "edit_page": {
     "title": "Edycja profilu",
     "subtitle": "Zaktualizuj swoje dane osobowe",
     "main_info": "Informacje podstawowe",
-    "enter_data": "Wpisz swoje dane osobowe",
+    "enter_data": "Wprowadź swoje dane osobowe",
     "placeholders": {
       "name": "Wpisz swoje imię",
       "email": "Wpisz swój email",
       "phone": "991234567"
     },
-    "email_warning": "Po zapisaniu na ten adres zostanie wysłany e-mail potwierdzający",
-    "email_update_sent": "Profil zaktualizowany. E-mail potwierdzający został wysłany na nowy adres.",
+    "email_warning": "Po zapisaniu na ten adres zostanie wysłany e-mail weryfikacyjny",
+    "email_update_sent": "Profil zaktualizowany. E-mail weryfikacyjny wysłano na nowy adres.",
     "errors": {
-      "load_failed": "Nie udało się załadować danych profilu",
-      "name_long": "Imię jest za długie (maks. 30 znaków)",
+      "load_failed": "Nie udało się pobrać danych profilu",
+      "name_long": "Imię zbyt długie (maks. 30 znaków)",
       "name_required": "Proszę podać imię",
-      "name_latin_only": "Imię musi zawierać tylko litery alfabetu łacińskiego", 
+      "name_latin_only": "Imię może zawierać tylko litery łacińskie",
       "email_required": "Proszę podać email",
       "email_invalid": "Nieprawidłowy format email",
       "save_error": "Błąd podczas zapisywania",
-      "phone_length": "Numer jest za krótki (minimum {{count}} cyfr)",
+      "phone_length": "Numer zbyt krótki (minimum {{count}} cyfr)",
       "email_invalid_format": "Niepoprawny format email",
-      "phone_too_long": "Numer jest za długi"
+      "phone_too_long": "Numer zbyt długi"
     },
     "success": "Profil został pomyślnie zaktualizowany"
-  },
-  "errors": {
-    "auth_error": "Błąd autoryzacji. Zaloguj się ponownie.",
-    "network_error": "Problemy z połączeniem internetowym.",
-    "user_not_found": "Użytkownik nie został znaleziony.",
-    "email_taken": "Ten email jest już używany przez innego użytkownika.",
-    "email_invalid_format": "Niepoprawny format email (odrzucony przez serwer).",
-    "too_many_requests": "Zbyt wiele prób. Spróbuj później.",
-    "unknown_error": "Wystąpił nieznany błąd."
   },
   "password_page": {
     "title": "Zmiana hasła",
     "subtitle": "Zaktualizuj hasło, aby zwiększyć bezpieczeństwo konta",
     "form_title": "Bezpieczeństwo konta",
-    "form_subtitle": "Wpisz nowe hasło",
+    "form_subtitle": "Wprowadź nowe hasło, aby zaktualizować",
     "new_pass": "Nowe hasło",
     "confirm_pass": "Potwierdź nowe hasło",
     "tips_title": "Wskazówki dotyczące bezpiecznego hasła",
     "tips": [
-      "Użyj co najmniej 8 znaków",
+      "Używaj co najmniej 8 znaków",
       "Dodaj wielkie litery, cyfry i znaki specjalne",
-      "Unikaj danych osobowych",
-      "Nie używaj tego samego hasła w różnych serwisach",
-      "Unikaj sekwencji (123456, qwerty)",
-      "Zaleca się korzystanie z menedżera haseł",
-      "Okresowo aktualizuj swoje hasła",
-      "Włącz uwierzytelnianie dwuskładnikowe"
+      "Unikaj danych osobistych"
     ],
     "placeholders": {
       "new": "Wpisz nowe hasło (min. 8 znaków)",
@@ -100,37 +66,10 @@
     },
     "errors": {
       "length": "Nowe hasło musi mieć co najmniej 8 znaków",
-      "mismatch": "Hasła nie są identyczne",
+      "mismatch": "Nowe hasła nie są identyczne",
       "regex": "Hasło musi zawierać wielkie/małe litery, cyfry i znaki specjalne",
       "unknown": "Wystąpił nieznany błąd"
     },
     "success": "Hasło zostało pomyślnie zmienione!"
-  },
-  "billing_page": {
-    "title": "Subskrypcja i Płatności",
-    "subtitle": "Zarządzanie i historia transakcji",
-    "current_sub": "Aktualna subskrypcja",
-    "plan_label": "Taryfa:",
-    "price_label": "Cena:",
-    "next_payment": "Następna płatność:",
-    "update_plan": "Zmień plan",
-    "cancel_sub": "Anuluj subskrypcję",
-    "history_title": "Historia płatności",
-    "transactions": "transakcji",
-    "cancel_btn": "Anuluj subskrypcję",
-    "method_online": "Karta",
-    "no_history": "Historia płatności jest pusta",
-    "error_load": "Nie udało się załadować historii",
-    "cancel_confirm": "Czy na pewno chcesz anulować? Stracisz dostęp do funkcji Premium po zakończeniu obecnego okresu.",
-    "error_cancel": "Nie udało się anulować subskrypcji",
-    "processing": "Przetwarzanie...",
-    "table": {
-      "date": "Data",
-      "plan": "Taryfa",
-      "amount": "Kwota",
-      "method": "Metoda",
-      "status": "Status",
-      "invoice": "Faktura"
-    }
   }
 }

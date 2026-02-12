@@ -49,7 +49,7 @@ export default function ProfileEditPage() {
     }
   };
 
-const mapErrorToMessage = (error) => {
+  const mapErrorToMessage = (error) => {
     const msg = (error?.message || '').toLowerCase();
 
     if (msg.includes('invalid refresh token') || msg.includes('jwt')) return t('profile:errors.auth_error');

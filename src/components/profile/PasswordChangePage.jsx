@@ -20,7 +20,6 @@ const StatusMessage = ({ type, text }) => {
 };
 
 export default function PasswordChangePage() {
-    // 👇 Додано 'common'
     const { t } = useTranslation(['profile', 'auth', 'common']);
     const [formData, setFormData] = useState({ newPassword: '', confirmPassword: '' });
     const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
@@ -79,7 +78,7 @@ export default function PasswordChangePage() {
         <div className={styles.container}>
             <div className={styles.header}>
                 <Link to="/profile" className={styles.backButton}>
-                    <FaArrowLeft /> {t('profile:actions.back_to_profile')}
+                    <FaArrowLeft /> <span>{t('profile:actions.back_to_profile')}</span>
                 </Link>
                 <div className={styles.titleSection}>
                     <h1 className={styles.title}>{t('profile:password_page.title')}</h1>
@@ -88,8 +87,15 @@ export default function PasswordChangePage() {
             </div>
 
             <div className={styles.content}>
-                <div className={styles.section}>
+                <div className={styles.card}>
                     <form onSubmit={handleSubmit} className={styles.form}>
+                        <input 
+                            type="text" 
+                            name="username" 
+                            autoComplete="username" 
+                            style={{ display: 'none' }} 
+                        />
+
                         <div className={styles.formHeader}>
                             <h2 className={styles.formTitle}>{t('profile:password_page.form_title')}</h2>
                             <p className={styles.formSubtitle}>{t('profile:password_page.form_subtitle')}</p>
@@ -100,61 +106,63 @@ export default function PasswordChangePage() {
                             text={statusMessage.text} 
                         />
                         
-                        <div className={styles.formGroup}>
-                            <label htmlFor="newPassword" className={styles.formLabel}>
-                                <FaLock className={styles.labelIcon} />
-                                {t('profile:password_page.new_pass')}
-                            </label>
-                            <div className={styles.passwordInputContainer}>
-                                <input
-                                    id="newPassword"
-                                    name="newPassword"
-                                    type={showPasswords.new ? "text" : "password"}
-                                    className={styles.formInput}
-                                    value={formData.newPassword}
-                                    onChange={(e) => handleInputChange('newPassword', e.target.value)}
-                                    placeholder={t('profile:password_page.placeholders.new')}
-                                    required
-                                    disabled={isSaving}
-                                    autoComplete="new-password"
-                                />
-                                <button
-                                    type="button"
-                                    className={styles.passwordToggle}
-                                    onClick={() => togglePasswordVisibility('new')}
-                                    aria-label={showPasswords.new ? t('profile:actions.hide_password') : t('profile:actions.show_password')}
-                                >
-                                    {showPasswords.new ? <FaEyeSlash /> : <FaEye />}
-                                </button>
+                        <div className={styles.inputsWrapper}>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="newPassword" className={styles.formLabel}>
+                                    <FaLock className={styles.labelIcon} />
+                                    {t('profile:password_page.new_pass')}
+                                </label>
+                                <div className={styles.passwordInputContainer}>
+                                    <input
+                                        id="newPassword"
+                                        name="newPassword"
+                                        type={showPasswords.new ? "text" : "password"}
+                                        className={styles.formInput}
+                                        value={formData.newPassword}
+                                        onChange={(e) => handleInputChange('newPassword', e.target.value)}
+                                        placeholder={t('profile:password_page.placeholders.new')}
+                                        required
+                                        disabled={isSaving}
+                                        autoComplete="new-password"
+                                    />
+                                    <button
+                                        type="button"
+                                        className={styles.passwordToggle}
+                                        onClick={() => togglePasswordVisibility('new')}
+                                        aria-label={showPasswords.new ? t('profile:actions.hide_password') : t('profile:actions.show_password')}
+                                    >
+                                        {showPasswords.new ? <FaEyeSlash /> : <FaEye />}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <div className={styles.formGroup}>
-                            <label htmlFor="confirmPassword" className={styles.formLabel}>
-                                <FaLock className={styles.labelIcon} />
-                                {t('profile:password_page.confirm_pass')}
-                            </label>
-                            <div className={styles.passwordInputContainer}>
-                                <input
-                                    id="confirmPassword"
-                                    name="confirmPassword"
-                                    type={showPasswords.confirm ? "text" : "password"}
-                                    className={styles.formInput}
-                                    value={formData.confirmPassword}
-                                    onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
-                                    placeholder={t('profile:password_page.placeholders.confirm')}
-                                    required
-                                    disabled={isSaving}
-                                    autoComplete="new-password"
-                                />
-                                <button
-                                    type="button"
-                                    className={styles.passwordToggle}
-                                    onClick={() => togglePasswordVisibility('confirm')}
-                                    aria-label={showPasswords.confirm ? t('profile:actions.hide_password') : t('profile:actions.show_password')}
-                                >
-                                    {showPasswords.confirm ? <FaEyeSlash /> : <FaEye />}
-                                </button>
+                            <div className={styles.formGroup}>
+                                <label htmlFor="confirmPassword" className={styles.formLabel}>
+                                    <FaLock className={styles.labelIcon} />
+                                    {t('profile:password_page.confirm_pass')}
+                                </label>
+                                <div className={styles.passwordInputContainer}>
+                                    <input
+                                        id="confirmPassword"
+                                        name="confirmPassword"
+                                        type={showPasswords.confirm ? "text" : "password"}
+                                        className={styles.formInput}
+                                        value={formData.confirmPassword}
+                                        onChange={(e) => handleInputChange('confirmPassword', e.target.value)}
+                                        placeholder={t('profile:password_page.placeholders.confirm')}
+                                        required
+                                        disabled={isSaving}
+                                        autoComplete="new-password"
+                                    />
+                                    <button
+                                        type="button"
+                                        className={styles.passwordToggle}
+                                        onClick={() => togglePasswordVisibility('confirm')}
+                                        aria-label={showPasswords.confirm ? t('profile:actions.hide_password') : t('profile:actions.show_password')}
+                                    >
+                                        {showPasswords.confirm ? <FaEyeSlash /> : <FaEye />}
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
@@ -165,13 +173,11 @@ export default function PasswordChangePage() {
                                 className={`${styles.baseButton} ${styles.primaryButton}`}
                             >
                                 <FaSave className={styles.buttonIcon} />
-                                {/* 👇 Використовуємо common для saving */}
                                 {isSaving ? t('common:actions.saving') : t('profile:actions.change_password')}
                             </button>
 
                             <Link to="/profile" className={`${styles.baseButton} ${styles.secondaryButton}`}>
                                 <FaTimes className={styles.buttonIcon} />
-                                {/* 👇 Використовуємо common для cancel */}
                                 {t('common:actions.cancel')}
                             </Link>
                         </div>
@@ -184,7 +190,7 @@ export default function PasswordChangePage() {
                                 aria-expanded={isTipsOpen}
                             >
                                 <span className={styles.dropdownTitle}>
-                                    <FaShieldAlt />
+                                    <FaShieldAlt className={styles.shieldIcon}/>
                                     {t('profile:password_page.tips_title')}
                                 </span>
                                 <FaChevronDown 

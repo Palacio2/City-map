@@ -1,115 +1,147 @@
+.statsGridContainer {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .statCard {
-  background: var(--bg-white, #ffffff);
-  border: 1px solid var(--border-color, #e0e0e0);
-  border-radius: 16px;
-  padding: 24px;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+  box-shadow: var(--shadow-sm);
   width: 100%; 
   box-sizing: border-box;
   overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
 }
 
 .statCard:hover {
-  border-color: var(--primary-light, #60a5fa);
-  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.08);
+  border-color: var(--accent-color);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
+}
+
+:global([data-theme='dark']) .statCard {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+:global([data-theme='dark']) .statCard:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent-color);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
 }
 
 .cardHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 20px;
-  padding-bottom: 16px;
-  border-bottom: 1px solid var(--border-color, #e0e0e0);
-  gap: 10px;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-color);
+  gap: 1rem;
 }
 
 .cardTitle {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 12px;
   min-width: 0;
   flex: 1;
 }
 
 .cardIcon {
-  font-size: 24px;
-  width: 42px; 
-  height: 42px;
-  background: var(--primary-color, #007bff);
-  border-radius: 12px;
+  font-size: 1.25rem;
+  width: 40px; 
+  height: 40px;
+  background: rgba(197, 164, 126, 0.1); 
+  color: var(--accent-color);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: white;
-  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.2);
+  border: 1px solid var(--border-accent);
 }
 
 .cardTitle h3 {
   margin: 0;
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--text-dark, #333);
-  white-space: normal;
-  overflow-wrap: break-word;
-  word-break: break-word;
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-main);
   line-height: 1.3;
+  letter-spacing: 0.01em;
 }
 
 .cardRating {
-  font-size: 16px;
+  font-family: var(--font-body);
+  font-size: 0.9rem;
   font-weight: 700;
-  padding: 6px 10px;
-  border-radius: 10px;
-  min-width: 40px;
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
+  min-width: 36px;
   text-align: center;
   flex-shrink: 0;
 }
 
 .highRating {
-  color: #27ae60;
-  background: rgba(46, 204, 113, 0.15);
-  border: 1px solid #27ae60;
+  color: var(--success-color);
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.2);
 }
 .mediumRating {
-  color: #d35400;
-  background: rgba(243, 156, 18, 0.15);
-  border: 1px solid #d35400;
+  color: var(--warning-color);
+  background: rgba(234, 179, 8, 0.1);
+  border: 1px solid rgba(234, 179, 8, 0.2);
 }
 .lowRating {
-  color: #c0392b;
-  background: rgba(231, 76, 60, 0.15);
-  border: 1px solid #c0392b;
+  color: var(--danger-color);
+  background: rgba(239, 68, 68, 0.1);
+  border: 1px solid rgba(239, 68, 68, 0.2);
 }
 
 .cardStats {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0; 
+}
+
+.statRow {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px dashed var(--border-color);
+  font-size: 0.9rem;
+  align-items: center;
+}
+
+.statRow:last-child {
+  border-bottom: none;
+}
+
+.statLabel {
+  color: var(--text-secondary);
+}
+
+.statValue {
+  color: var(--text-main);
+  font-weight: 600;
+  text-align: right;
 }
 
 @media (max-width: 768px) {
+  .statsGridContainer {
+    grid-template-columns: 1fr; 
+    gap: 1rem;
+  }
   .statCard {
-    padding: 16px;
-    border-radius: 12px;
-  }
-  .cardHeader {
-    margin-bottom: 16px;
-    padding-bottom: 12px;
-  }
-  .cardTitle h3 {
-    font-size: 16px;
-  }
-  .cardIcon {
-    width: 36px;
-    height: 36px;
-    font-size: 20px;
-    border-radius: 10px;
-  }
-  .cardRating {
-    font-size: 14px;
-    padding: 4px 8px;
+    padding: 1.25rem;
   }
 }

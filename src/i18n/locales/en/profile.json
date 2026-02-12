@@ -1,136 +1,75 @@
 {
   "title": "My Account",
-  "subtitle": "Manage your subscription and settings",
+  "expires": "Expires: {{date}}",
+  "subtitle": "Manage profile settings",
   "user_profile": "User Profile",
   "labels": {
     "name": "Name:",
     "email": "Email:",
     "phone": "Phone:",
-    "full_name": "Full Name",
+    "full_name": "Full name",
     "user": "User",
-    "country_code": "Country Code"
+    "country_code": "Country code"
   },
   "actions": {
     "edit": "Edit Profile",
-    "change_password": "Change Password",
     "manage_subscription": "Manage Subscription",
-    "choose_plan": "Choose Plan",
+    "hide_details": "Hide details",
+    "show_details": "Show details",
+    "change_password": "Change Password",
     "back_to_profile": "Back to Profile",
-    "hide_password": "Hide Password",
-    "show_password": "Show Password"
-  },
-  "subscription": {
-    "title": "Subscription",
-    "plan": "Plan: {{plan}}",
-    "expires": "Expires: {{date}}",
-    "cancelled_notice": "Subscription cancelled, but active until {{date}}",
-    "expired_notice": "Subscription expired on {{date}}",
-    "features_title": "Available Features:",
-    "status": {
-      "active": "Active",
-      "inactive": "Inactive",
-      "cancelled": "Cancelled",
-      "expired": "Expired",
-      "free": "Free"
-    }
-  },
-  "quick_actions": {
-    "stats_title": "Usage Statistics",
-    "stats_desc": "View your activity",
-    "billing_title": "Payment History",
-    "billing_desc": "View all transactions",
-    "locked": "Premium Subscription Required"
+    "hide_password": "Hide password",
+    "show_password": "Show password"
   },
   "edit_page": {
     "title": "Edit Profile",
     "subtitle": "Update your personal information",
-    "main_info": "Main Information",
+    "main_info": "Basic Information",
     "enter_data": "Enter your personal details",
     "placeholders": {
       "name": "Enter your name",
       "email": "Enter your email",
       "phone": "991234567"
     },
-    "email_warning": "A confirmation email will be sent to this address after saving",
-    "email_update_sent": "Profile updated. A confirmation email has been sent to the new address.",
+    "email_warning": "A verification email will be sent to this address after saving",
+    "email_update_sent": "Profile updated. Verification email sent to new address.",
     "errors": {
       "load_failed": "Failed to load profile data",
       "name_long": "Name is too long (max 30 characters)",
-      "name_required": "Please enter a name",
-      "name_latin_only": "Name must contain only Latin letters", 
-      "email_required": "Please enter an email",
+      "name_required": "Please enter your name",
+      "name_latin_only": "Name must contain only Latin letters",
+      "email_required": "Please enter your email",
       "email_invalid": "Invalid email format",
       "save_error": "Error while saving",
       "phone_length": "Number is too short (minimum {{count}} digits)",
       "email_invalid_format": "Incorrect email format",
       "phone_too_long": "Number is too long"
     },
-    "success": "Profile updated successfully"
-  },
-  "errors": {
-    "auth_error": "Authorization error. Please log in again.",
-    "network_error": "Internet connection issues.",
-    "user_not_found": "User not found.",
-    "email_taken": "This email is already in use by another user.",
-    "email_invalid_format": "Incorrect email format (rejected by server).",
-    "too_many_requests": "Too many attempts. Try again later.",
-    "unknown_error": "An unknown error occurred."
+    "success": "Profile successfully updated"
   },
   "password_page": {
     "title": "Change Password",
     "subtitle": "Update your password to enhance account security",
     "form_title": "Account Security",
     "form_subtitle": "Enter a new password to update",
-    "new_pass": "New Password",
-    "confirm_pass": "Confirm New Password",
-    "tips_title": "Tips for a Secure Password",
+    "new_pass": "New password",
+    "confirm_pass": "Confirm new password",
+    "tips_title": "Tips for a secure password",
     "tips": [
       "Use at least 8 characters",
       "Include uppercase letters, numbers, and special characters",
-      "Avoid personal information",
-      "Do not use the same password for different services",
-      "Avoid sequences (123456, qwerty)",
-      "It is recommended to use a password manager",
-      "Update your passwords periodically",
-      "Enable two-factor authentication"
+      "Avoid personal information"
     ],
     "placeholders": {
-      "new": "Enter new password (minimum 8 characters)",
+      "new": "Enter new password (min 8 characters)",
       "confirm": "Repeat new password"
     },
     "errors": {
       "length": "New password must be at least 8 characters long",
-      "mismatch": "Passwords do not match",
-      "regex": "Password must include upper/lowercase letters, numbers, and special characters",
+      "mismatch": "New passwords do not match",
+      "regex": "Password must contain uppercase/lowercase letters, numbers, and special characters",
       "unknown": "An unknown error occurred"
     },
-    "success": "Password changed successfully!"
-  },
-  "billing_page": {
-    "title": "Subscription & Payments",
-    "subtitle": "Management and transaction history",
-    "current_sub": "Current Subscription",
-    "plan_label": "Plan:",
-    "price_label": "Price:",
-    "next_payment": "Next Payment:",
-    "update_plan": "Change Plan",
-    "cancel_sub": "Cancel Subscription",
-    "history_title": "Payment History",
-    "transactions": "transactions",
-    "cancel_btn": "Cancel Subscription",
-    "method_online": "Card",
-    "no_history": "Payment history is empty",
-    "error_load": "Failed to load history",
-    "cancel_confirm": "Are you sure you want to cancel? You will lose access to Premium features after the current period ends.",
-    "error_cancel": "Failed to cancel subscription",
-    "processing": "Processing...",
-    "table": {
-      "date": "Date",
-      "plan": "Plan",
-      "amount": "Amount",
-      "method": "Method",
-      "status": "Status",
-      "invoice": "Invoice"
-    }
+    "success": "Password successfully changed!"
   }
 }

@@ -107,17 +107,18 @@ export default function TrackedDistricts() {
     }
   };
 
-  const handleAddSubmit = async (country, city, districtsArray) => {
-    if (!country || !city || !districtsArray || districtsArray.length === 0) return;
+  const handleAddSubmit = async (districtsArray) => {
+    // В оновленому модальному вікні ми отримуємо масив об'єктів {name, city, country}
+    if (!districtsArray || districtsArray.length === 0) return;
     
     setIsAdding(true);
     try {
         const promises = districtsArray.map(d => 
             addTrackedDistrict({ 
-                country, 
-                city, 
+                country: d.country, 
+                city: d.city, 
                 district: d.name, 
-                districtId: d.id 
+                districtId: d.id // Якщо API потребує ID
             })
         );
 
@@ -125,6 +126,7 @@ export default function TrackedDistricts() {
         await loadTrackedData(); 
         setIsModalOpen(false);
     } catch (error) {
+        console.error(error);
         alert(t('stats:error_add_multiple_districts'));
     } finally {
         setIsAdding(false);
@@ -141,7 +143,9 @@ export default function TrackedDistricts() {
     <div className={styles.section}>
       <div className={styles.header}>
         <div className={styles.titleWrapper}>
-          <FaBookmark className={styles.icon} />
+          <div className={styles.iconWrapper}>
+            <FaBookmark className={styles.icon} />
+          </div>
           <h2 className={styles.title}>{t('stats:stats_page.saved_districts_prices')}</h2>
         </div>
         <div className={styles.actions}>
@@ -151,18 +155,16 @@ export default function TrackedDistricts() {
                 className={styles.navBtn} 
                 onClick={() => setCurrentPage(p => p - 1)} 
                 disabled={currentPage === 0}
-                style={{minWidth: '32px', minHeight: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
               >
-                <FaChevronLeft className={styles.navIcon} style={{color: '#4a5568', fontSize: '14px'}} />
+                <FaChevronLeft />
               </button>
               <span className={styles.pageIndicator}>{currentPage + 1} / {totalPages}</span>
               <button 
                 className={styles.navBtn} 
                 onClick={() => setCurrentPage(p => p + 1)} 
                 disabled={currentPage >= totalPages - 1}
-                style={{minWidth: '32px', minHeight: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
               >
-                <FaChevronRight className={styles.navIcon} style={{color: '#4a5568', fontSize: '14px'}} />
+                <FaChevronRight />
               </button>
             </div>
           )}
@@ -181,18 +183,20 @@ export default function TrackedDistricts() {
             {visibleItems.map((item) => (
               <div key={item.id} className={styles.card} onClick={() => handleNavigate(item)}>
                 <div className={styles.cardHeader}>
-                  <div>
-                    <span className={styles.name}>{item.district}</span>
+                  <div className={styles.headerInfo}>
+                    <h3 className={styles.name}>{item.district}</h3>
                     <span className={styles.location}>{item.city}, {item.country}</span>
                   </div>
                   <button className={styles.deleteBtn} onClick={(e) => handleDeleteClick(e, item.id)}>
                       <FaTrash />
                   </button>
                 </div>
+                
                 <div className={styles.prices}>
                   <div className={styles.priceRow}>
                     <div className={styles.priceLabel}>
-                      <FaKey className={styles.rentIcon} /> <span>{t('common:fields.average_rent_price')}</span>
+                      <FaKey className={styles.rentIcon} /> 
+                      <span>{t('common:fields.average_rent_price')}</span>
                     </div>
                     <span className={styles.priceValue}>
                         {formatPrice(item.rental_price || item.avg_price_rent, item.country)}
@@ -200,19 +204,21 @@ export default function TrackedDistricts() {
                   </div>
                   <div className={styles.priceRow}>
                     <div className={styles.priceLabel}>
-                      <FaHome className={styles.saleIcon} /> <span>{t('common:fields.propertyPricePerSqm')}</span>
+                      <FaHome className={styles.saleIcon} /> 
+                      <span>{t('common:fields.propertyPricePerSqm')}</span>
                     </div>
                     <span className={styles.priceValue}>
                         {formatPrice(item.sale_price || item.avg_price_sqm, item.country)}
                     </span>
                   </div>
                 </div>
+                
                 <div className={styles.cardFooter}>
                     <div className={styles.updatedAt}>
                       <FaClock className={styles.clockIcon} />
                       <span>{t('stats:updated_label')} {formatDate(item.updated_at || item.created_at, t('stats:date_unknown'))}</span>
                     </div>
-                    <span className={styles.detailsLink}><FaArrowRight /></span>
+                    <div className={styles.detailsLink}><FaArrowRight /></div>
                 </div>
               </div>
             ))}

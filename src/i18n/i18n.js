@@ -21,7 +21,9 @@ import NotFoundPageUK from './locales/uk/404.json';
 import RodoUK from './locales/uk/rodo.json';
 import StatsUK from './locales/uk/stats.json';
 import ComparisonUK from './locales/uk/comparison.json';
-import commonUK from './locales/uk/common.json'; // 🆕 Додано
+import commonUK from './locales/uk/common.json';
+import billingUK from './locales/uk/billing.json';
+
 
 // === ENGLISH (en) ===
 import headerEN from './locales/en/header.json';
@@ -42,7 +44,9 @@ import NotFoundPageEN from './locales/en/404.json';
 import RodoEN from './locales/en/rodo.json';
 import StatsEN from './locales/en/stats.json';
 import ComparisonEN from './locales/en/comparison.json';
-import commonEN from './locales/en/common.json'; // 🆕 Додано
+import commonEN from './locales/en/common.json';
+import billingEN from './locales/en/billing.json';
+
 
 // === POLISH (pl) ===
 import headerPL from './locales/pl/header.json';
@@ -63,10 +67,11 @@ import NotFoundPagePL from './locales/pl/404.json';
 import RodoPL from './locales/pl/rodo.json';
 import StatsPL from './locales/pl/stats.json';
 import ComparisonPL from './locales/pl/comparison.json';
-import commonPL from './locales/pl/common.json'; // 🆕 Додано
+import commonPL from './locales/pl/common.json';
+import billingPL from './locales/pl/billing.json';
+
 
 const resources = {
-  // 👇 ЗМІНЕНО з 'ua' на 'uk' (стандартний код ISO)
   uk: { 
     header: headerUK,
     footer: footerUK,
@@ -86,7 +91,8 @@ const resources = {
     rodo: RodoUK,
     stats: StatsUK,
     comparison: ComparisonUK,
-    common: commonUK, // 🆕 Підключено common
+    common: commonUK,
+    billing: billingUK,
   },
   en: { 
     header: headerEN,
@@ -107,7 +113,8 @@ const resources = {
     rodo: RodoEN,
     stats: StatsEN,
     comparison: ComparisonEN,
-    common: commonEN, // 🆕 Підключено common
+    common: commonEN,
+    billing: billingEN,
   },
   pl: { 
     header: headerPL,
@@ -128,7 +135,8 @@ const resources = {
     rodo: RodoPL,
     stats: StatsPL,
     comparison: ComparisonPL,
-    common: commonPL, // 🆕 Підключено common
+    common: commonPL,
+    billing: billingPL,
   },
 };
 
@@ -148,7 +156,7 @@ i18n
     },
     
     ns: [
-      'header', 'footer', 'faq', 'auth', 'select', 'stats',
+      'header', 'footer', 'faq', 'auth', 'select', 'stats', 'billing',
       'districts', 'filters', 'profile', 'about', 'rodo', 'comparison',
       'contacts', 'favorites', 'payment', 'subscription', 'terms', 'notFound',
       'common'
@@ -159,6 +167,10 @@ i18n
 
     interpolation: {
       escapeValue: false,
+    },
+
+    react: {
+      useSuspense: false
     }
   });
 

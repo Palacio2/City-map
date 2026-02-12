@@ -104,9 +104,19 @@ export default function DistrictPdfTemplate({
       </div>
 
       <div className={styles.heroSection}>
-        {photo_url && (
-          <div className={styles.mainPhoto} style={{ backgroundImage: `url(${photo_url})` }} />
-        )}
+        {/* ВИПРАВЛЕННЯ: Використовуємо IMG замість background-image */}
+        <div className={styles.mainPhoto}>
+          {photo_url ? (
+            <img 
+              src={photo_url} 
+              alt={name} 
+              className={styles.mainPhotoImage}
+              crossOrigin="anonymous" 
+            />
+          ) : (
+            <div style={{ width: '100%', height: '100%', background: '#f3f4f6' }} />
+          )}
+        </div>
         
         {filterData?.general && isRealtor && (
           <div className={styles.quickStatsCard}>

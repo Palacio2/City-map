@@ -28,8 +28,13 @@ const CollapsibleSection = ({ id, title, icon: Icon, children, isOpen, onToggle 
         <FaChevronDown className={`${styles.chevron} ${isOpen ? styles.rotate : ''}`} />
       </button>
       
-      <div className={`${styles.sectionContent} ${isOpen ? styles.contentVisible : ''}`}>
-        {isOpen && children}
+      <div 
+        className={`${styles.sectionContent} ${isOpen ? styles.contentVisible : ''}`}
+        aria-hidden={!isOpen}
+      >
+        <div className={styles.innerContent}>
+            {children} {/* ВАЖЛИВО: Контент завжди рендериться, але ховається через CSS */}
+        </div>
       </div>
     </div>
   );

@@ -1,18 +1,21 @@
-import React, { useState, useEffect, useCallback, Suspense, useMemo } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictMap.module.css';
+
+// ✅ ТЕПЕР ЦІ ІМПОРТИ ПРАЦЮВАТИМУТЬ КОРЕКТНО
 import CountrySelect from '@cityCountrySelect/CountrySelect';
 import CitySelect from '@cityCountrySelect/CitySelect';
 import FiltersPanel from '@filtersPanel/FiltersPanel';
+
+import DistrictsMap from './DistrictsMap';
+import DistrictDetailsModal from './DistrictDetailsModal';
+
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import { filterDistrictsByCriteria } from '@utils/filterUtils';
 import { transformDistrictsForDisplay } from '@utils/dataTransformers';
-import DistrictDetailsModal from './DistrictDetailsModal';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
 import { useSubscription } from '@subscription/SubscriptionContext';
-
-const DistrictsMap = React.lazy(() => import('./DistrictsMap'));
 
 const FREE_ALLOWED_CATEGORIES = Object.values(DISTRICT_CATEGORIES)
   .filter(cat => !cat.isPremium)
@@ -91,6 +94,11 @@ export default function DistrictMap() {
     return allFilteredDistricts;
   }, [allFilteredDistricts, isFree]);
 
+  // Key Reset Pattern для продуктивності
+  const listKey = useMemo(() => 
+    `dist-list-${country}-${city}-${districtsToDisplay.length}-${JSON.stringify(selectedFilters)}`,
+  [country, city, districtsToDisplay.length, selectedFilters]);
+
   const handleFiltersChange = useCallback((newFilters) => {
     setSelectedFilters(newFilters);
   }, []);
@@ -129,15 +137,13 @@ export default function DistrictMap() {
         ) : error ? (
           <ErrorDisplay error={error} onRetry={loadData} />
         ) : (
-          <Suspense fallback={<LoadingIndicator />}>
             <DistrictsMap 
+                key={listKey}
                 districts={districtsToDisplay}
                 totalCount={totalCount}
-                
                 onDistrictClick={handleDistrictClick}
                 selectedFilters={selectedFilters}
             />
-          </Suspense>
         )}
       </div>
       

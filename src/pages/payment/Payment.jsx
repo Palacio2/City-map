@@ -5,7 +5,7 @@ import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-
 import { FaCheckCircle, FaArrowLeft, FaShieldAlt, FaSync, FaTag } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next'; 
 import { subscriptionPlans } from '@subscription/subscriptionPlans';
-import { processPayment, activateSubscription } from '@api/paymentApi';
+import { processPayment } from '@api/paymentApi';
 import styles from './Payment.module.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -17,7 +17,7 @@ const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => {
   const [message, setMessage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
-const handleSubmit = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
     setIsProcessing(true);
@@ -27,11 +27,10 @@ const handleSubmit = async (e) => {
 
     try {
         let result;
-        // Логіка вибору між Списанням грошей та Налаштуванням картки (0 грн)
         if (mode === 'setup') {
             result = await stripe.confirmSetup({
                 elements,
-                redirect: 'if_required', // Важливо для UX
+                redirect: 'if_required',
                 confirmParams: { return_url: returnUrl },
             });
         } else {
@@ -132,7 +131,15 @@ export default function Payment() {
 
   const options = useMemo(() => ({
     clientSecret,
-    appearance: { theme: 'stripe', variables: { colorPrimary: '#667eea' } },
+    appearance: { 
+        theme: 'night', 
+        variables: { 
+            colorPrimary: '#c5a47e', // Акцентний колір
+            colorBackground: '#1a1a1a', // Фон для інпутів у темній темі
+            colorText: '#ffffff',
+            fontFamily: 'Manrope, sans-serif'
+        } 
+    },
   }), [clientSecret]);
 
   if (!planConfig) return null;
@@ -149,7 +156,7 @@ export default function Payment() {
 
         <div className={styles.grid}>
           <div className={styles.infoCard}>
-            <div className={styles.headerRow}><FaCheckCircle /> {t('payment:tariff_label')}</div>
+            <div className={styles.headerRow}><FaCheckCircle className={styles.featureIcon} /> {t('payment:tariff_label')}</div>
             <div className={styles.priceTag}>
                 {displayPrice}
             </div>
@@ -177,7 +184,7 @@ export default function Payment() {
             <div className={styles.featuresList}>
               {planConfig.features.map((f, i) => (
                 <div key={i} className={styles.feature}>
-                    <FaCheckCircle size={14} color="#48bb78"/> 
+                    <FaCheckCircle size={14} className={styles.featureIcon}/> 
                     {t(`subscription:subscription.features.${f}`)}
                 </div>
               ))}

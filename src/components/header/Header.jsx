@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import styles from './Header.module.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '@supabaseClient';
@@ -7,7 +7,6 @@ import {
   FaHeart, 
   FaBars, 
   FaTimes, 
-  FaChevronDown, 
   FaSun, 
   FaMoon 
 } from 'react-icons/fa';
@@ -20,18 +19,22 @@ export default function Header() {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation(['header', 'common']);
   const { isPremium } = useSubscription();
-  
   const { theme, toggleTheme } = useTheme(); 
   
-  const isDarkMode = theme === 'dark';
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  const checkAuthStatus = useCallback(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    setIsAuthenticated(!!session);
+    setIsLoading(false);
+  }, []);
+
   useEffect(() => {
     checkAuthStatus();
+    
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       (_, session) => {
         setIsAuthenticated(!!session);
@@ -39,7 +42,7 @@ export default function Header() {
       }
     );
     return () => subscription.unsubscribe();
-  }, []);
+  }, [checkAuthStatus]);
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -47,52 +50,45 @@ export default function Header() {
   }, [location]);
 
   useEffect(() => {
-    const overflowValue = isMenuOpen ? 'hidden' : '';
-    document.documentElement.style.overflow = overflowValue;
-    document.body.style.overflow = overflowValue;
+    if (isMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
     return () => {
-      document.documentElement.style.overflow = '';
       document.body.style.overflow = '';
     };
   }, [isMenuOpen]);
 
-  const checkAuthStatus = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    setIsAuthenticated(!!session);
-    setIsLoading(false);
-  };
-
-  const isActive = (path) => location.pathname === path ? styles.navLinkActive : '';
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
-  const toggleLanguageDropdown = () => setShowLanguageDropdown(!showLanguageDropdown);
   
   const changeLanguage = (lang) => {
     i18n.changeLanguage(lang);
     setShowLanguageDropdown(false);
+  };
+
+  const handleAuthClick = async () => {
+    if (isAuthenticated) {
+      await supabase.auth.signOut();
+      navigate('/');
+    } else {
+      navigate('/login');
+    }
     setIsMenuOpen(false);
   };
 
-  const handleAuthClick = () => {
-    if (isAuthenticated) handleLogout();
-    else navigate('/login');
-    setIsMenuOpen(false);
-  };
+  const isActive = (path) => location.pathname === path ? styles.navLinkActive : '';
 
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    navigate('/');
-  };
-
-  if (isLoading) return <div className={styles.header}></div>;
+  if (isLoading) return null;
 
   return (
     <header className={styles.header}>
       <div className={styles.container}>
         <div className={styles.logo}>
-          <Link to="/">GeoAnalyzer</Link>
+          <Link to="/">GeoAnalyzer<span>.</span></Link>
         </div>
 
-        <button className={styles.burgerButton} onClick={toggleMenu}>
+        <button className={styles.burgerButton} onClick={toggleMenu} aria-label="Toggle menu">
           {isMenuOpen ? <FaTimes /> : <FaBars />}
         </button>
 
@@ -118,25 +114,24 @@ export default function Header() {
           </nav>
 
           <div className={styles.userControls}>
-            <button className={`${styles.navButton} ${styles.themeToggle}`} onClick={toggleTheme}>
-              {isDarkMode ? <FaSun className={styles.icon} /> : <FaMoon className={styles.icon} />}
+            <button className={styles.navButton} onClick={toggleTheme} aria-label="Toggle theme">
+              {theme === 'dark' ? <FaSun className={styles.icon} /> : <FaMoon className={styles.icon} />}
               <span className={styles.buttonText}>
-                {isDarkMode ? t('header:light_mode') : t('header:dark_mode')}
+                {theme === 'dark' ? t('header:light_mode') : t('header:dark_mode')}
               </span>
             </button>
 
             {isAuthenticated && isPremium && (
-              <button className={`${styles.navButton} ${styles.favoritesButton}`} onClick={() => navigate('/favorites')}>
+              <button className={styles.navButton} onClick={() => navigate('/favorites')}>
                 <FaHeart className={styles.icon} />
                 <span className={styles.buttonText}>{t('header:favorites_title')}</span>
               </button>
             )}
 
             <div className={styles.languageContainer}>
-              <button className={`${styles.navButton} ${styles.languageButton}`} onClick={toggleLanguageDropdown}>
+              <button className={styles.navButton} onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}>
                 <FaGlobe className={styles.icon} />
                 <span className={styles.buttonText}>{t('header:language_title')}</span>
-                <FaChevronDown className={styles.chevron} />
               </button>
 
               {showLanguageDropdown && (

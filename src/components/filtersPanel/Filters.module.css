@@ -1,38 +1,103 @@
 .section {
-  background: var(--bg-white);
+  background: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  transition: all 0.25s ease;
+  transition: var(--transition);
+  
+  box-shadow: var(--shadow-sm); 
 }
 
 .section:hover {
-  box-shadow: var(--shadow-card);
+  border-color: var(--accent-color);
 }
 
-.sectionTitle {
+.section.open {
+  border-color: var(--accent-color);
+  background: var(--bg-surface);
+}
+
+.sectionHeader {
+  width: 100%;
   margin: 0;
-  padding: 14px 16px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-dark);
-  background: var(--bg-light);
-  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 1.25rem;
+  background: var(--bg-hover); 
+  border: none;
+  border-bottom: 1px solid transparent;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  outline: none;
+}
+
+.section.open .sectionHeader {
+  border-bottom-color: var(--border-color);
+  background: var(--bg-surface);
+}
+
+.sectionHeader:hover {
+  background: rgba(0,0,0,0.05);
+}
+
+:global([data-theme='dark']) .sectionHeader:hover {
+  background: rgba(255,255,255,0.05);
+}
+
+.headerTitle {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-main);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 .sectionIcon {
-  font-size: 1.05rem;
-  color: var(--primary-color);
+  font-size: 1.1rem;
+  color: var(--accent-color);
+  display: flex;
+  align-items: center;
+}
+
+.activeBadge {
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 0.7rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-body);
+}
+
+.chevron {
+  color: var(--text-secondary);
+  transition: transform 0.3s ease;
+}
+
+.section.open .chevron {
+  transform: rotate(180deg);
+  color: var(--accent-color);
 }
 
 .filterGroup {
-  padding: 14px 16px;
+  padding: 1.25rem;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.5rem;
+  animation: slideDown 0.2s ease-out;
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .filterItem {
@@ -40,105 +105,88 @@
   align-items: center;
   gap: 12px;
   cursor: pointer;
-  font-size: 0.9rem;
-  color: var(--text-medium);
-  transition: color 0.2s ease;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  transition: var(--transition);
   user-select: none;
+  font-family: var(--font-body);
+  min-height: 44px; 
+  padding: 4px 0;
 }
 
 .filterItem:hover {
-  color: var(--text-dark);
+  color: var(--text-main);
 }
 
 .filterItem input[type="checkbox"] {
   appearance: none;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   border-radius: 6px;
-  border: 2px solid var(--border-color);
-  background: var(--bg-white);
-  transition: all 0.2s ease;
+  border: 1px solid var(--border-color);
+  background: var(--bg-body);
+  transition: var(--transition);
   position: relative;
   display: grid;
   place-items: center;
   flex-shrink: 0;
+  cursor: pointer;
 }
 
 .filterItem input[type="checkbox"]:checked {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
+  background: var(--accent-color);
+  border-color: var(--accent-color);
 }
 
 .filterItem input[type="checkbox"]:checked::after {
   content: '';
   width: 6px;
-  height: 10px;
+  height: 12px;
   border: solid white;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg);
+  margin-top: -2px;
 }
 
-.filterItem input[type="checkbox"]:focus {
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(79,70,229,0.25);
+.filterItem:hover input[type="checkbox"] {
+  border-color: var(--accent-color);
 }
-
 
 .ratingFilter {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding-bottom: 12px;
+  gap: 10px;
+  padding-bottom: 1.25rem;
+  margin-bottom: 0.75rem;
   border-bottom: 1px dashed var(--border-color);
 }
 
 .ratingLabel {
   font-size: 0.85rem;
   font-weight: 600;
-  color: var(--text-medium);
+  color: var(--text-main);
+  font-family: var(--font-body);
 }
 
 .select {
   width: 100%;
-  padding: 9px 12px;
-  border-radius: 10px;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--border-color);
-  background-color: var(--bg-white);
-  font-size: 0.9rem;
-  color: var(--text-dark);
+  background-color: var(--bg-body);
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text-main);
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: var(--transition);
   appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='292.4' height='292.4'%3E%3Cpath fill='%239ca3af' d='M287 69.4a17.6 17.6 0 0 0-13-5.4H18.4c-5 0-9.3 1.8-12.9 5.4A17.6 17.6 0 0 0 0 82.2c0 5 1.8 9.3 5.4 12.9l128 127.9c3.6 3.6 7.8 5.4 12.8 5.4s9.2-1.8 12.8-5.4L287 95c3.5-3.5 5.4-7.8 5.4-12.8 0-5-1.9-9.2-5.5-12.8z'/%3E%3C/svg%3E");
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23c5a47e' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
-  background-position: right 12px center;
-  background-size: 10px;
+  background-position: right 1rem center;
 }
 
-.select:hover {
-  border-color: var(--primary-color);
-}
-
-.select:focus {
+.select:hover, .select:focus {
+  border-color: var(--accent-color);
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(79,70,229,0.25);
-}
-
-.scrollableContent {
-  scrollbar-width: thin;
-  scrollbar-color: var(--border-color) transparent;
-}
-
-.scrollableContent::-webkit-scrollbar {
-  width: 6px;
-}
-
-.scrollableContent::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.scrollableContent::-webkit-scrollbar-thumb {
-  background-color: var(--border-color);
-  border-radius: 20px;
+  box-shadow: 0 0 0 3px rgba(197, 164, 126, 0.1);
 }

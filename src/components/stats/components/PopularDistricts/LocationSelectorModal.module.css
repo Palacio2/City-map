@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 3000;
+  z-index: 9999; /* Високий z-index для перекриття всього */
   backdrop-filter: blur(8px);
   padding: 16px;
   animation: fadeIn 0.2s ease-out;
@@ -117,11 +117,13 @@
 }
 
 .form::-webkit-scrollbar,
-.districtsGrid::-webkit-scrollbar {
+.districtsGrid::-webkit-scrollbar,
+.summaryChips::-webkit-scrollbar {
   width: 6px;
 }
 .form::-webkit-scrollbar-thumb,
-.districtsGrid::-webkit-scrollbar-thumb {
+.districtsGrid::-webkit-scrollbar-thumb,
+.summaryChips::-webkit-scrollbar-thumb {
   background-color: var(--border-color);
   border-radius: 4px;
 }
@@ -249,6 +251,7 @@
   border-top: 1px dashed var(--border-color);
   padding-top: 16px;
   margin-top: 8px;
+  animation: fadeIn 0.3s ease;
 }
 
 .selectedSummary h4 {
@@ -264,6 +267,8 @@
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  max-height: 120px;
+  overflow-y: auto;
 }
 
 .summaryChip {
@@ -277,6 +282,13 @@
   font-size: 0.85rem;
   font-weight: 600;
   border: 1px solid var(--border-color);
+  transition: all 0.2s;
+}
+
+.summaryChip small {
+    color: var(--text-medium);
+    font-weight: 400;
+    margin-left: 4px;
 }
 
 .summaryChip button {
@@ -296,8 +308,8 @@
 }
 
 .summaryChip button svg {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   display: block;
 }
 
@@ -356,4 +368,22 @@
   background: var(--bg-light);
   border-radius: var(--border-radius-md);
   border: 1px dashed var(--border-color);
+}
+
+@media (max-width: 600px) {
+  .modalContent {
+    max-height: 95vh;
+  }
+  
+  .modalHeader {
+    padding: 24px 16px 16px;
+  }
+  
+  .form {
+    padding: 16px;
+  }
+  
+  .submitButton {
+    padding: 14px;
+  }
 }

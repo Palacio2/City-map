@@ -1,69 +1,168 @@
-import { useEffect, useState, useRef } from 'react'; 
-import { useNavigate } from 'react-router-dom';
+import React, { useMemo, memo } from 'react';
+import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '@supabaseClient';
-import { FaSpinner, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa';
 import styles from './AuthCallback.module.css';
 
-export default function AuthCallback() {
+const SOCIAL_PROVIDERS = [
+  { key: 'google', icon: FaGoogle, label: 'Google' }
+];
+
+const AuthForm = memo(({
+  mode = 'login',
+  formData,
+  errors,
+  isLoading,
+  passwordVisibility = {},
+  onChange,
+  onSubmit,
+  onTogglePassword,
+  onSwitchMode,
+  onSocialLogin
+}) => {
   const { t } = useTranslation('auth');
-  const navigate = useNavigate();
-  const [status, setStatus] = useState('loading');
-  const [message, setMessage] = useState(t('callback.processing'));
-  
+  const isLogin = mode === 'login';
 
-  const finishedRef = useRef(false);
+  const config = useMemo(() => ({
+    title: isLogin ? t('login.title') : t('register.title'),
+    subtitle: isLogin ? t('login.subtitle') : t('register.subtitle'),
+    submitText: isLogin ? t('login.submit') : t('register.submit'),
+    loadingText: isLogin ? t('login.loading') : t('register.loading')
+  }), [isLogin, t]);
 
-  useEffect(() => {
-    const handleSuccess = () => {
-      if (finishedRef.current) return;
-      finishedRef.current = true;
-      setStatus('success');
-      setMessage(t('callback.success'));
-      setTimeout(() => navigate('/', { replace: true }), 1500);
-    };
-
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === 'SIGNED_IN' || session) {
-        handleSuccess();
-      }
-    });
-
-
-    const timeout = setTimeout(() => {
-      if (!finishedRef.current) {
-        setStatus('error');
-        setMessage(t('callback.timeout'));
-        setTimeout(() => navigate('/login', { replace: true }), 3000);
-      }
-    }, 8000);
-
-    return () => {
-      subscription.unsubscribe();
-      clearTimeout(timeout);
-    };
-  }, [navigate, t]);
-
-  const config = {
-    loading: { icon: FaSpinner, className: styles.spinner, color: 'var(--primary-color)' },
-    success: { icon: FaCheckCircle, className: styles.icon, color: 'var(--secondary-color)' },
-    error: { icon: FaExclamationTriangle, className: styles.icon, color: 'var(--danger-color)' }
-  }[status];
-
-  const Icon = config.icon;
+  const fields = useMemo(() => [
+    !isLogin && { 
+      name: 'name', 
+      label: t('fields.name'), 
+      type: 'text', 
+      icon: FaUser, 
+      placeholder: t('fields.name_placeholder') 
+    },
+    { 
+      name: 'email', 
+      label: t('fields.email'), 
+      type: 'text', 
+      inputMode: 'email', 
+      icon: FaEnvelope, 
+      placeholder: t('fields.email_placeholder') 
+    },
+    { 
+      name: 'password', 
+      label: t('fields.password'), 
+      type: 'password', 
+      icon: FaLock, 
+      placeholder: isLogin ? t('fields.password_placeholder') : t('fields.password_min') 
+    },
+    !isLogin && { 
+      name: 'confirmPassword', 
+      label: t('fields.confirm_password'), 
+      type: 'password', 
+      icon: FaLock, 
+      placeholder: t('fields.confirm_placeholder') 
+    }
+  ].filter(Boolean), [isLogin, t]);
 
   return (
     <div className={styles.container}>
       <div className={styles.card}>
-        <div className={styles.content}>
-          <Icon className={config.className} style={{ color: config.color }} />
-          <h2 className={styles.title}>
-            {status === 'loading' ? t('callback.loading') : status === 'success' ? 'Ok' : t('callback.error')}
-          </h2>
-          <p className={styles.text}>{message}</p>
+        <div className={styles.header}>
+          <h1 className={styles.title}>{config.title}</h1>
+          <p className={styles.subtitle}>{config.subtitle}</p>
+        </div>
+
+        <form onSubmit={onSubmit} className={styles.form}>
+          {fields.map(({ name, label, type, inputMode, icon: Icon, placeholder }) => {
+            const isPasswordType = name.includes('password');
+            const showPassword = passwordVisibility[name];
+            
+            return (
+              <div className={styles.formGroup} key={name}>
+                <label htmlFor={name} className={styles.label}>
+                  <Icon className={styles.icon} /> {label}
+                </label>
+                
+                <div className={styles.passwordInput}>
+                  <input
+                    type={isPasswordType && showPassword ? 'text' : type}
+                    inputMode={inputMode} 
+                    id={name}
+                    name={name}
+                    value={formData[name] || ''}
+                    onChange={onChange}
+                    className={`${styles.input} ${errors[name] ? styles.inputError : ''}`}
+                    placeholder={placeholder}
+                    disabled={isLoading}
+                    autoComplete={isPasswordType ? "current-password" : "email"}
+                  />
+                  
+                  {isPasswordType && (
+                    <button
+                      type="button"
+                      className={styles.passwordToggle}
+                      onClick={() => onTogglePassword(name)}
+                      tabIndex="-1"
+                    >
+                      {showPassword ? <FaEyeSlash /> : <FaEye />}
+                    </button>
+                  )}
+                </div>
+                {errors[name] && <span className={styles.error}>{errors[name]}</span>}
+              </div>
+            );
+          })}
+
+          {isLogin && (
+            <div className={styles.rememberForgot}>
+              <label className={styles.checkboxLabel}>
+                <input 
+                  type="checkbox" 
+                  name="rememberMe" 
+                  checked={formData.rememberMe || false}
+                  onChange={onChange}
+                />
+                <span>{t('login.remember_me')}</span>
+              </label>
+              <Link to="/forgot-password" className={styles.forgotLink}>{t('login.forgot_pass')}</Link>
+            </div>
+          )}
+
+          {errors.submit && <div className={styles.errorSubmit}>{errors.submit}</div>}
+
+          <button type="submit" className={styles.submitButton} disabled={isLoading}>
+            {isLoading ? <span className={styles.spinner}></span> : config.submitText}
+          </button>
+        </form>
+
+        <div className={styles.divider}><span>{t('login.or')}</span></div>
+
+        <div className={styles.socialButtons}>
+          {SOCIAL_PROVIDERS.map(({ key, icon: Icon, label }) => (
+            <button
+              key={key}
+              type="button"
+              className={styles[`${key}Button`]}
+              onClick={() => onSocialLogin(key)}
+              disabled={isLoading}
+            >
+              <Icon className={styles.socialIcon} />
+              {isLogin 
+                ? t('login.social', { provider: label }) 
+                : t('register.social', { provider: label })}
+            </button>
+          ))}
+        </div>
+
+        <div className={styles.footer}>
+          <p>
+            {isLogin ? t('login.no_account') : t('register.has_account')}{' '}
+            <button onClick={onSwitchMode} className={styles.link} type="button">
+              {isLogin ? t('login.register_link') : t('register.login_link')}
+            </button>
+          </p>
         </div>
       </div>
     </div>
   );
-}
+});
+
+export default AuthForm;

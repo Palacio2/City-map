@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense } from 'react'; // 👈 1. Додано Suspense
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@supabaseClient';
@@ -14,7 +14,6 @@ import styles from './MainLayout.module.css';
 
 export default function MainLayout() {
   const { t } = useTranslation('rodo');
-  
   const [session, setSession] = useState(null);
 
   const { 
@@ -53,23 +52,28 @@ export default function MainLayout() {
 
       <main className={styles.mainContent}>
         <div className={styles.contentWrapper}>
-          <Outlet />
+          
+          {/* 👇 2. Обгортаємо Outlet. Це вирішує проблему білого екрану */}
+          <Suspense fallback={
+            <div style={{ padding: '50px', textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>
+              ⏳ Завантаження сторінки...
+            </div>
+          }>
+            <Outlet />
+          </Suspense>
+
         </div>
       </main>
 
       <Footer />
 
-      {authReady && (
-        <>
-          <CookieBanner />
-          
-          {session && showRodoModal && (
-            <RodoModal
-              onAccept={onAccept}
-              onDecline={handleDeclineRodo}
-            />
-          )}
-        </>
+      <CookieBanner />
+
+      {authReady && session && showRodoModal && (
+        <RodoModal
+          onAccept={onAccept}
+          onDecline={handleDeclineRodo}
+        />
       )}
     </div>
   );

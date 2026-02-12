@@ -1,66 +1,88 @@
 .tableWrapper {
-  background: var(--bg-white);
-  border-radius: var(--border-radius-lg);
+  background: var(--bg-surface);
+  border-radius: var(--radius-lg);
   box-shadow: var(--shadow-card);
-  padding: var(--spacing-lg);
-  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  overflow-x: auto; 
+  position: relative;
+  margin-bottom: 24px;
 }
 
 .table {
   width: 100%;
-  border-collapse: separate;
+  border-collapse: separate; 
   border-spacing: 0;
+  min-width: 600px; 
 }
 
-.metricCol {
-  background: linear-gradient(180deg, var(--bg-white), var(--bg-light));
-  color: var(--text-medium);
-  font-weight: 600;
-}
-
-.districtCol {
-  background: linear-gradient(180deg, var(--bg-white), var(--bg-light));
+.th, .td {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
   text-align: center;
+  vertical-align: middle;
+  background: var(--bg-surface);
+}
+
+/* Sticky First Column */
+.firstCol {
+  position: sticky;
+  left: 0;
+  z-index: 10;
+  background: var(--bg-surface); 
+  border-right: 1px solid var(--border-color);
+  text-align: left;
+  min-width: 200px;
+  max-width: 250px;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.05); 
 }
 
 .districtHeader {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+  align-items: center;
+  min-width: 140px;
 }
 
 .dName {
+  font-family: var(--font-heading);
   font-weight: 700;
-  color: var(--text-dark);
+  font-size: 1.1rem;
+  color: var(--text-main);
+  white-space: normal;
 }
 
 .dCity {
-  font-size: 0.75rem;
-  color: var(--text-light);
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 
 .sectionHeader td {
-  background: var(--primary-gradient);
-  color: #fff;
+  background: var(--bg-body);
+  color: var(--accent-color);
+  font-family: var(--font-heading);
   font-weight: 700;
-  letter-spacing: 0.05em;
   text-transform: uppercase;
-  padding: 10px;
-}
-
-.dataRow td {
-  padding: 10px 12px;
-  border-bottom: 1px solid var(--border-color);
-  transition: background-color 0.2s ease;
-}
-
-.dataRow:hover td {
-  background-color: var(--bg-hover);
+  letter-spacing: 0.05em;
+  padding: 12px 16px;
+  font-size: 0.85rem;
 }
 
 .metricName {
-  font-weight: 500;
-  color: var(--text-medium);
+  font-weight: 600;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.dataRow:hover .td {
+  background-color: var(--bg-hover);
+}
+
+.dataRow:hover .firstCol {
+  background-color: var(--bg-hover);
 }
 
 .rating {
@@ -68,31 +90,30 @@
   color: var(--accent-color);
 }
 
-/* ===== DARK THEME FIXES ===== */
-
-[data-theme='dark'] .tableWrapper {
-  background: var(--bg-white);
-  box-shadow: 0 6px 18px rgba(0,0,0,0.45);
+.headerSpacer {
+  background: var(--bg-body);
+  border-bottom: 1px solid var(--border-color);
 }
 
-[data-theme='dark'] .metricCol {
-  background: linear-gradient(180deg, var(--bg-white), var(--bg-light));
-  color: rgba(255,255,255,0.7);
-}
+@media (max-width: 768px) {
+  .tableWrapper {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+  }
 
-[data-theme='dark'] .metricName {
-  color: rgba(255,255,255,0.85);
-}
+  .th, .td {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
 
-[data-theme='dark'] .districtCol {
-  background: linear-gradient(180deg, #1e293b, #0f172a);
-}
+  .firstCol {
+    min-width: 140px;
+    max-width: 140px;
+    font-size: 0.8rem;
+  }
 
-[data-theme='dark'] .sectionHeader td {
-  background: linear-gradient(135deg, #1e293b, #020617);
-  color: #e5e7eb;
-}
-
-[data-theme='dark'] .dataRow:hover td {
-  background-color: #334155;
+  .dName {
+    font-size: 0.95rem;
+  }
 }

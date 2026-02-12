@@ -22,16 +22,25 @@ export default function DistrictDetailsModal({
   const fileName = district ? `${district.name}_report` : 'district_report';
   const { isDownloading, downloadPdf } = usePdfExport(fileName);
 
-
   const effectiveCountry = paramCountry || district?.country || district?.cities?.countries?.name;
   const currencyInfo = getCurrencyInfo(effectiveCountry);
 
-useEffect(() => {
-  if (district && isOpen) {
-    trackDistrictVisit(district); 
-  }
-}, [district, isOpen]);
+  useEffect(() => {
+    if (district && isOpen) {
+      trackDistrictVisit(district); 
+    }
+  }, [district?.id, isOpen]);
 
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isOpen]);
 
   if (!isOpen || !district) return null;
 

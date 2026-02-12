@@ -1,131 +1,119 @@
 .footer {
-  background: var(--primary-gradient);
-  color: #ffffff;
-  padding: 3rem 0 0;
+  background-color: var(--bg-footer);
+  color: var(--text-inverse);
+  padding: var(--spacing-xl) 0 var(--spacing-lg);
   margin-top: auto;
   position: relative;
-  overflow: hidden;
-  transition: background 0.3s ease;
-}
-
-[data-theme='dark'] .footer {
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-}
-
-.footer::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  border-top: 1px solid var(--border-color);
+  transition: background-color 0.3s ease;
+  padding-bottom: calc(var(--spacing-lg) + env(safe-area-inset-bottom));
 }
 
 .footerContent {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 2rem;
   flex-wrap: wrap;
+  max-width: 1440px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-lg);
   gap: 3rem;
-  position: relative;
-  z-index: 1;
-}
-
-.footerSection {
-  flex: 0 1 280px;
-  min-width: 220px;
   text-align: center;
 }
 
-.footerSection h3 {
-  margin-bottom: 1rem;
-  color: #ffffff;
-  font-size: 1.5rem;
-  font-weight: 700;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.footerSection h4 {
-  margin-bottom: 1rem;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 1.2rem;
-  font-weight: 600;
-  position: relative;
-  display: inline-block;
-}
-
-.footerSection h4::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 40px;
-  height: 2px;
-  background: rgba(255, 255, 255, 0.4);
-}
-
-.footerSection p {
-  margin: 0.5rem 0;
-  line-height: 1.5;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.95rem;
-}
-
-.navLinks {
+.footerSection {
+  flex: 1;
+  min-width: 250px;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
   align-items: center;
 }
 
+.logoTitle {
+  font-family: var(--font-heading);
+  font-size: 1.75rem;
+  color: #ffffff;
+  margin-bottom: var(--spacing-md);
+  letter-spacing: 0.05em;
+}
+
+.accentDot {
+  color: var(--accent-color);
+}
+
+.footerSection h4 {
+  font-family: var(--font-heading);
+  font-size: 1rem;
+  color: var(--accent-color);
+  margin-bottom: 1.25rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-weight: 600;
+}
+
+.footerSection p {
+  color: var(--text-inverse-secondary);
+  line-height: 1.6;
+  font-size: 0.9rem;
+  max-width: 300px;
+  margin: 0 auto;
+  font-family: var(--font-body);
+}
+
+.navLinks, .contactLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+}
+
 .navLinks a, .contactLink {
-  color: rgba(255, 255, 255, 0.85);
+  color: var(--text-inverse-secondary);
   text-decoration: none;
-  transition: all 0.3s ease;
-  font-size: 0.95rem;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
   position: relative;
-  display: inline-block;
 }
 
 .navLinks a:hover, .contactLink:hover {
-  color: #ffffff;
-  transform: translateX(5px);
-}
-
-.contactLink {
-  display: block;
-  margin-bottom: 0.5rem;
+  color: var(--accent-color);
+  transform: translateX(4px);
 }
 
 .copyright {
   text-align: center;
-  padding: 1.5rem;
-  margin-top: 2rem;
-  background: rgba(0, 0, 0, 0.15);
-  font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.7);
-  position: relative;
-}
-
-[data-theme='dark'] .copyright {
-  background: rgba(0, 0, 0, 0.3);
+  padding-top: var(--spacing-lg);
+  margin-top: var(--spacing-xl);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-inverse-secondary);
+  font-size: 0.8rem;
+  width: 100%;
+  opacity: 0.7;
 }
 
 @media (max-width: 768px) {
+  .footer {
+    padding: var(--spacing-lg) 0;
+    padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
+  }
+  
   .footerContent {
-    gap: 1.5rem;
+    flex-direction: column;
+    gap: 2.5rem;
+    align-items: center;
   }
   
   .footerSection {
-    padding: 0.5rem 0;
+    width: 100%;
+    min-width: 0;
   }
-
-  .navLinks a:hover, .contactLink:hover {
-    transform: none;
+  
+  .logoTitle {
+    font-size: 1.5rem;
   }
 }

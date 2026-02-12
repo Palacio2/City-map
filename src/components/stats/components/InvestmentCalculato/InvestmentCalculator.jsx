@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaUndo, FaMoneyBillWave, FaPercentage, FaChartLine } from 'react-icons/fa';
-import { useInvestmentCalculator } from '../../hooks/useInvestmentCalculator'; // Шлях до вашого хука
+import { useInvestmentCalculator } from '../../hooks/useInvestmentCalculator'; 
 import styles from './InvestmentCalculator.module.css';
 
 export default function InvestmentCalculator() {
@@ -53,7 +53,6 @@ export default function InvestmentCalculator() {
             <label>{t('calculator.rental_income')} ({currency.symbol}/mo)</label>
             <input type="number" name="rentalIncome" value={values.rentalIncome} onChange={handleChange} min="0" />
           </div>
-          {/* 🆕 Нове поле витрат */}
           <div className={styles.inputGroup}>
             <label>{t('calculator.expenses')} ({currency.symbol}/mo)</label>
             <input type="number" name="expenses" value={values.expenses} onChange={handleChange} min="0" placeholder="Taxes, HOA..." />
@@ -107,5 +106,5 @@ export default function InvestmentCalculator() {
         </div>
       </div>
     </div>
-  );
+  ); 
 }

@@ -5,7 +5,13 @@ import { ThemeProvider } from './components/header/ThemeContext';
 import './index.css';
 import './i18n/i18n';
 
-ReactDOM.createRoot(document.getElementById('root')).render(
+const rootElement = document.getElementById('root');
+
+if (!rootElement) {
+  throw new Error('Failed to find the root element');
+}
+
+ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <ThemeProvider>
       <App />

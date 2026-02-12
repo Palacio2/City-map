@@ -10,7 +10,7 @@ export default function RegisterSuccess() {
   const location = useLocation();
   const email = location.state?.email; 
   const [isResending, setIsResending] = useState(false);
-  const [resendStatus, setResendStatus] = useState('');
+  const [resendStatus, setResendStatus] = useState(''); // '' | 'success' | 'error'
 
   const handleResendEmail = async () => {
     if (!email) return;

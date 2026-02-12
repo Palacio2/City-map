@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -9,10 +9,22 @@ export default function RodoModal({ onAccept, onDecline }) {
   const { t } = useTranslation('rodo');
   const [isProcessing, setIsProcessing] = useState(false);
 
+  // Блокуємо скрол сторінки, поки модалка відкрита
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    
+    // Повертаємо скрол при закритті компонента
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   const handleAcceptClick = async () => {
     setIsProcessing(true);
     try {
       await onAccept();
+    } catch (e) {
+      console.error(e);
     } finally {
       setIsProcessing(false);
     }
@@ -35,13 +47,13 @@ export default function RodoModal({ onAccept, onDecline }) {
         </p>
 
         <div className={styles.infoBox}>
-          <p><strong>{t('rodo.we_store_title')}</strong></p>
+          <p className={styles.infoTitle}>{t('rodo.we_store_title')}</p>
           <ul>
             <li>{t('rodo.store_history')}</li>
             <li>{t('rodo.store_favorites')}</li>
             <li>{t('rodo.store_stats')}</li>
           </ul>
-          <p className={styles.small}>{t('rodo.analytics_note')}</p>
+          <p className={styles.analyticsNote}>{t('rodo.analytics_note')}</p>
         </div>
 
         <div className={styles.actions}>

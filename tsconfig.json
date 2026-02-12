@@ -1,0 +1,47 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Режим міграції */
+    "allowJs": true,
+    "checkJs": false,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Ваші шляхи (Master List) */
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@api/*": ["src/components/api/*"],
+      "@layout/*": ["src/components/layout/*"],
+      "@header/*": ["src/components/header/*"],
+      "@footer/*": ["src/components/footer/*"],
+      "@auth/*": ["src/components/auth/*"],
+      "@ui/*": ["src/ui/*"],
+      "@pages/*": ["src/pages/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@supabaseClient": ["src/supabaseClient"], 
+      "@subscription/*": ["src/pages/subscription/*"],
+      "@utils/*": ["src/utils/*"],
+      "@modals/*": ["src/components/modals/*"],
+      "@config/*": ["src/config/*"],
+      "@cityCountrySelect/*": ["src/components/cityCountrySelect/*"],
+      "@filtersPanel/*": ["src/components/filtersPanel/*"]
+    }
+  },
+"include": [
+    "src/**/*",         // Шукати ВСЕ всередині src (включаючи .tsx, .ts, .css)
+    "vite-env.d.ts"     // Явно підключити файл типів середовища
+  ],
+}

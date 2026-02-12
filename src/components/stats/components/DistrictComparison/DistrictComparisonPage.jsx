@@ -48,12 +48,13 @@ export default function DistrictComparisonPage() {
     setIsModalOpen(true);
   };
 
-  const handleAddDistricts = async (country, city, districtsArray) => {
+  const handleAddDistricts = async (districtsArray) => {
+    // districtsArray містить об'єкти { name, city, country }
     const availableSlots = MAX_SELECTION - selectedDistricts.length;
     
     const candidates = districtsArray
       .filter(d => !selectedDistricts.some(
-        existing => existing.name === (d.name || d) && existing.city === city && existing.country === country
+        existing => existing.name === d.name && existing.city === d.city && existing.country === d.country
       ))
       .slice(0, availableSlots);
 
@@ -84,9 +85,9 @@ export default function DistrictComparisonPage() {
             
             return {
                 ...(fullVer || candidate),
-                city: city,
-                country: country,
-                id: candidate.id || `${city}-${candidate.name}-${Date.now()}` 
+                city: candidate.city,
+                country: candidate.country,
+                id: candidate.id || `${candidate.city}-${candidate.name}-${Date.now()}` 
             };
         });
 

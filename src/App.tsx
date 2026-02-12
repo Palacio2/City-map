@@ -5,7 +5,10 @@ import { FavoritesProvider } from './pages/favorites/FavoritesContext';
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter future={{ 
+      v7_startTransition: true,
+      v7_relativeSplatPath: true 
+    }}>
       <SubscriptionProvider>
         <FavoritesProvider>
           <AppRoutes />

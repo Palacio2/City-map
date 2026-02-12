@@ -1,9 +1,9 @@
 .favoriteButton,
 .closeButton {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px); 
-  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur)); 
+  border: 1px solid rgba(255, 255, 255, 0.2);
   width: 44px;
   height: 44px;
   border-radius: 50%;
@@ -12,59 +12,65 @@
   justify-content: center;
   padding: 0;
   cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  transition: var(--transition);
   flex-shrink: 0;
   z-index: 20;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   outline: none;
-  appearance: none;
-  -webkit-tap-highlight-color: transparent;
+  color: #ffffff;
+  
+  /* Збільшує область натискання без візуального збільшення кнопки */
+  position: relative;
 }
 
-@media (hover: hover) {
-  .favoriteButton:hover,
-  .closeButton:hover {
-    background: rgba(255, 255, 255, 0.35);
-    transform: scale(1.05);
-    border-color: rgba(255, 255, 255, 0.8);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
-  }
+.favoriteButton::after,
+.closeButton::after {
+  content: '';
+  position: absolute;
+  inset: -8px;
+  background: transparent;
 }
 
-.favoriteButton:active,
-.closeButton:active {
-  transform: scale(0.95);
-  background: rgba(255, 255, 255, 0.5);
+.favoriteButton:hover,
+.closeButton:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 12px rgba(0,0,0,0.2);
 }
 
 .favoriteButton svg,
 .closeButton svg {
-  color: white;
-  stroke: white;
-  stroke-width: 2px;
-  width: 22px;
-  height: 22px;
+  stroke-width: 2.5px;
+  width: 20px;
+  height: 20px;
   display: block;
-  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.3));
-  pointer-events: none;
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.3));
+}
+
+.favoriteButton:active,
+.closeButton:active {
+  transform: scale(0.96);
+  background: rgba(255, 255, 255, 0.3);
 }
 
 .favoriteActive {
-  background: rgba(255, 255, 255, 0.95);
-  border-color: white;
+  background: #ffffff;
+  border-color: #ffffff;
 }
 
 .favoriteActive svg {
-  color: #ff4757; 
-  fill: #ff4757;
-  stroke: #ff4757; 
+  color: var(--danger-color); 
+  fill: var(--danger-color);
+  stroke: var(--danger-color); 
   stroke-width: 0;
   filter: none;
 }
 
 .loading {
   cursor: wait;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 
 .loading svg {
@@ -77,15 +83,18 @@
   to { transform: rotate(360deg); }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .favoriteButton,
   .closeButton {
-    width: 40px;
-    height: 40px;
+    /* Синхронізуємо з розміром .glassBtn (PDF) */
+    width: 36px;
+    height: 36px;
   }
+
   .favoriteButton svg,
   .closeButton svg {
-    width: 20px;
-    height: 20px;
+    /* Трохи зменшуємо іконку для балансу */
+    width: 18px;
+    height: 18px;
   }
 }

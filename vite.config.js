@@ -1,45 +1,31 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
-// https://vite.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  resolve: {
-    alias: {
-      '@': path.resolve(__dirname, './src'),
-      '@components': path.resolve(__dirname, './src/components'),
-      '@api': path.resolve(__dirname, './src/components/api'),
-      '@layout': path.resolve(__dirname, './src/components/layout'),
-      '@maps': path.resolve(__dirname, './src/components/districtMap'),
-      '@header': path.resolve(__dirname, './src/components/header'),
-      '@footer': path.resolve(__dirname, './src/components/footer'),
-      '@auth': path.resolve(__dirname, './src/components/auth'),
-      '@ui': path.resolve(__dirname, './src/ui'),
-      '@pages': path.resolve(__dirname, './src/pages'),
-      '@hooks': path.resolve(__dirname, './src/hooks'),
-      '@supabaseClient': path.resolve(__dirname, './src/supabaseClient'),
-      '@subscription': path.resolve(__dirname, './src/pages/subscription'),
-      '@utils': path.resolve(__dirname, './src/utils'),
-      '@cityCountrySelect': path.resolve(__dirname, './src/components/cityCountrySelect'),
-      '@filtersPanel': path.resolve(__dirname, './src/components/filtersPanel'),
-      '@modals': path.resolve(__dirname, './src/components/modals'),
-      '@config': path.resolve(__dirname, './src/config'),
+export default defineConfig(({ mode }) => {
+  const isDev = mode === 'development';
 
-
-    }
-  },
-  build: {
-    sourcemap: true, 
-    chunkSizeWarningLimit: 1000,
-    rollupOptions: {
-      output: {
+  return {
+    plugins: [react(), tsconfigPaths()], 
+    build: {
+      sourcemap: isDev,
+      chunkSizeWarningLimit: 800,
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'react-vendor': ['react', 'react-dom', 'react-router-dom'],
+            'i18n-vendor': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
+            'pdf-vendor': ['jspdf', 'html2canvas'],
+            'ui-vendor': ['react-icons', 'react-toastify']
+          }
+        }
       }
+    },
+    test: {
+      globals: true,
+      environment: 'jsdom',
+      setupFiles: './vitest.setup.js',
+      include: ['src/**/*.{test,spec}.{js,jsx,ts,tsx}'], 
     }
-  },
-  test: {
-    globals: true,
-    environment: 'jsdom',
-    setupFiles: './vitest.setup.js',
-  },
-})
+  };
+});

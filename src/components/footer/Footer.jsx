@@ -12,7 +12,9 @@ export default function Footer() {
       <div className={styles.footerContent}>
         
         <div className={styles.footerSection}>
-          <h3>GeoAnalyzer</h3>
+          <h3 className={styles.logoTitle}>
+            GeoAnalyzer<span className={styles.accentDot}>.</span>
+          </h3>
           <p>{t('footer:description')}</p>
         </div>
 
@@ -22,7 +24,6 @@ export default function Footer() {
             <Link to="/">{t('header:home')}</Link>
             <Link to="/about">{t('header:about')}</Link>
             <Link to="/contacts">{t('header:contacts')}</Link>
-            
             <Link to="/terms">{t('footer:terms')}</Link>
             <Link to="/faq">{t('footer:faq')}</Link>
           </nav>
@@ -30,12 +31,14 @@ export default function Footer() {
 
         <div className={styles.footerSection}>
           <h4>{t('footer:contacts_title')}</h4>
-          <a href={`mailto:${t('footer:email')}`} className={styles.contactLink}>
-            {t('footer:email')}
-          </a>
-          <a href={`tel:${t('footer:phone_raw')}`} className={styles.contactLink}>
-            {t('footer:phone')}
-          </a>
+          <div className={styles.contactLinks}>
+            <a href={`mailto:${t('footer:email')}`} className={styles.contactLink}>
+              {t('footer:email')}
+            </a>
+            <a href={`tel:${t('footer:phone_raw')}`} className={styles.contactLink}>
+              {t('footer:phone')}
+            </a>
+          </div>
         </div>
       </div>
 

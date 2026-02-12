@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useMemo, memo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaGoogle } from 'react-icons/fa';
+import { blockCyrillicInput } from '@auth/validation';
 import styles from './AuthForm.module.css';
 
 const SOCIAL_PROVIDERS = [
   { key: 'google', icon: FaGoogle, label: 'Google' }
 ];
 
-export default function AuthForm({
+const AuthForm = memo(({
   mode = 'login',
   formData,
   errors,
@@ -19,18 +20,18 @@ export default function AuthForm({
   onTogglePassword,
   onSwitchMode,
   onSocialLogin
-}) {
+}) => {
   const { t } = useTranslation('auth');
   const isLogin = mode === 'login';
 
-  const config = {
+  const config = useMemo(() => ({
     title: isLogin ? t('login.title') : t('register.title'),
     subtitle: isLogin ? t('login.subtitle') : t('register.subtitle'),
     submitText: isLogin ? t('login.submit') : t('register.submit'),
     loadingText: isLogin ? t('login.loading') : t('register.loading')
-  };
+  }), [isLogin, t]);
 
-  const fields = [
+  const fields = useMemo(() => [
     !isLogin && { 
       name: 'name', 
       label: t('fields.name'), 
@@ -41,7 +42,8 @@ export default function AuthForm({
     { 
       name: 'email', 
       label: t('fields.email'), 
-      type: 'email', 
+      type: 'text',
+      inputMode: 'email',
       icon: FaEnvelope, 
       placeholder: t('fields.email_placeholder') 
     },
@@ -59,7 +61,7 @@ export default function AuthForm({
       icon: FaLock, 
       placeholder: t('fields.confirm_placeholder') 
     }
-  ].filter(Boolean);
+  ].filter(Boolean), [isLogin, t]);
 
   return (
     <div className={styles.container}>
@@ -70,7 +72,7 @@ export default function AuthForm({
         </div>
 
         <form onSubmit={onSubmit} className={styles.form}>
-          {fields.map(({ name, label, type, icon: Icon, placeholder }) => {
+          {fields.map(({ name, label, type, inputMode, icon: Icon, placeholder }) => {
             const isPasswordType = name.includes('password');
             const showPassword = passwordVisibility[name];
             
@@ -83,13 +85,18 @@ export default function AuthForm({
                 <div className={styles.passwordInput}>
                   <input
                     type={isPasswordType && showPassword ? 'text' : type}
+                    inputMode={inputMode}
                     id={name}
                     name={name}
                     value={formData[name] || ''}
                     onChange={onChange}
+                    onKeyDown={(e) => {
+                      if (name === 'email') blockCyrillicInput(e);
+                    }}
                     className={`${styles.input} ${errors[name] ? styles.inputError : ''}`}
                     placeholder={placeholder}
                     disabled={isLoading}
+                    autoComplete={isPasswordType ? "current-password" : "email"}
                   />
                   
                   {isPasswordType && (
@@ -97,6 +104,7 @@ export default function AuthForm({
                       type="button"
                       className={styles.passwordToggle}
                       onClick={() => onTogglePassword(name)}
+                      tabIndex="-1"
                     >
                       {showPassword ? <FaEyeSlash /> : <FaEye />}
                     </button>
@@ -151,7 +159,7 @@ export default function AuthForm({
         <div className={styles.footer}>
           <p>
             {isLogin ? t('login.no_account') : t('register.has_account')}{' '}
-            <button onClick={onSwitchMode} className={styles.link}>
+            <button onClick={onSwitchMode} className={styles.link} type="button">
               {isLogin ? t('login.register_link') : t('register.login_link')}
             </button>
           </p>
@@ -159,4 +167,6 @@ export default function AuthForm({
       </div>
     </div>
   );
-}
+});
+
+export default AuthForm;
