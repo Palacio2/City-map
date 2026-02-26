@@ -1,9 +1,5 @@
 {
-  "title": "Page Not Found",
-  "desc": "Looks like you got lost. This location doesn't exist on our map.",
-  "button": "Go Home",
-  "loader": {
-    "checking_subscription": "Checking subscription",
-    "wait": "Please wait..."
-  }
+  "title": "Page not found",
+  "desc": "It appears you have lost your way. This page does not exist.",
+  "button": "Go Home"
 }

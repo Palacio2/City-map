@@ -219,6 +219,19 @@
   z-index: 1040;
 }
 
+.aiLettersIcon {
+  font-family: var(--font-heading);
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--text-main);
+  letter-spacing: 0.5px;
+  transition: var(--transition);
+}
+
+.navButton:hover .aiLettersIcon {
+  color: var(--accent-color);
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }

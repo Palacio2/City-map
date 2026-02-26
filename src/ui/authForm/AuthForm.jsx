@@ -72,7 +72,8 @@ const AuthForm = memo(({
         </div>
 
         <form onSubmit={onSubmit} className={styles.form}>
-          {fields.map(({ name, label, type, inputMode, icon: Icon, placeholder }) => {
+          {fields.map((field) => {
+            const { name, label, type, inputMode, placeholder, icon: Icon } = field;
             const isPasswordType = name.includes('password');
             const showPassword = passwordVisibility[name];
             
@@ -140,20 +141,23 @@ const AuthForm = memo(({
         <div className={styles.divider}><span>{t('login.or')}</span></div>
 
         <div className={styles.socialButtons}>
-          {SOCIAL_PROVIDERS.map(({ key, icon: Icon, label }) => (
-            <button
-              key={key}
-              type="button"
-              className={styles[`${key}Button`]}
-              onClick={() => onSocialLogin(key)}
-              disabled={isLoading}
-            >
-              <Icon className={styles.socialIcon} />
-              {isLogin 
-                ? t('login.social', { provider: label }) 
-                : t('register.social', { provider: label })}
-            </button>
-          ))}
+          {SOCIAL_PROVIDERS.map((provider) => {
+            const { key, icon: Icon, label } = provider;
+            return (
+              <button
+                key={key}
+                type="button"
+                className={styles[`${key}Button`]}
+                onClick={() => onSocialLogin(key)}
+                disabled={isLoading}
+              >
+                <Icon className={styles.socialIcon} />
+                {isLogin 
+                  ? t('login.social', { provider: label }) 
+                  : t('register.social', { provider: label })}
+              </button>
+            );
+          })}
         </div>
 
         <div className={styles.footer}>

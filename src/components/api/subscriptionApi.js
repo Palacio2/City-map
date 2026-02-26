@@ -58,7 +58,7 @@ export const fetchSubscriptionStatus = async (forceReload = false) => {
 
     return result;
 
-  } catch (err) {
+  } catch {
     return FREE_PLAN_DATA;
   }
 };

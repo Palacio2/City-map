@@ -1,4 +1,5 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { useParams } from 'react-router-dom';
 import styles from './DistrictDetailsModal.module.css';
@@ -10,17 +11,16 @@ import { useSubscription } from '@subscription/SubscriptionContext';
 import { usePdfExport } from '@hooks/usePdfExport';
 import DistrictPdfTemplate from './DistrictPdfTemplate';
 
-export default function DistrictDetailsModal({ 
-  district, 
-  isOpen, 
-  onClose
-}) {
+// ОНОВЛЕНО: Приймаємо selectedCategory
+export default function DistrictDetailsModal({ district, selectedCategory, isOpen, onClose }) {
   const { t } = useTranslation('districts');
   const { country: paramCountry } = useParams();
   
   const { isRealtor, isFree } = useSubscription();
   const fileName = district ? `${district.name}_report` : 'district_report';
   const { isDownloading, downloadPdf } = usePdfExport(fileName);
+  
+  const [pdfPhoto, setPdfPhoto] = useState(null);
 
   const effectiveCountry = paramCountry || district?.country || district?.cities?.countries?.name;
   const currencyInfo = getCurrencyInfo(effectiveCountry);
@@ -30,6 +30,33 @@ export default function DistrictDetailsModal({
       trackDistrictVisit(district); 
     }
   }, [district?.id, isOpen]);
+
+  useEffect(() => {
+    if (district?.photo_url) {
+      const loadBase64Image = async () => {
+        try {
+          let response = await fetch(district.photo_url, { mode: 'cors' }).catch(() => null);
+          
+          if (!response || !response.ok) {
+            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(district.photo_url)}`;
+            response = await fetch(proxyUrl);
+          }
+          
+          if (response && response.ok) {
+            const blob = await response.blob();
+            const reader = new FileReader();
+            reader.onloadend = () => setPdfPhoto(reader.result);
+            reader.readAsDataURL(blob);
+          } else {
+            setPdfPhoto('error');
+          }
+        } catch (error) {
+          setPdfPhoto('error');
+        }
+      };
+      loadBase64Image();
+    }
+  }, [district?.photo_url]);
 
   useEffect(() => {
     if (isOpen) {
@@ -44,7 +71,7 @@ export default function DistrictDetailsModal({
 
   if (!isOpen || !district) return null;
 
-  return (
+  const modalContent = (
     <>
       <div className={styles.modalOverlay} onClick={onClose}>
         <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
@@ -69,6 +96,7 @@ export default function DistrictDetailsModal({
                 currencyInfo={currencyInfo}
                 isFree={isFree}
                 isRealtor={isRealtor}
+                selectedCategory={selectedCategory} // ПЕРЕДАЄМО СЮДИ
               />
             ) : (
               <div className={styles.noData}>
@@ -87,6 +115,7 @@ export default function DistrictDetailsModal({
         <div id="district-pdf-container" className={styles.hiddenPdfTemplate}>
           <DistrictPdfTemplate 
              district={district}
+             photoOverride={pdfPhoto}
              currencyInfo={currencyInfo}
              formatNumber={formatNumber}
              formatPrice={formatPrice}
@@ -96,4 +125,6 @@ export default function DistrictDetailsModal({
       )}
     </>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 }

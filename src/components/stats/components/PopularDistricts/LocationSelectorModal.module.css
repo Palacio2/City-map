@@ -1,48 +1,38 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: rgba(15, 23, 42, 0.75);
+  background: rgba(0, 0, 0, 0.75);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999; /* Високий z-index для перекриття всього */
-  backdrop-filter: blur(8px);
+  z-index: 9999;
+  backdrop-filter: blur(4px);
   padding: 16px;
   animation: fadeIn 0.2s ease-out;
 }
 
 .modalContent {
-  background: var(--bg-white);
-  border-radius: var(--border-radius-lg);
+  background: var(--bg-body);
+  border-radius: var(--radius-lg);
   width: 100%;
   max-width: 500px;
   max-height: 90vh;
   display: flex;
   flex-direction: column;
   position: relative;
-  box-shadow: var(--shadow-modal);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
   border: 1px solid var(--border-color);
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: slideUp 0.3s ease-out;
   overflow: hidden;
-  color: var(--text-dark);
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(30px) scale(0.98); opacity: 0; }
-  to { transform: translateY(0) scale(1); opacity: 1; }
+  color: var(--text-main);
 }
 
 .closeButton {
   position: absolute;
   top: 16px;
   right: 16px;
-  background: var(--bg-hover);
-  border: 1px solid var(--border-color);
+  background: transparent;
+  border: none;
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -50,57 +40,50 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  color: var(--text-medium);
+  color: var(--text-secondary);
   transition: all 0.2s;
   z-index: 10;
   padding: 0;
 }
 
-.closeButton svg {
-  width: 20px;
-  height: 20px;
-  display: block;
-}
-
 .closeButton:hover {
-  background: var(--danger-color);
-  border-color: var(--danger-color);
-  color: #ffffff;
-  transform: rotate(90deg);
+  background: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
 }
 
 .modalHeader {
   padding: 32px 24px 20px;
   text-align: center;
   border-bottom: 1px solid var(--border-color);
-  background: var(--bg-white);
+  background: var(--bg-surface);
   flex-shrink: 0;
 }
 
 .iconCircle {
   width: 60px;
   height: 60px;
-  background: var(--bg-light);
+  background: var(--bg-hover);
   border: 1px solid var(--border-color);
   border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 0 auto 16px;
-  color: var(--primary-color);
+  color: var(--accent-color);
   font-size: 26px;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-sm);
 }
 
 .modalHeader h3 {
   font-size: 1.5rem;
+  font-family: var(--font-heading);
   font-weight: 700;
-  color: var(--text-dark);
+  color: var(--text-main);
   margin: 0 0 8px 0;
 }
 
 .modalSubtitle {
-  color: var(--text-medium);
+  color: var(--text-secondary);
   margin: 0;
   font-size: 0.95rem;
   line-height: 1.5;
@@ -113,19 +96,6 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background-color: var(--bg-white);
-}
-
-.form::-webkit-scrollbar,
-.districtsGrid::-webkit-scrollbar,
-.summaryChips::-webkit-scrollbar {
-  width: 6px;
-}
-.form::-webkit-scrollbar-thumb,
-.districtsGrid::-webkit-scrollbar-thumb,
-.summaryChips::-webkit-scrollbar-thumb {
-  background-color: var(--border-color);
-  border-radius: 4px;
 }
 
 .inputGroup {
@@ -138,15 +108,15 @@
   font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--text-medium);
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
 .inputIcon { 
-  color: var(--primary-color); 
+  color: var(--accent-color); 
 }
 
 .selectWrapper { 
@@ -156,35 +126,32 @@
 
 .selectInput {
   width: 100%;
-  padding: 14px 16px;
+  padding: 12px 16px;
   padding-right: 44px;
-  background-color: var(--bg-light);
+  background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-sm);
   font-size: 1rem;
-  color: var(--text-dark);
+  color: var(--text-main);
   appearance: none;
   cursor: pointer;
-  transition: var(--transition-default);
+  transition: var(--transition);
 }
 
 .selectInput:hover:not(:disabled) {
-  border-color: var(--text-light);
-  background-color: var(--bg-hover);
+  border-color: var(--accent-color);
 }
 
 .selectInput:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.25);
-  background-color: var(--bg-white);
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(197, 164, 126, 0.15);
 }
 
 .selectInput:disabled {
-  opacity: 0.5;
+  opacity: 0.6;
   cursor: not-allowed;
-  background-color: var(--bg-light);
-  color: var(--text-light);
+  background-color: var(--bg-hover);
 }
 
 .selectArrow {
@@ -192,7 +159,7 @@
   right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-medium);
+  color: var(--text-secondary);
   pointer-events: none;
   font-size: 0.8rem;
 }
@@ -204,63 +171,39 @@
   max-height: 200px;
   overflow-y: auto;
   padding: 4px 2px;
-  margin-top: 4px;
 }
 
 .districtChip {
   padding: 8px 14px;
-  border-radius: 50px;
+  border-radius: var(--radius-full);
   border: 1px solid var(--border-color);
-  background: var(--bg-light);
-  color: var(--text-dark);
+  background: var(--bg-surface);
+  color: var(--text-main);
   font-size: 0.9rem;
   cursor: pointer;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  transition: var(--transition);
   user-select: none;
 }
 
-.districtChip:hover:not(.disabled) {
-  border-color: var(--primary-color);
+.districtChip:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
   background: var(--bg-hover);
   transform: translateY(-1px);
-}
-
-.districtChip.selected {
-  background: var(--primary-gradient);
-  border-color: transparent;
-  color: #ffffff;
-  padding-right: 12px;
-  box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
-}
-
-.districtChip.disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-  background: var(--bg-light);
-  border-color: transparent;
-}
-
-.checkIcon { 
-  font-size: 0.8rem; 
 }
 
 .selectedSummary {
   border-top: 1px dashed var(--border-color);
   padding-top: 16px;
   margin-top: 8px;
-  animation: fadeIn 0.3s ease;
 }
 
 .selectedSummary h4 {
   font-size: 0.8rem;
   text-transform: uppercase;
-  color: var(--text-light);
+  color: var(--text-secondary);
   margin: 0 0 12px 0;
   font-weight: 700;
-  letter-spacing: 0.5px;
 }
 
 .summaryChips {
@@ -275,115 +218,81 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: var(--bg-hover);
-  color: var(--primary-color);
+  background: rgba(197, 164, 126, 0.1);
+  color: var(--accent-color);
   padding: 6px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.85rem;
   font-weight: 600;
-  border: 1px solid var(--border-color);
-  transition: all 0.2s;
+  border: 1px solid rgba(197, 164, 126, 0.3);
 }
 
 .summaryChip small {
-    color: var(--text-medium);
-    font-weight: 400;
-    margin-left: 4px;
+  color: var(--text-secondary);
+  font-weight: 400;
 }
 
 .summaryChip button {
   background: transparent;
   border: none;
-  color: var(--text-light);
+  color: var(--accent-color);
   cursor: pointer;
-  padding: 0;
-  margin-left: 6px;
+  padding: 4px;
   display: flex;
   align-items: center;
-  justify-content: center;
   border-radius: 4px;
-  transition: all 0.2s;
-  width: 20px;
-  height: 20px;
-}
-
-.summaryChip button svg {
-  width: 10px;
-  height: 10px;
-  display: block;
+  transition: var(--transition);
 }
 
 .summaryChip button:hover {
-  color: var(--danger-color);
-  background-color: rgba(229, 62, 62, 0.1);
+  color: var(--bg-surface);
+  background-color: var(--danger-color);
 }
 
 .submitButton {
   margin-top: auto;
   width: 100%;
-  background: var(--primary-gradient);
-  color: #ffffff;
+  background: var(--text-main);
+  color: var(--bg-surface);
   border: none;
-  padding: 16px;
-  border-radius: var(--border-radius-md);
-  font-weight: 700;
-  font-size: 1rem;
+  padding: 14px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.95rem;
   cursor: pointer;
-  transition: var(--transition-default);
-  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  transition: var(--transition);
 }
 
 .submitButton:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-}
-
-.submitButton:active:not(:disabled) {
-  transform: translateY(0);
+  background: var(--accent-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .submitButton:disabled {
-  background: var(--bg-hover);
-  color: var(--text-light);
+  opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: none;
-}
-
-.errorMsg {
-  background: rgba(229, 62, 62, 0.1);
-  color: var(--danger-color);
-  padding: 12px;
-  border-radius: var(--border-radius-sm);
-  text-align: center;
-  font-size: 0.9rem;
-  margin: 0 24px;
-  border: 1px solid rgba(229, 62, 62, 0.2);
 }
 
 .emptyMessage {
   text-align: center;
   padding: 24px 0;
-  color: var(--text-light);
+  color: var(--text-secondary);
   font-size: 0.95rem;
-  background: var(--bg-light);
-  border-radius: var(--border-radius-md);
+  background: var(--bg-hover);
+  border-radius: var(--radius-sm);
   border: 1px dashed var(--border-color);
 }
 
-@media (max-width: 600px) {
-  .modalContent {
-    max-height: 95vh;
-  }
-  
-  .modalHeader {
-    padding: 24px 16px 16px;
-  }
-  
-  .form {
-    padding: 16px;
-  }
-  
-  .submitButton {
-    padding: 14px;
-  }
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px) scale(0.98); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
 }

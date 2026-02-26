@@ -4,6 +4,7 @@ import { fetchSubscriptionStatus, FREE_PLAN_DATA } from '@api/subscriptionApi';
 
 const SubscriptionContext = createContext();
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useSubscription = () => {
   const context = useContext(SubscriptionContext);
   if (!context) throw new Error('useSubscription must be used within a SubscriptionProvider');
@@ -30,7 +31,7 @@ export const SubscriptionProvider = ({ children }) => {
         }
       }
       setSubscription(sub);
-    } catch (e) {
+    } catch {
       setSubscription(FREE_PLAN_DATA);
     } finally {
       setIsLoading(false);
@@ -46,7 +47,7 @@ export const SubscriptionProvider = ({ children }) => {
 
       const { data: { user } } = await supabase.auth.getUser();
 
-      if (user) {
+      if (user && mounted) {
          channel = supabase
           .channel('subscription-updates')
           .on(
@@ -76,13 +77,16 @@ export const SubscriptionProvider = ({ children }) => {
          setSubscription(FREE_PLAN_DATA);
          setIsLoading(false);
          localStorage.removeItem('user_subscription_cache');
-         if (channel) supabase.removeChannel(channel);
+         if (channel) {
+             supabase.removeChannel(channel);
+             channel = null;
+         }
        }
     });
 
     return () => { 
       mounted = false; 
-      authSub.unsubscribe();
+      authSub?.unsubscribe();
       if (channel) supabase.removeChannel(channel);
     };
   }, [updateSubscription]);

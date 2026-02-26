@@ -6,7 +6,8 @@ import { DISTRICT_CATEGORIES } from '@config/districtFields';
 import { useSubscription } from '@subscription/SubscriptionContext';
 
 const DistrictCard = React.memo(({ district, onClick, isFree }) => {
-  const { t } = useTranslation('districts');
+  // ДОДАНО 'common' для перекладу підказок (tooltips)
+  const { t } = useTranslation(['districts', 'common']);
   const [imgError, setImgError] = useState(false);
   const filterData = district.filterData;
   
@@ -60,9 +61,18 @@ const DistrictCard = React.memo(({ district, onClick, isFree }) => {
       
       <div className={styles.districtStats}>
         {visibleStats.map(stat => (
-          <span key={stat.key} className={styles.statBadge}>
+          // ОНОВЛЕНО: Тепер це кнопка з зупинкою пропагування кліку
+          <button 
+            key={stat.key} 
+            className={styles.statBadge}
+            onClick={(e) => {
+              e.stopPropagation(); // Важливо! Щоб не клікалась уся карточка
+              onClick(district, stat.key);
+            }}
+            title={t(`common:categories.${stat.key}`)}
+          >
             {stat.icon} {Number(stat.rating).toFixed(1)}
-          </span>
+          </button>
         ))}
       </div>
     </div>

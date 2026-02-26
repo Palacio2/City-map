@@ -40,7 +40,7 @@ export default function Contacts() {
     }
   ], [t]);
 
-  const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -63,7 +63,7 @@ export default function Contacts() {
         <div className={styles.card}>
           <div className={styles.successState} role="alert">
             <FaCheckCircle className={styles.successIcon} />
-            <h2 className={styles.title} style={{color: 'var(--text-dark)'}}>
+            <h2 className={styles.title} style={{color: 'var(--text-main)'}}>
               {t('success.title')}
             </h2>
             <p className={styles.subtitle}>{t('success.text')}</p>
@@ -94,40 +94,45 @@ export default function Contacts() {
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form} noValidate={false}>
-          {fields.map(({ name, label, type, icon: Icon, placeholder, autoComplete, id }) => (
-            <div key={name} className={styles.fieldGroup}>
-              <label htmlFor={id} className={styles.label}>
-                <Icon className={styles.icon} aria-hidden="true" /> {label}
-              </label>
-              {type === 'textarea' ? (
-                <textarea
-                  id={id}
-                  name={name}
-                  value={form[name]}
-                  onChange={handleChange}
-                  placeholder={placeholder}
-                  className={styles.input}
-                  required
-                  minLength={10}
-                  rows={4}
-                  autoComplete={autoComplete}
-                />
-              ) : (
-                <input
-                  id={id}
-                  type={type}
-                  name={name}
-                  value={form[name]}
-                  onChange={handleChange}
-                  placeholder={placeholder}
-                  className={styles.input}
-                  required
-                  minLength={name === 'name' ? 2 : undefined}
-                  autoComplete={autoComplete}
-                />
-              )}
-            </div>
-          ))}
+          {fields.map((field) => {
+            const Icon = field.icon;
+            
+            return (
+              <div key={field.name} className={styles.fieldGroup}>
+                <label htmlFor={field.id} className={styles.label}>
+                  <Icon className={styles.icon} aria-hidden="true" /> {field.label}
+                </label>
+                
+                {field.type === 'textarea' ? (
+                  <textarea
+                    id={field.id}
+                    name={field.name}
+                    value={form[field.name]}
+                    onChange={handleChange}
+                    placeholder={field.placeholder}
+                    className={styles.input}
+                    required
+                    minLength={10}
+                    rows={4}
+                    autoComplete={field.autoComplete}
+                  />
+                ) : (
+                  <input
+                    id={field.id}
+                    type={field.type}
+                    name={field.name}
+                    value={form[field.name]}
+                    onChange={handleChange}
+                    placeholder={field.placeholder}
+                    className={styles.input}
+                    required
+                    minLength={field.name === 'name' ? 2 : undefined}
+                    autoComplete={field.autoComplete}
+                  />
+                )}
+              </div>
+            );
+          })}
 
           {status === 'error' && (
             <div className={styles.errorMessage} role="alert">

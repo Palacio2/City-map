@@ -2,8 +2,8 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { DISTRICT_CATEGORIES } from '@config/districtFields'; 
-import { getValue } from '@utils/comparisonHelpers.jsx';
-import { formatPrice, formatNumber, formatBoolean, formatLevel, renderRating } from '@utils/formatters.jsx';
+// ВИПРАВЛЕНО: Усе беремо з одного файлу
+import { getValue, formatPrice, formatNumber, formatBoolean, formatLevel, renderRating } from '@utils/formatters.jsx';
 import styles from './ComparisonTable.module.css';
 
 export default function ComparisonTable({ districts }) {
@@ -26,39 +26,21 @@ export default function ComparisonTable({ districts }) {
       
       const fieldRows = category.fields.map(field => {
         let formatter;
-        
         switch (field.type) {
-          case 'price':
-            formatter = (v, d) => formatPrice(v, d.country);
-            break;
-          case 'rating_10':
-            formatter = (v) => v ? <span className={styles.rating}>{renderRating(v)}</span> : '-';
-            break;
-          case 'boolean':
-            formatter = (v) => formatBoolean(v, t, true, styles);
-            break;
-          case 'crimeLevel':
-            formatter = (v) => formatNumber(v) + '/10';
-            break;
-          case 'text':
-            formatter = (v) => formatLevel(v, t);
-            break;
-          case 'number':
-          default:
-            formatter = (v) => formatNumber(v);
-            break;
+          case 'price': formatter = (v, d) => formatPrice(v, d.country); break;
+          case 'rating_10': formatter = (v) => v ? <span className={styles.rating}>{renderRating(v)}</span> : '-'; break;
+          case 'boolean': formatter = (v) => formatBoolean(v, t, true, styles); break;
+          case 'crimeLevel': formatter = (v) => formatNumber(v) + '/10'; break;
+          case 'text': formatter = (v) => formatLevel(v, t); break;
+          case 'number': default: formatter = (v) => formatNumber(v); break;
         }
 
         if (field.key === 'avgParkSize' || field.key === 'transportAvgDistance') {
            formatter = (v) => formatNumber(v, ` ${t('common:units.m')}`);
            if (field.key === 'avgParkSize') formatter = (v) => formatNumber(v, ` ${t('common:units.sqm')}`);
         }
-        if (field.key === 'bikeLanes') {
-           formatter = (v) => formatNumber(v, ` ${t('common:units.km')}`);
-        }
-        if (field.key === 'greenSpaces') {
-           formatter = (v) => formatNumber(v, '%');
-        }
+        if (field.key === 'bikeLanes') formatter = (v) => formatNumber(v, ` ${t('common:units.km')}`);
+        if (field.key === 'greenSpaces') formatter = (v) => formatNumber(v, '%');
 
         return {
           label: t(`common:fields.${field.key}`),
@@ -115,5 +97,5 @@ export default function ComparisonTable({ districts }) {
         </tbody>
       </table>
     </div>
-  );
+  ); 
 }

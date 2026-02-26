@@ -16,7 +16,7 @@ export default defineConfig(({ mode }) => {
             'react-vendor': ['react', 'react-dom', 'react-router-dom'],
             'i18n-vendor': ['i18next', 'react-i18next', 'i18next-browser-languagedetector'],
             'pdf-vendor': ['jspdf', 'html2canvas'],
-            'ui-vendor': ['react-icons', 'react-toastify']
+            'ui-vendor': ['react-icons']
           }
         }
       }

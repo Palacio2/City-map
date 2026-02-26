@@ -1,31 +1,20 @@
 .pdfContainer {
-  /* === КРИТИЧНО ВАЖЛИВО: ПЕРЕВИЗНАЧЕННЯ ЗМІННИХ === */
-  /* Ми жорстко прописуємо значення "світлої теми" тут, 
-     щоб ізолювати PDF від глобальної темної теми сайту */
-  
   --primary-color: #0f1014;
-  --text-main: #000000;         /* Було світлим у темній темі */
-  --text-secondary: #444444;    /* Було світлим у темній темі */
+  --text-main: #000000;
+  --text-secondary: #444444;
   --bg-body: #ffffff;
   --bg-surface: #ffffff;
   --border-color: #e2e8f0;
   --accent-color: #c5a47e;
-  
-  /* Специфічні змінні з вашого глобального файлу */
   --text-inverse: #ffffff;
   --primary-light: #2c2e35;
-  
-  /* ================================================ */
 
   width: 794px;
   min-height: 1122px;
   padding: 40px;
-  
-  /* Явний білий фон для контейнера */
   background-color: var(--bg-surface) !important;
   color: var(--text-main) !important;
-  
-  font-family: 'Manrope', sans-serif; /* Використовуємо шрифт з глобальних, якщо він є */
+  font-family: 'Manrope', sans-serif;
   box-sizing: border-box;
   display: block;
   position: relative;
@@ -35,20 +24,6 @@
   print-color-adjust: exact !important;
 }
 
-/* Примусове фарбування всього тексту */
-.pdfContainer h1,
-.pdfContainer h2,
-.pdfContainer h3,
-.pdfContainer p,
-.pdfContainer span,
-.pdfContainer div,
-.pdfContainer strong {
-  color: #000000 !important; 
-  /* Якщо десь використовується opacity, це допоможе */
-  text-shadow: none !important;
-}
-
-/* HEADER */
 .header {
   display: flex;
   justify-content: space-between;
@@ -63,7 +38,7 @@
 }
 
 .districtName {
-  font-family: 'Cinzel', serif; /* Глобальний шрифт */
+  font-family: 'Cinzel', serif;
   font-size: 32px;
   font-weight: 700;
   color: #000000 !important;
@@ -87,7 +62,6 @@
   border: 2px solid #000000;
 }
 
-/* HERO */
 .heroSection {
   display: flex;
   gap: 24px;
@@ -103,7 +77,6 @@
   overflow: hidden;
 }
 
-/* Замість background-image */
 .mainPhotoImage {
   width: 100%;
   height: 100%;
@@ -113,12 +86,13 @@
 
 .quickStatsCard {
   flex: 1;
-  background-color: #f8f9fa !important; /* Явний колір, не змінна */
+  background-color: #f8f9fa !important;
   padding: 20px;
   border: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
   -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 .quickStatsTitle {
@@ -146,7 +120,6 @@
   width: 100%;
 }
 
-/* GRID */
 .masonryGrid {
   display: flex;
   justify-content: space-between;
@@ -161,11 +134,12 @@
   gap: 20px;
 }
 
-/* SECTIONS */
 .categorySection {
   background-color: #ffffff !important;
   border: 1px solid #e5e7eb;
+  width: 100%;
   break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .categoryHeader {
@@ -176,6 +150,7 @@
   gap: 10px;
   border-bottom: 1px solid #e5e7eb;
   -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 .categoryIcon {
@@ -193,14 +168,15 @@
 }
 
 .categoryRating {
-  background-color: #000000 !important;
   color: #ffffff !important;
   font-size: 11px;
   font-weight: 700;
   padding: 2px 6px;
   min-width: 20px;
   text-align: center;
+  border-radius: 4px;
   -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 .categoryContent {
@@ -210,7 +186,6 @@
   gap: 6px;
 }
 
-/* STATS */
 .statRow {
   display: flex;
   justify-content: space-between;

@@ -1,120 +1,100 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
-import { favoritesApi } from '@api/favoritesApi';
-import { supabase } from '@supabaseClient';
-import { transformDistrictsForDisplay } from '@utils/dataTransformers';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { favoritesApi } from "@api/favoritesApi";
+import { supabase } from "@supabaseClient";
+import { transformDistrictsForDisplay } from "@utils/dataTransformers";
 
-const FavoritesContext = createContext();
+const FavoritesContext = createContext(null);
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useFavorites = () => {
-  const context = useContext(FavoritesContext);
-  if (!context) {
-    throw new Error('useFavorites must be used within a FavoritesProvider');
-  }
-  return context;
+  const ctx = useContext(FavoritesContext);
+  if (!ctx) throw new Error("useFavorites must be used inside FavoritesProvider");
+  return ctx;
 };
 
 export const FavoritesProvider = ({ children }) => {
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(true);
-  
   const isLoaded = useRef(false);
-  const isFetching = useRef(false);
 
   const loadFavorites = useCallback(async () => {
-    if (isLoaded.current || isFetching.current) return;
-
-    isFetching.current = true;
+    if (isLoaded.current) return;
 
     try {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        setFavorites([]);
-        setLoading(false);
-        return;
-      }
-
       const data = await favoritesApi.getFavorites();
       const transformed = transformDistrictsForDisplay(data || []);
-      
       setFavorites(transformed);
       isLoaded.current = true;
-    } catch (err) {
-      console.error(err);
+    } catch {
+      setFavorites([]);
     } finally {
       setLoading(false);
-      isFetching.current = false;
     }
   }, []);
 
   useEffect(() => {
-    let mounted = true;
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
-      if (!mounted) return;
-      
-      if (event === 'SIGNED_OUT') {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
         setFavorites([]);
         isLoaded.current = false;
-        setLoading(false);
-      } else if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+      }
+
+      if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
         loadFavorites();
       }
     });
 
-    return () => { 
-      mounted = false; 
-      subscription.unsubscribe(); 
-    };
+    return () => subscription.unsubscribe();
   }, [loadFavorites]);
 
-  const isFavorite = useCallback((districtId) => {
-    return favorites.some(f => f.id === districtId || f.district_id === districtId);
-  }, [favorites]);
-
-  const addFavorite = useCallback(async (district) => {
-    const newFav = { ...district, addedAt: new Date().toISOString() };
-    setFavorites(prev => [...prev, newFav]);
-    
-    try {
-      await favoritesApi.addFavorite(district.id);
-    } catch (e) {
-      setFavorites(prev => prev.filter(f => f.id !== district.id));
-      throw e;
-    }
-  }, []);
-
-  const removeFavorite = useCallback(async (districtId) => {
-    const prevFavorites = [...favorites];
-    
-    setFavorites(prev => prev.filter(f => f.id !== districtId));
-
-    try {
-      await favoritesApi.removeFavorite(districtId);
-    } catch (e) {
-      console.error("Remove failed:", e);
-      setFavorites(prevFavorites);
-      throw e;
-    }
-  }, [favorites]);
-
   const toggleFavorite = useCallback(async (district) => {
-    if (isFavorite(district.id)) {
-      await removeFavorite(district.id);
-    } else {
-      await addFavorite(district);
+    const isFav = favorites.some((f) => f.id === district.id);
+
+    setFavorites((prev) => 
+      isFav
+        ? prev.filter((f) => f.id !== district.id)
+        : [...prev, { ...district, addedAt: new Date().toISOString() }]
+    );
+
+    try {
+      if (isFav) {
+        await favoritesApi.removeFavorite(district.id);
+      } else {
+        await favoritesApi.addFavorite(district.id);
+      }
+    } catch {
+      setFavorites((prev) => 
+        isFav
+          ? [...prev, district]
+          : prev.filter((f) => f.id !== district.id)
+      );
     }
-  }, [isFavorite, addFavorite, removeFavorite]);
+  }, [favorites]);
+
+  const isFavorite = useCallback(
+    (id) => favorites.some((f) => f.id === id || f.district_id === id),
+    [favorites]
+  );
+
+  const refresh = useCallback(() => {
+    isLoaded.current = false;
+    setLoading(true);
+    loadFavorites();
+  }, [loadFavorites]);
+
+  const value = useMemo(
+    () => ({
+      favorites,
+      loading,
+      toggleFavorite,
+      isFavorite,
+      refresh,
+    }),
+    [favorites, loading, toggleFavorite, isFavorite, refresh]
+  );
 
   return (
-    <FavoritesContext.Provider value={{ 
-      favorites, 
-      loading, 
-      isFavorite, 
-      toggleFavorite, 
-      removeFavorite,
-      addFavorite,
-      refresh: () => { isLoaded.current = false; loadFavorites(); }
-    }}>
+    <FavoritesContext.Provider value={value}>
       {children}
     </FavoritesContext.Provider>
   );

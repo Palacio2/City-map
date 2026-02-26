@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaTimes, FaFilePdf, FaUpload } from 'react-icons/fa';
+import { FaTimes, FaFilePdf, FaCloudUploadAlt } from 'react-icons/fa';
+import { supabase } from '@supabaseClient';
 import styles from './ExportSettingsModal.module.css';
 
 const STORAGE_KEY = 'geo_analyzer_export_settings';
@@ -8,6 +9,7 @@ const STORAGE_KEY = 'geo_analyzer_export_settings';
 const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
   const { t } = useTranslation(['comparison', 'common']);
   
+  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [formData, setFormData] = useState(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -26,6 +28,55 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
   useEffect(() => {
     if (isOpen) {
       setFormData(prev => ({ ...prev, comments: '' }));
+      
+      const fetchUserData = async () => {
+        setIsLoadingProfile(true);
+        try {
+          const { data: { user } } = await supabase.auth.getUser();
+          
+          if (user) {
+            const meta = user.user_metadata || {};
+            
+            const updateStateWithData = (logoData) => {
+              setFormData(prev => ({
+                ...prev,
+                agencyName: prev.agencyName || meta.full_name || '',
+                phone: prev.phone || meta.phone || '',
+                logo: prev.logo || logoData || null
+              }));
+              setIsLoadingProfile(false);
+            };
+
+            if (meta.avatar_url) {
+              if (meta.avatar_url.startsWith('http')) {
+                updateStateWithData(meta.avatar_url);
+              } else {
+                const { data: blob } = await supabase.storage
+                  .from('avatars')
+                  .download(meta.avatar_url);
+                  
+                if (blob) {
+                  const reader = new FileReader();
+                  reader.onloadend = () => {
+                    updateStateWithData(reader.result);
+                  };
+                  reader.readAsDataURL(blob);
+                } else {
+                  updateStateWithData(null);
+                }
+              }
+            } else {
+              updateStateWithData(null);
+            }
+          } else {
+            setIsLoadingProfile(false);
+          }
+        } catch (error) {
+          setIsLoadingProfile(false);
+        }
+      };
+
+      fetchUserData();
     }
   }, [isOpen]);
 
@@ -49,10 +100,8 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
     const settingsToSave = { ...formData, comments: '' };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(settingsToSave));
-    
     onConfirm(formData);
   };
 
@@ -60,7 +109,10 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
     <div className={styles.overlay}>
       <div className={styles.modal}>
         <div className={styles.header}>
-          <h3>{t('comparison:export_modal.title')}</h3>
+          <div>
+            <h3>{t('export_modal.title')}</h3>
+            <p className={styles.subtitle}>{t('export_modal.subtitle', 'Заповніть дані для вашого PDF-звіту')}</p>
+          </div>
           <button className={styles.closeButton} onClick={onClose}>
             <FaTimes />
           </button>
@@ -68,13 +120,20 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
         
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.logoUploadSection}>
-            <label htmlFor="logo-upload" className={styles.logoUploadLabel}>
+            <label htmlFor="logo-upload" className={`${styles.logoUploadLabel} ${formData.logo ? styles.hasImage : ''}`}>
               {formData.logo ? (
-                <img src={formData.logo} alt="Logo Preview" className={styles.logoPreview} />
+                <div className={styles.imagePreviewWrapper}>
+                  <img src={formData.logo} alt="Logo Preview" className={styles.logoPreview} />
+                  <div className={styles.changeImageOverlay}>
+                    <span>{t('export_modal.change_logo', 'Змінити')}</span>
+                  </div>
+                </div>
               ) : (
-                <>
-                  <FaUpload /> {t('comparison:export_modal.upload_logo')}
-                </>
+                <div className={styles.uploadPlaceholder}>
+                  <FaCloudUploadAlt className={styles.uploadIcon} />
+                  <span className={styles.uploadTitle}>{t('export_modal.upload_logo')}</span>
+                  <span className={styles.uploadHint}>PNG, JPG до 2MB</span>
+                </div>
               )}
             </label>
             <input 
@@ -87,11 +146,11 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>{t('comparison:export_modal.agency_name')}</label>
+            <label>{t('export_modal.agency_name')}</label>
             <input 
               type="text" 
               name="agencyName" 
-              placeholder={t('comparison:export_modal.agency_placeholder')} 
+              placeholder={t('export_modal.agency_placeholder')} 
               value={formData.agencyName}
               onChange={handleChange}
               required
@@ -99,45 +158,47 @@ const ExportSettingsModal = ({ isOpen, onClose, onConfirm }) => {
           </div>
 
           <div className={styles.inputGroup}>
-            <label>{t('comparison:export_modal.comments')}</label>
+            <label>{t('export_modal.comments')}</label>
             <textarea 
               name="comments" 
-              rows="4"
-              placeholder={t('comparison:export_modal.comments_placeholder')} 
+              rows="3"
+              placeholder={t('export_modal.comments_placeholder')} 
               value={formData.comments}
               onChange={handleChange}
             />
           </div>
 
-          <div className={styles.inputGroup}>
-            <label>{t('comparison:export_modal.phone')}</label>
-            <input 
-              type="text" 
-              name="phone" 
-              placeholder={t('comparison:export_modal.phone_placeholder')} 
-              value={formData.phone}
-              onChange={handleChange}
-              required
-            />
-          </div>
+          <div className={styles.rowInputs}>
+            <div className={styles.inputGroup}>
+              <label>{t('export_modal.phone')}</label>
+              <input 
+                type="text" 
+                name="phone" 
+                placeholder={t('export_modal.phone_placeholder')} 
+                value={formData.phone}
+                onChange={handleChange}
+                required
+              />
+            </div>
 
-          <div className={styles.inputGroup}>
-            <label>{t('comparison:export_modal.website')}</label>
-            <input 
-              type="text" 
-              name="website" 
-              placeholder={t('comparison:export_modal.website_placeholder', 'www.example.com')} 
-              value={formData.website}
-              onChange={handleChange}
-            />
+            <div className={styles.inputGroup}>
+              <label>{t('export_modal.website')}</label>
+              <input 
+                type="text" 
+                name="website" 
+                placeholder={t('export_modal.website_placeholder')} 
+                value={formData.website}
+                onChange={handleChange}
+              />
+            </div>
           </div>
 
           <div className={styles.actions}>
             <button type="button" className={styles.cancelBtn} onClick={onClose}>
-              {t('common:actions.cancel', 'Скасувати')}
+              {t('common:actions.cancel')}
             </button>
-            <button type="submit" className={styles.confirmBtn}>
-              <FaFilePdf /> {t('comparison:export_modal.export_btn')}
+            <button type="submit" className={styles.confirmBtn} disabled={isLoadingProfile}>
+              <FaFilePdf /> {t('export_modal.export_btn')}
             </button>
           </div>
         </form>

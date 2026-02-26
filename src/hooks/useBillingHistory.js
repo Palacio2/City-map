@@ -6,8 +6,7 @@ import { useSubscription } from '@subscription/SubscriptionContext';
 const ITEMS_PER_PAGE = 5;
 
 export const useBillingHistory = () => {
-  // Підключаємо всі три файли: profile (загальне), subscription (назви планів), billing (сторінка)
-  const { t } = useTranslation(['profile', 'subscription', 'billing']);
+  const { t, i18n } = useTranslation(['profile', 'subscription', 'billing']);
   const { subscription, updateSubscription, isLoading: isSubLoading } = useSubscription();
   
   const [state, setState] = useState({
@@ -23,9 +22,14 @@ export const useBillingHistory = () => {
 
   const [expandedItems, setExpandedItems] = useState({});
 
-  const dateFormatter = useMemo(() => new Intl.DateTimeFormat('uk-UA', {
-    day: '2-digit', month: '2-digit', year: 'numeric'
-  }), []);
+  const dateFormatter = useMemo(() => {
+    const lang = i18n.language || 'uk-UA';
+    return new Intl.DateTimeFormat(lang, {
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric'
+    });
+  }, [i18n.language]);
 
   const loadBillingData = useCallback(async () => {
     setState(prev => ({ ...prev, isLoading: true, error: null }));
@@ -37,23 +41,25 @@ export const useBillingHistory = () => {
         totalCount: count,
         isLoading: false 
       }));
-    } catch (e) {
+    } catch {
       setState(prev => ({ 
         ...prev, 
-        error: t('billing:error_load'), // З billing.json
+        error: t('billing:error_load'), 
         isLoading: false 
       }));
     }
   }, [state.currentPage, t]);
 
-  useEffect(() => { loadBillingData(); }, [loadBillingData]);
+  useEffect(() => { 
+    loadBillingData(); 
+  }, [loadBillingData]);
 
   const confirmCancellation = async () => {
     if (state.isCancelling) return;
     setState(prev => ({ ...prev, isCancelling: true, cancellationError: null }));
 
     try {
-      let subId = subscription.id;
+      let subId = subscription?.id;
       if (!subId) {
         const activeSub = state.history.find(s => s.status === 'active');
         if (activeSub) subId = activeSub.id;
@@ -68,14 +74,22 @@ export const useBillingHistory = () => {
       setState(prev => ({ 
         ...prev, 
         isCancelling: false, 
-        cancellationError: error.message || t('billing:error_cancel') // З billing.json
+        cancellationError: error.message || t('billing:error_cancel') 
       }));
     }
   };
 
-  const toggleModal = (show) => setState(prev => ({ ...prev, showCancelModal: show }));
-  const toggleRow = (id) => setExpandedItems(prev => ({ ...prev, [id]: !prev[id] }));
-  const setPage = (page) => setState(prev => ({ ...prev, currentPage: page }));
+  const toggleModal = useCallback((show) => {
+    setState(prev => ({ ...prev, showCancelModal: show }));
+  }, []);
+
+  const toggleRow = useCallback((id) => {
+    setExpandedItems(prev => ({ ...prev, [id]: !prev[id] }));
+  }, []);
+
+  const setPage = useCallback((page) => {
+    setState(prev => ({ ...prev, currentPage: page }));
+  }, []);
 
   return {
     ...state,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FaBookmark, FaKey, FaHome, FaArrowRight, FaTrash, FaChevronLeft, FaChevronRight, FaPlus, FaClock } from 'react-icons/fa';
@@ -30,9 +30,7 @@ export default function TrackedDistricts() {
     }
   });
 
-  const [loading, setLoading] = useState(() => {
-    return trackedItems.length === 0;
-  });
+  const [loading, setLoading] = useState(() => trackedItems.length === 0);
 
   const [currentPage, setCurrentPage] = useState(() => {
     try {
@@ -48,18 +46,13 @@ export default function TrackedDistricts() {
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
   const [districtToDelete, setDistrictToDelete] = useState(null);
 
-  useEffect(() => { loadTrackedData(); }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem(STORAGE_KEY_PAGE, currentPage);
-  }, [currentPage]);
-
-  const updateLocalData = (newData) => {
+  const updateLocalData = useCallback((newData) => {
     setTrackedItems(newData);
     sessionStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(newData));
-  };
+  }, []);
 
-  const loadTrackedData = async () => {
+  // ВИПРАВЛЕНО: Функція огорнута в useCallback, щоб бути стабільною залежністю для useEffect
+  const loadTrackedData = useCallback(async () => {
     if (trackedItems.length === 0) {
         setLoading(true);
     }
@@ -73,10 +66,20 @@ export default function TrackedDistricts() {
         setCurrentPage(maxPage);
       }
     } catch (err) { 
+      console.error("Failed to load tracked data:", err); // ВИПРАВЛЕНО: Додано логування замість порожнього блоку
     } finally { 
         setLoading(false); 
     }
-  };
+  }, [trackedItems.length, updateLocalData, currentPage]);
+
+  // ВИПРАВЛЕНО: Тепер loadTrackedData додано в залежності
+  useEffect(() => { 
+    loadTrackedData(); 
+  }, [loadTrackedData]);
+
+  useEffect(() => {
+    sessionStorage.setItem(STORAGE_KEY_PAGE, currentPage);
+  }, [currentPage]);
 
   const handleNavigate = (item) => {
     if (item.city && item.country && item.district) {
@@ -99,7 +102,7 @@ export default function TrackedDistricts() {
       
       const maxPage = Math.ceil(newItems.length / ITEMS_PER_PAGE) - 1;
       if (currentPage > maxPage && maxPage >= 0) setCurrentPage(maxPage);
-    } catch (err) {
+    } catch {
       alert(t('stats:error_delete'));
     } finally {
       setDeleteModalOpen(false);
@@ -108,7 +111,6 @@ export default function TrackedDistricts() {
   };
 
   const handleAddSubmit = async (districtsArray) => {
-    // В оновленому модальному вікні ми отримуємо масив об'єктів {name, city, country}
     if (!districtsArray || districtsArray.length === 0) return;
     
     setIsAdding(true);
@@ -118,7 +120,7 @@ export default function TrackedDistricts() {
                 country: d.country, 
                 city: d.city, 
                 district: d.name, 
-                districtId: d.id // Якщо API потребує ID
+                districtId: d.id 
             })
         );
 
@@ -126,7 +128,7 @@ export default function TrackedDistricts() {
         await loadTrackedData(); 
         setIsModalOpen(false);
     } catch (error) {
-        console.error(error);
+        console.error("Add multiple districts error:", error);
         alert(t('stats:error_add_multiple_districts'));
     } finally {
         setIsAdding(false);

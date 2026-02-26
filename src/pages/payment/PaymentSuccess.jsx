@@ -29,7 +29,7 @@ export default function PaymentSuccess() {
   const [displayData] = useState(() => ({
     plan: location.state?.plan || 'Premium', 
     amount: initialAmount,
-    txId: realTxId || `TX-${Date.now().toString().substr(-8)}`
+    txId: realTxId || `TX-${Date.now().toString().slice(-8)}`
   }));
 
   useEffect(() => {

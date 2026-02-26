@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
 import { FaFire, FaMapMarkerAlt, FaHome, FaKey, FaClock, FaPen } from 'react-icons/fa';
 import LocationSelectorModal from './LocationSelectorModal';
 import DistrictDetailsModal from '@components/districtMap/DistrictDetailsModal'; 
@@ -9,18 +8,11 @@ import { transformDistrictsForDisplay } from '@utils/dataTransformers';
 import { formatPrice } from '@utils/formatters.jsx';
 import styles from './PopularDistricts.module.css';
 
-const formatDate = (dateString, defaultText) => {
-  if (!dateString) return defaultText;
-  return new Date(dateString).toLocaleDateString('uk-UA', { day: 'numeric', month: 'short', year: 'numeric' });
-};
-
 export default function PopularDistricts() {
-  const { t } = useTranslation(['stats', 'common']);
-  const navigate = useNavigate();
+  const { t, i18n } = useTranslation(['stats', 'common']);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [districts, setDistricts] = useState([]);
   const [loading, setLoading] = useState(false);
-  
   const [viewingDistrict, setViewingDistrict] = useState(null);
   
   const [selectedLocation, setSelectedLocation] = useState(() => {
@@ -38,8 +30,11 @@ export default function PopularDistricts() {
           const data = await fetchDistrictsWithFilters(selectedLocation.country, selectedLocation.city);
           const transformedData = transformDistrictsForDisplay(data);
           setDistricts(Array.isArray(transformedData) ? transformedData.slice(0, 5) : []);
-        } catch { /* silent */ } 
-        finally { setLoading(false); }
+        } catch { 
+          setDistricts([]);
+        } finally { 
+          setLoading(false); 
+        }
       };
       loadData();
     }
@@ -54,12 +49,13 @@ export default function PopularDistricts() {
 
   const handleCardClick = (district) => {
     if (district) {
-      setViewingDistrict({
-        ...district,
-        country: selectedLocation?.country,
-        city: selectedLocation?.city
-      });
+      setViewingDistrict({ ...district, country: selectedLocation?.country, city: selectedLocation?.city });
     }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return t('common:general.date_unknown');
+    return new Date(dateString).toLocaleDateString(i18n.language || 'uk-UA', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
   return (
@@ -68,10 +64,7 @@ export default function PopularDistricts() {
         <div className={styles.titleWrapper}>
           <FaFire className={styles.icon} />
           <h2 className={styles.title}>
-            {selectedLocation 
-              ? `${t('stats:popular_in')} ${selectedLocation.city}`
-              : t('stats:popular_districts')
-            }
+            {selectedLocation ? `${t('stats:popular_in')} ${selectedLocation.city}` : t('stats:popular_districts')}
           </h2>
         </div>
         {selectedLocation && (
@@ -90,23 +83,15 @@ export default function PopularDistricts() {
             </button>
           </div>
         ) : loading ? (
-          <div className={styles.loader}>{t('stats:loading')}...</div>
+          <div className={styles.placeholderState}>{t('common:general.loading')}</div>
         ) : districts.length > 0 ? (
           <div className={styles.grid}>
             {districts.map((district, index) => {
-              const generalStats = district.filterData?.general || {};
+              const salePrice = district.filterData?.utilities?.propertyPricePerSqm || district.sale_price;
+              const rentPrice = district.filterData?.general?.average_rent_price || district.rental_price;
               
-              const salePrice = generalStats.propertyPrice || generalStats.salePriceSqm || district.sale_price;
-              const rentPrice = generalStats.average_rent_price || generalStats.rentalPrice || district.rental_price;
-              
-              const isSalePriceValid = salePrice && salePrice !== 0;
-
               return (
-                <div 
-                  key={district.id || index} 
-                  className={styles.richCard} 
-                  onClick={() => handleCardClick(district)} 
-                >
+                <div key={district.id || index} className={styles.richCard} onClick={() => handleCardClick(district)}>
                   <div className={styles.cardTop}>
                       <span className={styles.locationBadge}>
                           <FaMapMarkerAlt /> {selectedLocation.country}, {selectedLocation.city}
@@ -123,30 +108,32 @@ export default function PopularDistricts() {
                           <div className={styles.statLabel}><FaHome className={styles.saleIcon} /> <span>{t('common:fields.propertyPricePerSqm')}</span></div>
                           <div className={styles.statValue}>
                               {formatPrice(salePrice, selectedLocation.country)}
-                              {isSalePriceValid && <span className={styles.unit}> / м²</span>}
+                              {salePrice ? <span className={styles.unit}> / м²</span> : null}
                           </div>
                       </div>
                   </div>
                   <div className={styles.cardFooter}>
                       <FaClock className={styles.clockIcon} />
-                      <span>{t('stats:updated_label')} {formatDate(district.updated_at, t('stats:date_unknown'))}</span>
+                      <span>{t('stats:updated_label')} {formatDate(district.updated_at)}</span>
                   </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          <div className={styles.emptyState}>{t('stats:no_popular_data')}</div>
+          <div className={styles.placeholderState}>{t('stats:no_popular_data')}</div>
         )}
       </div>
       
       {isModalOpen && <LocationSelectorModal onClose={() => setIsModalOpen(false)} onSubmit={handleLocationSubmit} />}
 
-      <DistrictDetailsModal 
-        district={viewingDistrict}
-        isOpen={!!viewingDistrict}
-        onClose={() => setViewingDistrict(null)}
-      />
+      {viewingDistrict && (
+        <DistrictDetailsModal 
+          district={viewingDistrict}
+          isOpen={true}
+          onClose={() => setViewingDistrict(null)}
+        />
+      )}
     </div>
   );
 }

@@ -2,20 +2,21 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft, FaUser, FaEnvelope, FaSave, FaTimes, FaPhone, FaCheckCircle, FaExclamationTriangle } from 'react-icons/fa';
+import PhoneInput, { isValidPhoneNumber } from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
+import enLabels from 'react-phone-number-input/locale/en.json';
 import { profileAPI } from '@api/edit-profileApi';
-import { parsePhoneNumber, countryCodes, cleanPhoneNumberForSave } from '@utils/phoneUtils';
 import { validateProfileForm } from '@utils/profileValidation';
 import styles from './ProfileEditPages.module.css';
 
 export default function ProfileEditPage() {
-  const { t } = useTranslation(['profile', 'common']);
+  const { t } = useTranslation('profile');
   const navigate = useNavigate();
 
   const [state, setState] = useState({
     name: '',
     email: '',
     phone: '',
-    countryCode: '+380',
     originalEmail: '',
     isSaving: false
   });
@@ -24,60 +25,58 @@ export default function ProfileEditPage() {
 
   const updateState = (key, value) => setState(prev => ({ ...prev, [key]: value }));
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
-
-  const loadUserData = async () => {
+  const loadUserData = useCallback(async () => {
     try {
       const profile = await profileAPI.getProfile();
-      const { code, number } = parsePhoneNumber(profile.phone);
       
       setState(prev => ({
         ...prev,
         name: profile.full_name || '',
         email: profile.email || '',
-        phone: number || '',
-        countryCode: code || '+380',
+        phone: profile.phone || '',
         originalEmail: profile.email || ''
       }));
-    } catch (error) {
+    } catch {
       setStatusMessage({ 
         type: 'error', 
-        text: t('profile:edit_page.errors.load_failed') 
+        text: t('edit_page.errors.load_failed') 
       });
     }
-  };
+  }, [t]);
+
+  useEffect(() => {
+    loadUserData();
+  }, [loadUserData]);
 
   const mapErrorToMessage = (error) => {
     const msg = (error?.message || '').toLowerCase();
 
-    if (msg.includes('invalid refresh token') || msg.includes('jwt')) return t('profile:errors.auth_error');
-    if (msg.includes('networkerror') || msg.includes('failed to fetch')) return t('profile:errors.network_error');
-    if (msg.includes('user not found')) return t('profile:errors.user_not_found');
+    if (msg.includes('invalid refresh token') || msg.includes('jwt')) return t('errors.auth_error');
+    if (msg.includes('networkerror') || msg.includes('failed to fetch')) return t('errors.network_error');
+    if (msg.includes('user not found')) return t('errors.user_not_found');
     
     if (msg.includes('already registered') || msg.includes('already been registered') || msg.includes('unique constraint')) {
-        return t('profile:errors.email_taken');
+        return t('errors.email_taken');
     }
     
     if (msg.includes('rate limit') || msg.includes('security purposes') || msg.includes('try again after')) {
-        return t('profile:errors.too_many_requests');
+        return t('errors.too_many_requests');
     }
     
     if (msg.includes('is invalid') || (msg.includes('email') && msg.includes('invalid'))) {
-        return t('profile:errors.email_invalid_format');
+        return t('errors.email_invalid_format');
     }
 
-    return error.message || t('profile:errors.unknown_error');
+    return error.message || t('errors.unknown_error');
   };
 
   const handleInputChange = useCallback((e) => {
     const { name, value } = e.target;
-    let newValue = value;
-    if (name === 'phone') {
-      newValue = value.replace(/[^0-9]/g, '');
-    }
-    updateState(name, newValue);
+    updateState(name, value);
+  }, []);
+
+  const handlePhoneChange = useCallback((value) => {
+    updateState('phone', value || '');
   }, []);
 
   const handleSubmit = async (e) => {
@@ -85,10 +84,14 @@ export default function ProfileEditPage() {
     setStatusMessage({ type: '', text: '' });
     
     const validationError = validateProfileForm(state, t);
-    
     if (validationError) {
         setStatusMessage(validationError);
         return; 
+    }
+
+    if (state.phone && !isValidPhoneNumber(state.phone)) {
+        setStatusMessage({ type: 'error', text: t('edit_page.errors.phone_invalid') });
+        return;
     }
 
     if (state.isSaving) return;
@@ -96,11 +99,9 @@ export default function ProfileEditPage() {
     updateState('isSaving', true);
     
     try {
-      const phoneToSave = cleanPhoneNumberForSave(state.countryCode, state.phone);
-
       await profileAPI.updateProfile({
         full_name: state.name.trim(),
-        phone: phoneToSave
+        phone: state.phone
       });
 
       if (state.email.trim() !== state.originalEmail) {
@@ -108,11 +109,11 @@ export default function ProfileEditPage() {
         
         setStatusMessage({ 
             type: 'success', 
-            text: t('profile:edit_page.email_update_sent') 
+            text: t('edit_page.email_update_sent') 
         });
         updateState('originalEmail', state.email.trim());
       } else {
-        setStatusMessage({ type: 'success', text: t('profile:edit_page.success') });
+        setStatusMessage({ type: 'success', text: t('edit_page.success') });
         setTimeout(() => navigate('/profile'), 1500);
       }
     } catch (error) {
@@ -129,11 +130,11 @@ export default function ProfileEditPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <Link to="/profile" className={styles.backButton}>
-          <FaArrowLeft /> {t('profile:actions.back_to_profile')}
+          <FaArrowLeft /> {t('actions.back_to_profile')}
         </Link>
         <div className={styles.titleSection}>
-          <h1 className={styles.title}>{t('profile:edit_page.title')}</h1>
-          <p className={styles.subtitle}>{t('profile:edit_page.subtitle')}</p>
+          <h1 className={styles.title}>{t('edit_page.title')}</h1>
+          <p className={styles.subtitle}>{t('edit_page.subtitle')}</p>
         </div>
       </div>
       
@@ -141,8 +142,8 @@ export default function ProfileEditPage() {
         <div className={styles.section}>
           <form onSubmit={handleSubmit} className={styles.form} noValidate>
             <div className={styles.formHeader}>
-              <h2 className={styles.formTitle}>{t('profile:edit_page.main_info')}</h2>
-              <p className={styles.formSubtitle}>{t('profile:edit_page.enter_data')}</p>
+              <h2 className={styles.formTitle}>{t('edit_page.main_info')}</h2>
+              <p className={styles.formSubtitle}>{t('edit_page.enter_data')}</p>
             </div>
             
             {statusMessage.text && (
@@ -163,7 +164,7 @@ export default function ProfileEditPage() {
             <div className={styles.formGroup}>
               <label htmlFor="name" className={styles.formLabel}>
                 <FaUser className={styles.labelIcon} />
-                {t('profile:labels.full_name')} *
+                {t('labels.full_name')} *
               </label>
               <input
                 id="name"
@@ -172,7 +173,7 @@ export default function ProfileEditPage() {
                 value={state.name}
                 onChange={handleInputChange}
                 className={styles.formInput}
-                placeholder={t('profile:edit_page.placeholders.name')}
+                placeholder={t('edit_page.placeholders.name')}
                 required
                 disabled={state.isSaving}
                 maxLength={30}
@@ -182,7 +183,7 @@ export default function ProfileEditPage() {
             <div className={styles.formGroup}>
               <label htmlFor="email" className={styles.formLabel}>
                 <FaEnvelope className={styles.labelIcon} />
-                {t('profile:labels.email')} *
+                {t('labels.email')} *
               </label>
               <input
                 id="email"
@@ -191,7 +192,7 @@ export default function ProfileEditPage() {
                 value={state.email}
                 onChange={handleInputChange}
                 className={styles.formInput}
-                placeholder={t('profile:edit_page.placeholders.email')}
+                placeholder={t('edit_page.placeholders.email')}
                 required
                 disabled={state.isSaving}
                 maxLength={60} 
@@ -201,7 +202,7 @@ export default function ProfileEditPage() {
                 <div className={styles.emailWarning} role="note">
                   <FaExclamationTriangle className={styles.warningIcon} />
                   <span className={styles.warningText}>
-                    {t('profile:edit_page.email_warning')}
+                    {t('edit_page.email_warning')}
                   </span>
                 </div>
               )}
@@ -210,33 +211,20 @@ export default function ProfileEditPage() {
             <div className={styles.formGroup}>
               <label htmlFor="phone" className={styles.formLabel}>
                 <FaPhone className={styles.labelIcon} />
-                {t('profile:labels.phone')}
+                {t('labels.phone')}
               </label>
-              <div className={styles.phoneInputContainer}>
-                <select
-                  name="countryCode"
-                  value={state.countryCode}
-                  onChange={(e) => updateState('countryCode', e.target.value)}
-                  className={styles.countryCodeSelect}
-                  disabled={state.isSaving}
-                >
-                  {countryCodes.map(item => (
-                    <option key={item.code} value={item.code}>
-                      {item.code} {item.name && `(${item.name})`}
-                    </option>
-                  ))}
-                </select>
-                <input
-                  id="phone"
-                  type="tel"
-                  name="phone"
-                  value={state.phone}
-                  onChange={handleInputChange}
-                  className={styles.formInput}
-                  placeholder={t('profile:edit_page.placeholders.phone')}
-                  disabled={state.isSaving}
-                />
-              </div>
+              
+              <PhoneInput
+                international
+                defaultCountry="PL"
+                value={state.phone}
+                onChange={handlePhoneChange}
+                disabled={state.isSaving}
+                className={styles.phoneInputWrapper}
+                labels={enLabels}
+                limitMaxLength={true}
+              />
+
             </div>
 
             <div className={styles.buttonsContainer}>
@@ -246,12 +234,12 @@ export default function ProfileEditPage() {
                 disabled={state.isSaving}
               >
                 <FaSave className={styles.buttonIcon} />
-                {state.isSaving ? t('common:actions.saving') : t('common:actions.save')}
+                {state.isSaving ? t('actions.saving') : t('actions.save')}
               </button>
               
               <Link to="/profile" className={styles.secondaryButton}>
                 <FaTimes className={styles.buttonIcon} />
-                {t('common:actions.cancel')}
+                {t('actions.cancel')}
               </Link>
             </div>
           </form>

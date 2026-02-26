@@ -1,25 +1,27 @@
 import React from 'react';
 import { FaCheck, FaTimes, FaMinus } from 'react-icons/fa';
 
-// === Currency & Numbers ===
+// === Core Helpers ===
+export const getValue = (obj, path) => {
+  if (!obj || !path) return undefined;
+  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+};
 
+// === Currency & Numbers ===
 export const getCurrencyInfo = (countryName) => {
   if (!countryName) return { code: 'UAH', locale: 'uk-UA', symbol: '₴' };
-  
   const normalized = countryName.toLowerCase().trim();
   
-  if (normalized === 'pl' || normalized.includes('poland') || normalized.includes('polska') || normalized.includes('польща')) {
+  if (['pl', 'poland', 'polska', 'польща'].some(k => normalized.includes(k))) {
     return { code: 'PLN', locale: 'pl-PL', symbol: 'zł' };
   }
-  if (['de', 'fr', 'es', 'it'].includes(normalized) || 
-      normalized.includes('germany') || normalized.includes('france') || normalized.includes('italy') || normalized.includes('spain')) {
+  if (['de', 'fr', 'es', 'it', 'germany', 'france'].some(k => normalized.includes(k))) {
     return { code: 'EUR', locale: 'de-DE', symbol: '€' };
   }
-  if (['us', 'usa', 'uk', 'gb'].some(k => normalized.includes(k)) || normalized.includes('america') || normalized.includes('сша')) {
-    if (normalized.includes('uk') || normalized.includes('gb')) return { code: 'GBP', locale: 'en-GB', symbol: '£' };
+  if (['us', 'usa', 'uk', 'gb', 'сша'].some(k => normalized.includes(k))) {
+    if (['uk', 'gb'].some(k => normalized.includes(k))) return { code: 'GBP', locale: 'en-GB', symbol: '£' };
     return { code: 'USD', locale: 'en-US', symbol: '$' };
   }
-
   return { code: 'UAH', locale: 'uk-UA', symbol: '₴' };
 };
 
@@ -30,50 +32,41 @@ export const formatNumber = (val, unit = '') => {
 };
 
 export const formatPrice = (price, currencyInfoOrCountry) => {
-  if (price === null || price === undefined) return 'n/a';
+  if (price === null || price === undefined) return '-';
   
-  let info = currencyInfoOrCountry;
-  if (typeof currencyInfoOrCountry === 'string') {
-     info = getCurrencyInfo(currencyInfoOrCountry);
-  }
-  
-  const code = info?.code || 'UAH';
-  const locale = info?.locale || 'uk-UA';
+  const info = typeof currencyInfoOrCountry === 'string' 
+    ? getCurrencyInfo(currencyInfoOrCountry) 
+    : (currencyInfoOrCountry || { code: 'UAH', locale: 'uk-UA' });
 
   try {
-    return new Intl.NumberFormat(locale, {
+    return new Intl.NumberFormat(info.locale, {
       style: 'currency',
-      currency: code,
+      currency: info.code,
       maximumFractionDigits: 0
     }).format(price);
-  } catch (e) {
-    return `${price}`;
+  } catch {
+    return String(price);
   }
 };
 
 // === Boolean & Levels ===
-
 export const formatBoolean = (val, t = null, useIcons = false, styles = {}) => {
   if (useIcons) {
     if (val === true) return <FaCheck className={styles.check || 'icon-check'} style={{ color: 'green' }} />;
     if (val === false) return <FaTimes className={styles.cross || 'icon-cross'} style={{ color: 'red' }} />;
     return <FaMinus className={styles.dash || 'icon-dash'} style={{ color: '#ccc' }} />;
   }
-  
-  if (t) {
-    return val === true ? t('common:enums.yes') : (val === false ? t('common:enums.no') : '-');
-  }
-  
+  if (t) return val === true ? t('common:enums.yes') : (val === false ? t('common:enums.no') : '-');
   return val === true ? 'Yes' : (val === false ? 'No' : '-');
 };
 
-// Аліас для сумісності, якщо десь використовується formatBool
 export const formatBool = formatBoolean;
 
 export const formatLevel = (val, t) => {
   return val ? t(`common:enums.${val.toLowerCase()}`, { defaultValue: val }) : '-';
 };
 
+// === Crime Levels ===
 export const getCrimeLevelText = (crimeLevel) => {
   if (crimeLevel === null || crimeLevel === undefined) return 'common:enums.crime_medium';
   if (crimeLevel <= 3) return 'common:enums.crime_low';
@@ -89,9 +82,8 @@ export const getCrimeLevelClass = (crimeLevel, styles = {}) => {
 };
 
 // === Components ===
-
 export const renderRating = (rating) => {
-  if (rating === null || rating === undefined) return 'n/a';
+  if (rating === null || rating === undefined) return '-';
   
   const numericRating = parseFloat(rating);
   const fullStars = Math.floor(numericRating / 2);

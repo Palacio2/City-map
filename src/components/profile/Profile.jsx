@@ -4,12 +4,38 @@ import { useTranslation } from 'react-i18next';
 import { FaUser, FaCrown, FaCreditCard, FaSync, FaCheckCircle, FaTimesCircle, FaChartLine, FaEdit, FaKey, FaExclamationTriangle, FaChevronDown, FaChevronUp } from 'react-icons/fa';
 import { supabase } from '@supabaseClient';
 import { useSubscription } from '@subscription/SubscriptionContext';
-import { formatPhoneNumber } from '@utils/phoneUtils';
+import { formatPhoneNumberIntl, parsePhoneNumber } from 'react-phone-number-input';
 import AvatarUpload from './AvatarUpload';
 import styles from './Profile.module.css';
 
+const formatPhoneWithFlag = (phone) => {
+  if (!phone) return '';
+  const parsed = parsePhoneNumber(phone);
+  if (!parsed) return phone;
+  
+  const countryCode = parsed.country; 
+  const intlFormat = formatPhoneNumberIntl(phone); 
+  
+  const parts = intlFormat.split(' ');
+  const countryCodePart = parts[0]; 
+  const numberPart = parts.slice(1).join('-'); 
+  
+  return (
+    <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+      {countryCode && (
+        <img 
+          src={`https://flagcdn.com/24x18/${countryCode.toLowerCase()}.png`} 
+          alt={countryCode}
+          style={{ width: '20px', height: '15px', objectFit: 'cover', borderRadius: '2px', display: 'block' }}
+        />
+      )}
+      <span>{countryCodePart} {numberPart}</span>
+    </span>
+  );
+};
+
 const SubscriptionSection = React.memo(({ subscription, features, isPremium }) => {
-  const { t, i18n } = useTranslation(['profile', 'subscription']);
+  const { t, i18n } = useTranslation('profile');
   const [isExpanded, setIsExpanded] = useState(false);
 
   const statusInfo = useMemo(() => {
@@ -27,34 +53,34 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
 
     let status = { 
       icon: <FaCheckCircle />, 
-      text: t('profile:subscription.status.active'), 
+      text: t('subscription.status.active'), 
       class: styles.active 
     };
 
     if (isExpired) {
       status = { 
         icon: <FaTimesCircle />, 
-        text: t('profile:subscription.status.expired'), 
+        text: t('subscription.status.expired'), 
         class: styles.expired 
       };
     } else if (isFree) {
       status = { 
         icon: <FaTimesCircle />, 
-        text: t('profile:subscription.status.free'), 
+        text: t('subscription.status.free'), 
         class: styles.inactive 
       };
     } else if (isScheduledForCancel) {
       status = { 
         icon: <FaExclamationTriangle />, 
-        text: `${t('profile:subscription.status.active')} (${t('profile:subscription.expires_short', { date: formattedExpires })})`, 
+        text: `${t('subscription.status.active')} (${t('subscription.expires_short', { date: formattedExpires })})`, 
         class: styles.active 
       };
     }
 
     return {
       status,
-      name: t(`subscription:subscription.plans.${planKey}.name`),
-      price: t(`subscription:subscription.plans.${planKey}.price`),
+      name: t(`subscription.plans.${planKey}.name`),
+      price: t(`subscription.plans.${planKey}.price`),
       expires: formattedExpires
     };
   }, [subscription, t, i18n.language]);
@@ -66,7 +92,7 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
       <div className={styles.sectionHeader}>
         <div className={styles.headerTitleRow}>
           <FaCrown className={styles.sectionIcon} />
-          <h2>{t('profile:subscription.title')}</h2>
+          <h2>{t('subscription.title')}</h2>
         </div>
         {subscription.plan !== 'free' && (
            <span className={`${styles.statusBadge} ${statusInfo.status.class}`}>
@@ -79,8 +105,8 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
         {(subscription.status === 'cancelled' || subscription.isExpired) && subscription.plan !== 'free' && (
           <div className={`${styles.alertNotice} ${subscription.isExpired ? styles.expiredNotice : styles.cancellationNotice}`}>
             {subscription.isExpired 
-              ? t('profile:subscription.expired_notice', { date: statusInfo.expires })
-              : t('profile:subscription.cancelled_notice', { date: statusInfo.expires })}
+              ? t('subscription.expired_notice', { date: statusInfo.expires })
+              : t('subscription.cancelled_notice', { date: statusInfo.expires })}
           </div>
         )}
 
@@ -88,7 +114,7 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
             <div>
                 <h3 className={styles.planName}>{statusInfo.name}</h3>
                 {!subscription.isExpired && subscription.plan !== 'free' && (
-                    <p className={styles.billingDate}>{t('profile:expires', { date: statusInfo.expires })}</p>
+                    <p className={styles.billingDate}>{t('expires', { date: statusInfo.expires })}</p>
                 )}
             </div>
             {!subscription.isExpired && subscription.plan !== 'free' && (
@@ -101,7 +127,7 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
                 {features.map((featureKey, index) => (
                     <div key={index} className={styles.featureItem}>
                         <FaCheckCircle className={styles.featureIcon} /> 
-                        <span>{t(`subscription:subscription.features.${featureKey}`)}</span>
+                        <span>{t(`subscription.features.${featureKey}`)}</span>
                     </div>
                 ))}
             </div>
@@ -111,7 +137,7 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
             className={styles.expandButton} 
             onClick={() => setIsExpanded(!isExpanded)}
         >
-            {isExpanded ? t('profile:actions.hide_details') : t('profile:actions.show_details')}
+            {isExpanded ? t('actions.hide_details') : t('actions.show_details')}
             {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
         </button>
 
@@ -119,8 +145,8 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
           <Link to="/subscription" className={`${styles.baseLinkButton} ${styles.primaryButton}`}>
             <FaSync /> 
             {(isPremium || subscription.isExpired) 
-              ? t('profile:actions.manage_subscription') 
-              : t('profile:actions.choose_plan')}
+              ? t('actions.manage_subscription') 
+              : t('actions.choose_plan')}
           </Link>
         </div>
       </div>
@@ -129,7 +155,7 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
 });
 
 export default function Profile() {
-  const { t } = useTranslation(['profile', 'subscription']);
+  const { t } = useTranslation('profile');
   const [userData, setUserData] = useState({ id: null, name: '', email: '', phone: '', avatar_url: null });
   
   const { subscription, isPremium, getFeatureKeys } = useSubscription();
@@ -140,7 +166,7 @@ export default function Profile() {
       if (user) {
         setUserData({
           id: user.id,
-          name: user.user_metadata?.full_name || t('profile:labels.user'),
+          name: user.user_metadata?.full_name || t('labels.user'),
           email: user.email || '',
           phone: user.user_metadata?.phone || '',
           avatar_url: user.user_metadata?.avatar_url || null
@@ -165,14 +191,14 @@ export default function Profile() {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h1 className={styles.title}>{t('profile:title')}</h1>
+        <h1 className={styles.title}>{t('title')}</h1>
       </div>
 
       <div className={styles.content}>
         <section className={styles.section}>
           <div className={styles.sectionHeader}>
             <div className={styles.headerTitleRow}>
-                <FaUser className={styles.sectionIcon} /> <h2>{t('profile:user_profile')}</h2>
+                <FaUser className={styles.sectionIcon} /> <h2>{t('user_profile')}</h2>
             </div>
           </div>
           
@@ -187,16 +213,18 @@ export default function Profile() {
                 <div className={styles.textInfo}>
                     <h3 className={styles.userName}>{userData.name}</h3>
                     <span className={styles.userEmail}>{userData.email}</span>
-                    <span className={styles.userPhone}>{userData.phone ? formatPhoneNumber(userData.phone) : ''}</span>
+                    <span className={styles.userPhone}>
+                        {userData.phone ? formatPhoneWithFlag(userData.phone) : ''}
+                    </span>
                 </div>
             </div>
 
             <div className={styles.profileActionsGrid}>
               <Link to="/profile/edit" className={`${styles.baseLinkButton} ${styles.actionButton}`}>
-                <FaEdit /> <span>{t('profile:actions.edit')}</span>
+                <FaEdit /> <span>{t('actions.edit')}</span>
               </Link>
               <Link to="/profile/password" className={`${styles.baseLinkButton} ${styles.actionButtonSecondary}`}>
-                <FaKey /> <span>{t('profile:actions.change_password')}</span>
+                <FaKey /> <span>{t('actions.change_password')}</span>
               </Link>
             </div>
           </div>
@@ -214,7 +242,7 @@ export default function Profile() {
               <div className={styles.iconWrapper}>
                   <FaChartLine />
               </div>
-              <span className={styles.actionTitle}>{t('profile:quick_actions.stats_title')}</span>
+              <span className={styles.actionTitle}>{t('quick_actions.stats_title')}</span>
             </Link>
           )}
           
@@ -222,7 +250,7 @@ export default function Profile() {
             <div className={styles.iconWrapper}>
                 <FaCreditCard />
             </div>
-            <span className={styles.actionTitle}>{t('profile:quick_actions.billing_title')}</span>
+            <span className={styles.actionTitle}>{t('quick_actions.billing_title')}</span>
           </Link>
         </div>
       </div>

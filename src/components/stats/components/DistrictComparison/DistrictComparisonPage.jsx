@@ -16,7 +16,8 @@ const MAX_SELECTION = 4;
 const STORAGE_KEY = 'comparison_selected_districts';
 
 export default function DistrictComparisonPage() {
-  const { t } = useTranslation(['comparison', 'stats']);
+  // Використовуємо comparison як основний, common як допоміжний
+  const { t } = useTranslation(['comparison', 'common']);
   
   const [selectedDistricts, setSelectedDistricts] = useState(() => {
     try {
@@ -49,7 +50,6 @@ export default function DistrictComparisonPage() {
   };
 
   const handleAddDistricts = async (districtsArray) => {
-    // districtsArray містить об'єкти { name, city, country }
     const availableSlots = MAX_SELECTION - selectedDistricts.length;
     
     const candidates = districtsArray
@@ -96,7 +96,7 @@ export default function DistrictComparisonPage() {
 
     } catch (err) {
         console.error("Failed to add districts:", err);
-        alert(t('stats:error_loading_details') || "Failed to load district details");
+        alert(t('error_details'));
     } finally {
         setIsSaving(false);
         setIsModalOpen(false);
@@ -109,7 +109,7 @@ export default function DistrictComparisonPage() {
   };
 
   const handleReset = () => {
-    if (window.confirm(t('stats:actions.confirm_reset'))) {
+    if (window.confirm(t('confirm_clear'))) {
       setSelectedDistricts([]);
       setShowResults(false);
     }
@@ -153,7 +153,7 @@ export default function DistrictComparisonPage() {
         );
       } catch (error) {
         console.error("PDF Export failed:", error);
-        alert(t('stats:error_export'));
+        alert(t('error_export'));
       } finally {
         setIsExporting(false);
       }
@@ -168,7 +168,7 @@ export default function DistrictComparisonPage() {
     <div className={styles.container}>
       <div className={styles.header}>
         <Link to="/profile/stats" className={styles.backButton}>
-          <FaArrowLeft /> {t('stats:stats_page.back_to_profile')}
+          <FaArrowLeft /> {t('common:actions.back_to_profile')}
         </Link>
         <div className={styles.titleSection}>
           <h1 className={styles.title}>{t('title')}</h1>
@@ -184,7 +184,7 @@ export default function DistrictComparisonPage() {
           
           {selectedDistricts.length > 0 && (
             <button className={styles.resetBtn} onClick={handleReset} disabled={isSaving}>
-              <FaTrashAlt /> {t('stats:actions.clear_all')}
+              <FaTrashAlt /> {t('common:actions.clear')}
             </button>
           )}
         </div>
@@ -211,7 +211,7 @@ export default function DistrictComparisonPage() {
                 <button 
                   className={styles.removeBtn} 
                   onClick={() => handleRemoveDistrict(index)}
-                  title={t('stats:actions.delete')}
+                  title={t('common:actions.delete')}
                   disabled={isSaving}
                 >
                   <FaTimes />
@@ -239,7 +239,7 @@ export default function DistrictComparisonPage() {
             onClick={handleCompare}
             disabled={isSaving}
           >
-            {isSaving ? t('stats:loading') : t('compare_btn')}
+            {isSaving ? t('common:general.loading') : t('compare_btn')}
           </button>
         </div>
       )}
@@ -255,7 +255,7 @@ export default function DistrictComparisonPage() {
               disabled={isExporting}
             >
               <FaFilePdf />
-              {isExporting ? t('stats:loading') : t('export_pdf')}
+              {isExporting ? t('common:general.loading') : t('export_pdf')}
             </button>
           </div>
           

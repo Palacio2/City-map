@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './styles/cards.module.css';
 import StatCard from './StatCard';
@@ -11,7 +11,8 @@ import {
   getCrimeLevelClass 
 } from '@utils/formatters';
 
-export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor }) {
+// ОНОВЛЕНО: приймаємо selectedCategory
+export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor, selectedCategory }) {
   const { t } = useTranslation(['districts', 'common']);
 
   const formatValue = (value, type, fieldKey) => {
@@ -50,9 +51,17 @@ export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor 
     return value;
   };
 
+  // ОНОВЛЕНО: Визначаємо, які категорії показувати
+  const categoriesToRender = useMemo(() => {
+    if (selectedCategory && DISTRICT_CATEGORIES[selectedCategory]) {
+      return [DISTRICT_CATEGORIES[selectedCategory]];
+    }
+    return Object.values(DISTRICT_CATEGORIES);
+  }, [selectedCategory]);
+
   return (
     <div className={styles.statsGridContainer}>
-      {Object.values(DISTRICT_CATEGORIES).map((category) => {
+      {categoriesToRender.map((category) => {
         if (isFree && category.isPremium) return null;
 
         const categoryData = filterData[category.key];

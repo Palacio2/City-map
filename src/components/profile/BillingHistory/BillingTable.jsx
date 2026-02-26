@@ -1,27 +1,29 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaCheckCircle, FaTimesCircle, FaChevronDown, FaChevronUp, FaFileInvoiceDollar } from 'react-icons/fa';
 import styles from './BillingTable.module.css';
 
-const BillingTable = ({ history, isLoading, expandedItems, onToggleRow, dateFormatter, t }) => {
-  if (isLoading) {
-    return <div className={styles.emptyState}>Loading...</div>;
-  }
+const BillingTable = ({ history, expandedItems, onToggleRow, dateFormatter }) => {
+  const { t } = useTranslation('billing');
 
-  if (history.length === 0) {
-    return <div className={styles.emptyState}>{t('billing:no_history')}</div>;
+  if (!history || history.length === 0) {
+    return <div className={styles.emptyState}>{t('no_history')}</div>;
   }
 
   return (
     <div className={styles.gridBody}>
       {history.map((item) => {
         const planKey = item.plan_name === 'pro' ? 'premium' : (item.plan_name || 'free');
-        const planName = t(`subscription:subscription.plans.${planKey}.name`);
+        const planName = t(`plans.${planKey}.name`, { defaultValue: planKey });
+        
         const isScheduledForCancel = item.cancel_at && new Date(item.cancel_at) > new Date();
         const dateStr = dateFormatter.format(new Date(item.created_at));
         const amountStr = `€${item.amount}`;
         const invoiceId = item.payment_id ? item.payment_id.replace(/^(TX_|SUB_)/, '').slice(-8).toUpperCase() : '---';
 
-        const statusLower = item.status.toLowerCase();
+        const safeStatus = item.status || 'unknown';
+        const statusLower = safeStatus.toLowerCase();
+        
         let statusClass = styles.statusDefault;
         let rowBorderClass = styles.borderDefault; 
         let StatusIcon = FaCheckCircle;
@@ -35,9 +37,9 @@ const BillingTable = ({ history, isLoading, expandedItems, onToggleRow, dateForm
           rowBorderClass = styles.borderError;
         }
 
-        const statusTranslationKey = `billing:status_map.${statusLower}`;
-        const translatedStatus = t(statusTranslationKey, { defaultValue: item.status.replace(/_/g, ' ') });
-        const statusText = isScheduledForCancel ? t('billing:ending_soon') : translatedStatus;
+        const statusText = isScheduledForCancel 
+          ? t('ending_soon') 
+          : t(`status_map.${statusLower}`, { defaultValue: safeStatus.replace(/_/g, ' ') });
         
         const isExpanded = !!expandedItems[item.id];
 
@@ -48,17 +50,17 @@ const BillingTable = ({ history, isLoading, expandedItems, onToggleRow, dateForm
             onClick={() => onToggleRow(item.id)}
           >
             <div className={styles.cellDate}>
-              <span className={styles.mobileLabel}>{t('billing:table.date')}</span>
+              <span className={styles.mobileLabel}>{t('table.date')}</span>
               <span className={styles.dateValue}>{dateStr}</span>
             </div>
 
             <div className={`${styles.cellPlan} ${styles.mobileHidden}`}>
-              <span className={styles.mobileLabel}>{t('billing:table.plan')}</span>
+              <span className={styles.mobileLabel}>{t('table.plan')}</span>
               <span className={styles.valueText}>{planName}</span>
             </div>
 
             <div className={styles.cellAmount}>
-              <span className={styles.mobileLabel}>{t('billing:table.amount')}</span>
+              <span className={styles.mobileLabel}>{t('table.amount')}</span>
               <span className={styles.amountText}>{amountStr}</span>
               <span className={styles.mobileToggleIcon}>
                 {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
@@ -66,7 +68,7 @@ const BillingTable = ({ history, isLoading, expandedItems, onToggleRow, dateForm
             </div>
 
             <div className={`${styles.cellStatus} ${styles.mobileHidden}`}>
-              <span className={styles.mobileLabel}>{t('billing:table.status')}</span>
+              <span className={styles.mobileLabel}>{t('table.status')}</span>
               <span className={`${styles.statusPill} ${statusClass}`}>
                 <StatusIcon size={12} />
                 {statusText}
@@ -76,7 +78,7 @@ const BillingTable = ({ history, isLoading, expandedItems, onToggleRow, dateForm
             <div className={`${styles.cellInvoice} ${styles.mobileHidden}`}>
               <button 
                 className={styles.invoiceTag} 
-                title={t('billing:download_invoice')} 
+                title={t('download_invoice')} 
                 onClick={(e) => e.stopPropagation()}
               >
                 <FaFileInvoiceDollar className={styles.invoiceIcon} />

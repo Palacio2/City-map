@@ -17,6 +17,7 @@
   "processing": "Обробка...",
   "download_invoice": "Завантажити інвойс",
   "ending_soon": "Скасовується",
+  "back_to_profile": "Назад до профілю",
   "actions": {
     "prev": "Назад",
     "next": "Далі"
@@ -38,5 +39,11 @@
     "past_due": "Заборгованість",
     "unpaid": "Не сплачено",
     "trialing": "Пробний період"
+  },
+  "plans": {
+    "free": { "name": "Безкоштовний", "price": "€0" },
+    "weekly": { "name": "Тижневий", "price": "€2.99 / тиждень" },
+    "premium": { "name": "Premium", "price": "€8.99 / міс" },
+    "realtor": { "name": "Realtor Pro", "price": "€29.00 / міс" }
   }
 }

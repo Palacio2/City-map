@@ -3,22 +3,28 @@ import { supabase } from '@supabaseClient';
 import { FaCamera, FaSpinner } from 'react-icons/fa';
 import styles from './AvatarUpload.module.css';
 
-export default function AvatarUpload({ uid, url, onUpload }) {
-  const [avatarUrl, setAvatarUrl] = useState(null);
+export default function AvatarUpload({ uid, url: filePath, onUpload }) {
+  const [signedUrl, setSignedUrl] = useState(null);
   const [uploading, setUploading] = useState(false);
 
+  // Отримуємо тимчасове посилання, коли є шлях до файлу
   useEffect(() => {
-    if (url) downloadImage(url);
-  }, [url]);
+    if (filePath) {
+      getSignedUrl(filePath);
+    }
+  }, [filePath]);
 
-  const downloadImage = async (path) => {
+  const getSignedUrl = async (path) => {
     try {
-      const { data, error } = await supabase.storage.from('avatars').download(path);
+      // Створюємо посилання, яке діятиме 1 годину (3600 секунд)
+      const { data, error } = await supabase.storage
+        .from('avatars')
+        .createSignedUrl(path, 3600);
+
       if (error) throw error;
-      const url = URL.createObjectURL(data);
-      setAvatarUrl(url);
+      setSignedUrl(data.signedUrl);
     } catch (error) {
-      console.log('Error downloading image: ', error.message);
+      console.error('Помилка отримання зображення: ', error.message);
     }
   };
 
@@ -27,29 +33,37 @@ export default function AvatarUpload({ uid, url, onUpload }) {
       setUploading(true);
 
       if (!event.target.files || event.target.files.length === 0) {
-        throw new Error('Select an image to upload.');
+        throw new Error('Оберіть зображення для завантаження.');
       }
 
       const file = event.target.files[0];
       const fileExt = file.name.split('.').pop();
-      const fileName = `${uid}-${Math.random()}.${fileExt}`;
-      const filePath = `${fileName}`;
+      // Генеруємо новий шлях: id_користувача/timestamp.розширення
+      const newFilePath = `${uid}/${Date.now()}.${fileExt}`;
 
+      // 1. Видаляємо старе фото зі Storage (якщо воно було)
+      if (filePath) {
+        await supabase.storage.from('avatars').remove([filePath]);
+      }
+
+      // 2. Завантажуємо нове фото
       const { error: uploadError } = await supabase.storage
         .from('avatars')
-        .upload(filePath, file);
+        .upload(newFilePath, file);
 
       if (uploadError) throw uploadError;
 
+      // 3. Оновлюємо шлях в метаданих користувача
       const { error: updateError } = await supabase.auth.updateUser({
-        data: { avatar_url: filePath }
+        data: { avatar_url: newFilePath }
       });
 
       if (updateError) throw updateError;
 
-      onUpload(filePath);
+      // 4. Повідомляємо батьківський компонент про новий шлях
+      onUpload(newFilePath);
     } catch (error) {
-      alert(error.message);
+      alert('Помилка завантаження: ' + error.message);
     } finally {
       setUploading(false);
     }
@@ -57,15 +71,15 @@ export default function AvatarUpload({ uid, url, onUpload }) {
 
   return (
     <div className={styles.avatarContainer}>
-      {avatarUrl ? (
+      {signedUrl ? (
         <img
-          src={avatarUrl}
+          src={signedUrl}
           alt="Avatar"
           className={styles.avatarImage}
         />
       ) : (
         <div className={styles.avatarPlaceholder}>
-            {uploading ? <FaSpinner className={styles.spinner} /> : <FaCamera />}
+          {uploading ? <FaSpinner className={styles.spinner} /> : <FaCamera />}
         </div>
       )}
       

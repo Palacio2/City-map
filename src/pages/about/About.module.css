@@ -7,11 +7,16 @@
 
 .heroSection {
   background: var(--primary-gradient);
-  color: var(--text-inverse);
+  color: #ffffff;
   padding: 6rem 1.5rem 5rem;
   text-align: center;
   position: relative;
   overflow: hidden;
+}
+
+:global([data-theme='dark']) .heroSection {
+  background: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .heroContent {
@@ -27,17 +32,26 @@
   font-weight: 600;
   margin-bottom: 1.5rem;
   letter-spacing: -0.02em;
-  color: var(--text-inverse);
+  color: #ffffff;
   text-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+
+:global([data-theme='dark']) .heroTitle {
+  color: var(--text-main);
+  text-shadow: none;
 }
 
 .heroSubtitle {
   font-size: 1.25rem;
-  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.9);
   max-width: 700px;
   margin: 0 auto;
   font-weight: 300;
   line-height: 1.6;
+}
+
+:global([data-theme='dark']) .heroSubtitle {
+  color: var(--text-secondary);
 }
 
 .content {
@@ -154,7 +168,7 @@
 
 .stepNumber {
   background: var(--accent-color);
-  color: var(--text-inverse);
+  color: #ffffff;
   font-family: var(--font-heading);
   font-weight: 700;
   width: 40px;
@@ -198,7 +212,6 @@
 
 .ctaSection {
   background: var(--primary-gradient);
-  color: var(--text-inverse);
   padding: 4rem 2rem;
   border-radius: var(--radius-lg);
   text-align: center;
@@ -208,17 +221,28 @@
   overflow: hidden;
 }
 
+:global([data-theme='dark']) .ctaSection {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-card);
+}
+
 .ctaSection h2 {
   font-family: var(--font-heading);
   font-size: 2.5rem;
   margin-bottom: 1rem;
+  color: var(--accent-color);
 }
 
 .ctaSection p {
   font-size: 1.1rem;
-  opacity: 0.9;
+  color: rgba(255, 255, 255, 0.9);
   max-width: 600px;
   margin: 0 auto 2.5rem;
+}
+
+:global([data-theme='dark']) .ctaSection p {
+  color: var(--text-secondary);
 }
 
 .ctaButtons {
@@ -245,25 +269,36 @@
 }
 
 .primary {
-  background: #fff;
-  color: var(--primary-color);
+  background: var(--accent-color);
+  color: #ffffff;
+  border: none;
 }
 
 .primary:hover {
-  background: var(--accent-color);
-  color: var(--text-inverse);
-  box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+  background: var(--accent-hover);
+  box-shadow: 0 8px 25px rgba(197, 164, 126, 0.3);
+  transform: translateY(-2px);
 }
 
 .secondary {
   background: transparent;
   border: 1px solid rgba(255,255,255,0.4);
-  color: #fff;
+  color: #ffffff;
+}
+
+:global([data-theme='dark']) .secondary {
+  border-color: var(--border-color);
+  color: var(--text-main);
 }
 
 .secondary:hover {
   background: rgba(255,255,255,0.1);
-  border-color: #fff;
+  border-color: #ffffff;
+}
+
+:global([data-theme='dark']) .secondary:hover {
+  background: var(--bg-hover);
+  border-color: var(--text-secondary);
 }
 
 .tertiary {
@@ -272,9 +307,17 @@
   border: 1px solid transparent;
 }
 
+:global([data-theme='dark']) .tertiary {
+  color: var(--text-secondary);
+}
+
 .tertiary:hover {
-  color: #fff;
+  color: #ffffff;
   text-decoration: underline;
+}
+
+:global([data-theme='dark']) .tertiary:hover {
+  color: var(--text-main);
 }
 
 @media (max-width: 768px) {

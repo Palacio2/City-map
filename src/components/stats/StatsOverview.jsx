@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaChevronDown, FaChartBar, FaMapMarkerAlt, FaHistory, FaBookmark, FaCalculator } from 'react-icons/fa';
@@ -13,7 +13,7 @@ import InvestmentCalculator from './components/InvestmentCalculato/InvestmentCal
 
 const STORAGE_KEY = 'stats_page_sections_state';
 
-const CollapsibleSection = ({ id, title, icon: Icon, children, isOpen, onToggle }) => {
+const CollapsibleSection = React.memo(({ id, title, icon: Icon, children, isOpen, onToggle }) => {
   return (
     <div className={`${styles.sectionWrapper} ${isOpen ? styles.open : ''}`}>
       <button 
@@ -33,12 +33,12 @@ const CollapsibleSection = ({ id, title, icon: Icon, children, isOpen, onToggle 
         aria-hidden={!isOpen}
       >
         <div className={styles.innerContent}>
-            {children} {/* ВАЖЛИВО: Контент завжди рендериться, але ховається через CSS */}
+            {children}
         </div>
       </div>
     </div>
   );
-};
+});
 
 export default function StatsOverview({ stats, weeklyActivity, trackedDistricts }) {
   const { t } = useTranslation(['stats', 'common']);
@@ -60,24 +60,24 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
     }
   });
 
-  const toggleSection = (sectionId) => {
+  const toggleSection = useCallback((sectionId) => {
     setOpenSections(prev => {
       const newState = { ...prev, [sectionId]: !prev[sectionId] };
       sessionStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
       return newState;
     });
-  };
+  }, []);
 
-  const handleNavigateToSearches = () => navigate('/');
-  const handleNavigateToSaved = () => navigate('/favorites');
-
-  const handleNavigateToCompare = () => {
+  const handleNavigateToSearches = useCallback(() => navigate('/'), [navigate]);
+  const handleNavigateToSaved = useCallback(() => navigate('/favorites'), [navigate]);
+  
+  const handleNavigateToCompare = useCallback(() => {
     if (isRealtor) {
       navigate('/profile/stats/compare');
     } else {
       navigate('/subscription');
     }
-  };
+  }, [isRealtor, navigate]);
 
   return (
     <div className={styles.content}>

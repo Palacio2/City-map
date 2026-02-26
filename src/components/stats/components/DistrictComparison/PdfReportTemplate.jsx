@@ -2,8 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaPhone, FaGlobe, FaBuilding, FaQuoteLeft, FaMapMarkerAlt } from 'react-icons/fa';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
-import { getValue } from '@utils/comparisonHelpers.jsx';
-import { formatPrice, formatNumber, formatBoolean, formatLevel, renderRating } from '@utils/formatters.jsx';
+import { getValue, formatPrice, formatNumber, formatBoolean, formatLevel } from '@utils/formatters.jsx';
 import styles from './PdfReportTemplate.module.css';
 
 const DEFAULTS = {
@@ -28,7 +27,7 @@ const getFieldFormatter = (field, t) => {
 
   switch (field.type) {
     case 'price': return (v, d) => formatPrice(v, d.country);
-    case 'boolean': return (v) => formatBoolean(v, t, false); // false = текст (Так/Ні) для PDF
+    case 'boolean': return (v) => formatBoolean(v, t, false);
     case 'rating_10': return (v) => v ? v.toFixed(1) : '-';
     case 'crimeLevel': return (v) => formatNumber(v) + '/10';
     case 'text': return (v) => formatLevel(v, t);
@@ -117,13 +116,13 @@ export default function PdfReportTemplate({ districts, customData, isPremium = t
           </div>
         </div>
         <div className={styles.reportTitleBlock}>
-          <p>{t('comparison:results_title')}</p>
+          <p>{t('results_title')}</p>
         </div>
       </div>
 
       {comments && (
         <div className={styles.commentsSection}>
-          <h3><FaQuoteLeft size={12} /> {t('comparison:pdf_report.analyst_notes')}</h3>
+          <h3><FaQuoteLeft size={12} /> {t('pdf_report.analyst_notes')}</h3>
           <p>{comments}</p>
         </div>
       )}
@@ -132,7 +131,7 @@ export default function PdfReportTemplate({ districts, customData, isPremium = t
         <table className={styles.table}>
           <thead>
             <tr>
-              <th className={styles.metricHeader}>{t('comparison:metric')}</th>
+              <th className={styles.metricHeader}>{t('metric')}</th>
               {districts.map((d, i) => (
                 <th key={d.id || i} className={styles.districtHeader}>
                   <div className={styles.dName}>{d.name}</div>
@@ -181,8 +180,8 @@ export default function PdfReportTemplate({ districts, customData, isPremium = t
           {phone && <span><FaPhone /> {phone}</span>}
         </div>
         <div className={styles.disclaimer}>
-          {t('comparison:pdf_report.prepared_by')} <strong>{agencyName}</strong>. <br/>
-          {t('comparison:pdf_report.valid_as_of')} {new Date().getFullYear()}.
+          {t('pdf_report.prepared_by')} <strong>{agencyName}</strong>. <br/>
+          {t('pdf_report.valid_as_of')} {new Date().getFullYear()}.
         </div>
       </div>
     </div>

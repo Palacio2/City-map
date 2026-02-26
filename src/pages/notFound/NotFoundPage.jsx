@@ -5,7 +5,7 @@ import { FaMapMarkedAlt, FaHome } from 'react-icons/fa';
 import styles from './NotFoundPage.module.css';
 
 export default function NotFoundPage() {
-  const { t } = useTranslation('notFound');
+  const { t } = useTranslation('404');
 
   return (
     <div className={styles.container}>

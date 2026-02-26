@@ -7,28 +7,20 @@ const GenericCategoryFilter = memo(({ categoryKey, values, onChange, isFree, isR
 
   const filters = useMemo(() => {
     if (!config) return [];
-    
     return config.fields
-      .filter(f => {
-        if (isFree && f.isPremiumField) return false;
-        if (f.isRealtorOnly && !isRealtor) return false;
-        return true;
-      })
-      .map(f => ({
-        name: f.key
-      }));
+      .filter(f => (isFree && f.isPremiumField) ? false : (f.isRealtorOnly && !isRealtor) ? false : true)
+      .map(f => ({ name: f.key, type: f.type }));
   }, [config, isFree, isRealtor]);
 
   if (!config) return null;
 
-  return (
-    <FilterSection
-      categoryKey={categoryKey}
-      filters={filters}
-      values={values}
-      onChange={onChange}
-    />
-  );
+return (
+  <FilterSection 
+    categoryKey={categoryKey} 
+    filters={filters} 
+    values={values} 
+    onChange={(data) => onChange(categoryKey, data)} 
+  />);
 });
 
 export default GenericCategoryFilter;

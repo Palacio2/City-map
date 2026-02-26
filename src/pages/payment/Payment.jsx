@@ -10,7 +10,7 @@ import styles from './Payment.module.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
-const CheckoutForm = ({ formattedPrice, mode, subscriptionId }) => {
+const CheckoutForm = ({ formattedPrice, mode }) => {
   const stripe = useStripe();
   const elements = useElements();
   const { t } = useTranslation('payment'); 
@@ -81,7 +81,6 @@ export default function Payment() {
   const [promoCode, setPromoCode] = useState("");
   const [finalAmount, setFinalAmount] = useState(null);
   const [paymentMode, setPaymentMode] = useState('payment');
-  const [subscriptionId, setSubscriptionId] = useState(null);
   const [error, setError] = useState(null);
 
   const planKey = state?.planKey;
@@ -108,7 +107,6 @@ export default function Payment() {
           setClientSecret(data.clientSecret);
           setFinalAmount(data.amount);
           setPaymentMode(data.mode);
-          setSubscriptionId(data.subscriptionId);
       } else {
           throw new Error("No client secret returned from server");
       }
@@ -134,8 +132,8 @@ export default function Payment() {
     appearance: { 
         theme: 'night', 
         variables: { 
-            colorPrimary: '#c5a47e', // Акцентний колір
-            colorBackground: '#1a1a1a', // Фон для інпутів у темній темі
+            colorPrimary: '#c5a47e',
+            colorBackground: '#1a1a1a',
             colorText: '#ffffff',
             fontFamily: 'Manrope, sans-serif'
         } 
@@ -198,7 +196,6 @@ export default function Payment() {
                 <CheckoutForm 
                     formattedPrice={displayPrice} 
                     mode={paymentMode} 
-                    subscriptionId={subscriptionId}
                 />
               </Elements>
             ) : (

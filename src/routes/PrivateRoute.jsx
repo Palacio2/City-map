@@ -25,7 +25,7 @@ const PrivateRoute = ({ children }) => {
             setHasConsent(false);
           }
         }
-      } catch (error) {
+      } catch {
         if (mounted) {
           setIsAuthenticated(false);
           setHasConsent(false);
@@ -39,10 +39,7 @@ const PrivateRoute = ({ children }) => {
     return () => { mounted = false; };
   }, []);
 
-  // Повертаємо null замість спінера
-  if (isLoading) {
-    return null; 
-  }
+  if (isLoading) return null; 
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;

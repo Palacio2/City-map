@@ -168,6 +168,15 @@
   display: flex;
   align-items: center;
   gap: 3px;
+  cursor: pointer; /* ДОДАНО */
+  transition: all 0.2s ease; /* ДОДАНО */
+}
+
+.statBadge:hover {
+  background: var(--accent-color);
+  color: #fff;
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
 }
 
 .pagination {

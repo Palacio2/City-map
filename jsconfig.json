@@ -1,24 +1,5 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-    "module": "ESNext",
-    "skipLibCheck": true,
-
-    /* Режим міграції */
-    "allowJs": true,
-    "checkJs": false,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "noEmit": true,
-    "jsx": "react-jsx",
-
-    /* Ваші шляхи (Master List) */
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"],
@@ -40,8 +21,5 @@
       "@filtersPanel/*": ["src/components/filtersPanel/*"]
     }
   },
-"include": [
-    "src/**/*",         // Шукати ВСЕ всередині src (включаючи .tsx, .ts, .css)
-    "vite-env.d.ts"     // Явно підключити файл типів середовища
-  ],
+  "include": ["src/**/*"]
 }

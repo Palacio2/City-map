@@ -2,11 +2,7 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictPdfTemplate.module.css';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
-import { 
-  formatNumber, 
-  formatPrice, 
-  getCrimeLevelText 
-} from '@utils/formatters';
+import { formatNumber, formatPrice, getCrimeLevelText } from '@utils/formatters';
 
 const StatRow = ({ label, value, highlight = false, className = '' }) => (
   <div className={`${styles.statRow} ${highlight ? styles.highlight : ''} ${className}`}>
@@ -14,6 +10,13 @@ const StatRow = ({ label, value, highlight = false, className = '' }) => (
     <span className={styles.statValue}>{value}</span>
   </div>
 );
+
+const getRatingBg = (rating) => {
+  if (!rating) return '#000000';
+  if (rating >= 8) return '#22c55e';
+  if (rating >= 5) return '#eab308';
+  return '#ef4444';
+};
 
 const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
   if (!data) return null;
@@ -23,14 +26,16 @@ const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
       <div className={styles.categoryHeader}>
         <span className={styles.categoryIcon}>{categoryConfig.icon}</span>
         <h3 className={styles.categoryTitle}>{t(`common:categories.${categoryConfig.key}`)}</h3>
-        <span className={styles.categoryRating}>
+        <span 
+          className={styles.categoryRating}
+          style={{ backgroundColor: getRatingBg(data.rating || data.qualityRating) }}
+        >
            {(data.rating || data.qualityRating || 0).toFixed(1)}
         </span>
       </div>
       <div className={styles.categoryContent}>
         {categoryConfig.fields.map(field => {
            if (field.isRealtorOnly && !isRealtor) return null;
-
            const val = data[field.key];
            if (val === null || val === undefined) return null;
 
@@ -47,35 +52,23 @@ const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
   );
 };
 
-export default function DistrictPdfTemplate({ 
-  district, 
-  currencyInfo, 
-  isRealtor 
-}) {
+export default function DistrictPdfTemplate({ district, currencyInfo, isRealtor, photoOverride }) {
   const { t } = useTranslation(['districts', 'common']);
 
   const formatValue = (value, type) => {
     if (value === null || value === undefined) return '-';
-
     if (type === 'price') return formatPrice(value, currencyInfo);
-    
-    if (type === 'boolean') {
-        return value ? t('common:enums.yes') : t('common:enums.no');
-    }
-    
+    if (type === 'boolean') return value ? t('common:enums.yes') : t('common:enums.no');
     if (type === 'crimeLevel') {
         const labelKey = getCrimeLevelText(value);
         return t(labelKey);
     }
-
     if (type === 'number') return formatNumber(value);
-
     if (type === 'text') {
         const translationKey = `common:enums.${value.toLowerCase()}`;
         const translated = t(translationKey);
         return translated !== translationKey ? translated : value;
     }
-
     return value;
   };
 
@@ -83,7 +76,7 @@ export default function DistrictPdfTemplate({
 
   const { name, photo_url, filterData } = district;
   const safeCurrencyInfo = currencyInfo || { code: 'UAH', locale: 'uk-UA' };
-
+  
   const categories = Object.values(DISTRICT_CATEGORIES);
   const midPoint = Math.ceil(categories.length / 2);
   const leftColumn = categories.slice(0, midPoint);
@@ -104,11 +97,10 @@ export default function DistrictPdfTemplate({
       </div>
 
       <div className={styles.heroSection}>
-        {/* ВИПРАВЛЕННЯ: Використовуємо IMG замість background-image */}
         <div className={styles.mainPhoto}>
-          {photo_url ? (
+          {photoOverride || photo_url ? (
             <img 
-              src={photo_url} 
+              src={photoOverride || photo_url} 
               alt={name} 
               className={styles.mainPhotoImage}
               crossOrigin="anonymous" 

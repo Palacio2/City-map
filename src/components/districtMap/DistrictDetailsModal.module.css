@@ -74,10 +74,12 @@
 }
 
 .hiddenPdfTemplate {
-  position: absolute;
-  left: -9999px;
-  top: -9999px;
-  visibility: hidden;
+  position: fixed; /* Краще fixed, ніж absolute, щоб уникнути розтягування скролу сторінки */
+  left: -10000px;
+  top: 0;
+  z-index: -1;
+  width: 794px; /* ВАЖЛИВО: Фіксуємо ширину А4 */
+  /* visibility: hidden; - ВИДАЛЯЄМО ЦЕЙ РЯДОК */
 }
 
 @keyframes fadeIn {

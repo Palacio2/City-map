@@ -98,7 +98,8 @@ const HeroSection = ({ t }) => (
 );
 
 const Section = ({ config, children }) => {
-  const { icon: Icon, title } = config;
+  const Icon = config.icon;
+  const title = config.title;
   return (
     <section className={styles.section}>
       <div className={styles.sectionHeader}>
@@ -110,13 +111,17 @@ const Section = ({ config, children }) => {
   );
 };
 
-const FeatureCard = ({ icon: Icon, title, text }) => (
-  <div className={styles.featureCard}>
-    <Icon className={styles.featureIcon} />
-    <h3>{title}</h3>
-    <p>{text}</p>
-  </div>
-);
+const FeatureCard = (props) => {
+  const Icon = props.icon;
+  const { title, text } = props;
+  return (
+    <div className={styles.featureCard}>
+      <Icon className={styles.featureIcon} />
+      <h3>{title}</h3>
+      <p>{text}</p>
+    </div>
+  );
+};
 
 const Step = ({ number, title, text }) => (
   <div className={styles.step}>
@@ -135,13 +140,17 @@ const SourceCategory = ({ title, items }) => (
   </div>
 );
 
-const AudienceGroup = ({ icon: Icon, title, text }) => (
-  <div className={styles.audienceGroup}>
-    <Icon className={styles.audienceIcon} />
-    <h3>{title}</h3>
-    <p>{text}</p>
-  </div>
-);
+const AudienceGroup = (props) => {
+  const Icon = props.icon;
+  const { title, text } = props;
+  return (
+    <div className={styles.audienceGroup}>
+      <Icon className={styles.audienceIcon} />
+      <h3>{title}</h3>
+      <p>{text}</p>
+    </div>
+  );
+};
 
 const CTASection = ({ t }) => (
   <section className={styles.ctaSection}>

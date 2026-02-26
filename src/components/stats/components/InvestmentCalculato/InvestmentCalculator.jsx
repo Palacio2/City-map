@@ -6,26 +6,24 @@ import styles from './InvestmentCalculator.module.css';
 
 export default function InvestmentCalculator() {
   const { t } = useTranslation('stats');
-  const { 
-    values, 
-    currency, 
-    results, 
-    handleChange, 
-    handleCurrencyChange, 
-    handleReset, 
-    currencies 
-  } = useInvestmentCalculator();
+  const { values, currency, results, handleChange, handleCurrencyChange, handleReset, currencies } = useInvestmentCalculator();
+
+  // ОПТИМІЗАЦІЯ: Масив конфігурації інпутів, щоб не дублювати HTML-код 6 разів
+  const inputFields = [
+    { name: 'propertyPrice', label: t('calculator.property_price'), suffix: `(${currency.symbol})` },
+    { name: 'downPayment', label: t('calculator.down_payment'), suffix: `(${currency.symbol})` },
+    { name: 'interestRate', label: t('calculator.interest_rate'), suffix: '(%)', step: '0.1' },
+    { name: 'loanTerm', label: t('calculator.loan_term'), suffix: `(${t('calculator.years')})` },
+    { name: 'rentalIncome', label: t('calculator.rental_income'), suffix: `(${currency.symbol}/mo)` },
+    { name: 'expenses', label: t('calculator.expenses'), suffix: `(${currency.symbol}/mo)`, placeholder: 'Taxes, HOA...' }
+  ];
 
   return (
     <div className={styles.calculatorContainer}>
       <div className={styles.inputsSection}>
         <div className={styles.headerRow}>
           <h4 className={styles.sectionTitle}>{t('calculator.inputs')}</h4>
-          <select 
-            className={styles.currencySelect} 
-            value={currency.code} 
-            onChange={handleCurrencyChange}
-          >
+          <select className={styles.currencySelect} value={currency.code} onChange={handleCurrencyChange}>
             {currencies.map(c => (
               <option key={c.code} value={c.code}>{c.label}</option>
             ))}
@@ -33,30 +31,20 @@ export default function InvestmentCalculator() {
         </div>
 
         <div className={styles.gridInputs}>
-          <div className={styles.inputGroup}>
-            <label>{t('calculator.property_price')} ({currency.symbol})</label>
-            <input type="number" name="propertyPrice" value={values.propertyPrice} onChange={handleChange} min="0" />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>{t('calculator.down_payment')} ({currency.symbol})</label>
-            <input type="number" name="downPayment" value={values.downPayment} onChange={handleChange} min="0" />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>{t('calculator.interest_rate')} (%)</label>
-            <input type="number" name="interestRate" value={values.interestRate} onChange={handleChange} step="0.1" min="0" />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>{t('calculator.loan_term')} ({t('calculator.years')})</label>
-            <input type="number" name="loanTerm" value={values.loanTerm} onChange={handleChange} min="1" />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>{t('calculator.rental_income')} ({currency.symbol}/mo)</label>
-            <input type="number" name="rentalIncome" value={values.rentalIncome} onChange={handleChange} min="0" />
-          </div>
-          <div className={styles.inputGroup}>
-            <label>{t('calculator.expenses')} ({currency.symbol}/mo)</label>
-            <input type="number" name="expenses" value={values.expenses} onChange={handleChange} min="0" placeholder="Taxes, HOA..." />
-          </div>
+          {inputFields.map((field) => (
+            <div key={field.name} className={styles.inputGroup}>
+              <label>{field.label} {field.suffix}</label>
+              <input 
+                type="number" 
+                name={field.name} 
+                value={values[field.name]} 
+                onChange={handleChange} 
+                min="0" 
+                step={field.step || "1"}
+                placeholder={field.placeholder || ""}
+              />
+            </div>
+          ))}
         </div>
         
         <button onClick={handleReset} className={styles.resetBtn}>
@@ -102,7 +90,7 @@ export default function InvestmentCalculator() {
         </div>
 
         <div className={styles.totalInfo}>
-          <span>{t('calculator.total_interest')}: <b>{currency.symbol}{results.totalInterest.toLocaleString(undefined, {maximumFractionDigits: 0})}</b></span>
+          <span>{t('calculator.total_interest')}: <b>{currency.symbol}{results.totalInterest.toLocaleString('uk-UA', {maximumFractionDigits: 0})}</b></span>
         </div>
       </div>
     </div>

@@ -3,16 +3,16 @@ import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictMap.module.css';
 
-// ✅ ТЕПЕР ЦІ ІМПОРТИ ПРАЦЮВАТИМУТЬ КОРЕКТНО
 import CountrySelect from '@cityCountrySelect/CountrySelect';
 import CitySelect from '@cityCountrySelect/CitySelect';
 import FiltersPanel from '@filtersPanel/FiltersPanel';
 
 import DistrictsMap from './DistrictsMap';
-import DistrictDetailsModal from './DistrictDetailsModal';
+import DistrictDetailsModal from './DistrictDetailsModal';  
+import Loader from '@components/loader/Loader';
 
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
-import { filterDistrictsByCriteria } from '@utils/filterUtils';
+import { filterDistrictsByCriteria } from '@filtersPanel/filterLogic';
 import { transformDistrictsForDisplay } from '@utils/dataTransformers';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
 import { useSubscription } from '@subscription/SubscriptionContext';
@@ -20,16 +20,6 @@ import { useSubscription } from '@subscription/SubscriptionContext';
 const FREE_ALLOWED_CATEGORIES = Object.values(DISTRICT_CATEGORIES)
   .filter(cat => !cat.isPremium)
   .map(cat => cat.key);
-
-const LoadingIndicator = () => {
-  const { t } = useTranslation('districts');
-  return (
-    <div className={styles.loading}>
-      <div className={styles.spinner}></div>
-      <p>{t('loading')}</p>
-    </div>
-  );
-};
 
 const ErrorDisplay = ({ error, onRetry }) => {
   const { t } = useTranslation('districts');
@@ -54,6 +44,7 @@ export default function DistrictMap() {
   const [selectedFilters, setSelectedFilters] = useState({});
   
   const [selectedDistrict, setSelectedDistrict] = useState(null);
+  const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const allowedCategories = useMemo(() => {
@@ -94,7 +85,6 @@ export default function DistrictMap() {
     return allFilteredDistricts;
   }, [allFilteredDistricts, isFree]);
 
-  // Key Reset Pattern для продуктивності
   const listKey = useMemo(() => 
     `dist-list-${country}-${city}-${districtsToDisplay.length}-${JSON.stringify(selectedFilters)}`,
   [country, city, districtsToDisplay.length, selectedFilters]);
@@ -103,14 +93,18 @@ export default function DistrictMap() {
     setSelectedFilters(newFilters);
   }, []);
 
-  const handleDistrictClick = useCallback((district) => {
+  const handleDistrictClick = useCallback((district, categoryKey = null) => {
     setSelectedDistrict(district);
+    setSelectedCategory(categoryKey);
     setIsModalOpen(true);
   }, []);
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
-    setSelectedDistrict(null);
+    setTimeout(() => {
+        setSelectedDistrict(null);
+        setSelectedCategory(null);
+    }, 300);
   }, []);
   
   const handleToggleFavorite = useCallback((districtId, isFavorite) => {
@@ -133,7 +127,9 @@ export default function DistrictMap() {
         />
         
         {isLoading ? (
-          <LoadingIndicator />
+          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50dvh' }}>
+             <Loader size="large" text={t('loading')} />
+          </div>
         ) : error ? (
           <ErrorDisplay error={error} onRetry={loadData} />
         ) : (
@@ -149,6 +145,7 @@ export default function DistrictMap() {
       
       <DistrictDetailsModal
         district={selectedDistrict}
+        selectedCategory={selectedCategory} 
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         onToggleFavorite={handleToggleFavorite}

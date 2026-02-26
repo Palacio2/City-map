@@ -16,13 +16,14 @@ export default function LastActivity({ lastActive, favoriteDistrict }) {
   const navigate = useNavigate();
 
   const handleDistrictNavigate = (district) => {
-    if (district && district.city && district.country && district.name) {
+    // ОПТИМІЗАЦІЯ: Безпечна перевірка (Optional Chaining)
+    if (district?.city && district?.country && district?.name) {
       navigate(`/map/${encodeURIComponent(district.country)}/${encodeURIComponent(district.city)}?district=${encodeURIComponent(district.name)}`);
     }
   };
 
   const formattedDate = lastActive ? formatDate(lastActive, i18n.language) : t('stats_page.never');
-  const hasValidDistrict = favoriteDistrict && favoriteDistrict.name && favoriteDistrict.city && favoriteDistrict.country;
+  const hasValidDistrict = !!(favoriteDistrict?.name && favoriteDistrict?.city && favoriteDistrict?.country);
 
   return (
     <div className={styles.container}>

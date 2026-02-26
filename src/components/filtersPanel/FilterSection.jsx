@@ -1,66 +1,115 @@
 import React, { memo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from './Filters.module.css';
-import { 
-  FaBus, FaHospital, FaShoppingCart, FaSchool, 
-  FaTree, FaBolt, FaShieldAlt, FaChevronDown 
-} from 'react-icons/fa';
+import styles from './FilterSection.module.css';
+import { FaBus, FaHospital, FaShoppingCart, FaSchool, FaTree, FaBolt, FaShieldAlt, FaChevronDown } from 'react-icons/fa';
 
 const ICONS = {
-  transport: <FaBus />,
-  medicine: <FaHospital />,
-  commerce: <FaShoppingCart />,
-  education: <FaSchool />,
-  social: <FaTree />,
-  safety: <FaShieldAlt />,
-  utilities: <FaBolt />
+  transport: <FaBus />, medicine: <FaHospital />, commerce: <FaShoppingCart />,
+  education: <FaSchool />, social: <FaTree />, safety: <FaShieldAlt />, utilities: <FaBolt />
 };
 
 const FilterSection = memo(({ categoryKey, filters = [], values = {}, onChange }) => {
   const { t } = useTranslation(['filters', 'common']);
   const [isOpen, setIsOpen] = useState(false);
 
-  const handleCheckboxChange = (event) => {
-    const { name, checked } = event.target;
-    onChange?.({ [name]: checked });
+  const activeCount = filters.filter(f => {
+    const val = values[f.name];
+    return val !== undefined && val !== null && val !== false && val !== '' && val !== 'any' && val !== '0' && val !== 0;
+  }).length;
+
+  const renderInput = (filter) => {
+    const isSelect = ['airQuality', 'crimeLevel'].includes(filter.name);
+    const isNumericInput = ['propertyPricePerSqm', 'costPerSqm', 'transportAvgDistance', 'avgParkSize'].includes(filter.name);
+
+    if (isSelect) {
+      return (
+        <select
+          name={filter.name}
+          value={values[filter.name] || (filter.name === 'crimeLevel' ? 'any' : '')}
+          onChange={(e) => onChange?.({ [filter.name]: e.target.value })}
+          className={styles.select}
+        >
+          <option value={filter.name === 'crimeLevel' ? 'any' : ''}>{t('filters:options.any', 'Будь-яка')}</option>
+          {filter.name === 'crimeLevel' ? (
+            <>
+              <option value="low">{t('common:enums.low', 'Низька')}</option>
+              <option value="medium">{t('common:enums.medium', 'Середня')}</option>
+              <option value="high">{t('common:enums.high', 'Висока')}</option>
+            </>
+          ) : (
+            <>
+              <option value="good">{t('common:enums.good', 'Добра')}</option>
+              <option value="medium">{t('common:enums.medium', 'Середня')}</option>
+              <option value="bad">{t('common:enums.bad', 'Погана')}</option>
+            </>
+          )}
+        </select>
+      );
+    }
+
+    if (isNumericInput) {
+      return (
+        <input
+          type="number"
+          name={filter.name}
+          value={values[filter.name] || ''}
+          onChange={(e) => onChange?.({ [filter.name]: e.target.value })}
+          className={styles.numberInput}
+          placeholder="0"
+          min="0"
+        />
+      );
+    }
+
+    return (
+      <input
+        type="checkbox"
+        name={filter.name}
+        checked={!!values[filter.name]}
+        onChange={(e) => onChange?.({ [filter.name]: e.target.checked })}
+      />
+    );
   };
-
-  const handleToggle = () => setIsOpen(!isOpen);
-
-  const activeCount = filters.filter(f => values[f.name]).length;
 
   return (
     <div className={`${styles.section} ${isOpen ? styles.open : ''}`}>
-      <button 
-        className={styles.sectionHeader} 
-        onClick={handleToggle}
-        type="button"
-      >
+      <button className={styles.sectionHeader} onClick={() => setIsOpen(!isOpen)} type="button">
         <div className={styles.headerTitle}>
           <span className={styles.sectionIcon}>{ICONS[categoryKey]}</span>
           {t(`common:categories.${categoryKey}`)}
-          {activeCount > 0 && (
-            <span className={styles.activeBadge}>{activeCount}</span>
-          )}
+          {activeCount > 0 && <span className={styles.activeBadge}>{activeCount}</span>}
         </div>
         <FaChevronDown className={styles.chevron} />
       </button>
 
-      {isOpen && (
-        <div className={styles.filterGroup}>
-          {filters.map((filter) => (
-            <label className={styles.filterItem} key={filter.name}>
-              <input
-                type="checkbox"
-                name={filter.name}
-                checked={values[filter.name] || false}
-                onChange={handleCheckboxChange}
-              />
-              <span>{t(`common:fields.${filter.name}`)}</span>
-            </label>
-          ))}
+      <div className={styles.filterGroupWrapper} aria-expanded={isOpen}>
+        <div className={styles.filterGroupInner}>
+          <div className={styles.filterGroup}>
+            {filters.map((filter) => {
+              const isColumn = ['propertyPricePerSqm', 'costPerSqm', 'transportAvgDistance', 'avgParkSize', 'airQuality', 'crimeLevel'].includes(filter.name);
+              
+              return (
+                <label 
+                  className={`${styles.filterItem} ${isColumn ? styles.columnItem : ''}`} 
+                  key={filter.name}
+                >
+                  {isColumn ? (
+                    <>
+                      <span>{t(`common:fields.${filter.name}`)}</span>
+                      {renderInput(filter)}
+                    </>
+                  ) : (
+                    <>
+                      {renderInput(filter)}
+                      <span>{t(`common:fields.${filter.name}`)}</span>
+                    </>
+                  )}
+                </label>
+              );
+            })}
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 });

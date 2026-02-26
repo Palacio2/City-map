@@ -33,13 +33,14 @@ export default function ForgotPassword() {
     const redirectUrl = `${window.location.origin}/profile/password`; 
     
     try {
-      const { error } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
+      const { error: authError } = await supabase.auth.resetPasswordForEmail(cleanEmail, {
         redirectTo: redirectUrl,
       });
 
-      if (error) throw error;
+      if (authError) throw authError;
       setIsSubmitted(true);
-    } catch (err) {
+    } catch {
+      // Прибрали (err), бо ми його не використовуємо
       setError(t('errors.generic'));
     } finally {
       setIsLoading(false);

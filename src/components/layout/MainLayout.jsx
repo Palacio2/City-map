@@ -1,4 +1,4 @@
-import React, { useEffect, useState, Suspense } from 'react'; // 👈 1. Додано Suspense
+import React, { useEffect, useState, Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@supabaseClient';
@@ -7,6 +7,7 @@ import Header from '@header/Header';
 import Footer from '@footer/Footer';
 import RodoModal from '@modals/RodoModal';
 import CookieBanner from '@modals/CookieBanner';
+import Loader from '@components/loader/Loader';
 
 import { useUserConsent } from '@hooks/useUserConsent';
 import { useTimeTracker } from '@hooks/useTimeTracker';
@@ -53,12 +54,7 @@ export default function MainLayout() {
       <main className={styles.mainContent}>
         <div className={styles.contentWrapper}>
           
-          {/* 👇 2. Обгортаємо Outlet. Це вирішує проблему білого екрану */}
-          <Suspense fallback={
-            <div style={{ padding: '50px', textAlign: 'center', fontSize: '1.2rem', color: '#666' }}>
-              ⏳ Завантаження сторінки...
-            </div>
-          }>
+          <Suspense fallback={<Loader fullScreen={true} text="Завантаження..." />}>
             <Outlet />
           </Suspense>
 

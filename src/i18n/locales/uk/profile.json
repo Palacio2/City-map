@@ -13,13 +13,73 @@
   },
   "actions": {
     "edit": "Редагувати профіль",
-    "manage_subscription" : "Керувати підпискою",
+    "manage_subscription": "Керувати підпискою",
     "hide_details": "Приховати деталі",
-    "show_details" : "Показати деталі",
+    "show_details": "Показати деталі",
     "change_password": "Змінити пароль",
     "back_to_profile": "Назад до профілю",
     "hide_password": "Приховати пароль",
-    "show_password": "Показати пароль"
+    "show_password": "Показати пароль",
+    "saving": "Збереження...",
+    "save": "Зберегти",
+    "cancel": "Скасувати",
+    "choose_plan": "Обрати план"
+  },
+  "quick_actions": {
+    "stats_title": "Статистика",
+    "billing_title": "Історія платежів"
+  },
+  "subscription": {
+    "title": "Моя підписка",
+    "status": {
+      "active": "Активна",
+      "expired": "Прострочена",
+      "free": "Безкоштовна"
+    },
+    "expires_short": "до {{date}}",
+    "expired_notice": "Ваша підписка закінчилась {{date}}",
+    "cancelled_notice": "Ваша підписка буде скасована {{date}}",
+    "plans": {
+      "free": { "name": "Безкоштовний", "price": "€0" },
+      "weekly": { "name": "Тижневий", "price": "€2.99 / тиждень" },
+      "premium": { "name": "Premium", "price": "€8.99 / міс" },
+      "realtor": { "name": "Realtor Pro", "price": "€29.00 / міс" }
+    },
+    "features": {
+      "district_limit_5": "Відображення тільки до 5 районів",
+      "filters_limit_2": "Обмежений доступ блоків фільтрації",
+      "basic_rating": "Базовий рейтинг привабливості",
+      "safety_edu_analytics": "Детальна аналітика безпеки та освіти",
+      "financial_stats": "Повна фінансова статистика",
+      "favorites_save": "Збереження районів в «Улюблене»",
+      "compare_tools": "Інструменти порівняння",
+      "pdf_export": "Експорт професійних PDF-звітів",
+      "unlimited_districts": "Безлімітний доступ до всіх районів",
+      "extended_filters": "Розширений доступ до фільтрування",
+      "partial_analytics": "Частковий доступ до аналітики",
+      "personal_stats": "Персональна статистика",
+      "save_favorites": "Збереження улюблених районів",
+      "pdf_download": "Скачування PDF файлів",
+      "all_weekly_features": "Весь функціонал тижневої підписки",
+      "all_premium_features": "Усі переваги Premium-плану",
+      "roi_calculator": "Інвестиційний калькулятор (ROI)",
+      "white_label_pdf": "PDF-звіти з вашою інформацією",
+      "compare_4_districts": "Порівняння до 4 районів",
+      "full_filter_access": "Повний доступ до фільтрації",
+      "full_district_info": "Повна інформація про райони",
+      "popular_districts_monitor": "Моніторинг популярних районів",
+      "growth_tracking": "Відсліжування росту районів"
+    }
+  },
+  "errors": {
+    "auth_error": "Помилка авторизації. Увійдіть знову.",
+    "network_error": "Помилка мережі",
+    "user_not_found": "Користувача не знайдено",
+    "email_taken": "Цей email вже використовується",
+    "too_many_requests": "Забагато спроб. Спробуйте пізніше.",
+    "email_invalid_format": "Некоректний формат email",
+    "unknown_error": "Сталася невідома помилка",
+    "password_same_as_old": "Новий пароль не може бути таким самим, як старий"
   },
   "edit_page": {
     "title": "Редагування профілю",
@@ -41,9 +101,9 @@
       "email_required": "Будь ласка, введіть email",
       "email_invalid": "Невірний формат email",
       "save_error": "Помилка при збереженні",
-      "phone_length": "Номер занадто короткий (мінімум {{count}} цифр)",
-      "email_invalid_format": "Некоректний формат email",
-      "phone_too_long": "Номер занадто довгий"
+      "phone_length": "Номер занадто короткий",
+      "phone_too_long": "Номер занадто довгий",
+      "phone_invalid": "Невірний формат телефону"
     },
     "success": "Профіль успішно оновлено"
   },

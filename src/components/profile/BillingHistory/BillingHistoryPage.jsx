@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { FaArrowLeft, FaCheckCircle } from 'react-icons/fa';
 import { useBillingHistory } from '@hooks/useBillingHistory';
 import SubscriptionCard from './SubscriptionCard';
@@ -8,11 +9,12 @@ import CancelModal from './CancelModal';
 import styles from './BillingHistoryPage.module.css';
 
 export default function BillingHistoryPage() {
+  const { t } = useTranslation('billing');
   const {
-    history, totalCount, isLoading, currentPage, 
+    history, totalCount, currentPage, 
     showCancelModal, cancellationError, isCancelling,
-    subscription, isSubLoading, expandedItems,
-    dateFormatter, confirmCancellation, toggleModal, toggleRow, setPage, t
+    subscription, expandedItems,
+    dateFormatter, confirmCancellation, toggleModal, toggleRow, setPage
   } = useBillingHistory();
 
   const totalPages = Math.ceil(totalCount / 5);
@@ -21,11 +23,11 @@ export default function BillingHistoryPage() {
     <div className={styles.container}>
       <header className={styles.header}>
         <Link to="/profile" className={styles.backButton}>
-          <FaArrowLeft /> <span>{t('profile:actions.back_to_profile')}</span>
+          <FaArrowLeft /> <span>{t('back_to_profile')}</span>
         </Link>
         <div className={styles.titleSection}>
-          <h1 className={styles.title}>{t('billing:page_title')}</h1>
-          <p className={styles.subtitle}>{t('billing:page_subtitle')}</p>
+          <h1 className={styles.title}>{t('page_title')}</h1>
+          <p className={styles.subtitle}>{t('page_subtitle')}</p>
         </div>
       </header>
       
@@ -33,38 +35,34 @@ export default function BillingHistoryPage() {
         <div className={styles.billingGrid}>
           <SubscriptionCard 
             subscription={subscription}
-            isLoading={isSubLoading}
             onManage={() => toggleModal(true)}
             isCancelling={isCancelling}
             error={cancellationError}
             dateFormatter={dateFormatter}
-            t={t}
           />
 
           <section className={styles.historySection}>
             <div className={styles.tableHeaderWrapper}>
-                <h3 className={styles.cardTitle}>{t('billing:history_title')}</h3>
+                <h3 className={styles.cardTitle}>{t('history_title')}</h3>
                 <div className={styles.summaryBadge}>
-                    <FaCheckCircle /> {totalCount} {t('billing:transactions')}
+                    <FaCheckCircle /> {totalCount} {t('transactions')}
                 </div>
             </div>
 
             <div className={styles.tableContainer}>
                 <div className={styles.gridHeader}>
-                  <span>{t('billing:table.date')}</span>
-                  <span>{t('billing:table.plan')}</span>
-                  <span>{t('billing:table.amount')}</span>
-                  <span>{t('billing:table.status')}</span>
-                  <span className={styles.alignRight}>{t('billing:table.invoice')}</span>
+                  <span>{t('table.date')}</span>
+                  <span>{t('table.plan')}</span>
+                  <span>{t('table.amount')}</span>
+                  <span>{t('table.status')}</span>
+                  <span className={styles.alignRight}>{t('table.invoice')}</span>
                 </div>
                 
                 <BillingTable 
                   history={history}
-                  isLoading={isLoading}
                   expandedItems={expandedItems}
                   onToggleRow={toggleRow}
                   dateFormatter={dateFormatter}
-                  t={t}
                 />
             </div>
             
@@ -75,7 +73,7 @@ export default function BillingHistoryPage() {
                       disabled={currentPage === 1}
                       onClick={() => setPage(currentPage - 1)}
                   >
-                      {t('billing:actions.prev')}
+                      {t('actions.prev')}
                   </button>
                   <span className={styles.pageInfo}>
                       {currentPage} / {totalPages}
@@ -85,7 +83,7 @@ export default function BillingHistoryPage() {
                       disabled={currentPage === totalPages}
                       onClick={() => setPage(currentPage + 1)}
                   >
-                      {t('billing:actions.next')}
+                      {t('actions.next')}
                   </button>
                 </div>
             )}
@@ -99,7 +97,6 @@ export default function BillingHistoryPage() {
           onConfirm={confirmCancellation}
           isProcessing={isCancelling}
           error={cancellationError}
-          t={t}
         />
       )}
     </div>
