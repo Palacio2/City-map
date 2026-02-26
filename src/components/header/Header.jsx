@@ -6,7 +6,7 @@ import { FaGlobe, FaHeart, FaBars, FaTimes, FaSun, FaMoon, FaSketch } from 'reac
 import { useSubscription } from '@subscription/SubscriptionContext';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from './ThemeContext';
-import AiAssistantModal from '../AiAssistant/AiAssistantModal'; 
+import AiAssistantModal from '../aiAssistant/AiAssistantModal'; 
 import AiSidebar from '../AiAssistant/AiSidebar';
 
 const Header = () => {
