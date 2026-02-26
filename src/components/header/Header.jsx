@@ -7,7 +7,7 @@ import { useSubscription } from '@subscription/SubscriptionContext';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from './ThemeContext';
 import AiAssistantModal from '../aiAssistant/AiAssistantModal'; 
-import AiSidebar from '../AiAssistant/AiSidebar';
+import AiSidebar from '../aiAssistant/AiSidebar';
 
 const Header = () => {
   const location = useLocation();
