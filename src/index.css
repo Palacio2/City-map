@@ -1,7 +1,7 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Manrope:wght@300;400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap');
 
 :root {
-  --font-heading: 'Cinzel', serif;
+  --font-heading: 'Lora', serif;
   --font-body: 'Manrope', sans-serif;
 
   --primary-color: #0f1014;
@@ -37,6 +37,16 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
+
+  --z-base: 1;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 1000;
+  --z-sidebar: 2000;
+  --z-modal-overlay: 9998;
+  --z-modal: 9999;
+  --z-tooltip: 10000;
+  --z-toast: 100000;
 
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
@@ -81,7 +91,6 @@
   --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
 }
 
-/* Global Reset & Base Styles */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -107,20 +116,18 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Typography Defaults (Restore spacing) */
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
   font-weight: 600;
   line-height: 1.2;
   letter-spacing: -0.02em;
-  margin-bottom: var(--spacing-md); /* Added back margin */
+  margin-bottom: var(--spacing-md);
 }
 
 p {
-  margin-bottom: var(--spacing-md); /* Added back margin */
+  margin-bottom: var(--spacing-md);
 }
 
-/* Form Elements Defaults */
 label {
   display: block;
   font-weight: 500;
@@ -135,7 +142,6 @@ input, select, textarea, button {
   outline: none;
 }
 
-/* Links & Buttons */
 a {
   text-decoration: none;
   color: inherit;
@@ -147,13 +153,11 @@ button {
   cursor: pointer;
 }
 
-/* Focus Accessibility */
 :focus-visible {
   outline: 2px solid var(--accent-color);
   outline-offset: 2px;
 }
 
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -174,7 +178,6 @@ button {
   background-color: var(--accent-color);
 }
 
-/* Responsive Utilities */
 @media (max-width: 768px) {
   :root {
     --header-height: 64px;

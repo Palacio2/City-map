@@ -38,7 +38,7 @@ const FiltersPanel = memo(({ onFiltersChange, selectedFilters = {}, allowedCateg
       <div className={styles.panelHeader} onClick={() => setIsMobileOpen(!isMobileOpen)}>
         <div className={styles.headerTitle}>
           <FaFilter className={styles.filterIcon} />
-          <h2 className={styles.panelTitle}>{t('filters:filter.panel.title')}</h2>
+          <h2 className={styles.panelTitle}>{t('filter.panel.title')}</h2>
         </div>
         <FaChevronDown className={styles.chevron} />
       </div>
@@ -46,7 +46,7 @@ const FiltersPanel = memo(({ onFiltersChange, selectedFilters = {}, allowedCateg
       <div className={styles.mobileContentWrapper}>
         <div className={styles.content}>
           <div className={styles.scrollableContent}>
-            {Object.entries(DISTRICT_CATEGORIES).map(([key, _]) => {
+            {Object.entries(DISTRICT_CATEGORIES).map(([key]) => {
               if (isFree && !FREE_ALLOWED_CATEGORIES.includes(key)) return null;
               if (allowedCategories && !allowedCategories.includes(key)) return null;
 
@@ -67,10 +67,10 @@ const FiltersPanel = memo(({ onFiltersChange, selectedFilters = {}, allowedCateg
           {isFree && (
             <div className={styles.upgradeBanner}>
               <div className={styles.bannerContent}>
-                <h4>{t('filters:filter.panel.banner_title')}</h4>
-                <p>{t('filters:filter.panel.banner_text')}</p>
+                <h4>{t('filter.panel.banner_title')}</h4>
+                <p>{t('filter.panel.banner_text')}</p>
                 <button className={styles.bannerButton} onClick={() => navigate('/subscription')}>
-                  {t('filters:filter.panel.view_tariffs')}
+                  {t('filter.panel.view_tariffs')}
                 </button>
               </div>
             </div>
@@ -79,7 +79,7 @@ const FiltersPanel = memo(({ onFiltersChange, selectedFilters = {}, allowedCateg
         
         <div className={styles.actions}>
           <button className={styles.clearButton} onClick={handleClearFilters}>
-            {t('filters:filter.panel.clear')}
+            {t('filter.panel.clear')}
           </button>
         </div>
       </div>

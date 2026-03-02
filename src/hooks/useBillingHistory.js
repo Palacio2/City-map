@@ -6,7 +6,7 @@ import { useSubscription } from '@subscription/SubscriptionContext';
 const ITEMS_PER_PAGE = 5;
 
 export const useBillingHistory = () => {
-  const { t, i18n } = useTranslation(['profile', 'subscription', 'billing']);
+  const { t, i18n } = useTranslation('billing');
   const { subscription, updateSubscription, isLoading: isSubLoading } = useSubscription();
   
   const [state, setState] = useState({
@@ -44,7 +44,7 @@ export const useBillingHistory = () => {
     } catch {
       setState(prev => ({ 
         ...prev, 
-        error: t('billing:error_load'), 
+        error: t('error_load'), 
         isLoading: false 
       }));
     }
@@ -74,7 +74,7 @@ export const useBillingHistory = () => {
       setState(prev => ({ 
         ...prev, 
         isCancelling: false, 
-        cancellationError: error.message || t('billing:error_cancel') 
+        cancellationError: error.message || t('error_cancel') 
       }));
     }
   };

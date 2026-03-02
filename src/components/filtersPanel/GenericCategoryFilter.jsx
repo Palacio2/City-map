@@ -14,13 +14,14 @@ const GenericCategoryFilter = memo(({ categoryKey, values, onChange, isFree, isR
 
   if (!config) return null;
 
-return (
-  <FilterSection 
-    categoryKey={categoryKey} 
-    filters={filters} 
-    values={values} 
-    onChange={(data) => onChange(categoryKey, data)} 
-  />);
+  return (
+    <FilterSection 
+      categoryKey={categoryKey} 
+      filters={filters} 
+      values={values} 
+      onChange={(data) => onChange(categoryKey, data)} 
+    />
+  );
 });
 
 export default GenericCategoryFilter;

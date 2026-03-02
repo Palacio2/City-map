@@ -1,0 +1,76 @@
+.mapWrapper {
+    height: 100%;
+    width: 100%;
+    position: relative;
+    background: #e2e8f0;
+}
+
+.leafletContainer {
+    height: 100%;
+    width: 100%;
+    z-index: 1; /* Keep map below the overlay/banner */
+}
+
+.activeMetricBanner {
+    position: absolute;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    background: rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(8px);
+    color: #f8fafc;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(56, 189, 248, 0.4);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translate(-50%, -20px); opacity: 0; }
+    to { transform: translate(-50%, 0); opacity: 1; }
+}
+
+.bannerPulse {
+    width: 10px;
+    height: 10px;
+    background-color: #38bdf8;
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7);
+    animation: pulseObj 1.5s infinite;
+}
+
+@keyframes pulseObj {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(56, 189, 248, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(56, 189, 248, 0); }
+}
+
+/* Tooltip global overrides via CSS modules if needed, or nested classes */
+.tooltipContent {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 4px;
+}
+
+.sourceTag {
+    font-size: 0.8rem;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 2px 6px;
+    border-radius: 4px;
+}
+
+.tooltipHint {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-top: 4px;
+}

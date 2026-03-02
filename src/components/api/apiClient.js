@@ -12,17 +12,27 @@ export async function authenticatedApiRequest(endpoint, options = {}) {
     ...options.headers,
   };
 
-  headers['Authorization'] = `Bearer ${token || SUPABASE_ANON_KEY}`;
-
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-    ...options,
-    headers,
-  });
-
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({ error: 'API Error' }));
-    throw new Error(errorData.error || `API Error: ${response.status}`);
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  } else {
+    headers['Authorization'] = `Bearer ${SUPABASE_ANON_KEY}`;
   }
 
-  return response.json();
+  try {
+    const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers,
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.error || `Помилка сервера (${response.status})`);
+    }
+
+    return result;
+  } catch (err) {
+    console.error(`API Error [${endpoint}]:`, err.message);
+    throw err;
+  }
 }

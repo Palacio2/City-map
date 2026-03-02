@@ -1,16 +1,17 @@
 {
+  "loading": "Loading...",
   "cookies": {
-    "text": "We use cookies to improve your experience on our site.",
+    "text": "We use cookies to improve site functionality.",
     "link": "Learn more",
     "accept": "Got it"
   },
   "rodo": {
     "welcome": "Welcome! 👋",
-    "description_prefix": "To create your personal account and save your search history, we need your consent to process data in accordance with our",
-    "terms_link": "Terms of Service",
+    "description_prefix": "To create your personal account and save your search history, we need your consent to process data according to our",
+    "terms_link": "Terms and Conditions (Regulamin)",
     "we_store_title": "We store:",
     "store_history": "Your district browsing history",
-    "store_favorites": "Saved locations",
+    "store_favorites": "Selected locations",
     "store_stats": "Comparison statistics",
     "analytics_note": "This allows us to provide you with personalized analytics.",
     "accept_btn": "Accept and Continue",

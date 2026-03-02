@@ -40,7 +40,7 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
       icon: FaClock, 
       color: 'orange', 
       label: t('stats_page.time_spent'), 
-      value: formatDuration(stats?.totalTime, t),
+      value: formatDuration(stats?.total_time_seconds || stats?.totalTime || 0, t),
       onClick: null
     },
   ];

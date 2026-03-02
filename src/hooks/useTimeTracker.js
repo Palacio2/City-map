@@ -6,11 +6,11 @@ const SEND_INTERVAL = 60000;
 const ACCUMULATE_INTERVAL = 1000;
 
 export const useTimeTracker = () => {
-  const { isPremium, isPro } = useSubscription(); 
+  const { isPremium, isRealtor } = useSubscription(); 
   const timeAccumulator = useRef(0);
 
   useEffect(() => {
-    const isActiveUser = isPremium || isPro; 
+    const isActiveUser = isPremium || isRealtor; 
     if (!isActiveUser) return;
 
     const countTimer = setInterval(() => {
@@ -33,5 +33,5 @@ export const useTimeTracker = () => {
          updateUserTime(timeAccumulator.current);
       }
     };
-  }, [isPremium, isPro]);
+  }, [isPremium, isRealtor]);
 };

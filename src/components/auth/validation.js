@@ -1,8 +1,8 @@
-const PASSWORD_REGEX = /^(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/;
+const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{8,}$/;
 const MIN_PASSWORD_LENGTH = 8;
 const CYRILLIC_REGEX = /[\u0400-\u04FF]/;
 
-const getAuthKey = (key) => `auth:${key}`;
+const getAuthKey = (key) => key;
 
 export const sanitizeEmail = (value) => {
   return value.replace(/[^a-zA-Z0-9@._\-+]/g, '');

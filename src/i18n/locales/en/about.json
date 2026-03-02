@@ -5,61 +5,61 @@
   },
   "sections": {
     "mission": "Our Story",
-    "features": "Key Features",
+    "features": "Features",
     "process": "Analysis Algorithm",
     "data": "Data & Verification",
     "audience": "Who We Serve"
   },
   "mission": {
-    "text_1": "This is an intelligent answer to real estate market opacity. We prove that quality of life and comfort are not subjective feelings, but concrete metrics that can be measured. Our platform transforms millions of raw urban data points into precise analytical ratings.",
-    "text_2": "We are creating a new standard for urban analytics. Our goal is to provide every user, from tenants to strategic investors, with a tool for a deep understanding of infrastructure, safety, and the potential of any neighborhood."
+    "text_1": "This is an intelligent response to the opacity of the real estate market. We demonstrate that quality of life and comfort are not subjective feelings, but measurable indicators. Our platform transforms millions of raw urban data points into precise analytical ratings.",
+    "text_2": "We are setting a new standard for urban analytics. Our goal is to provide every user, from tenants to strategic investors, with tools to deeply understand infrastructure, safety, and potential of any district."
   },
   "features": [
-    { "title": "Social Infrastructure", "text": "Deep analysis of the educational and medical network. We evaluate not only the number of schools and hospitals but also their real accessibility and density per capita." },
-    { "title": "Transport & Logistics", "text": "Comprehensive mobility assessment: from proximity to metro and tram lines to the length of bike lanes and parking zone availability." },
-    { "title": "Safety & Security", "text": "Monitoring of crime rates, street lighting quality, and CCTV density to ensure your peace of mind." },
-    { "title": "Ecology & Environment", "text": "Objective data on air quality, noise pollution levels, percentage of green spaces, and availability of recreation zones within walking distance." },
-    { "title": "Commercial Potential", "text": "Market saturation analysis: from grocery chains and shopping malls to bank branches and dining establishments." },
-    { "title": "Economic Indicators", "text": "Analytics of price per square meter, rental price dynamics, and average salary in the district for precise ROI calculation." }
+    { "title": "Social Infrastructure", "text": "In-depth analysis of educational and medical networks. We evaluate not only the number of schools and hospitals but also their real accessibility and density per capita." },
+    { "title": "Transport & Mobility", "text": "Comprehensive mobility assessment: from proximity to metro and tram lines to bike lane coverage and parking availability." },
+    { "title": "Safety & Law Enforcement", "text": "Monitoring crime rates, street lighting quality, and CCTV coverage to ensure your safety." },
+    { "title": "Environment & Urban Space", "text": "Objective data on air quality, noise pollution, greenery percentage, and availability of recreational zones within walking distance." },
+    { "title": "Commercial Potential", "text": "Market saturation analysis: from grocery chains and malls to bank branches and dining establishments." },
+    { "title": "Economic Indicators", "text": "Analytics of property prices per square meter, rental trends, and average salaries in the district for accurate ROI calculations." }
   ],
   "process": [
-    { "title": "Location Selection", "text": "Use the interactive map to instantly select a city or outline a specific search zone within Poland." },
-    { "title": "Smart Scoring", "text": "The algorithm automatically analyzes the location using 50+ Big Data parameters and forms detailed environmental quality ratings." },
-    { "title": "Comparative Analysis", "text": "Compare metrics of several districts side-by-side to reveal hidden advantages and critical drawbacks of each location." },
-    { "title": "Final Assessment & Report", "text": "Receive a comprehensive analysis of costs, infrastructure, and risks in a convenient format for making a weighted decision." }
+    { "title": "Geographic Focus", "text": "Use the interactive map to instantly select a city or outline a specific search area within Poland." },
+    { "title": "Intelligent Scoring", "text": "The algorithm automatically analyzes the location across 50+ Big Data parameters and generates detailed environmental quality ratings." },
+    { "title": "Comparative Analytics", "text": "Compare multiple districts side by side to identify hidden advantages and critical drawbacks of each location." },
+    { "title": "Final Assessment & Report", "text": "Receive a comprehensive analysis of value, infrastructure, and risks in a convenient format for informed decision-making." }
   ],
   "data_sources": [
     {
-      "title": "Information Sources:",
+      "title": "Data Sources:",
       "items": [
         "Official government registries",
         "International environmental monitoring systems",
         "Open geodata and mapping services",
-        "Partner networks of real estate aggregators"
+        "Partner real estate aggregator networks"
       ]
     },
     {
       "title": "Methodology & Data Processing:",
       "items": [
         "Multi-level verification and cleaning of raw data",
-        "Automatic aggregation of indicators using proprietary algorithms",
-        "Daily updates of dynamic indicators (prices, ecology)",
-        "Geospatial mapping of infrastructure objects to district boundaries",
-        "Intelligent anomaly detection and result validation by analysts"
+        "Automatic aggregation using proprietary algorithms",
+        "Daily updates of dynamic indicators (prices, environment)",
+        "Geospatial linking of infrastructure objects to district boundaries",
+        "Intelligent anomaly detection and validation by analysts"
       ]
     }
   ],
   "audience": [
-    { "title": "Private Individuals", "text": "For those seeking the perfect balance of price and quality of life. Find a quiet neighborhood with a school or a vibrant center for youth." },
-    { "title": "Private Investors", "text": "Minimize risks by relying on hard facts, not intuition. Assess the potential for neighborhood capitalization growth." },
-    { "title": "Realtors & Agencies", "text": "Increase expertise in the eyes of clients. Use our professional White Label reports." },
-    { "title": "Developers", "text": "Analyze the competitive environment and infrastructure needs of a district before starting construction." }
+    { "title": "Individuals", "text": "For those seeking the perfect balance of price and quality of life. Find a quiet neighborhood with schools or a lively city center for youth." },
+    { "title": "Private Investors", "text": "Minimize risks based on hard data rather than intuition. Evaluate the growth potential of district capitalization." },
+    { "title": "Realtors & Agencies", "text": "Enhance your expertise in the eyes of clients. Use our professional reports (White Label)." },
+    { "title": "Developers", "text": "Analyze competitive environment and infrastructure needs of a district before starting construction." }
   ],
   "cta": {
-    "title": "Make decisions based on facts",
-    "text": "Join thousands of users who have already found their perfect space",
+    "title": "Make Decisions Based on Facts",
+    "text": "Join thousands of users who have already found their ideal space",
     "map_btn": "Go to Map",
-    "plans_btn": "Choose Plan",
+    "plans_btn": "Choose a Plan",
     "support_btn": "Contact Us"
   }
 }

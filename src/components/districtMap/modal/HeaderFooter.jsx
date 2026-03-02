@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import styles from './styles/headerFooter.module.css';
 import { CloseButton, FavoriteButton } from './Buttons';
-import { FiDownload, FiUsers, FiBriefcase, FiTrendingUp, FiHome, FiDollarSign } from 'react-icons/fi';
+import { FiDownload, FiUsers, FiBriefcase, FiTrendingUp, FiHome, FiDollarSign, FiMap } from 'react-icons/fi';
 import { AiOutlineLoading3Quarters } from 'react-icons/ai';
 import { useFavorites } from '@pages/favorites/FavoritesContext';
 
@@ -28,7 +28,8 @@ export function HeaderSection({
   onDownloadPdf,
   isDownloading,
   isFree,
-  currencyInfo
+  currencyInfo,
+  onOpenMap
 }) {
   const { t, i18n } = useTranslation(['districts', 'common']);
   const { isFavorite, toggleFavorite } = useFavorites();
@@ -48,31 +49,11 @@ export function HeaderSection({
   }, [updatedAt, district, i18n.language]);
 
   const quickStatsConfig = useMemo(() => [
-    {
-      key: 'population',
-      label: 'districts:details.population',
-      formatter: formatNumber
-    },
-    {
-      key: 'averageSalary',
-      label: 'districts:details.salary',
-      formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val
-    },
-    {
-      key: 'unemploymentRate',
-      label: 'districts:details.unemployment',
-      formatter: (val) => `${val}%`
-    },
-    {
-      key: 'propertyPrice',
-      label: 'districts:details.price',
-      formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val
-    },
-    {
-      key: 'average_rent_price',
-      label: 'districts:pdf.rent',
-      formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val
-    }
+    { key: 'population', label: 'districts:details.population', formatter: formatNumber },
+    { key: 'averageSalary', label: 'districts:details.salary', formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val },
+    { key: 'unemploymentRate', label: 'districts:details.unemployment', formatter: (val) => `${val}%` },
+    { key: 'propertyPrice', label: 'districts:details.price', formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val },
+    { key: 'average_rent_price', label: 'districts:pdf.rent', formatter: (val) => formatPrice ? formatPrice(val, currencyInfo) : val }
   ], [formatNumber, formatPrice, currencyInfo]);
 
   if (!district) return null;
@@ -93,9 +74,16 @@ export function HeaderSection({
        )}
       
       <div className={styles.headerContent}>
-        
         <div className={styles.topBar}>
            <div className={styles.actionButtons}>
+             <button
+               className={styles.glassBtn}
+               onClick={onOpenMap}
+               title={t('common:actions.view_map')}
+             >
+               <FiMap size={20} />
+             </button>
+
              {!isFree && (
                <>
                  <button

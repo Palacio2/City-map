@@ -1,20 +1,18 @@
 .pdfContainer {
-  --primary-color: #0f1014;
-  --text-main: #000000;
-  --text-secondary: #444444;
-  --bg-body: #ffffff;
-  --bg-surface: #ffffff;
-  --border-color: #e2e8f0;
-  --accent-color: #c5a47e;
-  --text-inverse: #ffffff;
-  --primary-light: #2c2e35;
+  --pdf-bg: #ffffff;
+  --pdf-text-main: #000000;
+  --pdf-text-secondary: #666666;
+  --pdf-border: #e5e7eb;
+  --pdf-accent: #c5a47e;
+  --pdf-card-bg: #f8f9fa;
+  --pdf-header-bg: #f1f5f9;
 
   width: 794px;
   min-height: 1122px;
   padding: 40px;
-  background-color: var(--bg-surface) !important;
-  color: var(--text-main) !important;
-  font-family: 'Manrope', sans-serif;
+  background-color: var(--pdf-bg) !important;
+  color: var(--pdf-text-main) !important;
+  font-family: var(--font-body);
   box-sizing: border-box;
   display: block;
   position: relative;
@@ -29,7 +27,7 @@
   justify-content: space-between;
   align-items: flex-start;
   padding-bottom: 20px;
-  border-bottom: 2px solid var(--accent-color);
+  border-bottom: 2px solid var(--pdf-accent);
   margin-bottom: 30px;
 }
 
@@ -38,10 +36,10 @@
 }
 
 .districtName {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 32px;
   font-weight: 700;
-  color: #000000 !important;
+  color: var(--pdf-text-main) !important;
   margin: 0;
   line-height: 1.2;
   text-transform: uppercase;
@@ -49,17 +47,17 @@
 
 .reportDate {
   font-size: 12px;
-  color: #666666 !important;
+  color: var(--pdf-text-secondary) !important;
   margin-top: 8px;
 }
 
 .logo {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 20px;
   font-weight: 700;
-  color: #000000 !important;
+  color: var(--pdf-text-main) !important;
   padding: 8px 16px;
-  border: 2px solid #000000;
+  border: 2px solid var(--pdf-text-main);
 }
 
 .heroSection {
@@ -71,8 +69,8 @@
 
 .mainPhoto {
   flex: 1.3;
-  border: 1px solid #ddd;
-  background-color: #eee;
+  border: 1px solid var(--pdf-border);
+  background-color: var(--pdf-header-bg);
   position: relative;
   overflow: hidden;
 }
@@ -86,9 +84,9 @@
 
 .quickStatsCard {
   flex: 1;
-  background-color: #f8f9fa !important;
+  background-color: var(--pdf-card-bg) !important;
   padding: 20px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--pdf-border);
   display: flex;
   flex-direction: column;
   -webkit-print-color-adjust: exact !important;
@@ -96,14 +94,14 @@
 }
 
 .quickStatsTitle {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 14px;
   text-transform: uppercase;
-  color: var(--accent-color) !important;
+  color: var(--pdf-accent) !important;
   font-weight: 700;
   margin: 0 0 15px 0;
   padding-bottom: 8px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--pdf-border);
 }
 
 .quickStatsList {
@@ -115,7 +113,7 @@
 
 .divider {
   height: 1px;
-  background: #e5e7eb;
+  background: var(--pdf-border);
   margin: 0 0 30px 0;
   width: 100%;
 }
@@ -135,40 +133,40 @@
 }
 
 .categorySection {
-  background-color: #ffffff !important;
-  border: 1px solid #e5e7eb;
+  background-color: var(--pdf-bg) !important;
+  border: 1px solid var(--pdf-border);
   width: 100%;
   break-inside: avoid;
   page-break-inside: avoid;
 }
 
 .categoryHeader {
-  background-color: #f1f5f9 !important;
+  background-color: var(--pdf-header-bg) !important;
   padding: 8px 12px;
   display: flex;
   align-items: center;
   gap: 10px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid var(--pdf-border);
   -webkit-print-color-adjust: exact !important;
   print-color-adjust: exact !important;
 }
 
 .categoryIcon {
   font-size: 14px;
-  color: #000000 !important;
+  color: var(--pdf-text-main) !important;
 }
 
 .categoryTitle {
   font-size: 11px;
   font-weight: 700;
-  color: #333333 !important;
+  color: var(--pdf-text-main) !important;
   margin: 0;
   flex-grow: 1;
   text-transform: uppercase;
 }
 
 .categoryRating {
-  color: #ffffff !important;
+  color: var(--pdf-bg) !important;
   font-size: 11px;
   font-weight: 700;
   padding: 2px 6px;
@@ -193,7 +191,7 @@
   font-size: 11px;
   line-height: 1.4;
   padding-bottom: 4px;
-  border-bottom: 1px dotted #e5e7eb;
+  border-bottom: 1px dotted var(--pdf-border);
 }
 
 .statRow:last-child {
@@ -201,27 +199,27 @@
 }
 
 .statLabel {
-  color: #555555 !important;
+  color: var(--pdf-text-secondary) !important;
   font-weight: 500;
 }
 
 .statValue {
-  color: #000000 !important;
+  color: var(--pdf-text-main) !important;
   font-weight: 700;
   text-align: right;
 }
 
 .highlight .statValue {
-  color: #c5a47e !important;
+  color: var(--pdf-accent) !important;
 }
 
 .footer {
   margin-top: auto;
   padding-top: 15px;
-  border-top: 1px solid #eee;
+  border-top: 1px solid var(--pdf-border);
   text-align: center;
   font-size: 9px;
-  color: #888888 !important;
+  color: var(--pdf-text-secondary) !important;
   display: flex;
   justify-content: space-between;
 }

@@ -8,7 +8,6 @@ export default function InvestmentCalculator() {
   const { t } = useTranslation('stats');
   const { values, currency, results, handleChange, handleCurrencyChange, handleReset, currencies } = useInvestmentCalculator();
 
-  // ОПТИМІЗАЦІЯ: Масив конфігурації інпутів, щоб не дублювати HTML-код 6 разів
   const inputFields = [
     { name: 'propertyPrice', label: t('calculator.property_price'), suffix: `(${currency.symbol})` },
     { name: 'downPayment', label: t('calculator.down_payment'), suffix: `(${currency.symbol})` },
@@ -75,7 +74,7 @@ export default function InvestmentCalculator() {
           <div className={styles.metricItem}>
             <div className={styles.metricIcon}><FaPercentage /></div>
             <div className={styles.metricContent}>
-              <span className={styles.metricLabel}>Cap Rate (Net)</span>
+              <span className={styles.metricLabel}>{t('calculator.cap_rate')}</span>
               <span className={styles.metricValue}>{results.capRate.toFixed(2)}%</span>
             </div>
           </div>
@@ -83,7 +82,7 @@ export default function InvestmentCalculator() {
           <div className={styles.metricItem}>
             <div className={styles.metricIcon}><FaChartLine /></div>
             <div className={styles.metricContent}>
-              <span className={styles.metricLabel}>Cash on Cash</span>
+              <span className={styles.metricLabel}>{t('calculator.cash_on_cash')}</span>
               <span className={styles.metricValue}>{results.cashOnCash.toFixed(2)}%</span>
             </div>
           </div>

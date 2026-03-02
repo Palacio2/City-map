@@ -8,7 +8,7 @@
     },
     "email": {
       "label": "Email",
-      "placeholder": "przyklad@mail.com"
+      "placeholder": "example@mail.com"
     },
     "message": {
       "label": "Wiadomość",
@@ -26,5 +26,9 @@
   },
   "errors": {
     "generic": "Coś poszło nie tak"
+  },
+  "info": {
+    "email": "youworkday@gmail.com",
+    "phone": "+48 698 991 398"
   }
 }

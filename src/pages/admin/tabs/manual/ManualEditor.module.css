@@ -1,0 +1,172 @@
+.editor {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; /* Менша відстань між секціями */
+}
+
+.emptyState {
+    background: #ffffff;
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 40px 20px;
+    text-align: center;
+    color: #64748b;
+}
+
+.emptyStateIcon { font-size: 2rem; margin-bottom: 8px; }
+
+.editorHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.headerInfo { display: flex; flex-direction: column; gap: 2px; }
+.editorTitle { margin: 0; font-size: 1.2rem; color: #0f172a; font-weight: 700; }
+.breadcrumbs { font-size: 0.8rem; color: #64748b; font-weight: 500; }
+
+.card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px; /* Зменшений padding карток */
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+    padding-bottom: 10px;
+    margin-bottom: 12px;
+}
+
+.cardTitle {
+    font-size: 1rem;
+    color: #1e293b;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Компактний грід для інпутів */
+.formGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+}
+
+.inputGroup { display: flex; flex-direction: column; gap: 4px; }
+
+.label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.input {
+    padding: 6px 10px; /* Компактні інпути */
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #1e293b;
+    outline: none;
+    background: #f8fafc;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.input:focus {
+    border-color: #3b82f6;
+    background: #ffffff;
+}
+
+/* Компактне фото */
+.photoDropzone {
+    border: 2px dashed #cbd5e1;
+    border-radius: 8px;
+    background: #f8fafc;
+    padding: 4px;
+    position: relative;
+}
+
+.emptyPhotoState {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+    font-size: 0.85rem;
+}
+
+.emptyPhotoIcon { font-size: 1.5rem; opacity: 0.5; }
+
+.previewContainer {
+    position: relative;
+    width: 100%;
+    height: 160px; /* Вдвічі менша висота фото */
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.previewImage { width: 100%; height: 100%; object-fit: cover; }
+
+.previewOverlay {
+    position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.5);
+    display: flex; align-items: center; justify-content: center;
+    opacity: 0; transition: 0.2s;
+}
+
+.previewContainer:hover .previewOverlay { opacity: 1; }
+
+.stickyActions {
+    /* ВИДАЛЯЄМО position: sticky; та bottom: 0; */
+    position: relative; /* Змінюємо на relative або просто видаляємо position */
+    
+    background: #f8fafc; /* Робимо фон трохи іншим, щоб візуально відділити від форми */
+    border-top: 1px solid #e2e8f0;
+    padding: 20px 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    border-radius: 12px; 
+    margin-top: 20px; /* Відступ від останньої картки метрик */
+}
+
+/* Менші кнопки */
+.btn {
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.defaultBtn { background: #f1f5f9; color: #475569; }
+.defaultBtn:hover:not(:disabled) { background: #e2e8f0; }
+
+.primaryBtn { background: #3b82f6; color: white; }
+.primaryBtn:hover:not(:disabled) { background: #2563eb; }
+
+.accentBtn { background: #4f46e5; color: white; }
+.accentBtn:hover:not(:disabled) { background: #4338ca; }
+
+.saveBtn { background: #10b981; color: white; }
+.saveBtn:hover:not(:disabled) { background: #059669; }
+
+.warningBtn { background: #f59e0b; color: white; padding: 4px 10px; font-size: 0.8rem; border-radius: 4px; }
+.warningBtn:hover:not(:disabled) { background: #d97706; }

@@ -1,7 +1,7 @@
 {
-  "page_title": "Subskrypcja i Płatności",
-  "page_subtitle": "Zarządzanie i historia transakcji",
-  "current_sub": "Obecna subskrypcja",
+  "page_title": "Subskrypcja i płatności",
+  "page_subtitle": "Zarządzanie oraz historia transakcji",
+  "current_sub": "Aktualna subskrypcja",
   "plan_label": "Plan",
   "price_label": "Cena",
   "next_payment": "Następna płatność",
@@ -11,12 +11,13 @@
   "transactions": "transakcji",
   "cancel_btn": "Anuluj subskrypcję",
   "no_history": "Historia płatności jest pusta",
-  "error_load": "Nie udało się pobrać historii",
-  "cancel_confirm": "Czy na pewno chcesz anulować subskrypcję? Utracisz dostęp do funkcji Premium po zakończeniu obecnego okresu.",
+  "error_load": "Nie udało się załadować historii",
+  "cancel_confirm": "Czy na pewno chcesz anulować subskrypcję? Utracisz dostęp do funkcji Premium po zakończeniu bieżącego okresu rozliczeniowego.",
   "error_cancel": "Nie udało się anulować subskrypcji",
   "processing": "Przetwarzanie...",
   "download_invoice": "Pobierz fakturę",
-  "ending_soon": "Anulowanie",
+  "ending_soon": "W trakcie anulowania",
+  "back_to_profile": "Powrót do profilu",
   "actions": {
     "prev": "Wstecz",
     "next": "Dalej"
@@ -34,9 +35,15 @@
     "cancelled": "Anulowana",
     "canceled": "Anulowana",
     "incomplete_expired": "Nieopłacona",
-    "incomplete": "Niedokończona",
-    "past_due": "Zaległa",
+    "incomplete": "Nieukończona",
+    "past_due": "Zaległość",
     "unpaid": "Nieopłacona",
     "trialing": "Okres próbny"
+  },
+  "plans": {
+    "free": { "name": "Darmowy", "price": "€0" },
+    "weekly": { "name": "Tygodniowy", "price": "€2.99 / tydzień" },
+    "premium": { "name": "Premium", "price": "€8.99 / mies." },
+    "realtor": { "name": "Realtor Pro", "price": "€29.00 / mies." }
   }
 }

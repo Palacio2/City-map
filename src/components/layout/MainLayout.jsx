@@ -1,7 +1,7 @@
-import React, { useEffect, useState, Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { Outlet } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { supabase } from '@supabaseClient';
+import { useAuth } from '@ui/authForm/AuthContext';
 
 import Header from '@header/Header';
 import Footer from '@footer/Footer';
@@ -15,7 +15,7 @@ import styles from './MainLayout.module.css';
 
 export default function MainLayout() {
   const { t } = useTranslation('rodo');
-  const [session, setSession] = useState(null);
+  const { session } = useAuth();
 
   const { 
     showRodoModal, 
@@ -26,23 +26,10 @@ export default function MainLayout() {
 
   useTimeTracker();
 
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
   const onAccept = async () => {
     try {
       await handleAcceptRodo();
-    } catch (e) {
-      console.error(e);
+    } catch {
       alert(t('errors.save_failed'));
     }
   };
@@ -54,7 +41,7 @@ export default function MainLayout() {
       <main className={styles.mainContent}>
         <div className={styles.contentWrapper}>
           
-          <Suspense fallback={<Loader fullScreen={true} text="Завантаження..." />}>
+          <Suspense fallback={<Loader fullScreen={true} text={t('loading')} />}>
             <Outlet />
           </Suspense>
 

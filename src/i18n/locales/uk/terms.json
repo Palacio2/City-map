@@ -1,79 +1,79 @@
 {
-  "title": "Умови використання сервісу",
-  "last_updated": "Останнє оновлення: {{date}}",
+  "title": "Warunki korzystania z serwisu",
+  "last_updated": "Ostatnia aktualizacja: {{date}}",
   "footer": {
-    "return": "Повернутися до",
-    "register": "реєстрації",
-    "or": "або",
-    "home": "головної сторінки"
+    "return": "Powrót do",
+    "register": "rejestracji",
+    "or": "lub",
+    "home": "strony głównej"
   },
   "sections": [
     {
-      "title": "1. Загальні положення",
+      "title": "1. Postanowienia ogólne",
       "content": [
-        "1.1. Ці Умови використання регулюють відносини між Вами (користувачем) та GeoAnalyzer щодо використання нашого сервісу.",
-        "1.2. Користуючись нашим сервісом, Ви погоджуєтеся з цими Умовами та нашою Політикою конфіденційності."
+        "1.1. Niniejsze Warunki korzystania regulują relacje pomiędzy Tobą (użytkownikiem) a GeoAnalyzer w zakresie korzystania z naszego serwisu.",
+        "1.2. Korzystając z naszego serwisu, zgadzasz się na te Warunki oraz naszą Politykę prywatności."
       ]
     },
     {
-      "title": "2. Визначення термінів",
+      "title": "2. Definicje",
       "content": [
-        "2.1. \"Сервіс\" - веб-сайт GeoAnalyzer та всі пов'язані з ним послуги.",
-        "2.2. \"Користувач\" - будь-яка особа, яка використовує наш Сервіс.",
-        "2.3. \"Контент\" - будь-яка інформація, дані, текст, зображення та інші матеріали, доступні через Сервіс."
+        "2.1. \"Serwis\" – strona internetowa GeoAnalyzer oraz wszystkie powiązane z nią usługi.",
+        "2.2. \"Użytkownik\" – każda osoba korzystająca z naszego Serwisu.",
+        "2.3. \"Treść\" – wszelkie informacje, dane, teksty, obrazy i inne materiały dostępne poprzez Serwis."
       ]
     },
     {
-      "title": "3. Реєстрація облікового запису",
+      "title": "3. Rejestracja konta",
       "content": [
-        "3.1. Для доступу до деяких функцій Сервісу може знадобитися створення облікового запису.",
-        "3.2. Ви несете відповідальність за безпеку свого облікового запису та пароля.",
-        "3.3. Ви погоджуєтеся надавати точну, актуальну та повну інформацію під час реєстрації."
+        "3.1. Aby uzyskać dostęp do niektórych funkcji Serwisu, może być konieczne utworzenie konta.",
+        "3.2. Odpowiadasz za bezpieczeństwo swojego konta i hasła.",
+        "3.3. Zgadzasz się podawać dokładne, aktualne i pełne informacje podczas rejestracji."
       ]
     },
     {
-      "title": "4. Інтелектуальна власність",
+      "title": "4. Własność intelektualna",
       "content": [
-        "4.1. Усі права на інтелектуальну власність, пов'язані з Сервісом, належать GeoAnalyzer або нашим ліцензіарам.",
-        "4.2. Ви можете використовувати Сервіс лише для особистих, некомерційних цілей."
+        "4.1. Wszelkie prawa do własności intelektualnej związanej z Serwisem należą do GeoAnalyzer lub naszych licencjodawców.",
+        "4.2. Serwis możesz wykorzystywać wyłącznie do celów osobistych, niekomercyjnych."
       ]
     },
     {
-      "title": "5. Обмеження відповідальності",
+      "title": "5. Ograniczenie odpowiedzialności",
       "content": [
-        "5.1. Сервіс надається \"як є\" без будь-яких гарантій.",
-        "5.2. Ми не несемо відповідальності за точність, повноту чи достовірність наданих даних.",
-        "5.3. Ми не несемо відповідальності за будь-які збитки, пов'язані з використанням Сервісу."
+        "5.1. Serwis jest dostarczany \"tak jak jest\" bez żadnych gwarancji.",
+        "5.2. Nie ponosimy odpowiedzialności za dokładność, kompletność ani rzetelność udostępnionych danych.",
+        "5.3. Nie ponosimy odpowiedzialności za jakiekolwiek szkody związane z korzystaniem z Serwisu."
       ]
     },
     {
-      "title": "6. Зміни умов",
+      "title": "6. Zmiany warunków",
       "content": [
-        "6.1. Ми залишаємо за собою право змінювати ці Умови в будь-який час.",
-        "6.2. Про зміни буде повідомлено через Сервіс або електронну пошту.",
-        "6.3. Продовжуючи використовувати Сервіс після змін, Ви погоджуєтеся з оновленими Умовами."
+        "6.1. Zastrzegamy sobie prawo do zmiany tych Warunków w dowolnym czasie.",
+        "6.2. O zmianach zostaniesz poinformowany poprzez Serwis lub e-mail.",
+        "6.3. Kontynuując korzystanie z Serwisu po zmianach, zgadzasz się na zaktualizowane Warunki."
       ]
     },
     {
-      "title": "7. Припинення доступу",
+      "title": "7. Zakończenie dostępu",
       "content": [
-        "7.1. Ми можемо припинити або призупинити Ваш доступ до Сервісу у разі порушення цих Умов.",
-        "7.2. Ви можете припинити використання Сервісу в будь-який час."
+        "7.1. Możemy zakończyć lub zawiesić Twój dostęp do Serwisu w przypadku naruszenia niniejszych Warunków.",
+        "7.2. Możesz przerwać korzystanie z Serwisu w dowolnym momencie."
       ]
     },
     {
-      "title": "8. Відповідне використання",
+      "title": "8. Odpowiednie korzystanie",
       "content": [
-        "8.1. Ви погоджуєтеся використовувати Сервіс відповідно до чинного законодавства.",
-        "8.2. Заборонено використовувати Сервіс для незаконних або шкідливих цілей."
+        "8.1. Zgadzasz się korzystać z Serwisu zgodnie z obowiązującym prawem.",
+        "8.2. Zabronione jest wykorzystywanie Serwisu do celów nielegalnych lub szkodliwych."
       ]
     },
     {
-      "title": "9. Контактна інформація",
+      "title": "9. Kontakt",
       "content": [
-        "9.1. Якщо у Вас виникли питання щодо цих Умов, будь ласка, зв'яжіться з нами:",
+        "9.1. W przypadku pytań dotyczących niniejszych Warunków, skontaktuj się z nami:",
         "Email: youworkday@gmail.com",
-        "Телефон: +48 698 991 398"
+        "Telefon: +48 698 991 398"
       ]
     }
   ]

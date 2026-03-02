@@ -23,7 +23,8 @@
     "never": "Ніколи",
     "error_load": "Помилка завантаження статистики",
     "error_unknown": "Сталася невідома помилка",
-    "error_export": "Не вдалося експортувати PDF файл."
+    "error_export": "Не вдалося експортувати PDF файл.",
+    "selected_districts": "Обрані райони"
   },
   "actions": {
     "retry": "Спробувати ще раз",
@@ -35,7 +36,7 @@
   "country": "Країна",
   "city": "Місто",
   "popular_districts": "Популярні райони",
-  "popular_in": "Топ-5 районів:",
+  "popular_in": "Топ-5 районів у місті",
   "no_popular_data": "На жаль, даних по цьому місту ще немає.",
   "select_city_prompt": "Оберіть місто, щоб побачити актуальні ціни та рейтинг районів.",
   "start_select": "Обрати локацію",
@@ -76,8 +77,13 @@
     "expenses": "Витрати (податки, ремонт)",
     "monthly_payment": "Платіж по кредиту",
     "cash_flow": "Чистий дохід (Cash Flow)",
+    "cap_rate": "Cap Rate (Чиста)",
+    "cash_on_cash": "Cash on Cash",
     "monthly": "щомісяця",
     "total_interest": "Переплата відсотків",
     "reset": "Скинути"
+  },
+  "comparison": {
+    "limit_reached": "Досягнуто ліміт порівняння (макс. {{max}})"
   }
 }

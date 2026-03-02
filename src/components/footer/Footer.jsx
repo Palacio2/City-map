@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 export default function Footer() {
-  const { t } = useTranslation(['footer', 'header']);
+  const { t } = useTranslation('footer');
   const year = new Date().getFullYear();
 
   return (
@@ -15,36 +15,36 @@ export default function Footer() {
           <h3 className={styles.logoTitle}>
             GeoAnalyzer<span className={styles.accentDot}>.</span>
           </h3>
-          <p>{t('footer:description')}</p>
+          <p>{t('description')}</p>
         </div>
 
         <div className={styles.footerSection}>
-          <h4>{t('footer:nav_title')}</h4>
+          <h4>{t('nav_title')}</h4>
           <nav className={styles.navLinks}>
-            <Link to="/">{t('header:home')}</Link>
-            <Link to="/about">{t('header:about')}</Link>
-            <Link to="/contacts">{t('header:contacts')}</Link>
-            <Link to="/terms">{t('footer:terms')}</Link>
-            <Link to="/faq">{t('footer:faq')}</Link>
+            <Link to="/">{t('home')}</Link>
+            <Link to="/about">{t('about')}</Link>
+            <Link to="/contacts">{t('contacts')}</Link>
+            <Link to="/terms">{t('terms')}</Link>
+            <Link to="/faq">{t('faq')}</Link>
           </nav>
         </div>
 
         <div className={styles.footerSection}>
-          <h4>{t('footer:contacts_title')}</h4>
+          <h4>{t('contacts_title')}</h4>
           <div className={styles.contactLinks}>
-            <a href={`mailto:${t('footer:email')}`} className={styles.contactLink}>
-              {t('footer:email')}
+            <a href={`mailto:${t('email')}`} className={styles.contactLink}>
+              {t('email')}
             </a>
-            <a href={`tel:${t('footer:phone_raw')}`} className={styles.contactLink}>
-              {t('footer:phone')}
+            <a href={`tel:${t('phone_raw')}`} className={styles.contactLink}>
+              {t('phone')}
             </a>
           </div>
         </div>
       </div>
 
       <div className={styles.copyright}>
-        © {year} GeoAnalyzer. {t('footer:rights')}.
+        © {year} GeoAnalyzer. {t('rights')}.
       </div>
     </footer>
-  );
+  ); 
 }

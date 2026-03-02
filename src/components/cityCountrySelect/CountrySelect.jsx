@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SelectForm, { StatusView } from '@ui/selectForm/SelectForm';
+import Loader from '@components/loader/Loader';
 import { fetchCountries, createSelectOptions } from '@api/cityCountrySelect';
 
 export default function CountrySelect() {
@@ -13,14 +14,27 @@ export default function CountrySelect() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    let isMounted = true;
+
     fetchCountries()
-      .then(data => setCountries(Array.isArray(data) ? data : []))
-      .catch(err => setError(err.message))
-      .finally(() => setLoading(false));
+      .then(data => {
+        if (isMounted) setCountries(Array.isArray(data) ? data : []);
+      })
+      .catch(err => {
+        if (isMounted) setError(err.message);
+      })
+      .finally(() => {
+        if (isMounted) setLoading(false);
+      });
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   const handleBack = () => navigate(-1);
 
+  if (loading) return <Loader fullScreen text={t('loading')} />;
   if (error) return <StatusView error={error} onBack={handleBack} showRetry />;
 
   return (
@@ -36,7 +50,6 @@ export default function CountrySelect() {
       }}
       onBack={handleBack}
       showBackButton
-      isLoading={loading}
     />
   );
 }

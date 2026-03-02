@@ -1,0 +1,52 @@
+/* Головний контейнер на всю ширину і висоту */
+.mainLayout {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    /* Обмежуємо висоту, щоб з'явився незалежний скрол. 
+       Якщо у тебе є шапка (header), відніми її висоту, наприклад calc(100vh - 80px) */
+    height: 85vh; 
+    width: 100%;
+}
+
+/* Ліва колонка: завжди 280px, має власний скрол */
+.leftPanel {
+    width: 280px;
+    flex-shrink: 0; /* Забороняємо звужуватись */
+    height: 100%;
+    overflow-y: auto; /* Власний скрол */
+    padding-right: 8px;
+    border-right: 1px solid #e2e8f0;
+}
+
+/* Права колонка: займає весь залишок місця, має власний скрол */
+.rightPanel {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    overflow-y: auto;
+    padding-right: 12px;
+    padding-bottom: 0; /* БУЛО 40px - прибираємо */
+}
+
+/* Стилізація скролбарів для обох панелей */
+.leftPanel::-webkit-scrollbar,
+.rightPanel::-webkit-scrollbar {
+    width: 6px;
+}
+
+.leftPanel::-webkit-scrollbar-track,
+.rightPanel::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.leftPanel::-webkit-scrollbar-thumb,
+.rightPanel::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.leftPanel::-webkit-scrollbar-thumb:hover,
+.rightPanel::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}

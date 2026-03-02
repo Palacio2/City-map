@@ -18,29 +18,30 @@ const FilterSection = memo(({ categoryKey, filters = [], values = {}, onChange }
   }).length;
 
   const renderInput = (filter) => {
-    const isSelect = ['airQuality', 'crimeLevel'].includes(filter.name);
+    const isSelect = ['airQuality', 'crimeLevel', 'transportFrequency'].includes(filter.name);
     const isNumericInput = ['propertyPricePerSqm', 'costPerSqm', 'transportAvgDistance', 'avgParkSize'].includes(filter.name);
+    const isLowMedHigh = ['crimeLevel', 'transportFrequency'].includes(filter.name);
 
     if (isSelect) {
       return (
         <select
           name={filter.name}
-          value={values[filter.name] || (filter.name === 'crimeLevel' ? 'any' : '')}
+          value={values[filter.name] || (isLowMedHigh ? 'any' : '')}
           onChange={(e) => onChange?.({ [filter.name]: e.target.value })}
           className={styles.select}
         >
-          <option value={filter.name === 'crimeLevel' ? 'any' : ''}>{t('filters:options.any', 'Будь-яка')}</option>
-          {filter.name === 'crimeLevel' ? (
+          <option value={isLowMedHigh ? 'any' : ''}>{t('filter.options.any')}</option>
+          {isLowMedHigh ? (
             <>
-              <option value="low">{t('common:enums.low', 'Низька')}</option>
-              <option value="medium">{t('common:enums.medium', 'Середня')}</option>
-              <option value="high">{t('common:enums.high', 'Висока')}</option>
+              <option value="low">{t('common:enums.low')}</option>
+              <option value="medium">{t('common:enums.medium')}</option>
+              <option value="high">{t('common:enums.high')}</option>
             </>
           ) : (
             <>
-              <option value="good">{t('common:enums.good', 'Добра')}</option>
-              <option value="medium">{t('common:enums.medium', 'Середня')}</option>
-              <option value="bad">{t('common:enums.bad', 'Погана')}</option>
+              <option value="good">{t('common:enums.good')}</option>
+              <option value="medium">{t('common:enums.medium')}</option>
+              <option value="bad">{t('common:enums.bad')}</option>
             </>
           )}
         </select>
@@ -86,7 +87,7 @@ const FilterSection = memo(({ categoryKey, filters = [], values = {}, onChange }
         <div className={styles.filterGroupInner}>
           <div className={styles.filterGroup}>
             {filters.map((filter) => {
-              const isColumn = ['propertyPricePerSqm', 'costPerSqm', 'transportAvgDistance', 'avgParkSize', 'airQuality', 'crimeLevel'].includes(filter.name);
+              const isColumn = ['propertyPricePerSqm', 'costPerSqm', 'transportAvgDistance', 'avgParkSize', 'airQuality', 'crimeLevel', 'transportFrequency'].includes(filter.name);
               
               return (
                 <label 

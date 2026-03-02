@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { DISTRICT_CATEGORIES } from '@config/districtFields'; 
-// ВИПРАВЛЕНО: Усе беремо з одного файлу
 import { getValue, formatPrice, formatNumber, formatBoolean, formatLevel, renderRating } from '@utils/formatters.jsx';
 import styles from './ComparisonTable.module.css';
 
@@ -63,8 +62,8 @@ export default function ComparisonTable({ districts }) {
         <thead>
           <tr>
             <th className={`${styles.th} ${styles.firstCol}`}></th>
-            {districts.map((d, i) => (
-              <th key={d.id || i} className={styles.th}>
+            {districts.map((d) => (
+              <th key={d.id || d.name} className={styles.th}>
                 <div className={styles.districtHeader}>
                   <span className={styles.dName}>{d.name}</span>
                   <span className={styles.dCity}><FaMapMarkerAlt /> {d.city}</span>
@@ -74,22 +73,33 @@ export default function ComparisonTable({ districts }) {
           </tr>
         </thead>
         <tbody>
-          {rows.map((row, rowIdx) => {
+          {rows.map((row, idx) => {
+            const rowKey = row.type === 'header' 
+              ? `header-${idx}-${row.title}` 
+              : `row-${idx}-${row.key}`;
+
             if (row.type === 'header') {
               return (
-                <tr key={`h-${rowIdx}`} className={styles.sectionHeader}>
+                <tr key={rowKey} className={styles.sectionHeader}>
                   <td className={`${styles.td} ${styles.firstCol}`}>{row.title}</td>
-                  {districts.map((_, i) => <td key={i} className={styles.headerSpacer}></td>)}
+                  {districts.map((d, dIdx) => (
+                    <td key={`spacer-${dIdx}`} className={styles.headerSpacer}></td>
+                  ))}
                 </tr>
               );
             }
+
             return (
-              <tr key={`r-${rowIdx}`} className={styles.dataRow}>
+              <tr key={rowKey} className={styles.dataRow}>
                 <td className={`${styles.td} ${styles.firstCol} ${styles.metricName}`}>{row.label}</td>
-                {districts.map((d, colIdx) => {
+                {districts.map((d, dIdx) => {
                   const rawVal = getValue(d, row.key);
                   const displayVal = row.format ? row.format(rawVal, d) : (rawVal ?? '-');
-                  return <td key={colIdx} className={styles.td}>{displayVal}</td>;
+                  return (
+                    <td key={`cell-${dIdx}`} className={styles.td}>
+                      {displayVal}
+                    </td>
+                  );
                 })}
               </tr>
             );

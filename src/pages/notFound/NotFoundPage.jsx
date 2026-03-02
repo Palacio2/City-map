@@ -10,7 +10,7 @@ export default function NotFoundPage() {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
-        <div className={styles.iconWrapper}>
+        <div className={styles.iconWrapper} aria-hidden="true">
           <FaMapMarkedAlt />
         </div>
         <h1 className={styles.errorCode}>404</h1>

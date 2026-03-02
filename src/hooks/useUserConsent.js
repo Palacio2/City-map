@@ -2,11 +2,13 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@supabaseClient';
 import { userConsentApi } from '@api/userConsentApi';
+import { useAuth } from '@ui/authForm/AuthContext';
 
 const SAFE_ROUTES = ['/terms', '/about', '/faq', '/contacts', '/payment-success', '/login'];
 
 export const useUserConsent = () => {
   const location = useLocation();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [hasConsent, setHasConsent] = useState(false);
   const [authReady, setAuthReady] = useState(false);
   
@@ -17,20 +19,18 @@ export const useUserConsent = () => {
     let mounted = true;
 
     const runCheck = async () => {
-      if (checkRunning.current) return;
+      if (authLoading || checkRunning.current) return;
       checkRunning.current = true;
 
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session?.user) {
-        const metaConsent = session.user.user_metadata?.rodo_accepted;
+      if (isAuthenticated && user) {
+        const metaConsent = user.user_metadata?.rodo_accepted;
         
         if (metaConsent) {
           if (mounted) setHasConsent(true);
         }
 
         try {
-          const dbStatus = await userConsentApi.checkConsentStatus(session.user.id);
+          const dbStatus = await userConsentApi.checkConsentStatus();
           
           if (mounted) {
             if (dbStatus === false) {
@@ -40,8 +40,7 @@ export const useUserConsent = () => {
               setHasConsent(true);
             }
           }
-        } catch (e) {
-          console.error(e);
+        } catch {
           if (mounted && metaConsent) setHasConsent(true);
         }
       } else {
@@ -55,28 +54,17 @@ export const useUserConsent = () => {
 
     runCheck();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        runCheck();
-      } else if (event === 'SIGNED_OUT') {
-        setHasConsent(false);
-      }
-    });
-
     return () => {
       mounted = false;
-      subscription.unsubscribe();
     };
-  }, []);
+  }, [isAuthenticated, user, authLoading]);
 
   const handleAcceptRodo = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    
     setHasConsent(true);
     localStorage.setItem('rodo_accepted', 'true');
 
-    if (user) {
-      const { error } = await userConsentApi.acceptConsent(user.id);
+    if (isAuthenticated && user) {
+      const { error } = await userConsentApi.acceptConsent();
       
       if (!error) {
         await supabase.auth.updateUser({

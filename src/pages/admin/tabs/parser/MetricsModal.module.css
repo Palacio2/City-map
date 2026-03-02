@@ -1,0 +1,184 @@
+.modalOverlay {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(6px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: fadeIn 0.2s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modalContent {
+    background: #ffffff;
+    padding: 32px;
+    border-radius: 16px;
+    width: 650px;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.modalTitle {
+    margin: 0 0 24px 0;
+    color: #0f172a;
+    font-size: 1.5rem;
+}
+
+.mainSettingsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    background: #f8fafc;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+}
+
+.toggleLabel {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #334155;
+    transition: color 0.2s;
+}
+
+.toggleLabel:hover { color: #0f172a; }
+
+.section {
+    margin-bottom: 24px;
+}
+
+.sectionTitle {
+    margin: 0 0 12px 0;
+    color: #475569;
+    font-size: 1.05rem;
+}
+
+.metricsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 12px;
+    background: #fdfdfd;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px dashed #cbd5e1;
+}
+
+.metricLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    cursor: pointer;
+    color: #475569;
+}
+
+.urlList {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 8px;
+}
+
+/* Custom Scrollbar for URL List */
+.urlList::-webkit-scrollbar { width: 6px; }
+.urlList::-webkit-scrollbar-track { background: transparent; }
+.urlList::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+
+.urlItem {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    background: #f8fafc;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.urlLabel {
+    width: 140px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #334155;
+    flex-shrink: 0;
+}
+
+.textInput {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s;
+}
+
+.textInput:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.checkbox {
+    width: 18px;
+    height: 18px;
+    accent-color: #3b82f6;
+    cursor: pointer;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 32px;
+    border-top: 1px solid #e2e8f0;
+    padding-top: 24px;
+}
+
+.btn {
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+}
+
+.primaryBtn {
+    background: #4f46e5;
+    color: #fff;
+    box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+}
+
+.primaryBtn:hover {
+    background: #4338ca;
+    transform: translateY(-1px);
+}
+
+.defaultBtn {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.defaultBtn:hover {
+    background: #e2e8f0;
+}

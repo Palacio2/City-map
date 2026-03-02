@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaUser, FaCrown, FaCreditCard, FaSync, FaCheckCircle, FaTimesCircle, FaChartLine, FaEdit, FaKey, FaExclamationTriangle, FaChevronDown, FaChevronUp } from 'react-icons/fa';
-import { supabase } from '@supabaseClient';
 import { useSubscription } from '@subscription/SubscriptionContext';
+import { useAuth } from '@ui/authForm/AuthContext';
 import { formatPhoneNumberIntl, parsePhoneNumber } from 'react-phone-number-input';
 import AvatarUpload from './AvatarUpload';
 import styles from './Profile.module.css';
@@ -124,8 +124,8 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
 
         <div className={`${styles.featuresContainer} ${isExpanded ? styles.expanded : ''}`}>
             <div className={styles.featuresList}>
-                {features.map((featureKey, index) => (
-                    <div key={index} className={styles.featureItem}>
+                {features.map((featureKey) => (
+                    <div key={featureKey} className={styles.featureItem}>
                         <FaCheckCircle className={styles.featureIcon} /> 
                         <span>{t(`subscription.features.${featureKey}`)}</span>
                     </div>
@@ -156,30 +156,22 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
 
 export default function Profile() {
   const { t } = useTranslation('profile');
+  const { user } = useAuth();
   const [userData, setUserData] = useState({ id: null, name: '', email: '', phone: '', avatar_url: null });
   
   const { subscription, isPremium, getFeatureKeys } = useSubscription();
 
-  const fetchUserData = useCallback(async () => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        setUserData({
-          id: user.id,
-          name: user.user_metadata?.full_name || t('labels.user'),
-          email: user.email || '',
-          phone: user.user_metadata?.phone || '',
-          avatar_url: user.user_metadata?.avatar_url || null
-        });
-      }
-    } catch (e) {
-      console.error("Error fetching user data:", e);
-    }
-  }, [t]);
-
   useEffect(() => {
-    fetchUserData();
-  }, [fetchUserData]);
+    if (user) {
+      setUserData({
+        id: user.id,
+        name: user.user_metadata?.full_name || t('labels.user'),
+        email: user.email || '',
+        phone: user.user_metadata?.phone || '',
+        avatar_url: user.user_metadata?.avatar_url || null
+      });
+    }
+  }, [user, t]);
 
   const features = useMemo(() => {
     if (subscription && typeof getFeatureKeys === 'function') {

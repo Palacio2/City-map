@@ -1,45 +1,44 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
-import { userConsentApi } from '../components/api/userConsentApi';
+import { useAuth } from '@ui/authForm/AuthContext';
+import { userConsentApi } from '@api/userConsentApi';
 
 const PrivateRoute = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [hasConsent, setHasConsent] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [consentLoading, setConsentLoading] = useState(true);
   const location = useLocation();
 
   useEffect(() => {
     let mounted = true;
-    const checkAuthAndConsent = async () => {
-      try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
+
+    if (!authLoading) {
+      if (isAuthenticated && user) {
+        userConsentApi.checkConsentStatus(user.id)
+          .then((consent) => {
+            if (mounted) {
+              setHasConsent(consent);
+              setConsentLoading(false);
+            }
+          })
+          .catch(() => {
+            if (mounted) {
+              setHasConsent(false);
+              setConsentLoading(false);
+            }
+          });
+      } else {
         if (mounted) {
-          if (session) {
-            setIsAuthenticated(true);
-            const consent = await userConsentApi.checkConsentStatus(session.user.id);
-            setHasConsent(consent);
-          } else {
-            setIsAuthenticated(false);
-            setHasConsent(false);
-          }
-        }
-      } catch {
-        if (mounted) {
-          setIsAuthenticated(false);
           setHasConsent(false);
+          setConsentLoading(false);
         }
-      } finally {
-        if (mounted) setIsLoading(false);
       }
-    };
+    }
 
-    checkAuthAndConsent();
     return () => { mounted = false; };
-  }, []);
+  }, [authLoading, isAuthenticated, user]);
 
-  if (isLoading) return null; 
+  if (authLoading || consentLoading) return null; 
 
   if (!isAuthenticated) {
     return <Navigate to="/login" state={{ from: location }} replace />;

@@ -1,9 +1,10 @@
 {
   "title": "Support Center",
-  "subtitle": "Answers to the most common questions about GeoAnalyzer",
+  "subtitle": "Answers to the most frequently asked questions about GeoAnalyzer",
+  "no_questions_found": "No questions available for this category yet.",
   "categories": {
-    "general": "General Questions",
-    "subscription": "Pricing & Billing",
+    "general": "General questions",
+    "subscription": "Plans & Billing",
     "data": "Data & Algorithms",
     "account": "Account & Security"
   },
@@ -11,56 +12,56 @@
     "general": [
       {
         "q": "How does GeoAnalyzer differ from competitors?",
-        "a": "We are unique in our approach. Competitors show 'where', while we answer the question 'how is it to live there?'. We don't just display objects; we aggregate them into ratings of safety, comfort, and investment attractiveness, saving you dozens of hours of independent research."
+        "a": "We are unique in our field. Competitors show 'where', while we answer 'how is it to live there?'. We don't just display objects; we aggregate them into safety, comfort, and investment attractiveness ratings, saving you dozens of hours of independent research."
       },
       {
         "q": "What coverage does the service have?",
-        "a": "Currently, we are entering the Polish market. We are constantly striving to add new locations. If you haven't found the city you need, please wait a little while. Our goal is to cover as many settlements as possible so everyone can find exactly what they are looking for."
+        "a": "Currently, we operate in Poland. We constantly add new locations. If you didn’t find your city, it means it’s queued for loading. Our goal is to cover as many locations as possible so everyone can find exactly what they need."
       },
       {
         "q": "Can I use the service on mobile?",
-        "a": "Yes, our interface is fully responsive. You can explore neighborhoods from your laptop at home or from your smartphone while visiting a property."
+        "a": "Yes, our interface is fully responsive. You can explore districts both from your laptop at home and on your smartphone on the go."
       }
     ],
     "subscription": [
       {
         "q": "Who is the 'Weekly' plan for?",
-        "a": "This is a unique offer for those in the active phase of house hunting. You get full Premium functionality for a symbolic fee for 7 days, which is usually enough to choose an apartment."
+        "a": "It’s perfect for those actively searching for housing. You get full Premium functionality for a symbolic fee for 7 days, usually enough to choose an apartment."
       },
       {
         "q": "Can I cancel my subscription?",
-        "a": "Yes, absolutely. You can turn off auto-renewal at any time in your profile settings. Access to paid features will remain until the end of the paid period."
+        "a": "Yes, of course. You can disable auto-renew at any time in your profile settings. Access to paid features will remain until the end of the already paid period."
       },
       {
-        "q": "What are White Label reports in the Realtor Pro plan?",
-        "a": "This feature allows real estate agents to generate PDF reports about a neighborhood without the GeoAnalyzer logo. You can add your own contacts and branding, providing clients with professional analytics under your own name."
+        "q": "What are White Label reports in Realtor Pro?",
+        "a": "This feature allows real estate agents to generate PDF district reports without the GeoAnalyzer logo. You can add your own contact info and branding, providing professional analytics to clients in your name."
       }
     ],
     "data": [
       {
         "q": "How accurate is your data?",
-        "a": "We use cross-verification of data from multiple authoritative sources. However, a city is a living organism, and changes happen daily. If you need a detailed data collection methodology for a specific district, please send a request to our email."
+        "a": "We cross-verify data from multiple authoritative sources. However, cities are dynamic, and changes happen daily. We update the database as quickly as possible."
       },
       {
-        "q": "Where does the safety information come from?",
-        "a": "The safety index is formed based on official crime statistics, street lighting data, the presence of CCTV cameras, and proximity to police stations."
+        "q": "Where does safety information come from?",
+        "a": "The safety index is based on official crime statistics, street lighting, presence of surveillance cameras, and proximity to police stations."
       },
       {
         "q": "How often is the database updated?",
-        "a": "Real estate prices and environmental indicators are updated in near real-time. Infrastructural changes (new shops, bus stops) are updated according to the schedule of primary registries."
+        "a": "Property prices and environmental metrics are updated in near real-time. Infrastructure changes are updated according to the primary registry schedule."
       }
     ],
     "account": [
       {
-        "q": "How do I contact technical support?",
-        "a": "For prompt resolution of issues, use the feedback form on the 'Contacts' page or email us at youworkday@gmail.com. We respond within 24 hours."
+        "q": "How can I contact technical support?",
+        "a": "For prompt assistance, use the contact form on the website under 'Contacts' or write to us at youworkday@gmail.com. We respond within 24 hours."
       },
       {
         "q": "Are my payment details safe?",
-        "a": "We do not store your card details. All payments are processed by the international provider Stripe, which has the highest level of PCI DSS security certification."
+        "a": "We do not store your card data. All payments are processed by the international provider Stripe, which is PCI DSS certified at the highest level."
       }
     ]
   },
   "still_have_questions": "Need more information?",
-  "contact_support": "Contact Support"
+  "contact_support": "Contact support"
 }

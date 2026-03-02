@@ -9,9 +9,10 @@ import { formatNumber, formatPrice, getCurrencyInfo } from '@utils/formatters';
 import { trackDistrictVisit } from '@api/statsApi';
 import { useSubscription } from '@subscription/SubscriptionContext';
 import { usePdfExport } from '@hooks/usePdfExport';
+import { useBodyScrollLock } from '@hooks/useBodyScrollLock';
 import DistrictPdfTemplate from './DistrictPdfTemplate';
+import DistrictGeoMapModal from './DistrictGeoMapModal';
 
-// ОНОВЛЕНО: Приймаємо selectedCategory
 export default function DistrictDetailsModal({ district, selectedCategory, isOpen, onClose }) {
   const { t } = useTranslation('districts');
   const { country: paramCountry } = useParams();
@@ -21,53 +22,44 @@ export default function DistrictDetailsModal({ district, selectedCategory, isOpe
   const { isDownloading, downloadPdf } = usePdfExport(fileName);
   
   const [pdfPhoto, setPdfPhoto] = useState(null);
+  const [isMapOpen, setIsMapOpen] = useState(false);
 
   const effectiveCountry = paramCountry || district?.country || district?.cities?.countries?.name;
   const currencyInfo = getCurrencyInfo(effectiveCountry);
 
+  useBodyScrollLock(isOpen);
+
   useEffect(() => {
-    if (district && isOpen) {
-      trackDistrictVisit(district); 
-    }
+    if (district && isOpen) { trackDistrictVisit(district); }
   }, [district?.id, isOpen]);
 
   useEffect(() => {
+    let isMounted = true;
+
     if (district?.photo_url) {
       const loadBase64Image = async () => {
         try {
-          let response = await fetch(district.photo_url, { mode: 'cors' }).catch(() => null);
-          
-          if (!response || !response.ok) {
-            const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(district.photo_url)}`;
-            response = await fetch(proxyUrl);
-          }
+          const response = await fetch(district.photo_url, { mode: 'cors' }).catch(() => null);
           
           if (response && response.ok) {
             const blob = await response.blob();
             const reader = new FileReader();
-            reader.onloadend = () => setPdfPhoto(reader.result);
+            reader.onloadend = () => {
+              if (isMounted) setPdfPhoto(reader.result);
+            };
             reader.readAsDataURL(blob);
           } else {
-            setPdfPhoto('error');
+            if (isMounted) setPdfPhoto('error');
           }
-        } catch (error) {
-          setPdfPhoto('error');
+        } catch {
+          if (isMounted) setPdfPhoto('error');
         }
       };
       loadBase64Image();
     }
-  }, [district?.photo_url]);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
+    return () => { isMounted = false; };
+  }, [district?.photo_url]);
 
   if (!isOpen || !district) return null;
 
@@ -87,6 +79,7 @@ export default function DistrictDetailsModal({ district, selectedCategory, isOpe
             isFree={isFree}
             onDownloadPdf={() => downloadPdf('district-pdf-container')}
             isDownloading={isDownloading}
+            onOpenMap={() => setIsMapOpen(true)}
           />
 
           <div className={styles.mainContent}>
@@ -96,7 +89,7 @@ export default function DistrictDetailsModal({ district, selectedCategory, isOpe
                 currencyInfo={currencyInfo}
                 isFree={isFree}
                 isRealtor={isRealtor}
-                selectedCategory={selectedCategory} // ПЕРЕДАЄМО СЮДИ
+                selectedCategory={selectedCategory} 
               />
             ) : (
               <div className={styles.noData}>
@@ -110,6 +103,13 @@ export default function DistrictDetailsModal({ district, selectedCategory, isOpe
           <ModalFooter onClose={onClose} />
         </div>
       </div>
+
+      <DistrictGeoMapModal 
+        isOpen={isMapOpen} 
+        onClose={() => setIsMapOpen(false)} 
+        districtId={district.id}
+        districtName={district.name}
+      />
 
       {!isFree && (
         <div id="district-pdf-container" className={styles.hiddenPdfTemplate}>

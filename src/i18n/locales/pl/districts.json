@@ -3,8 +3,8 @@
   "error_prefix": "Błąd: {{error}}",
   "retry": "Spróbuj ponownie",
   "load_failed": "Nie udało się załadować danych",
-  "stats_shown": "Pokazano {{shown}} z {{total}} dzielnic",
-  "na": "brak danych",
+  "stats_shown": "Wyświetlono {{shown}} z {{total}} dzielnic",
+  "na": "b/d",
   "not_found_title": "Nic nie znaleziono",
   "not_found_text": "Spróbuj zmienić parametry filtrów",
   "no_data_title": "Brak danych",
@@ -12,7 +12,7 @@
   "modal": {
     "no_data_title": "Brak danych",
     "no_data_text": "Informacje o tej dzielnicy nie zostały jeszcze dodane do systemu",
-    "login_alert": "Zaloguj się, aby dodać do ulubionych"
+    "login_alert": "Zaloguj się, aby dodawać do ulubionych"
   },
   "buttons": {
     "add_favorite": "Dodaj do ulubionych",
@@ -20,8 +20,8 @@
   },
   "details": {
     "updated": "Zaktualizowano",
-    "population": "Populacja",
-    "salary": "Średnie zarobki",
+    "population": "Liczba ludności",
+    "salary": "Średnie wynagrodzenie",
     "unemployment": "Bezrobocie",
     "density": "Gęstość",
     "price": "Cena za m²"
@@ -29,14 +29,14 @@
   "pdf": {
     "report_date": "Data wygenerowania raportu",
     "report_subtitle": "Raport o dzielnicy",
-    "rating_label": "Ranking",
-    "general_info": "Statystyki ogólne",
-    "rent": "Koszt wynajmu",
+    "rating_label": "Ocena",
+    "general_info": "Statystyka ogólna",
+    "rent": "Koszt najmu",
     "generated_auto": "Raport wygenerowany automatycznie przez platformę"
   },
   "premium": {
     "hidden_districts_title": "Ukryto jeszcze {{count}} dzielnic",
-    "hidden_districts_desc": "Wykup Premium, aby zobaczyć wszystkie dzielnice i pełną analitykę",
-    "upgrade_button": "Przejdź na Premium"
+    "hidden_districts_desc": "Wykup Premium, aby zobaczyć wszystkie dzielnice oraz szczegółową analitykę",
+    "upgrade_button": "Uzyskaj Premium"
   }
 }

@@ -97,7 +97,7 @@ const AuthForm = memo(({
                     className={`${styles.input} ${errors[name] ? styles.inputError : ''}`}
                     placeholder={placeholder}
                     disabled={isLoading}
-                    autoComplete={isPasswordType ? "current-password" : "email"}
+                    autoComplete={isPasswordType ? (isLogin ? "current-password" : "new-password") : "email"}
                   />
                   
                   {isPasswordType && (

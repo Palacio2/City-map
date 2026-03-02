@@ -1,0 +1,142 @@
+.mainWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-bottom: 40px;
+}
+
+.topActions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.section {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 24px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.topGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 24px;
+}
+
+.stepSection {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.stepHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+}
+
+.stepHeader h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #0f172a;
+    font-weight: 600;
+}
+
+.stepIcon {
+    font-size: 1.5rem;
+}
+
+.fileHeaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 12px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.textInput {
+    padding: 12px 16px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 1rem;
+    outline: none;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.2s;
+    background-color: #f8fafc;
+}
+
+.textInput:focus {
+    border-color: #3b82f6;
+    background-color: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.fileSelect {
+    cursor: pointer;
+    font-weight: 500;
+    color: #1e293b;
+}
+
+.emptyFolderBox {
+    padding: 20px;
+    background: #fef2f2;
+    color: #ef4444;
+    border-radius: 8px;
+    border: 1px dashed #fca5a5;
+    text-align: center;
+    font-weight: 500;
+}
+
+.btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.dangerBtn {
+    background: #fff1f2;
+    color: #e11d48;
+    border: 1px solid #fecdd3;
+}
+
+.dangerBtn:hover {
+    background: #ffe4e6;
+    transform: translateY(-1px);
+}
+
+.updateBtn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.updateBtn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.resultsSection {
+    border: 2px solid #10b981;
+    box-shadow: 0 10px 15px -3px rgba(16, 185, 129, 0.1);
+}
+
+.resultsHeaderRow {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e2e8f0;
+}

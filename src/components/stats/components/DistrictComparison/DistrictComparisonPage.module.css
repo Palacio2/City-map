@@ -45,6 +45,7 @@
   margin-bottom: var(--spacing-xs);
   background: var(--primary-gradient);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
   display: inline-block;
 }
@@ -268,18 +269,38 @@
 
 .addIcon { font-size: 1.5rem; }
 
+/* НОВІ СТИЛІ ДЛЯ READY PROMPT */
+.readyPrompt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+  color: #10b981;
+  font-weight: 600;
+  font-size: 1rem;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.readyIcon {
+  font-size: 1.2rem;
+}
+
 .compareAction {
   max-width: 1200px;
   margin: 40px auto 0;
   text-align: center;
   padding-top: 32px;
   border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   animation: fadeIn 0.5s ease-out;
 }
 
 .compareBtn {
   background: var(--primary-gradient);
-  color: var(--text-inverse);
+  color: white;
   border: none;
   padding: 16px 48px;
   font-size: 1rem;

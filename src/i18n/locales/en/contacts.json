@@ -12,13 +12,13 @@
     },
     "message": {
       "label": "Message",
-      "placeholder": "Message text..."
+      "placeholder": "Your message..."
     }
   },
   "buttons": {
     "submit": "Send",
     "sending": "Sending...",
-    "send_again": "Send again"
+    "send_again": "Send Again"
   },
   "success": {
     "title": "Thank you!",
@@ -26,5 +26,9 @@
   },
   "errors": {
     "generic": "Something went wrong"
+  },
+  "info": {
+    "email": "youworkday@gmail.com",
+    "phone": "+48 698 991 398"
   }
 }

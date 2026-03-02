@@ -19,54 +19,119 @@
     "change_password": "Zmień hasło",
     "back_to_profile": "Powrót do profilu",
     "hide_password": "Ukryj hasło",
-    "show_password": "Pokaż hasło"
+    "show_password": "Pokaż hasło",
+    "saving": "Zapisywanie...",
+    "save": "Zapisz",
+    "cancel": "Anuluj",
+    "choose_plan": "Wybierz plan"
+  },
+  "quick_actions": {
+    "stats_title": "Statystyki",
+    "billing_title": "Historia płatności"
+  },
+  "subscription": {
+    "title": "Moja subskrypcja",
+    "status": {
+      "active": "Aktywna",
+      "expired": "Wygasła",
+      "free": "Darmowa"
+    },
+    "expires_short": "do {{date}}",
+    "expired_notice": "Twoja subskrypcja wygasła {{date}}",
+    "cancelled_notice": "Twoja subskrypcja zostanie anulowana {{date}}",
+    "plans": {
+      "free": { "name": "Darmowy", "price": "€0" },
+      "weekly": { "name": "Tygodniowy", "price": "€2.99 / tydzień" },
+      "premium": { "name": "Premium", "price": "€8.99 / mies." },
+      "realtor": { "name": "Realtor Pro", "price": "€29.00 / mies." }
+    },
+    "features": {
+      "district_limit_5": "Wyświetlanie tylko do 5 dzielnic",
+      "filters_limit_2": "Ograniczony dostęp do filtrów",
+      "basic_rating": "Podstawowa ocena atrakcyjności",
+      "safety_edu_analytics": "Szczegółowa analiza bezpieczeństwa i edukacji",
+      "financial_stats": "Pełna statystyka finansowa",
+      "favorites_save": "Zapisywanie dzielnic w „Ulubionych”",
+      "compare_tools": "Narzędzia porównawcze",
+      "pdf_export": "Eksport profesjonalnych raportów PDF",
+      "unlimited_districts": "Nieograniczony dostęp do wszystkich dzielnic",
+      "extended_filters": "Rozszerzony dostęp do filtrów",
+      "partial_analytics": "Częściowy dostęp do analiz",
+      "personal_stats": "Statystyki osobiste",
+      "save_favorites": "Zapisywanie ulubionych dzielnic",
+      "pdf_download": "Pobieranie plików PDF",
+      "all_weekly_features": "Cała funkcjonalność subskrypcji tygodniowej",
+      "all_premium_features": "Wszystkie zalety planu Premium",
+      "roi_calculator": "Kalkulator inwestycyjny (ROI)",
+      "white_label_pdf": "Raporty PDF z własnymi informacjami",
+      "compare_4_districts": "Porównanie do 4 dzielnic",
+      "full_filter_access": "Pełny dostęp do filtrów",
+      "full_district_info": "Pełne informacje o dzielnicach",
+      "popular_districts_monitor": "Monitorowanie popularnych dzielnic",
+      "growth_tracking": "Śledzenie wzrostu dzielnic"
+    }
+  },
+  "errors": {
+    "auth_error": "Błąd autoryzacji. Zaloguj się ponownie.",
+    "network_error": "Błąd sieci",
+    "user_not_found": "Nie znaleziono użytkownika",
+    "email_taken": "Ten email jest już używany",
+    "too_many_requests": "Zbyt wiele prób. Spróbuj ponownie później.",
+    "email_invalid_format": "Nieprawidłowy format email",
+    "unknown_error": "Wystąpił nieznany błąd",
+    "password_same_as_old": "Nowe hasło nie może być takie samo jak stare",
+    "password_mismatch": "Hasła nie pasują do siebie",
+    "password_latin_only": "Hasło może zawierać tylko litery łacińskie i cyfry",
+    "password_weak": "Hasło musi zawierać co najmniej 8 znaków, jedną wielką literę, jedną małą literę i jeden znak specjalny."
   },
   "edit_page": {
     "title": "Edycja profilu",
     "subtitle": "Zaktualizuj swoje dane osobowe",
-    "main_info": "Informacje podstawowe",
+    "main_info": "Główne informacje",
     "enter_data": "Wprowadź swoje dane osobowe",
     "placeholders": {
-      "name": "Wpisz swoje imię",
-      "email": "Wpisz swój email",
+      "name": "Wprowadź swoje imię",
+      "email": "Wprowadź swój email",
       "phone": "991234567"
     },
-    "email_warning": "Po zapisaniu na ten adres zostanie wysłany e-mail weryfikacyjny",
-    "email_update_sent": "Profil zaktualizowany. E-mail weryfikacyjny wysłano na nowy adres.",
+    "email_warning": "Po zapisaniu na ten adres zostanie wysłany e-mail potwierdzający",
+    "email_update_sent": "Profil zaktualizowany. E-mail potwierdzający wysłany na nowy adres.",
     "errors": {
-      "load_failed": "Nie udało się pobrać danych profilu",
-      "name_long": "Imię zbyt długie (maks. 30 znaków)",
-      "name_required": "Proszę podać imię",
-      "name_latin_only": "Imię może zawierać tylko litery łacińskie",
-      "email_required": "Proszę podać email",
+      "load_failed": "Nie udało się załadować danych profilu",
+      "avatar_load_error": "Błąd pobierania obrazu",
+      "select_image": "Wybierz obraz do przesłania",
+      "name_long": "Imię jest zbyt długie (maks. 30 znaków)",
+      "name_required": "Proszę wprowadzić imię",
+      "name_latin_only": "Imię musi zawierać tylko litery łacińskie",
+      "email_required": "Proszę wprowadzić email",
       "email_invalid": "Nieprawidłowy format email",
       "save_error": "Błąd podczas zapisywania",
-      "phone_length": "Numer zbyt krótki (minimum {{count}} cyfr)",
-      "email_invalid_format": "Niepoprawny format email",
-      "phone_too_long": "Numer zbyt długi"
+      "phone_length": "Numer jest za krótki",
+      "phone_too_long": "Numer jest za długi",
+      "phone_invalid": "Nieprawidłowy format telefonu"
     },
     "success": "Profil został pomyślnie zaktualizowany"
   },
   "password_page": {
     "title": "Zmiana hasła",
-    "subtitle": "Zaktualizuj hasło, aby zwiększyć bezpieczeństwo konta",
+    "subtitle": "Zaktualizuj swoje hasło dla większego bezpieczeństwa konta",
     "form_title": "Bezpieczeństwo konta",
-    "form_subtitle": "Wprowadź nowe hasło, aby zaktualizować",
+    "form_subtitle": "Wprowadź nowe hasło, aby je zaktualizować",
     "new_pass": "Nowe hasło",
     "confirm_pass": "Potwierdź nowe hasło",
     "tips_title": "Wskazówki dotyczące bezpiecznego hasła",
     "tips": [
-      "Używaj co najmniej 8 znaków",
+      "Użyj co najmniej 8 znaków",
       "Dodaj wielkie litery, cyfry i znaki specjalne",
-      "Unikaj danych osobistych"
+      "Unikaj informacji osobistych"
     ],
     "placeholders": {
-      "new": "Wpisz nowe hasło (min. 8 znaków)",
+      "new": "Wprowadź nowe hasło (min. 8 znaków)",
       "confirm": "Powtórz nowe hasło"
     },
     "errors": {
       "length": "Nowe hasło musi mieć co najmniej 8 znaków",
-      "mismatch": "Nowe hasła nie są identyczne",
+      "mismatch": "Nowe hasła nie pasują do siebie",
       "regex": "Hasło musi zawierać wielkie/małe litery, cyfry i znaki specjalne",
       "unknown": "Wystąpił nieznany błąd"
     },

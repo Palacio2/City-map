@@ -3,7 +3,7 @@ import { supabase } from '@supabaseClient';
 export const profileAPI = {
   getProfile: async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     if (!user) throw new Error('User not authenticated');
 
     return {
@@ -24,13 +24,13 @@ export const profileAPI = {
         updated_at: new Date().toISOString()
       }
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     return { success: true };
   },
 
   updateEmail: async (newEmail) => {
     const { error } = await supabase.auth.updateUser({ email: newEmail });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     
     return {
       success: true,
@@ -40,7 +40,7 @@ export const profileAPI = {
 
   checkEmailConfirmation: async () => {
     const { data: { user }, error } = await supabase.auth.getUser();
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     
     return {
       isConfirmed: !!user.email_confirmed_at,
@@ -53,7 +53,7 @@ export const profileAPI = {
       type: 'email_change',
       email: email
     });
-    if (error) throw error;
+    if (error) throw new Error(error.message);
     
     return { success: true };
   }

@@ -1,85 +1,70 @@
 import React, { useEffect, useState, useCallback, memo } from 'react';
 import styles from './Header.module.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '@supabaseClient';
-import { FaGlobe, FaHeart, FaBars, FaTimes, FaSun, FaMoon, FaSketch } from 'react-icons/fa';
+import { FaGlobe, FaHeart, FaBars, FaTimes, FaSun, FaMoon } from 'react-icons/fa';
 import { useSubscription } from '@subscription/SubscriptionContext';
 import { useTranslation } from 'react-i18next';
 import { useTheme } from './ThemeContext';
+import { useAuth } from '@ui/authForm/AuthContext';
+import Loader from '@components/loader/Loader';
 import AiAssistantModal from '../aiAssistant/AiAssistantModal'; 
 import AiSidebar from '../aiAssistant/AiSidebar';
+import { useBodyScrollLock } from '@hooks/useBodyScrollLock';
 
 const Header = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { t, i18n } = useTranslation(['header', 'common']);
+  const { t, i18n } = useTranslation('header');
   const { isPremium, isRealtor } = useSubscription();
   const { theme, toggleTheme } = useTheme(); 
+  const { isAuthenticated, isLoading, signOut } = useAuth();
   
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(false);
 
-  const checkAuthStatus = useCallback(async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    setIsAuthenticated(!!session);
-    setIsLoading(false);
-  }, []);
-
-  useEffect(() => {
-    checkAuthStatus();
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_, session) => { setIsAuthenticated(!!session); setIsLoading(false); }
-    );
-    return () => subscription.unsubscribe();
-  }, [checkAuthStatus]);
+  useBodyScrollLock(isMenuOpen);
 
   useEffect(() => {
     setIsMenuOpen(false);
     setShowLanguageDropdown(false);
   }, [location]);
 
-  useEffect(() => {
-    document.body.style.overflow = isMenuOpen ? 'hidden' : '';
-    return () => { document.body.style.overflow = ''; };
-  }, [isMenuOpen]);
-
-  const handleAiClick = () => {
+  const handleAiClick = useCallback(() => {
     const hasPrefs = localStorage.getItem('geo_analyzer_ai_prefs');
     if (hasPrefs) {
       setIsAiSidebarOpen(true);
     } else {
       setIsAiModalOpen(true);
     }
-  };
+  }, []);
 
-  const openAiSettings = () => {
+  const openAiSettings = useCallback(() => {
     setIsAiSidebarOpen(false);
     setIsAiModalOpen(true);
-  };
+  }, []);
 
-  const changeLanguage = (lang) => {
+  const changeLanguage = useCallback((lang) => {
     i18n.changeLanguage(lang);
     setShowLanguageDropdown(false);
-  };
+  }, [i18n]);
 
-  const handleAuthClick = async () => {
+  const handleAuthClick = useCallback(async () => {
     if (isAuthenticated) {
-      await supabase.auth.signOut();
+      await signOut();
       navigate('/');
     } else {
       navigate('/login');
     }
     setIsMenuOpen(false);
-  };
+  }, [isAuthenticated, signOut, navigate]);
 
-  const isActive = (path) => location.pathname === path ? styles.navLinkActive : '';
+  const isActive = useCallback((path) => {
+    return location.pathname === path ? styles.navLinkActive : '';
+  }, [location.pathname]);
 
-  if (isLoading) return null;
+  if (isLoading) return <div className={styles.headerLoader}><Loader size="small" /></div>;
 
   return (
     <>
@@ -95,31 +80,31 @@ const Header = () => {
 
           <div className={`${styles.navWrapper} ${isMenuOpen ? styles.navOpen : ''}`}>
             <nav className={styles.nav}>
-              <Link to="/" className={`${styles.navLink} ${isActive('/')}`}>{t('header:home')}</Link>
-              <Link to="/about" className={`${styles.navLink} ${isActive('/about')}`}>{t('header:about')}</Link>
-              <Link to="/contacts" className={`${styles.navLink} ${isActive('/contacts')}`}>{t('header:contacts')}</Link>
-              <Link to="/subscription" className={`${styles.navLink} ${isActive('/subscription')}`}>{t('header:subscription')}</Link>
-              {isAuthenticated && <Link to="/profile" className={`${styles.navLink} ${isActive('/profile')}`}>{t('header:profile')}</Link>}
+              <Link to="/" className={`${styles.navLink} ${isActive('/')}`}>{t('home')}</Link>
+              <Link to="/about" className={`${styles.navLink} ${isActive('/about')}`}>{t('about')}</Link>
+              <Link to="/contacts" className={`${styles.navLink} ${isActive('/contacts')}`}>{t('contacts')}</Link>
+              <Link to="/subscription" className={`${styles.navLink} ${isActive('/subscription')}`}>{t('subscription')}</Link>
+              {isAuthenticated && <Link to="/profile" className={`${styles.navLink} ${isActive('/profile')}`}>{t('profile')}</Link>}
             </nav>
 
             <div className={styles.userControls}>
               <button 
                 className={styles.navButton} 
                 onClick={toggleTheme}
-                title={theme === 'dark' ? t('header:light_mode') : t('header:dark_mode')}
+                title={theme === 'dark' ? t('light_mode') : t('dark_mode')}
               >
                 {theme === 'dark' ? <FaSun className={styles.icon} /> : <FaMoon className={styles.icon} />}
-                <span className={styles.buttonText}>{theme === 'dark' ? t('header:light_mode') : t('header:dark_mode')}</span>
+                <span className={styles.buttonText}>{theme === 'dark' ? t('light_mode') : t('dark_mode')}</span>
               </button>
 
               {isAuthenticated && isPremium && (
                 <button 
                   className={styles.navButton} 
                   onClick={() => navigate('/favorites')}
-                  title={t('header:favorites_title')}
+                  title={t('favorites_title')}
                 >
                   <FaHeart className={styles.icon} />
-                  <span className={styles.buttonText}>{t('header:favorites_title')}</span>
+                  <span className={styles.buttonText}>{t('favorites_title')}</span>
                 </button>
               )}
 
@@ -127,33 +112,33 @@ const Header = () => {
                 <button 
                   className={styles.navButton} 
                   onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
-                  title={t('header:language_title')}
+                  title={t('language_title')}
                 >
                   <FaGlobe className={styles.icon} />
-                  <span className={styles.buttonText}>{t('header:language_title')}</span>
+                  <span className={styles.buttonText}>{t('language_title')}</span>
                 </button>
                 {showLanguageDropdown && (
                   <div className={styles.languageDropdown}>
-                    <button onClick={() => changeLanguage('uk')} className={styles.languageOption}>Українська</button>
-                    <button onClick={() => changeLanguage('en')} className={styles.languageOption}>English</button>
-                    <button onClick={() => changeLanguage('pl')} className={styles.languageOption}>Polski</button>
+                    <button onClick={() => changeLanguage('uk')} className={styles.languageOption}>{t('lang_uk')}</button>
+                    <button onClick={() => changeLanguage('en')} className={styles.languageOption}>{t('lang_en')}</button>
+                    <button onClick={() => changeLanguage('pl')} className={styles.languageOption}>{t('lang_pl')}</button>
                   </div>
                 )}
               </div>
 
               {isAuthenticated && isRealtor && (
                 <button 
-                  className={`${styles.navButton} ${styles.aiMagicBtn}`} 
+                  className={styles.navButton} 
                   onClick={handleAiClick} 
-                  title="AI Assistant"
+                  title={t('ai_assistant')}
                 >
-                  <FaSketch className={styles.icon} />
-                  <span className={styles.buttonText}>AI Assistant</span>
+                  <span className={styles.aiLettersIcon}>AI</span>
+                  <span className={styles.buttonText}>{t('ai_assistant')}</span>
                 </button>
               )}
 
               <button className={isAuthenticated ? styles.logoutButton : styles.authButton} onClick={handleAuthClick}>
-                {isAuthenticated ? t('header:logout') : t('header:login')}
+                {isAuthenticated ? t('logout') : t('login')}
               </button>
             </div>
           </div>

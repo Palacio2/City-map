@@ -2,9 +2,9 @@
   "filter": {
     "panel": {
       "title": "Filtry",
-      "banner_title": "Zyskaj więcej możliwości!",
-      "banner_text": "Odblokuj wszystkie filtry dzięki subskrypcji",
-      "view_tariffs": "Zobacz cennik",
+      "banner_title": "Uzyskaj więcej możliwości!",
+      "banner_text": "Odblokuj wszystkie filtry z subskrypcją",
+      "view_tariffs": "Zobacz plany",
       "clear": "Wyczyść"
     },
     "options": {

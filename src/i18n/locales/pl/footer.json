@@ -1,10 +1,13 @@
 {
-  "description": "Analiza danych geoprzestrzennych do podejmowania decyzji",
+  "description": "Analiza danych geoprzestrzennych dla podejmowania decyzji",
   "nav_title": "Nawigacja",
+  "home": "Strona główna",
+  "about": "O projekcie",
+  "contacts": "Kontakt",
   "contacts_title": "Kontakt",
   "rights": "Wszelkie prawa zastrzeżone",
-  "terms": "Regulamin",
-  "faq": "Często zadawane pytania",
+  "terms": "Warunki użytkowania",
+  "faq": "Pytania i odpowiedzi",
   "email": "youworkday@gmail.com",
   "phone": "+48 698 991 398",
   "phone_raw": "+48698991398"

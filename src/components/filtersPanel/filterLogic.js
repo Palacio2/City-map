@@ -28,7 +28,7 @@ const validateField = (field, filterVal, districtVal) => {
     return mapCrimeScoreToCategory(districtVal) === filterVal;
   }
 
-  if (field.key === 'airQuality') {
+  if (field.key === 'airQuality' || field.key === 'transportFrequency') {
     return String(districtVal).toLowerCase() === String(filterVal).toLowerCase();
   }
 

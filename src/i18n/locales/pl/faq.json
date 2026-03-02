@@ -1,9 +1,10 @@
 {
   "title": "Centrum wsparcia",
-  "subtitle": "Odpowiedzi na najczęstsze pytania o GeoAnalyzer",
+  "subtitle": "Odpowiedzi na najczęściej zadawane pytania dotyczące GeoAnalyzer",
+  "no_questions_found": "W tej kategorii nie ma jeszcze pytań.",
   "categories": {
     "general": "Pytania ogólne",
-    "subscription": "Cennik i subskrypcje",
+    "subscription": "Plany i rozliczenia",
     "data": "Dane i algorytmy",
     "account": "Konto i bezpieczeństwo"
   },
@@ -11,56 +12,56 @@
     "general": [
       {
         "q": "Czym GeoAnalyzer różni się od konkurencji?",
-        "a": "Jesteśmy unikalni w swoim podejściu. Konkurencja pokazuje „gdzie”, a my odpowiadamy na pytanie „jak się tam żyje”. Nie tylko wyświetlamy obiekty, ale agregujemy je w rankingi bezpieczeństwa, komfortu i atrakcyjności inwestycyjnej, oszczędzając Ci dziesiątki godzin samodzielnych poszukiwań."
+        "a": "Jesteśmy rozwiązaniem unikalnym. Konkurencja pokazuje „gdzie”, a my odpowiadamy na pytanie „jak się tam żyje?”. Nie tylko wyświetlamy obiekty, lecz agregujemy je w oceny bezpieczeństwa, komfortu i atrakcyjności inwestycyjnej, oszczędzając Ci dziesiątki godzin samodzielnej analizy."
       },
       {
-        "q": "Jaki zasięg ma serwis?",
-        "a": "Obecnie wchodzimy na rynek polski. Stale staramy się dodawać nowe lokalizacje. Jeśli nie znalazłeś potrzebnego miasta, prosimy o chwilę cierpliwości. Naszym celem jest objęcie jak największej liczby miejscowości, aby każdy mógł znaleźć dokładnie to, czego szuka."
+        "q": "Jaki zasięg ma usługa?",
+        "a": "Obecnie działamy na rynku Polski. Systematycznie dodajemy nowe lokalizacje. Jeśli nie znalazłeś interesującego miasta, oznacza to, że jest ono w kolejce do wdrożenia. Naszym celem jest objęcie jak największej liczby miejscowości."
       },
       {
-        "q": "Czy mogę korzystać z serwisu na telefonie?",
-        "a": "Tak, nasz interfejs jest w pełni responsywny. Możesz badać dzielnice zarówno z laptopa w domu, jak i ze smartfona, będąc bezpośrednio na oględzinach nieruchomości."
+        "q": "Czy można korzystać z serwisu na urządzeniach mobilnych?",
+        "a": "Tak, interfejs jest w pełni responsywny. Możesz analizować dzielnice zarówno na laptopie, jak i na smartfonie."
       }
     ],
     "subscription": [
       {
-        "q": "Dla kogo jest plan „Tygodniowy”?",
-        "a": "To unikalna oferta dla osób w aktywnej fazie poszukiwania mieszkania. Otrzymujesz pełną funkcjonalność Premium za symboliczną opłatą na 7 dni, co zazwyczaj wystarcza na wybór lokum."
+        "q": "Dla kogo przeznaczony jest plan „Tygodniowy”?",
+        "a": "To optymalne rozwiązanie dla osób aktywnie poszukujących mieszkania. Otrzymujesz pełen zakres funkcji Premium na 7 dni za symboliczną opłatą — zazwyczaj wystarczającą do podjęcia decyzji."
       },
       {
         "q": "Czy mogę anulować subskrypcję?",
-        "a": "Tak, oczywiście. Możesz wyłączyć automatyczne odnawianie w dowolnym momencie w ustawieniach profilu. Dostęp do płatnych funkcji zostanie zachowany do końca opłaconego okresu."
+        "a": "Tak. Możesz wyłączyć automatyczne odnawianie w dowolnym momencie w ustawieniach profilu. Dostęp do funkcji płatnych pozostanie aktywny do końca opłaconego okresu."
       },
       {
         "q": "Czym są raporty White Label w planie Realtor Pro?",
-        "a": "Ta funkcja pozwala agentom nieruchomości generować raporty PDF o dzielnicy bez logo GeoAnalyzer. Możesz dodać własne dane kontaktowe i markę, dostarczając klientom profesjonalną analizę w swoim imieniu."
+        "a": "Funkcja ta umożliwia agentom nieruchomości generowanie raportów PDF bez logo GeoAnalyzer. Możesz dodać własne dane kontaktowe i branding, przekazując klientom profesjonalną analizę pod własną marką."
       }
     ],
     "data": [
       {
         "q": "Jak dokładne są Wasze dane?",
-        "a": "Stosujemy weryfikację krzyżową danych z kilku autorytatywnych źródeł. Jednak miasto to żywy organizm i zmiany zachodzą codziennie. Jeśli potrzebujesz szczegółowej metodologii zbierania danych dla konkretnej dzielnicy, wyślij zapytanie na nasz adres e-mail."
+        "a": "Stosujemy weryfikację krzyżową informacji z wielu wiarygodnych źródeł. Miasto jednak stale się zmienia, dlatego aktualizujemy bazę możliwie najszybciej, zgodnie z dostępnością danych źródłowych."
       },
       {
         "q": "Skąd pochodzą informacje o bezpieczeństwie?",
-        "a": "Indeks bezpieczeństwa powstaje na podstawie oficjalnych statystyk przestępczości, danych o oświetleniu ulicznym, obecności kamer monitoringu oraz bliskości posterunków policji."
+        "a": "Indeks bezpieczeństwa opiera się na oficjalnych statystykach przestępczości, danych o oświetleniu ulicznym, obecności monitoringu oraz bliskości komisariatów policji."
       },
       {
-        "q": "Jak często aktualizowana jest baza?",
-        "a": "Ceny nieruchomości i wskaźniki ekologiczne są aktualizowane w czasie niemal rzeczywistym. Zmiany infrastrukturalne (nowe sklepy, przystanki) są wprowadzane zgodnie z harmonogramem aktualizacji rejestrów pierwotnych."
+        "q": "Jak często aktualizowana jest baza danych?",
+        "a": "Ceny nieruchomości i wskaźniki środowiskowe aktualizowane są w trybie zbliżonym do czasu rzeczywistego. Zmiany infrastrukturalne wprowadzane są zgodnie z harmonogramem aktualizacji rejestrów źródłowych."
       }
     ],
     "account": [
       {
         "q": "Jak skontaktować się z pomocą techniczną?",
-        "a": "W celu szybkiego rozwiązania problemów skorzystaj z formularza na stronie „Kontakt” lub napisz do nas na youworkday@gmail.com. Odpowiadamy w ciągu 24 godzin."
+        "a": "Aby szybko rozwiązać problem, skorzystaj z formularza kontaktowego w sekcji „Kontakt” lub napisz na adres youworkday@gmail.com. Odpowiadamy w ciągu 24 godzin."
       },
       {
         "q": "Czy moje dane płatnicze są bezpieczne?",
-        "a": "Nie przechowujemy danych Twoich kart. Wszystkie płatności są przetwarzane przez międzynarodowego dostawcę Stripe, który posiada najwyższy poziom certyfikacji bezpieczeństwa PCI DSS."
+        "a": "Nie przechowujemy danych kart płatniczych. Wszystkie transakcje obsługuje międzynarodowy operator Stripe, posiadający najwyższy poziom certyfikacji bezpieczeństwa PCI DSS."
       }
     ]
   },
-  "still_have_questions": "Potrzebujesz więcej informacji?",
+  "still_have_questions": "Potrzebujesz dodatkowych informacji?",
   "contact_support": "Napisz do wsparcia"
 }

@@ -30,7 +30,7 @@ const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
           className={styles.categoryRating}
           style={{ backgroundColor: getRatingBg(data.rating || data.qualityRating) }}
         >
-           {(data.rating || data.qualityRating || 0).toFixed(1)}
+            {(data.rating || data.qualityRating || 0).toFixed(1)}
         </span>
       </div>
       <div className={styles.categoryContent}>
@@ -41,9 +41,9 @@ const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
 
            return (
              <StatRow 
-               key={field.key}
-               label={t(`common:fields.${field.key}`)}
-               value={formatValue(val, field.type)}
+                key={field.key}
+                label={t(`common:fields.${field.key}`)}
+                value={formatValue(val, field.type, field.key)}
              />
            );
         })}
@@ -55,20 +55,47 @@ const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
 export default function DistrictPdfTemplate({ district, currencyInfo, isRealtor, photoOverride }) {
   const { t } = useTranslation(['districts', 'common']);
 
-  const formatValue = (value, type) => {
+  const formatValue = (value, type, fieldKey) => {
     if (value === null || value === undefined) return '-';
+
+    if (fieldKey === 'airQuality') {
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue)) {
+        let aqiEnum = 'medium';
+        if (numValue <= 50) aqiEnum = 'good';
+        else if (numValue > 100) aqiEnum = 'bad';
+        return t(`common:enums.${aqiEnum}`);
+      }
+    }
+
     if (type === 'price') return formatPrice(value, currencyInfo);
     if (type === 'boolean') return value ? t('common:enums.yes') : t('common:enums.no');
+    
     if (type === 'crimeLevel') {
         const labelKey = getCrimeLevelText(value);
         return t(labelKey);
     }
-    if (type === 'number') return formatNumber(value);
+    
+    if (type === 'number') {
+        let formatted = formatNumber(value);
+        if (fieldKey === 'avgParkSize' || fieldKey === 'propertyPricePerSqm' || fieldKey === 'costPerSqm') {
+          formatted += ` ${t('common:units.sqm')}`;
+        } else if (fieldKey === 'transportAvgDistance') {
+          formatted += ` ${t('common:units.m')}`;
+        } else if (fieldKey === 'bikeLanes') {
+          formatted += ` ${t('common:units.km')}`;
+        } else if (fieldKey === 'greenSpaces' || fieldKey === 'unemploymentRate') {
+          formatted += '%';
+        }
+        return formatted;
+    }
+
     if (type === 'text') {
-        const translationKey = `common:enums.${value.toLowerCase()}`;
+        const translationKey = `common:enums.${String(value).toLowerCase()}`;
         const translated = t(translationKey);
         return translated !== translationKey ? translated : value;
     }
+    
     return value;
   };
 

@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { FaExclamationTriangle } from 'react-icons/fa';
 import styles from './ConfirmationModal.module.css';
@@ -8,7 +9,7 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, m
 
   if (!isOpen) return null;
 
-  return (
+  const modalContent = (
     <div className={styles.overlay} onClick={onClose}>
       <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
         <div className={styles.iconWrapper}>
@@ -27,4 +28,6 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, m
       </div>
     </div>
   );
+
+  return ReactDOM.createPortal(modalContent, document.body);
 }

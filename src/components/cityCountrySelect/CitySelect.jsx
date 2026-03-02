@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import SelectForm, { StatusView } from '@ui/selectForm/SelectForm';
+import Loader from '@components/loader/Loader';
 import { fetchCitiesByCountry, createSelectOptions } from '@api/cityCountrySelect';
 
 export default function CitySelect({ country: propCountry }) {
@@ -46,6 +47,8 @@ export default function CitySelect({ country: propCountry }) {
 
   const handleBack = () => navigate(-1);
 
+  if (loading) return <Loader fullScreen text={t('loading')} />;
+
   if (displayError) {
     return (
       <StatusView 
@@ -77,7 +80,6 @@ export default function CitySelect({ country: propCountry }) {
       submitText={t('go_to_map')}
       disabled={!hasCities}
       disabledMessage={!hasCities ? t('cities_not_found') : t('unavailable')}
-      isLoading={loading}
       isSearchable
     />
   );

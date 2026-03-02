@@ -18,7 +18,7 @@ export const useSocialLogin = (setIsLoading, setErrors) => {
       });
       
       if (error) throw error;
-    } catch (error) {
+    } catch {
       setErrors({ submit: t('errors.generic') });
     } finally {
       setIsLoading(false);

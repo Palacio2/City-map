@@ -9,11 +9,9 @@ export default function RodoModal({ onAccept, onDecline }) {
   const { t } = useTranslation('rodo');
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Блокуємо скрол сторінки, поки модалка відкрита
   useEffect(() => {
     document.body.style.overflow = 'hidden';
     
-    // Повертаємо скрол при закритті компонента
     return () => {
       document.body.style.overflow = '';
     };
@@ -23,8 +21,8 @@ export default function RodoModal({ onAccept, onDecline }) {
     setIsProcessing(true);
     try {
       await onAccept();
-    } catch (e) {
-      console.error(e);
+    } catch {
+      // Помилка обробляється в батьківському компоненті MainLayout
     } finally {
       setIsProcessing(false);
     }

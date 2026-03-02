@@ -18,7 +18,7 @@ export default function useAuthRedirect() {
         } else {
           setIsAutoLoginAttempted(true);
         }
-      } catch (error) {
+      } catch {
         setIsAutoLoginAttempted(true);
       }
     };

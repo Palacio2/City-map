@@ -2,15 +2,12 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictMap.module.css';
-
 import CountrySelect from '@cityCountrySelect/CountrySelect';
 import CitySelect from '@cityCountrySelect/CitySelect';
 import FiltersPanel from '@filtersPanel/FiltersPanel';
-
 import DistrictsMap from './DistrictsMap';
 import DistrictDetailsModal from './DistrictDetailsModal';  
 import Loader from '@components/loader/Loader';
-
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import { filterDistrictsByCriteria } from '@filtersPanel/filterLogic';
 import { transformDistrictsForDisplay } from '@utils/dataTransformers';
@@ -61,8 +58,8 @@ export default function DistrictMap() {
       const data = await fetchDistrictsWithFilters(country, city);
       const transformed = transformDistrictsForDisplay(data);
       setAllDistricts(transformed);
-    } catch (err) {
-      setError(t('errors.fetch_failed'));
+    } catch {
+      setError(t('load_failed'));
     } finally {
       setIsLoading(false);
     }

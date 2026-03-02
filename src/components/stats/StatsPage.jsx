@@ -3,6 +3,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft } from 'react-icons/fa';
 import { useSubscription } from '@subscription/SubscriptionContext';
+import Loader from '@components/loader/Loader';
 import StatsOverview from './StatsOverview';
 import { useStatsData } from './hooks/useStatsData';
 import styles from './StatsPage.module.css';
@@ -35,7 +36,7 @@ export default function StatsPage() {
             <h3>{t('stats_page.error_load')}</h3>
             <p>{error}</p>
             <button onClick={reload} className={styles.retryButton}>
-              {t('actions.retry', { defaultValue: 'Retry' })} 
+              {t('actions.retry')} 
             </button>
           </div>
         </div>
@@ -56,7 +57,7 @@ export default function StatsPage() {
       </div>
 
       {loading ? (
-        <div className={styles.loading}>{t('loading', { defaultValue: 'Loading...' })}</div>
+        <Loader fullScreen text={t('loading')} />
       ) : (
         <StatsOverview 
           stats={stats} 

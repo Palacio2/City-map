@@ -1,47 +1,48 @@
 {
   "subscription": {
     "title": "Wybierz subskrypcję",
-    "subtitle": "Elastyczne plany dla poszukiwaczy nieruchomości i profesjonalistów",
-    "active_plan_label": "Aktywny plan",
-    "wait_expire": "Poczekaj na wygaśnięcie obecnej subskrypcji, aby zmienić plan.",
-    "included_title": "W pakiecie:",
+    "subtitle": "Elastyczne plany dla wyszukiwania nieruchomości i profesjonalistów",
+    "wait_expire": "Poczekaj na zakończenie obecnej subskrypcji, aby zmienić plan.",
+    "included_title": "Zawiera:",
     "disabled_title": "Niedostępne:",
+    "status": {
+      "free": "Bezpłatnie"
+    },
     "buttons": {
-      "active": "Aktywny",
-      "stay_free": "Zostań przy Free",
+      "active": "Aktywna",
+      "stay_free": "Pozostań przy Free",
       "choose": "Wybierz {{plan}}",
-      "upgrade": "Ulepsz subskrypcję",
-      "has_active_sub": "Subskrypcja aktywna"
+      "has_active_sub": "Subskrypcja jest już aktywna"
     },
     "plans": {
-      "free": { "name": "Darmowy", "price": "€0" },
+      "free": { "name": "Bezpłatny", "price": "€0" },
       "weekly": { "name": "Tygodniowy", "price": "€2.99 / tydzień" },
       "premium": { "name": "Premium", "price": "€8.99 / mies." },
       "realtor": { "name": "Realtor Pro", "price": "€29.00 / mies." }
     },
     "features": {
-      "district_limit_5": "Podgląd do 5 dzielnic w jednym mieście",
-      "filters_limit_2": "Dostęp ograniczony do 2 bloków filtrów",
-      "basic_rating": "Podstawowa ocena atrakcyjności lokalizacji",
-      "safety_edu_analytics": "Szczegółowa analityka bezpieczeństwa i edukacji",
-      "financial_stats": "Pełne statystyki finansowe i ceny za m²",
-      "favorites_save": "Zapisywanie dzielnic w „Ulubionych”",
+      "district_limit_5": "Wyświetlanie tylko do 5 dzielnic w jednym mieście",
+      "filters_limit_2": "Ograniczony dostęp tylko do 2 bloków filtrów",
+      "basic_rating": "Podstawowy ranking atrakcyjności lokalizacji",
+      "safety_edu_analytics": "Szczegółowa analiza bezpieczeństwa i edukacji",
+      "financial_stats": "Pełna analiza finansowa i ceny za m²",
+      "favorites_save": "Zapisywanie dzielnic w 'Ulubione'",
       "compare_tools": "Narzędzia do porównywania kilku dzielnic",
       "pdf_export": "Eksport profesjonalnych raportów PDF",
-      "unlimited_districts": "Nieograniczony dostęp do wszystkich dzielnic",
-      "extended_filters": "Rozszerzony dostęp do filtrowania",
+      "unlimited_districts": "Nieograniczony dostęp do wszystkich dzielnic miasta",
+      "extended_filters": "Rozszerzony dostęp do filtrów",
       "partial_analytics": "Częściowy dostęp do strony analityki",
       "personal_stats": "Statystyki osobiste",
       "save_favorites": "Możliwość zapisywania ulubionych dzielnic",
-      "pdf_download": "Pobieranie plików PDF z informacjami o dzielnicy",
-      "all_weekly_features": "Wszystkie funkcje planu tygodniowego w opcji miesięcznej",
+      "pdf_download": "Pobieranie plików PDF z informacjami o dzielnicach",
+      "all_weekly_features": "Wszystkie funkcje subskrypcji tygodniowej w planie miesięcznym",
       "all_premium_features": "Wszystkie korzyści planu Premium",
       "roi_calculator": "Kalkulator inwestycyjny (ROI)",
-      "white_label_pdf": "Raporty PDF z możliwością dodania własnego brandingu",
-      "compare_4_districts": "Porównanie do 4 dzielnic jednocześnie",
+      "white_label_pdf": "Raporty PDF z możliwością dodania Twoich danych osobowych",
+      "compare_4_districts": "Porównanie do 4 dzielnic miast jednocześnie",
       "full_filter_access": "Pełny dostęp do filtrów",
       "full_district_info": "Pełna informacja o dzielnicach",
-      "popular_districts_monitor": "Monitoring najpopularniejszych dzielnic",
+      "popular_districts_monitor": "Monitoring najpopularniejszych dzielnic w miastach",
       "growth_tracking": "Śledzenie wzrostu wybranych dzielnic"
     }
   }

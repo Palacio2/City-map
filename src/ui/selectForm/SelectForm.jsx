@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
+import Loader from '@components/loader/Loader';
 import styles from './SelectForm.module.css';
 
 const normalize = (text) => text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
@@ -164,7 +165,11 @@ export default function SelectForm({
               className={styles.button}
               disabled={!selectedValue || isFormDisabled}
             >
-              {isLoading ? t('loading') : (disabled ? (disabledMessage || t('unavailable')) : (submitText || t('continue')))}
+              {isLoading ? (
+                <Loader size="small" />
+              ) : (
+                disabled ? (disabledMessage || t('unavailable')) : (submitText || t('continue'))
+              )}
             </button>
           </div>
         </form>

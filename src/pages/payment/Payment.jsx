@@ -2,10 +2,11 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { FaCheckCircle, FaArrowLeft, FaShieldAlt, FaSync, FaTag } from 'react-icons/fa';
+import { FaCheckCircle, FaArrowLeft, FaShieldAlt, FaTag } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next'; 
 import { subscriptionPlans } from '@subscription/subscriptionPlans';
 import { processPayment } from '@api/paymentApi';
+import Loader from '@components/loader/Loader';
 import styles from './Payment.module.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
@@ -41,9 +42,7 @@ const CheckoutForm = ({ formattedPrice, mode }) => {
             });
         }
 
-        if (result.error) {
-            throw new Error(result.error.message);
-        }
+        if (result.error) throw new Error(result.error.message);
         window.location.href = returnUrl;
 
     } catch (err) {
@@ -88,34 +87,27 @@ export default function Payment() {
 
   const formatEuro = (amount) => {
     if (amount === null || amount === undefined) return '...';
-    return new Intl.NumberFormat('uk-UA', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(amount);
+    return new Intl.NumberFormat('uk-UA', { style: 'currency', currency: 'EUR' }).format(amount);
   };
 
   const fetchPaymentIntent = async (code = null) => {
     try {
       setClientSecret("");
       setError(null);
-      const data = await processPayment({
-        planKey,
-        promoCode: code
-      });
+      const data = await processPayment({ planKey, promoCode: code });
       
       if (data && data.clientSecret) {
           setClientSecret(data.clientSecret);
           setFinalAmount(data.amount);
           setPaymentMode(data.mode);
       } else {
-          throw new Error("No client secret returned from server");
+          throw new Error("No client secret returned");
       }
-      
-    } catch (error) {
-      if (error.message === 'Unauthorized' || error.message.includes('authorization')) {
+    } catch (err) {
+      if (err.message?.includes('Unauthorized')) {
           navigate('/auth');
       } else {
-          setError(error.message || t('errors.payment_create'));
+          setError(err.message || t('errors.payment_create'));
           if (code) setPromoCode(""); 
       }
     }
@@ -124,19 +116,13 @@ export default function Payment() {
   useEffect(() => {
     if (!planKey || !planConfig) navigate('/subscription');
     else fetchPaymentIntent();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [planKey]);
 
   const options = useMemo(() => ({
     clientSecret,
     appearance: { 
         theme: 'night', 
-        variables: { 
-            colorPrimary: '#c5a47e',
-            colorBackground: '#1a1a1a',
-            colorText: '#ffffff',
-            fontFamily: 'Manrope, sans-serif'
-        } 
+        variables: { colorPrimary: '#c5a47e', colorBackground: '#1a1a1a', colorText: '#ffffff', fontFamily: 'Manrope, sans-serif' } 
     },
   }), [clientSecret]);
 
@@ -155,9 +141,7 @@ export default function Payment() {
         <div className={styles.grid}>
           <div className={styles.infoCard}>
             <div className={styles.headerRow}><FaCheckCircle className={styles.featureIcon} /> {t('payment:tariff_label')}</div>
-            <div className={styles.priceTag}>
-                {displayPrice}
-            </div>
+            <div className={styles.priceTag}>{displayPrice}</div>
             
             <div className={styles.promoSection}>
                 <label className={styles.promoLabel}><FaTag /> {t('payment:promo_label')}</label>
@@ -169,11 +153,7 @@ export default function Payment() {
                         placeholder={t('payment:promo_placeholder')}
                         className={styles.promoInput}
                     />
-                    <button 
-                        onClick={() => fetchPaymentIntent(promoCode)} 
-                        disabled={!promoCode}
-                        className={styles.promoButton}
-                    >
+                    <button onClick={() => fetchPaymentIntent(promoCode)} disabled={!promoCode} className={styles.promoButton}>
                         {t('payment:promo_apply')}
                     </button>
                 </div>
@@ -193,13 +173,10 @@ export default function Payment() {
             {error && <div className={styles.serverError}>{error}</div>}
             {clientSecret ? (
               <Elements key={clientSecret} options={options} stripe={stripePromise}>
-                <CheckoutForm 
-                    formattedPrice={displayPrice} 
-                    mode={paymentMode} 
-                />
+                <CheckoutForm formattedPrice={displayPrice} mode={paymentMode} />
               </Elements>
             ) : (
-              !error && <div className={styles.loadingState}><FaSync className={styles.spin} /></div>
+              !error && <div className={styles.loadingState}><Loader size="medium" /></div>
             )}
           </div>
         </div>

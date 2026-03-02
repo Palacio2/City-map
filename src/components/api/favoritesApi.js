@@ -1,4 +1,4 @@
-import { supabase } from '../../supabaseClient'; 
+import { supabase } from '@supabaseClient'; 
 
 const API_BASE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/favorites`;
 

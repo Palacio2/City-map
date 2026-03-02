@@ -2,9 +2,9 @@
   "filter": {
     "panel": {
       "title": "Filters",
-      "banner_title": "Get more features!",
-      "banner_text": "Unlock all filters with a subscription",
-      "view_tariffs": "View pricing",
+      "banner_title": "Unlock more features!",
+      "banner_text": "Access all filters with a subscription",
+      "view_tariffs": "View plans",
       "clear": "Clear"
     },
     "options": {

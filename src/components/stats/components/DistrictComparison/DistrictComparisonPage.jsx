@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaArrowLeft, FaPlus, FaTimes, FaMapMarkerAlt, FaBalanceScale, FaTrashAlt, FaFilePdf } from 'react-icons/fa';
+import { FaArrowLeft, FaPlus, FaTimes, FaMapMarkerAlt, FaBalanceScale, FaTrashAlt, FaFilePdf, FaCheckCircle } from 'react-icons/fa';
 import { fetchDistrictsByIds } from '@api/districtsApi'; 
 import LocationSelectorModal from '../PopularDistricts/LocationSelectorModal';
 import ComparisonTable from './ComparisonTable';
 import PdfReportTemplate from './PdfReportTemplate';
 import ExportSettingsModal from './ExportSettingsModal';
+import Loader from '@components/loader/Loader';
 import { saveComparison } from '@api/comparisonApi';
 import { exportToPDF } from '@utils/pdfExport';
 import { transformDistrictsForDisplay } from '@utils/dataTransformers';
@@ -14,10 +15,10 @@ import styles from './DistrictComparisonPage.module.css';
 
 const MAX_SELECTION = 4;
 const STORAGE_KEY = 'comparison_selected_districts';
+const RESULTS_KEY = 'comparison_show_results';
 
 export default function DistrictComparisonPage() {
-  // Використовуємо comparison як основний, common як допоміжний
-  const { t } = useTranslation(['comparison', 'common']);
+  const { t } = useTranslation(['comparison', 'header', 'common']);
   
   const [selectedDistricts, setSelectedDistricts] = useState(() => {
     try {
@@ -30,16 +31,18 @@ export default function DistrictComparisonPage() {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
-  
   const [isExportModalOpen, setIsExportModalOpen] = useState(false);
   const [exportData, setExportData] = useState(null);
   const [isExporting, setIsExporting] = useState(false);
   
-  const [showResults, setShowResults] = useState(false);
+  const [showResults, setShowResults] = useState(() => {
+    return sessionStorage.getItem(RESULTS_KEY) === 'true';
+  });
 
   useEffect(() => {
     sessionStorage.setItem(STORAGE_KEY, JSON.stringify(selectedDistricts));
-  }, [selectedDistricts]);
+    sessionStorage.setItem(RESULTS_KEY, showResults.toString());
+  }, [selectedDistricts, showResults]);
 
   const handleOpenModal = () => {
     if (selectedDistricts.length >= MAX_SELECTION) {
@@ -51,7 +54,6 @@ export default function DistrictComparisonPage() {
 
   const handleAddDistricts = async (districtsArray) => {
     const availableSlots = MAX_SELECTION - selectedDistricts.length;
-    
     const candidates = districtsArray
       .filter(d => !selectedDistricts.some(
         existing => existing.name === d.name && existing.city === d.city && existing.country === d.country
@@ -64,25 +66,18 @@ export default function DistrictComparisonPage() {
     }
 
     setIsSaving(true);
-
     try {
         const idsToFetch = candidates
             .map(d => d.id)
             .filter(id => id && typeof id === 'string' && id.length > 10);
 
         let enrichedDistricts = [];
-
         if (idsToFetch.length > 0) {
-            try {
-                enrichedDistricts = await fetchDistrictsByIds(idsToFetch);
-            } catch (error) {
-                console.error("API Error fetching details:", error);
-            }
+            enrichedDistricts = await fetchDistrictsByIds(idsToFetch);
         }
 
         const finalDistricts = candidates.map(candidate => {
             const fullVer = enrichedDistricts.find(fd => fd.id === candidate.id);
-            
             return {
                 ...(fullVer || candidate),
                 city: candidate.city,
@@ -93,9 +88,7 @@ export default function DistrictComparisonPage() {
 
         setSelectedDistricts(prev => [...prev, ...finalDistricts]);
         setShowResults(false);
-
-    } catch (err) {
-        console.error("Failed to add districts:", err);
+    } catch {
         alert(t('error_details'));
     } finally {
         setIsSaving(false);
@@ -112,31 +105,25 @@ export default function DistrictComparisonPage() {
     if (window.confirm(t('confirm_clear'))) {
       setSelectedDistricts([]);
       setShowResults(false);
+      sessionStorage.removeItem(STORAGE_KEY);
+      sessionStorage.removeItem(RESULTS_KEY);
     }
   };
 
   const handleCompare = async () => {
     if (selectedDistricts.length < 2) return;
-
     setIsSaving(true);
     try {
       await saveComparison(selectedDistricts);
       setShowResults(true);
-      
       setTimeout(() => {
         document.getElementById('comparison-results')?.scrollIntoView({ behavior: 'smooth' });
       }, 100);
-
-    } catch (error) {
-      console.error(error);
+    } catch {
       setShowResults(true);
     } finally {
       setIsSaving(false);
     }
-  };
-
-  const handleExportClick = () => {
-    setIsExportModalOpen(true);
   };
 
   const handleConfirmExport = async (data) => {
@@ -149,26 +136,23 @@ export default function DistrictComparisonPage() {
         await exportToPDF(
           'pdf-report-template', 
           t('results_title'), 
-          `GeoAnalyzer_Report_${new Date().toISOString().slice(0,10)}.pdf`
+          `Report_${new Date().toISOString().slice(0,10)}.pdf`
         );
-      } catch (error) {
-        console.error("PDF Export failed:", error);
+      } catch {
         alert(t('error_export'));
       } finally {
         setIsExporting(false);
       }
-    }, 1000); 
+    }, 500); 
   };
 
-  const displayDistricts = useMemo(() => {
-    return transformDistrictsForDisplay(selectedDistricts);
-  }, [selectedDistricts]);
+  const displayDistricts = useMemo(() => transformDistrictsForDisplay(selectedDistricts), [selectedDistricts]);
 
   return (
     <div className={styles.container}>
       <div className={styles.header}>
         <Link to="/profile/stats" className={styles.backButton}>
-          <FaArrowLeft /> {t('common:actions.back_to_profile')}
+          <FaArrowLeft /> {t('header:back_to_profile', { defaultValue: 'Назад' })}
         </Link>
         <div className={styles.titleSection}>
           <h1 className={styles.title}>{t('title')}</h1>
@@ -181,10 +165,9 @@ export default function DistrictComparisonPage() {
           <span className={styles.counter}>
             {t('selected_count')}: {selectedDistricts.length} / {MAX_SELECTION}
           </span>
-          
           {selectedDistricts.length > 0 && (
             <button className={styles.resetBtn} onClick={handleReset} disabled={isSaving}>
-              <FaTrashAlt /> {t('common:actions.clear')}
+              <FaTrashAlt /> {t('common:actions.clear', { defaultValue: 'Очистити' })}
             </button>
           )}
         </div>
@@ -208,24 +191,20 @@ export default function DistrictComparisonPage() {
                   </span>
                   <h3 className={styles.districtName}>{item.name}</h3>
                 </div>
-                <button 
-                  className={styles.removeBtn} 
-                  onClick={() => handleRemoveDistrict(index)}
-                  title={t('common:actions.delete')}
-                  disabled={isSaving}
-                >
+                <button className={styles.removeBtn} onClick={() => handleRemoveDistrict(index)} disabled={isSaving}>
                   <FaTimes />
                 </button>
               </div>
             ))}
             
             {selectedDistricts.length < MAX_SELECTION && (
-              <div 
-                className={`${styles.addCard} ${isSaving ? styles.disabled : ''}`} 
-                onClick={!isSaving ? handleOpenModal : undefined}
-              >
-                <FaPlus className={styles.addIcon} />
-                <span>{t('add_another')}</span>
+              <div className={`${styles.addCard} ${isSaving ? styles.disabled : ''}`} onClick={!isSaving ? handleOpenModal : undefined}>
+                {isSaving ? <Loader size="small" /> : (
+                  <>
+                    <FaPlus className={styles.addIcon} />
+                    <span>{t('add_another')}</span>
+                  </>
+                )}
               </div>
             )}
           </div>
@@ -234,13 +213,13 @@ export default function DistrictComparisonPage() {
 
       {selectedDistricts.length >= 2 && !showResults && (
         <div className={styles.compareAction}>
-          <button 
-            className={styles.compareBtn} 
-            onClick={handleCompare}
-            disabled={isSaving}
-          >
-            {isSaving ? t('common:general.loading') : t('compare_btn')}
-          </button>
+            <div className={styles.readyPrompt}>
+                <FaCheckCircle className={styles.readyIcon} />
+                <span>{t('ready_message')}</span>
+            </div>
+            <button className={styles.compareBtn} onClick={handleCompare} disabled={isSaving}>
+                {isSaving ? <Loader size="small" /> : t('compare_btn')}
+            </button>
         </div>
       )}
 
@@ -248,33 +227,18 @@ export default function DistrictComparisonPage() {
         <div id="comparison-results" className={styles.resultsArea}>
           <div className={styles.resultsHeader}>
             <h2 className={styles.resultsTitle}>{t('results_title')}</h2>
-            
-            <button 
-              className={styles.exportBtn} 
-              onClick={handleExportClick} 
-              disabled={isExporting}
-            >
-              <FaFilePdf />
-              {isExporting ? t('common:general.loading') : t('export_pdf')}
+            <button className={styles.exportBtn} onClick={() => setIsExportModalOpen(true)} disabled={isExporting}>
+              {isExporting ? <Loader size="small" /> : <><FaFilePdf /> {t('export_pdf')}</>}
             </button>
           </div>
-          
           <ComparisonTable districts={displayDistricts} />
         </div>
       )}
 
-      <div style={{ 
-        position: 'fixed', 
-        top: 0, 
-        left: '-10000px', 
-        zIndex: -1,
-        width: '794px',  
-        minHeight: '1123px'
-      }}>
-        <PdfReportTemplate 
-            districts={displayDistricts} 
-            customData={exportData} 
-        />
+      <div style={{ position: 'fixed', top: 0, left: '-10000px', zIndex: -1 }}>
+        <div style={{ width: '794px', background: 'white' }}>
+           <PdfReportTemplate districts={displayDistricts} customData={exportData} />
+        </div>
       </div>
 
       {isModalOpen && (
@@ -282,7 +246,6 @@ export default function DistrictComparisonPage() {
           onClose={() => setIsModalOpen(false)} 
           onSubmit={handleAddDistricts}
           includeDistrict={true}
-          trackedLocations={[]} 
           maxSelection={MAX_SELECTION}
           currentCount={selectedDistricts.length}
         />

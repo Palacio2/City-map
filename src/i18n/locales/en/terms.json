@@ -1,79 +1,79 @@
 {
-  "title": "Terms of Service",
-  "last_updated": "Last updated: {{date}}",
+  "title": "Warunki korzystania z serwisu",
+  "last_updated": "Ostatnia aktualizacja: {{date}}",
   "footer": {
-    "return": "Return to",
-    "register": "registration",
-    "or": "or",
-    "home": "home page"
+    "return": "Powrót do",
+    "register": "rejestracji",
+    "or": "lub",
+    "home": "strony głównej"
   },
   "sections": [
     {
-      "title": "1. General Provisions",
+      "title": "1. Postanowienia ogólne",
       "content": [
-        "1.1. These Terms of Service govern the relationship between You (the user) and GeoAnalyzer regarding the use of our service.",
-        "1.2. By using our service, you agree to these Terms and our Privacy Policy."
+        "1.1. Niniejsze Warunki korzystania regulują relacje pomiędzy Tobą (użytkownikiem) a GeoAnalyzer w zakresie korzystania z naszego serwisu.",
+        "1.2. Korzystając z naszego serwisu, zgadzasz się na te Warunki oraz naszą Politykę prywatności."
       ]
     },
     {
-      "title": "2. Definitions",
+      "title": "2. Definicje",
       "content": [
-        "2.1. \"Service\" - the GeoAnalyzer website and all related services.",
-        "2.2. \"User\" - any person who uses our Service.",
-        "2.3. \"Content\" - any information, data, text, images, and other materials available through the Service."
+        "2.1. \"Serwis\" – strona internetowa GeoAnalyzer oraz wszystkie powiązane z nią usługi.",
+        "2.2. \"Użytkownik\" – każda osoba korzystająca z naszego Serwisu.",
+        "2.3. \"Treść\" – wszelkie informacje, dane, teksty, obrazy i inne materiały dostępne poprzez Serwis."
       ]
     },
     {
-      "title": "3. Account Registration",
+      "title": "3. Rejestracja konta",
       "content": [
-        "3.1. Access to certain features of the Service may require account creation.",
-        "3.2. You are responsible for the security of your account and password.",
-        "3.3. You agree to provide accurate, current, and complete information during registration."
+        "3.1. Aby uzyskać dostęp do niektórych funkcji Serwisu, może być konieczne utworzenie konta.",
+        "3.2. Odpowiadasz za bezpieczeństwo swojego konta i hasła.",
+        "3.3. Zgadzasz się podawać dokładne, aktualne i pełne informacje podczas rejestracji."
       ]
     },
     {
-      "title": "4. Intellectual Property",
+      "title": "4. Własność intelektualna",
       "content": [
-        "4.1. All intellectual property rights related to the Service belong to GeoAnalyzer or our licensors.",
-        "4.2. You may use the Service only for personal, non-commercial purposes."
+        "4.1. Wszelkie prawa do własności intelektualnej związanej z Serwisem należą do GeoAnalyzer lub naszych licencjodawców.",
+        "4.2. Serwis możesz wykorzystywać wyłącznie do celów osobistych, niekomercyjnych."
       ]
     },
     {
-      "title": "5. Limitation of Liability",
+      "title": "5. Ograniczenie odpowiedzialności",
       "content": [
-        "5.1. The Service is provided \"as is\" without any warranties.",
-        "5.2. We are not responsible for the accuracy, completeness, or reliability of the data provided.",
-        "5.3. We are not liable for any damages related to the use of the Service."
+        "5.1. Serwis jest dostarczany \"tak jak jest\" bez żadnych gwarancji.",
+        "5.2. Nie ponosimy odpowiedzialności za dokładność, kompletność ani rzetelność udostępnionych danych.",
+        "5.3. Nie ponosimy odpowiedzialności za jakiekolwiek szkody związane z korzystaniem z Serwisu."
       ]
     },
     {
-      "title": "6. Changes to Terms",
+      "title": "6. Zmiany warunków",
       "content": [
-        "6.1. We reserve the right to modify these Terms at any time.",
-        "6.2. Changes will be notified via the Service or email.",
-        "6.3. By continuing to use the Service after changes, you agree to the updated Terms."
+        "6.1. Zastrzegamy sobie prawo do zmiany tych Warunków w dowolnym czasie.",
+        "6.2. O zmianach zostaniesz poinformowany poprzez Serwis lub e-mail.",
+        "6.3. Kontynuując korzystanie z Serwisu po zmianach, zgadzasz się na zaktualizowane Warunki."
       ]
     },
     {
-      "title": "7. Termination",
+      "title": "7. Zakończenie dostępu",
       "content": [
-        "7.1. We may terminate or suspend your access to the Service in case of violation of these Terms.",
-        "7.2. You may stop using the Service at any time."
+        "7.1. Możemy zakończyć lub zawiesić Twój dostęp do Serwisu w przypadku naruszenia niniejszych Warunków.",
+        "7.2. Możesz przerwać korzystanie z Serwisu w dowolnym momencie."
       ]
     },
     {
-      "title": "8. Acceptable Use",
+      "title": "8. Odpowiednie korzystanie",
       "content": [
-        "8.1. You agree to use the Service in accordance with applicable laws.",
-        "8.2. It is prohibited to use the Service for illegal or harmful purposes."
+        "8.1. Zgadzasz się korzystać z Serwisu zgodnie z obowiązującym prawem.",
+        "8.2. Zabronione jest wykorzystywanie Serwisu do celów nielegalnych lub szkodliwych."
       ]
     },
     {
-      "title": "9. Contact Information",
+      "title": "9. Kontakt",
       "content": [
-        "9.1. If you have any questions about these Terms, please contact us:",
+        "9.1. W przypadku pytań dotyczących niniejszych Warunków, skontaktuj się z nami:",
         "Email: youworkday@gmail.com",
-        "Phone: +48 698 991 398"
+        "Telefon: +48 698 991 398"
       ]
     }
   ]

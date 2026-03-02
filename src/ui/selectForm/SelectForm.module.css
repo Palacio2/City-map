@@ -6,7 +6,6 @@
   width: 100%;
   padding: 1rem 0;
   flex: 1; 
-  
   min-height: 100%; 
 }
 
@@ -26,12 +25,6 @@
   position: relative;
   transition: var(--transition);
   margin: auto; 
-}
-
-:global([data-theme='dark']) .card {
-  background-color: #232730;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
 }
 
 .header {
@@ -93,9 +86,9 @@
   box-shadow: 0 0 0 1px var(--accent-color);
 }
 
-:global([data-theme='dark']) .select option {
-  background-color: #1e293b;
-  color: #ffffff;
+.select option {
+  background-color: var(--bg-surface);
+  color: var(--text-main);
 }
 
 .selectArrow {
@@ -119,7 +112,7 @@
   top: calc(100% + 5px);
   left: 0;
   right: 0;
-  z-index: 100;
+  z-index: var(--z-dropdown);
   background-color: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-sm);
@@ -128,11 +121,6 @@
   overflow-y: auto;
   list-style: none;
   padding: 0.25rem;
-}
-
-:global([data-theme='dark']) .suggestionsList {
-  background-color: #1a1d24; 
-  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .suggestionItem {
@@ -144,17 +132,8 @@
   transition: background-color 0.2s;
 }
 
-:global([data-theme='dark']) .suggestionItem {
-  color: #ffffff;
-}
-
 .suggestionItem:hover {
-  background-color: rgba(197, 164, 126, 0.1);
-  color: var(--accent-color);
-}
-
-:global([data-theme='dark']) .suggestionItem:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: var(--bg-hover);
   color: var(--accent-color);
 }
 
@@ -203,7 +182,7 @@
 .button:hover:not(:disabled) {
   background-color: var(--accent-color);
   border-color: var(--accent-color);
-  color: #fff;
+  color: var(--text-inverse);
   transform: translateY(-2px);
   box-shadow: var(--shadow-sm);
 }
@@ -221,11 +200,6 @@
   color: var(--text-main);
 }
 
-:global([data-theme='dark']) .backButton:hover:not(:disabled) {
-  color: #fff;
-  border-color: #fff;
-}
-
 .button:disabled,
 .backButton:disabled,
 .select:disabled {
@@ -236,7 +210,7 @@
 }
 
 .select:disabled {
-  background-color: rgba(0,0,0,0.03);
+  background-color: var(--border-color);
   color: var(--text-secondary);
 }
 
@@ -248,13 +222,6 @@
 
   .card {
     padding: 1.25rem;
-    background-color: var(--bg-surface);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-sm);
-  }
-  
-  .select {
-    background-color: var(--bg-surface);
   }
 
   .buttonsContainer {
@@ -265,11 +232,6 @@
     width: 100%;
   }
   
-  .backButton {
-    order: 2;
-  }
-  
-  .button {
-    order: 1;
-  }
+  .backButton { order: 2; }
+  .button { order: 1; }
 }

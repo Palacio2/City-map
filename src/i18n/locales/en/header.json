@@ -1,13 +1,18 @@
 {
   "home": "Home",
-  "about": "About Project",
+  "about": "About",
   "contacts": "Contacts",
   "subscription": "Subscription",
   "profile": "Profile",
-  "login": "Login",
-  "logout": "Logout",
-  "favorites_title": "My Saved Items",
+  "login": "Log in",
+  "logout": "Log out",
+  "favorites_title": "My Favorites",
   "language_title": "Change Language",
   "light_mode": "Light Mode",
-  "dark_mode": "Dark Mode"
+  "dark_mode": "Dark Mode",
+  "ai_assistant": "AI Assistant",
+  "lang_uk": "Ukrainian",
+  "lang_en": "English",
+  "lang_pl": "Polish",
+  "back_to_profile": "Back to Profile"
 }

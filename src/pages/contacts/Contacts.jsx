@@ -51,9 +51,9 @@ export default function Contacts() {
       await contactsAPI.submitMessage(form);
       setStatus('success');
       setForm({ name: '', email: '', message: '' });
-    } catch (err) {
+    } catch {
       setStatus('error');
-      setErrorMsg(err.message || t('errors.generic'));
+      setErrorMsg(t('errors.generic'));
     }
   };
 
@@ -80,10 +80,8 @@ export default function Contacts() {
     );
   }
 
-  const contactInfo = {
-    email: 'youworkday@gmail.com',
-    phone: '+48 698 991 398'
-  };
+  const email = t('info.email');
+  const phone = t('info.phone');
 
   return (
     <div className={styles.container}>
@@ -93,7 +91,7 @@ export default function Contacts() {
           <p className={styles.subtitle}>{t('subtitle')}</p>
         </div>
 
-        <form onSubmit={handleSubmit} className={styles.form} noValidate={false}>
+        <form onSubmit={handleSubmit} className={styles.form}>
           {fields.map((field) => {
             const Icon = field.icon;
             
@@ -152,11 +150,11 @@ export default function Contacts() {
         </form>
 
         <div className={styles.footer}>
-          <a href={`mailto:${contactInfo.email}`} className={styles.contactLink}>
-            <FaEnvelope /> {contactInfo.email}
+          <a href={`mailto:${email}`} className={styles.contactLink}>
+            <FaEnvelope /> {email}
           </a>
-          <a href={`tel:${contactInfo.phone.replace(/\s/g, '')}`} className={styles.contactLink}>
-            <FaPhone /> {contactInfo.phone}
+          <a href={`tel:${phone.replace(/\s/g, '')}`} className={styles.contactLink}>
+            <FaPhone /> {phone}
           </a>
         </div>
       </div>

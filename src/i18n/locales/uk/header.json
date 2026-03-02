@@ -9,5 +9,9 @@
   "favorites_title": "Мої збереження",
   "language_title": "Змінити мову",
   "light_mode": "Світла тема",
-  "dark_mode": "Темна тема"
+  "dark_mode": "Темна тема",
+  "ai_assistant": "AI Асистент",
+  "lang_uk": "Українська",
+  "lang_en": "English",
+  "lang_pl": "Polski"
 }

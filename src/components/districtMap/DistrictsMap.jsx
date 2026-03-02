@@ -6,7 +6,6 @@ import { DISTRICT_CATEGORIES } from '@config/districtFields';
 import { useSubscription } from '@subscription/SubscriptionContext';
 
 const DistrictCard = React.memo(({ district, onClick, isFree }) => {
-  // ДОДАНО 'common' для перекладу підказок (tooltips)
   const { t } = useTranslation(['districts', 'common']);
   const [imgError, setImgError] = useState(false);
   const filterData = district.filterData;
@@ -61,12 +60,11 @@ const DistrictCard = React.memo(({ district, onClick, isFree }) => {
       
       <div className={styles.districtStats}>
         {visibleStats.map(stat => (
-          // ОНОВЛЕНО: Тепер це кнопка з зупинкою пропагування кліку
           <button 
             key={stat.key} 
             className={styles.statBadge}
             onClick={(e) => {
-              e.stopPropagation(); // Важливо! Щоб не клікалась уся карточка
+              e.stopPropagation();
               onClick(district, stat.key);
             }}
             title={t(`common:categories.${stat.key}`)}
@@ -115,7 +113,7 @@ export default function DistrictsMap({
               {t('stats_shown', { shown: shownCount, total: realTotal })}
               
               {isFree && realTotal > shownCount && (
-                  <span style={{ marginLeft: '6px', opacity: 0.7, fontSize: '0.9em' }}>
+                  <span className={styles.premiumNote} style={{ marginLeft: '6px', opacity: 0.7, fontSize: '0.9em' }}>
                     ({t('premium.hidden_districts_title', { count: realTotal - shownCount })})
                   </span>
               )}

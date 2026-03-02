@@ -5,6 +5,7 @@ import { FaTimes, FaMapMarkerAlt, FaGlobe, FaCity, FaMap } from 'react-icons/fa'
 import styles from './LocationSelectorModal.module.css';
 import { fetchCountries, fetchCitiesByCountry } from '@api/cityCountrySelect'; 
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
+import Loader from '@components/loader/Loader';
 
 export default function LocationSelectorModal({ 
   onClose, 
@@ -14,7 +15,7 @@ export default function LocationSelectorModal({
   maxSelection = null,
   currentCount = 0 
 }) {
-  const { t } = useTranslation(['stats', 'common']);
+  const { t } = useTranslation('stats');
   
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
@@ -29,7 +30,6 @@ export default function LocationSelectorModal({
   
   const districtsCache = useRef({});
 
-  // 1. Завантаження країн
   useEffect(() => {
     let isMounted = true;
     fetchCountries()
@@ -41,14 +41,13 @@ export default function LocationSelectorModal({
       })
       .catch(() => {
         if (isMounted) {
-          setError(t('common:general.error')); 
+          setError(t('error_load')); 
           setLoading(p => ({ ...p, countries: false }));
         }
       });
     return () => { isMounted = false; };
   }, [t]);
 
-  // 2. Вибір країни -> завантаження міст
   const handleCountryChange = async (e) => {
     const country = e.target.value;
     setSelectedCountry(country);
@@ -63,14 +62,12 @@ export default function LocationSelectorModal({
     try {
       const data = await fetchCitiesByCountry(country);
       setCities(Array.isArray(data) ? data.map(i => i.value || i) : []);
-    } catch (err) { 
-      console.error(err);
+    } catch { 
     } finally { 
       setLoading(p => ({ ...p, cities: false })); 
     }
   };
 
-  // 3. Вибір міста -> завантаження районів
   const handleCityChange = async (e) => {
     const city = e.target.value;
     setSelectedCity(city);
@@ -89,29 +86,24 @@ export default function LocationSelectorModal({
       try {
         const response = await fetchDistrictsWithFilters(selectedCountry, city, false);
         const allDistricts = Array.isArray(response) ? response : (response?.districts || response?.data || []);
-        
         districtsCache.current[cacheKey] = allDistricts;
         setDistricts(allDistricts);
-      } catch (err) { 
-        console.error(err);
+      } catch { 
       } finally { 
         setLoading(p => ({ ...p, districts: false })); 
       }
     }
   };
 
-  // 4. Фільтрація районів (ховаємо ті, що вже обрані або відслідковуються)
   const availableDistricts = useMemo(() => {
     return districts.filter(d => {
       const name = d.name || d;
       const isSelectedLocally = selectedDistricts.some(sd => sd.name === name && sd.city === selectedCity);
       const isAlreadyTracked = trackedLocations.some(t => t.country === selectedCountry && t.city === selectedCity && (t.district === name || t.name === name));
-      
       return !isSelectedLocally && !isAlreadyTracked;
     });
   }, [districts, selectedDistricts, trackedLocations, selectedCountry, selectedCity]);
 
-  // 5. Додавання району
   const addDistrict = (districtData) => {
     if (maxSelection !== null && (currentCount + selectedDistricts.length >= maxSelection)) {
       alert(t('comparison.limit_reached', { max: maxSelection }));
@@ -128,14 +120,12 @@ export default function LocationSelectorModal({
     setSelectedDistricts(prev => [...prev, newDistrict]);
   };
 
-  // 6. Видалення району
   const removeSelectedDistrict = (districtToRemove) => {
       setSelectedDistricts(prev => prev.filter(d => 
           !(d.name === districtToRemove.name && d.city === districtToRemove.city)
       ));
   };
 
-  // 7. Відправка форми
   const handleSubmit = (e) => {
     e.preventDefault();
     if (includeDistrict && selectedDistricts.length > 0) {
@@ -154,31 +144,31 @@ export default function LocationSelectorModal({
         
         <div className={styles.modalHeader}>
           <div className={styles.iconCircle}><FaMapMarkerAlt /></div>
-          <h3>{includeDistrict ? t('stats:add_districts_title') : t('stats:select_location')}</h3>
+          <h3>{includeDistrict ? t('add_districts_title') : t('select_location')}</h3>
           <p className={styles.modalSubtitle}>
-            {includeDistrict ? t('stats:select_multiple_districts_subtitle') : t('stats:select_city_subtitle')}
+            {includeDistrict ? t('select_multiple_districts_subtitle') : t('select_city_subtitle')}
           </p>
         </div>
 
         {error ? <div className={styles.errorMsg}>{error}</div> : (
           <form onSubmit={handleSubmit} className={styles.form}>
             <div className={styles.inputGroup}>
-              <label><FaGlobe className={styles.inputIcon}/> {t('stats:country')}</label>
+              <label><FaGlobe className={styles.inputIcon}/> {t('country')}</label>
               <div className={styles.selectWrapper}>
                 <select value={selectedCountry} onChange={handleCountryChange} disabled={loading.countries} className={styles.selectInput} required={!includeDistrict}>
-                  <option value="">{loading.countries ? t('common:general.loading') : t('stats:select_country_placeholder')}</option>
-                  {countries.map((c, i) => <option key={i} value={c}>{c}</option>)}
+                  <option value="">{loading.countries ? t('loading') : t('select_country_placeholder')}</option>
+                  {countries.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <span className={styles.selectArrow}>▼</span>
               </div>
             </div>
             
             <div className={styles.inputGroup}>
-              <label><FaCity className={styles.inputIcon}/> {t('stats:city')}</label>
+              <label><FaCity className={styles.inputIcon}/> {t('city')}</label>
               <div className={styles.selectWrapper}>
                 <select value={selectedCity} onChange={handleCityChange} disabled={!selectedCountry || loading.cities} className={styles.selectInput} required={!includeDistrict}>
-                  <option value="">{!selectedCountry ? t('stats:select_country_first') : loading.cities ? t('common:general.loading') : t('stats:select_city_placeholder')}</option>
-                  {cities.map((c, i) => <option key={i} value={c}>{c}</option>)}
+                  <option value="">{!selectedCountry ? t('select_country_first') : loading.cities ? t('loading') : t('select_city_placeholder')}</option>
+                  {cities.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <span className={styles.selectArrow}>▼</span>
               </div>
@@ -187,18 +177,18 @@ export default function LocationSelectorModal({
             {includeDistrict && (
                 <>
                     <div className={styles.inputGroup}>
-                      <label><FaMap className={styles.inputIcon}/> {t('stats:districts_label')}</label>
+                      <label><FaMap className={styles.inputIcon}/> {t('districts_label')}</label>
                       
                       {!selectedCity ? (
-                          <div className={styles.emptyMessage}>{t('stats:select_city_first')}</div>
+                          <div className={styles.emptyMessage}>{t('select_city_first')}</div>
                       ) : loading.districts ? (
-                          <div className={styles.emptyMessage}>{t('common:general.loading')}</div>
+                          <div className={styles.emptyMessage}><Loader size="small" /></div>
                       ) : availableDistricts.length === 0 ? (
-                          <div className={styles.emptyMessage}>{t('stats:all_districts_added') || "Всі доступні райони додано"}</div>
+                          <div className={styles.emptyMessage}>{t('all_districts_added')}</div>
                       ) : (
                           <div className={styles.districtsGrid}>
-                            {availableDistricts.map((d, idx) => (
-                              <div key={idx} className={styles.districtChip} onClick={() => addDistrict(d)}>
+                            {availableDistricts.map((d) => (
+                              <div key={d.id || d.name || d} className={styles.districtChip} onClick={() => addDistrict(d)}>
                                   {d.name || d}
                               </div>
                             ))}
@@ -208,10 +198,10 @@ export default function LocationSelectorModal({
 
                     {selectedDistricts.length > 0 && (
                         <div className={styles.selectedSummary}>
-                            <h4>{t('stats:selected_districts')} ({selectedDistricts.length})</h4>
+                            <h4>{t('stats_page.selected_districts')} ({selectedDistricts.length})</h4>
                             <div className={styles.summaryChips}>
-                                {selectedDistricts.map((d, idx) => (
-                                    <div key={idx} className={styles.summaryChip}>
+                                {selectedDistricts.map((d) => (
+                                    <div key={d.id || `${d.country}-${d.city}-${d.name}`} className={styles.summaryChip}>
                                         <span>{d.name} <small>({d.city})</small></span>
                                         <button type="button" onClick={() => removeSelectedDistrict(d)}>
                                             <FaTimes />
@@ -226,8 +216,8 @@ export default function LocationSelectorModal({
 
             <button type="submit" className={styles.submitButton} disabled={!isFormValid || loading.cities || loading.districts}>
               {includeDistrict 
-                ? `${t('stats:add_selected_button')} (+${selectedDistricts.length})` 
-                : t('stats:show_popular')}
+                ? `${t('add_selected_button')} (+${selectedDistricts.length})` 
+                : t('show_popular')}
             </button>
           </form>
         )}

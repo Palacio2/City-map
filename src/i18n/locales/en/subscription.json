@@ -1,17 +1,18 @@
 {
   "subscription": {
     "title": "Choose a Subscription",
-    "subtitle": "Flexible plans for real estate search and professionals",
-    "active_plan_label": "Active Plan",
-    "wait_expire": "Please wait for your current subscription to expire before changing plans.",
+    "subtitle": "Flexible plans for property search and professionals",
+    "wait_expire": "Please wait for your current subscription to end before changing the plan.",
     "included_title": "Included:",
-    "disabled_title": "Not available:",
+    "disabled_title": "Unavailable:",
+    "status": {
+      "free": "Free"
+    },
     "buttons": {
       "active": "Active",
       "stay_free": "Stay on Free",
-      "choose": "Select {{plan}}",
-      "upgrade": "Upgrade Subscription",
-      "has_active_sub": "Subscription Active"
+      "choose": "Choose {{plan}}",
+      "has_active_sub": "Subscription already active"
     },
     "plans": {
       "free": { "name": "Free", "price": "€0" },
@@ -24,25 +25,25 @@
       "filters_limit_2": "Limited access to only 2 filter blocks",
       "basic_rating": "Basic location attractiveness rating",
       "safety_edu_analytics": "Detailed safety and education analytics",
-      "financial_stats": "Full financial stats and price per m²",
-      "favorites_save": "Save districts to 'Favorites'",
-      "compare_tools": "Tools for comparing multiple districts",
+      "financial_stats": "Full financial statistics and price per m²",
+      "favorites_save": "Save districts to Favorites",
+      "compare_tools": "Tools to compare multiple districts",
       "pdf_export": "Export professional PDF reports",
       "unlimited_districts": "Unlimited access to all city districts",
-      "extended_filters": "Extended access to filtering",
+      "extended_filters": "Extended filter access",
       "partial_analytics": "Partial access to analytics page",
       "personal_stats": "Personal statistics",
       "save_favorites": "Ability to save favorite districts",
-      "pdf_download": "Download PDF files with district info",
-      "all_weekly_features": "All Weekly features in a monthly plan",
-      "all_premium_features": "All Premium plan benefits",
-      "roi_calculator": "Investment Calculator (ROI)",
-      "white_label_pdf": "PDF reports with your custom branding",
-      "compare_4_districts": "Compare up to 4 districts simultaneously",
-      "full_filter_access": "Full access to all filters",
+      "pdf_download": "Download PDF files with district information",
+      "all_weekly_features": "All weekly subscription features included in monthly plan",
+      "all_premium_features": "All benefits of the Premium plan",
+      "roi_calculator": "Investment calculator (ROI)",
+      "white_label_pdf": "White-label PDF reports with your personal info",
+      "compare_4_districts": "Compare up to 4 districts at once",
+      "full_filter_access": "Full filter access",
       "full_district_info": "Complete district information",
-      "popular_districts_monitor": "Monitoring of most popular districts",
-      "growth_tracking": "Tracking growth of selected districts"
+      "popular_districts_monitor": "Monitor the most popular districts",
+      "growth_tracking": "Track growth of selected districts"
     }
   }
 }

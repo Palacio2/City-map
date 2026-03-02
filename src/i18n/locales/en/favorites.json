@@ -14,7 +14,7 @@
     "delete_failed": "Failed to delete"
   },
   "buttons": {
-    "login": "Log In",
-    "go_to_map": "Go to Map"
+    "login": "Log in",
+    "go_to_map": "Go to map"
   }
 }

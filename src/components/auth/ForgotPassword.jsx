@@ -40,7 +40,6 @@ export default function ForgotPassword() {
       if (authError) throw authError;
       setIsSubmitted(true);
     } catch {
-      // Прибрали (err), бо ми його не використовуємо
       setError(t('errors.generic'));
     } finally {
       setIsLoading(false);
