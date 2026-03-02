@@ -1,6 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import ReactDOM from 'react-dom';
-import { FaTimes, FaPaperPlane, FaSketch, FaCog, FaTrashAlt } from 'react-icons/fa';
+import { FaTimes, FaPaperPlane, FaSketch, FaCog, FaTrashAlt, FaExclamationCircle } from 'react-icons/fa';
 import { supabase } from '@supabaseClient';
 import ReactMarkdown from 'react-markdown';
 import styles from './AiSidebar.module.css';
@@ -16,9 +16,13 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
-      const savedPrefs = localStorage.getItem('geo_analyzer_ai_prefs');
-      if (savedPrefs) {
-        setChatContext(JSON.parse(savedPrefs));
+      try {
+        const savedPrefs = localStorage.getItem('geo_analyzer_ai_prefs');
+        if (savedPrefs) {
+          setChatContext(JSON.parse(savedPrefs));
+        }
+      } catch (err) {
+        console.error("Failed to parse AI prefs", err);
       }
     } else {
       document.body.style.overflow = '';
@@ -30,19 +34,30 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, isTyping]);
 
-  if (!isOpen) return null;
-
-  const generateQuickPrompts = () => {
-    const prompts = ["Зроби огляд ринку", "Які райони найзеленіші?"];
-    if (!chatContext) return prompts;
+  const quickPrompts = useMemo(() => {
+    if (!chatContext?.city) return ["Як працює пошук?", "Які міста доступні?", "Як оцінюється безпека?", "Що таке рейтинг районів?"];
     
-    if (chatContext.purpose === 'investment') prompts.unshift(`Топ райони для інвестицій у м. ${chatContext.city || 'вашому місті'}`);
-    if (chatContext.purpose === 'living') prompts.unshift(`Найбезпечніші райони у м. ${chatContext.city || 'вашому місті'}`);
-    if (chatContext.pets) prompts.push("Райони з великими парками");
+    const city = chatContext.city;
+    let prompts = [];
+    
+    if (chatContext.purpose === 'investment') prompts.push(`Найкращі райони для інвестицій у м. ${city}`);
+    if (chatContext.purpose === 'living') prompts.push(`Де краще жити у м. ${city}?`);
     if (chatContext.budget) prompts.push(`Що можна купити за ${chatContext.budget}?`);
-    
-    return prompts.slice(0, 4);
-  };
+    if (chatContext.propertyType === 'Будинок') prompts.push(`В яких районах найкраще купувати будинок?`);
+    if (chatContext.safetyImportance === 'Критично') prompts.push(`Назви найбезпечніші райони м. ${city}`);
+    if (chatContext.ecologyImportance === 'Дуже важливо') prompts.push(`Райони з найкращим повітрям та парками`);
+    if (chatContext.transport === 'public' && chatContext.maxCommute) prompts.push(`Райони з хорошим транспортом (до ${chatContext.maxCommute} хв)`);
+    if (chatContext.pets) prompts.push("Де найкраще жити з собакою?");
+
+    if (prompts.length < 4) {
+      prompts.push(`Зроби загальний огляд ринку м. ${city}`);
+      prompts.push(`Які райони зараз найдешевші?`);
+    }
+
+    return prompts.sort(() => 0.5 - Math.random()).slice(0, 4);
+  }, [chatContext]);
+
+  if (!isOpen) return null;
 
   const handleSend = async (textOrEvent) => {
     if (typeof textOrEvent === 'object') textOrEvent.preventDefault();
@@ -87,7 +102,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
         sender: 'ai', 
-        text: 'Вибачте, сталася помилка при підключенні до AI. Спробуйте пізніше.' 
+        text: "⚠️ Вибачте, сталася помилка при підключенні до AI. Спробуйте пізніше або перевірте інтернет-з'єднання." 
       }]);
     } finally {
       setIsTyping(false);
@@ -98,8 +113,9 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
 
   const sidebarContent = (
     <>
-      <div className={styles.overlay} onClick={onClose} />
+      <div className={styles.overlay} />
       <div className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
+        
         <div className={styles.header}>
           <div className={styles.headerInfo}>
             <div className={styles.aiAvatar}>
@@ -119,7 +135,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
             <button className={styles.iconBtn} onClick={onOpenSettings} title="Налаштування пошуку">
               <FaCog />
             </button>
-            <button className={styles.iconBtn} onClick={onClose}>
+            <button className={styles.iconBtn} onClick={onClose} title="Закрити">
               <FaTimes />
             </button>
           </div>
@@ -131,15 +147,25 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
               <div className={styles.welcomeMessage}>
                 <FaSketch className={styles.welcomeIcon} />
                 <h4>Привіт! Я ваш AI-помічник.</h4>
-                <p>
-                  Я пам'ятаю, що ви шукаєте нерухомість у місті <strong>{chatContext?.city || '...'}</strong> 
-                  {chatContext?.budget && ` з бюджетом ${chatContext.budget}`}.
-                </p>
-                <p>Оберіть швидке питання або напишіть своє:</p>
+                
+                {chatContext?.city ? (
+                  <p>
+                    Я налаштований на пошук у місті <strong>{chatContext.city}</strong>. 
+                    {chatContext.safetyImportance === 'Критично' && ' Буду звертати особливу увагу на рівень безпеки.'}
+                    {chatContext.ecologyImportance === 'Дуже важливо' && ' Врахую наявність парків та якість повітря.'}
+                  </p>
+                ) : (
+                  <div style={{ color: 'var(--warning-color)', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+                    <FaExclamationCircle />
+                    <span>Ви ще не налаштували параметри пошуку. Натисніть на шестірню зверху.</span>
+                  </div>
+                )}
+                
+                <p style={{ marginTop: '1rem' }}>Оберіть швидке питання або напишіть своє:</p>
               </div>
               
               <div className={styles.quickPrompts}>
-                {generateQuickPrompts().map((prompt, idx) => (
+                {quickPrompts.map((prompt, idx) => (
                   <button 
                     key={idx} 
                     className={styles.promptBtn}
@@ -160,9 +186,9 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
                 </div>
               )}
               <div className={styles.messageBubble}>
-                <ReactMarkdown className={styles.markdownContent}>
-                  {msg.text}
-                </ReactMarkdown>
+                <div className={styles.markdownContent}>
+                  <ReactMarkdown>{msg.text}</ReactMarkdown>
+                </div>
               </div>
             </div>
           ))}

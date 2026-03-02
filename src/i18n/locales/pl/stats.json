@@ -20,7 +20,7 @@
     "last_active_at": "Ostatnia aktywność: {{time}}",
     "fav_district": "Ulubiona dzielnica",
     "not_defined": "Nie zdefiniowano",
-    "never": "Nigdy",
+    "never": "Brak aktualnych danych",
     "error_load": "Błąd ładowania statystyk",
     "error_unknown": "Wystąpił nieznany błąd",
     "error_export": "Nie udało się wyeksportować pliku PDF.",

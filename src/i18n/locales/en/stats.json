@@ -20,7 +20,7 @@
     "last_active_at": "Last active: {{time}}",
     "fav_district": "Favorite district",
     "not_defined": "Not defined",
-    "never": "Never",
+    "never": "No up-to-date data yet",
     "error_load": "Failed to load statistics",
     "error_unknown": "An unknown error occurred",
     "error_export": "Failed to export PDF file",

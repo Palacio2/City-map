@@ -15,15 +15,20 @@ export default function LastActivity({ lastActive, favoriteDistrict }) {
   const { t, i18n } = useTranslation('stats');
   const navigate = useNavigate();
 
-  const handleDistrictNavigate = (district) => {
-    // ОПТИМІЗАЦІЯ: Безпечна перевірка (Optional Chaining)
-    if (district?.city && district?.country && district?.name) {
-      navigate(`/map/${encodeURIComponent(district.country)}/${encodeURIComponent(district.city)}?district=${encodeURIComponent(district.name)}`);
+  // ВАЖЛИВО: Ці змінні мають бути ТУТ, всередині функції компонента,
+  // оскільки саме тут доступний пропс favoriteDistrict.
+  const districtName = favoriteDistrict?.name || favoriteDistrict?.district;
+  const districtCity = favoriteDistrict?.city || favoriteDistrict?.cities?.name;
+  const districtCountry = favoriteDistrict?.country || favoriteDistrict?.cities?.countries?.name;
+
+  const handleDistrictNavigate = () => {
+    if (districtName && districtCity && districtCountry) {
+      navigate(`/map/${encodeURIComponent(districtCountry)}/${encodeURIComponent(districtCity)}?district=${encodeURIComponent(districtName)}`);
     }
   };
 
   const formattedDate = lastActive ? formatDate(lastActive, i18n.language) : t('stats_page.never');
-  const hasValidDistrict = !!(favoriteDistrict?.name && favoriteDistrict?.city && favoriteDistrict?.country);
+  const hasValidDistrict = !!(districtName && districtCity && districtCountry);
 
   return (
     <div className={styles.container}>
@@ -44,10 +49,10 @@ export default function LastActivity({ lastActive, favoriteDistrict }) {
         {hasValidDistrict ? (
           <button 
             className={styles.districtButton} 
-            onClick={() => handleDistrictNavigate(favoriteDistrict)}
+            onClick={handleDistrictNavigate}
           >
             <FaMapMarkerAlt className={styles.pinIcon} />
-            <span className={styles.districtName}>{favoriteDistrict.name}</span>
+            <span className={styles.districtName}>{districtName}</span>
             <FaExternalLinkAlt className={styles.linkIcon} />
           </button>
         ) : (

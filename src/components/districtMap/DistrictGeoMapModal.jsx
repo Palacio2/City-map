@@ -6,11 +6,12 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet.markercluster/dist/MarkerCluster.css';
 import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import 'leaflet.markercluster';
-// 1. Підключаємо geoApi замість прямого supabase
 import { geoApi } from '@api/geoApi';
 import { FiX, FiFilter, FiCheck } from 'react-icons/fi';
 import Loader from '@components/loader/Loader';
 import styles from './DistrictGeoMapModal.module.css';
+import { useSubscription } from '@subscription/SubscriptionContext';
+import { DISTRICT_CATEGORIES } from '@config/districtFields';
 
 const ICON_MAP = {
     hospitals_count: '🏥', clinics_count: '🩺', pharmacies_count: '💊', vet_clinics_count: '🐕',
@@ -102,6 +103,7 @@ const FastMapMarkers = ({ pois, t }) => {
 
 export default function DistrictGeoMapModal({ isOpen, onClose, districtId, districtName }) {
     const { t } = useTranslation('map');
+    const { isFree, isRealtor } = useSubscription();
     
     const [geoData, setGeoData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -115,12 +117,41 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
 
         const fetchGeo = async () => {
             try {
-                // 2. Використовуємо метод з geoApi
                 const data = await geoApi.getDistrictGeoData(districtId);
                 
                 if (isMounted) {
-                    setGeoData(data);
-                    const types = [...new Set((data.poi_data || []).map(p => p.type))];
+                    const allowedPois = (data.poi_data || []).filter(poi => {
+                        if (isRealtor) return true;
+
+                        let isPremiumPoi = false;
+                        let isRealtorPoi = false;
+                        let found = false;
+
+                        for (const cat of Object.values(DISTRICT_CATEGORIES)) {
+                            const field = cat.fields.find(f => f.dbKey === poi.type);
+                            if (field) {
+                                found = true;
+                                if (field.isRealtorOnly) isRealtorPoi = true;
+                                else if (cat.isPremium || field.isPremiumField) isPremiumPoi = true;
+                                break;
+                            }
+                        }
+
+                        if (!found) isPremiumPoi = true;
+
+                        if (isFree) {
+                            return !isPremiumPoi && !isRealtorPoi;
+                        } else {
+                            return !isRealtorPoi;
+                        }
+                    });
+
+                    setGeoData({
+                        ...data,
+                        poi_data: allowedPois
+                    });
+                    
+                    const types = [...new Set(allowedPois.map(p => p.type))];
                     setActiveFilters(types); 
                 }
             } catch (err) {
@@ -132,7 +163,7 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
 
         fetchGeo();
         return () => { isMounted = false; };
-    }, [isOpen, districtId]);
+    }, [isOpen, districtId, isFree, isRealtor]);
 
     const availableTypes = useMemo(() => {
         if (!geoData?.poi_data) return [];
