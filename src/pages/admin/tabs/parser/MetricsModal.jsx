@@ -55,12 +55,15 @@ export default function MetricsModal({ isOpen, onClose, onConfirm, selectedDistr
                     <div className={styles.section}>
                         <h4 className={styles.sectionTitle}>Метрики OSM:</h4>
                         <div className={styles.metricsGrid}>
-                            {ALL_METRICS.map(m => (
-                                <label key={m.db} className={styles.metricLabel}>
-                                    <input type="checkbox" checked={selectedMetrics.includes(m.db)} onChange={() => toggleMetric(m.db)} className={styles.checkbox}/>
-                                    {m.db}
-                                </label>
-                            ))}
+                            {ALL_METRICS.map(m => {
+    const isChecked = selectedMetrics.includes(m.db);
+    return (
+        <label key={m.db} className={`${styles.metricLabel} ${isChecked ? styles.metricLabelHasChecked : ''}`}>
+            <input type="checkbox" checked={isChecked} onChange={() => toggleMetric(m.db)} className={styles.checkbox}/>
+            {m.db}
+        </label>
+    );
+})}
                         </div>
                     </div>
                 )}

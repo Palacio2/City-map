@@ -1,189 +1,55 @@
-.container {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    padding-bottom: 20px;
-    animation: fadeIn 0.3s ease-in-out;
-}
+.container { display: flex; flex-direction: column; gap: 24px; padding-bottom: 20px; animation: fadeIn 0.3s ease-in-out; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+.loadingState { padding: 60px; font-size: 1.2rem; color: #64748b; text-align: center; font-weight: 500; }
+.errorState { padding: 60px; color: #ef4444; text-align: center; font-weight: 500; background: #fef2f2; border-radius: 16px; border: 1px dashed #fca5a5; }
 
-.statsGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 20px;
-}
+.statsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; }
 
-.statCard {
-    background: #ffffff;
-    padding: 24px;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
+.statCard { background: #ffffff; padding: 24px; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); display: flex; flex-direction: column; gap: 16px; transition: all 0.2s ease; }
+.statCard:hover { transform: translateY(-3px); box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05); border-color: #cbd5e1; }
+.statCardSuccess { background: #f0fdf4; border-color: #bbf7d0; }
 
-.statCard:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-}
+.statHeader { display: flex; align-items: center; gap: 12px; }
+.iconWrapper { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; }
+.iconBlue { background: #eff6ff; color: #3b82f6; }
+.iconPurple { background: #faf5ff; color: #a855f7; }
+.iconEmerald { background: #ecfdf5; color: #10b981; }
+.iconGreen { background: #dcfce7; color: #16a34a; }
+.iconWrapperError { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; background: #fef2f2; color: #ef4444; }
 
-.statCardSuccess {
-    background: #f0fdf4;
-    border-color: #bbf7d0;
-}
+.statTitle { font-size: 0.95rem; color: #64748b; margin: 0; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+.statTitleSuccess { color: #166534; }
+.statValue { font-size: 2.5rem; font-weight: 800; color: #0f172a; margin: 0; line-height: 1; }
+.statValueSuccess { color: #15803d; }
 
-.statTitle {
-    font-size: 1.05rem;
-    color: #64748b;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin: 0;
-    font-weight: 500;
-}
+.problemsSection { background: #ffffff; border-radius: 16px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02); overflow: hidden; }
+.problemsHeader { padding: 20px 24px; background: #ffffff; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 12px; }
+.problemsTitle { margin: 0; color: #0f172a; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+.badge { background: #ef4444; color: white; padding: 2px 10px; border-radius: 20px; font-size: 0.85rem; }
 
-.statTitleSuccess {
-    color: #166534;
-}
+.emptyState { padding: 60px 40px; text-align: center; color: #15803d; font-weight: 600; font-size: 1.1rem; background: #f0fdf4; display: flex; flex-direction: column; align-items: center; gap: 16px; }
+.emptyIcon { font-size: 3rem; }
 
-.statValue {
-    font-size: 3rem;
-    font-weight: 800;
-    color: #0f172a;
-    margin: 0;
-    line-height: 1;
-}
+.tableContainer { max-height: 500px; overflow-y: auto; }
+.tableContainer::-webkit-scrollbar { width: 6px; }
+.tableContainer::-webkit-scrollbar-track { background: transparent; }
+.tableContainer::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
-.statValueSuccess {
-    color: #15803d;
-}
+.table { width: 100%; border-collapse: separate; border-spacing: 0; text-align: left; }
+.table th { padding: 16px 24px; background: #f8fafc; color: #475569; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; position: sticky; top: 0; z-index: 10; border-bottom: 1px solid #e2e8f0; }
+.table td { padding: 16px 24px; border-bottom: 1px solid #f1f5f9; color: #334155; font-size: 0.95rem; background: #ffffff; transition: background 0.2s; }
+.table tr:last-child td { border-bottom: none; }
+.table tr:hover td { background: #f8fafc; }
 
-.problemsSection {
-    background: #ffffff;
-    border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    overflow: hidden;
-}
+.cityCell { color: #64748b; font-weight: 500; }
+.districtCell { font-weight: 700; color: #0f172a; }
 
-.problemsHeader {
-    padding: 18px 24px;
-    background: #f8fafc;
-    border-bottom: 1px solid #e2e8f0;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+.statusBadge { display: inline-flex; align-items: center; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; }
+.statusPublished { background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0; }
+.statusHidden { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 
-.problemsTitle {
-    margin: 0;
-    color: #0f172a;
-    font-size: 1.25rem;
-    font-weight: 700;
-}
-
-.emptyState {
-    padding: 40px;
-    text-align: center;
-    color: #10b981;
-    font-weight: 600;
-    font-size: 1.2rem;
-    background: #f0fdf4;
-}
-
-.tableContainer {
-    max-height: 500px;
-    overflow-y: auto;
-}
-
-.table {
-    width: 100%;
-    border-collapse: collapse;
-    text-align: left;
-}
-
-.table th {
-    padding: 16px 24px;
-    background: #f1f5f9;
-    color: #475569;
-    font-size: 0.85rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
-
-.table td {
-    padding: 16px 24px;
-    border-bottom: 1px solid #e2e8f0;
-    color: #334155;
-    font-size: 0.95rem;
-}
-
-.table tr:last-child td {
-    border-bottom: none;
-}
-
-.table tr:hover td {
-    background: #f8fafc;
-}
-
-.cityCell {
-    color: #64748b;
-    font-weight: 500;
-}
-
-.districtCell {
-    font-weight: 700;
-    color: #0f172a;
-}
-
-.statusBadge {
-    display: inline-flex;
-    align-items: center;
-    padding: 4px 10px;
-    border-radius: 999px;
-    font-size: 0.75rem;
-    font-weight: 600;
-}
-
-.statusPublished {
-    background: #dcfce7;
-    color: #166534;
-}
-
-.statusHidden {
-    background: #f1f5f9;
-    color: #64748b;
-}
-
-.issuesContainer {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.issueBadge {
-    padding: 4px 10px;
-    border-radius: 6px;
-    font-size: 0.8rem;
-    font-weight: 500;
-}
-
-.issuePhoto {
-    background: #fee2e2;
-    color: #991b1b;
-}
-
-.issueGeo {
-    background: #fef3c7;
-    color: #92400e;
-}
+.issuesContainer { display: flex; gap: 8px; flex-wrap: wrap; }
+.issueBadge { padding: 6px 10px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; border: 1px solid transparent; }
+.issuePhoto { background: #fef2f2; color: #b91c1c; border-color: #fecaca; }
+.issueGeo { background: #fffbeb; color: #b45309; border-color: #fde68a; }

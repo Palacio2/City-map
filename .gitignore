@@ -133,3 +133,10 @@ server/data/*.osm
 # Ігноруємо логі та тимчасові результати
 server/data/logs/
 server/pending-results.json
+
+# Налаштування редактора коду
+.vscode/
+.idea/
+
+# Кеш локального Vercel CLI (якщо колись встановиш)
+.vercel/

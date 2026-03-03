@@ -75,87 +75,113 @@ export default function ParserTab() {
         }
     };
 
-    return (
+return (
         <div className={styles.mainWrapper}>
-            <div className={styles.topActions}>
+            <div className={styles.pageHeader}>
+                <div>
+                    <h2 className={styles.pageTitle}>Парсер Даних</h2>
+                    <p className={styles.pageSubtitle}>Автоматичний збір інфраструктури та цін для районів</p>
+                </div>
                 <button onClick={handleResetAll} className={`${styles.btn} ${styles.dangerBtn}`}>🔄 Скинути все</button>
             </div>
 
             <div className={styles.topGrid}>
-                <div className={`${styles.section} ${styles.stepSection}`}>
-                    <div className={styles.fileHeaderRow}>
-                        <div className={styles.stepHeader}>
-                            <span className={styles.stepIcon}>📁</span>
-                            <h3>Крок 1. Файл карти</h3>
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div className={styles.stepTitle}>
+                            <span className={styles.stepNumber}>1</span>
+                            <h3>Файл карти (.pbf)</h3>
                         </div>
-                        <button onClick={logic.loadAvailableFiles} className={`${styles.btn} ${styles.updateBtn}`}>🔄 Оновити</button>
+                        <button onClick={logic.loadAvailableFiles} className={styles.iconBtnText}>🔄 Оновити</button>
                     </div>
-                    {logic.availableFiles.length === 0 ? (
-                        <div className={styles.emptyFolderBox}>Папка порожня. Додайте .pbf у server/data/</div>
-                    ) : (
-                        <select className={`${styles.textInput} ${styles.fileSelect}`} value={pbfFile} onChange={(e) => setPbfFile(e.target.value)}>
-                            {logic.availableFiles.map(file => <option key={file} value={file}>{file}</option>)}
-                        </select>
-                    )}
+                    <div className={styles.cardBody}>
+                        {logic.availableFiles.length === 0 ? (
+                            <div className={styles.emptyFolderBox}>Папка server/data порожня. Додайте .pbf файли.</div>
+                        ) : (
+                            <select className={styles.selectInput} value={pbfFile} onChange={(e) => setPbfFile(e.target.value)}>
+                                {logic.availableFiles.map(file => <option key={file} value={file}>{file}</option>)}
+                            </select>
+                        )}
+                    </div>
                 </div>
 
-                <div className={`${styles.section} ${styles.stepSection}`}>
-                    <div className={styles.stepHeader}>
-                        <span className={styles.stepIcon}>🌍</span>
-                        <h3>Крок 2. Географія</h3>
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div className={styles.stepTitle}>
+                            <span className={styles.stepNumber}>2</span>
+                            <h3>Локація</h3>
+                        </div>
                     </div>
-                    <ParserSettings
-                        country={country} setCountry={setCountry}
-                        city={city} setCity={setCity}
-                        region={region} setRegion={setRegion}
-                        countriesList={logic.countries} citiesList={logic.cities}
-                        onCountryChange={logic.loadCities}
-                    />
+                    <div className={styles.cardBody}>
+                        <ParserSettings
+                            country={country} setCountry={setCountry}
+                            city={city} setCity={setCity}
+                            region={region} setRegion={setRegion}
+                            countriesList={logic.countries} citiesList={logic.cities}
+                            onCountryChange={logic.loadCities}
+                        />
+                    </div>
                 </div>
             </div>
 
             {city && (
-                <div className={styles.section}>
-                    <div className={styles.stepHeader}>
-                        <span className={styles.stepIcon}>🏘</span>
-                        <h3>Крок 3. Райони міста</h3>
+                <div className={styles.card}>
+                    <div className={styles.cardHeader}>
+                        <div className={styles.stepTitle}>
+                            <span className={styles.stepNumber}>3</span>
+                            <h3>Управління районами ({city.name})</h3>
+                        </div>
                     </div>
-                    <DistrictsManager
-                        foundDistricts={logic.foundDistrictsOSM} dbDistricts={logic.dbDistricts}
-                        selectedIds={selectedDistrictIds} onToggleSelect={toggleDistrictSelection} onSelectAll={toggleSelectAll}
-                        onScan={() => logic.scanOSM(city?.name)} onCreate={() => logic.createDistrictsInDb(logic.foundDistrictsOSM, city.id)}
-                        onRemoveFromFound={(d) => logic.setFoundDistrictsOSM(prev => prev.filter(item => item !== d))}
-                        onDeleteDbDistrict={(id) => logic.deleteDbDistrict(id, city.id)} 
-                        onImportGeoJson={(file) => logic.importBoundariesGeoJSON(file, city.id)}
-                        loading={logic.loading}
-                    />
+                    <div className={styles.cardBodyOutless}>
+                        <DistrictsManager
+                            foundDistricts={logic.foundDistrictsOSM} dbDistricts={logic.dbDistricts}
+                            selectedIds={selectedDistrictIds} onToggleSelect={toggleDistrictSelection} onSelectAll={toggleSelectAll}
+                            onScan={() => logic.scanOSM(city?.name)} onCreate={() => logic.createDistrictsInDb(logic.foundDistrictsOSM, city.id)}
+                            onRemoveFromFound={(d) => logic.setFoundDistrictsOSM(prev => prev.filter(item => item !== d))}
+                            onDeleteDbDistrict={(id) => logic.deleteDbDistrict(id, city.id)} 
+                            onImportGeoJson={(file) => logic.importBoundariesGeoJSON(file, city.id)}
+                            loading={logic.loading}
+                        />
+                    </div>
                 </div>
             )}
 
-            <ParserConsole 
-                logs={logic.logs}
-                loading={logic.loading}
-                onClear={logic.clearLogs}
-                onDownload={logic.downloadLogs}
-                onStartClick={() => setIsModalOpen(true)}
-                isStartDisabled={logic.loading || !city || selectedDistrictIds.length === 0 || !pbfFile}
-                selectedCount={selectedDistrictIds.length}
-            />
+            <div className={styles.card}>
+                <div className={styles.cardHeader}>
+                    <div className={styles.stepTitle}>
+                        <span className={styles.stepNumber}>4</span>
+                        <h3>Логи парсера</h3>
+                    </div>
+                </div>
+                <div className={styles.cardBodyOutless}>
+                    <ParserConsole 
+                        logs={logic.logs}
+                        loading={logic.loading}
+                        onClear={logic.clearLogs}
+                        onDownload={logic.downloadLogs}
+                        onStartClick={() => setIsModalOpen(true)}
+                        isStartDisabled={logic.loading || !city || selectedDistrictIds.length === 0 || !pbfFile}
+                        selectedCount={selectedDistrictIds.length}
+                    />
+                </div>
+            </div>
 
             {logic.showResults && logic.parsedData.length > 0 && (
-                <div className={`${styles.section} ${styles.resultsSection}`}>
-                    <div className={styles.resultsHeaderRow}>
-                        <div className={styles.stepHeader}>
-                            <span className={styles.stepIcon}>📊</span>
-                            <h3>Крок 5. Результати</h3>
+                <div className={`${styles.card} ${styles.resultsCard}`}>
+                    <div className={styles.cardHeader}>
+                        <div className={styles.stepTitle}>
+                            <span className={`${styles.stepNumber} ${styles.stepNumberSuccess}`}>5</span>
+                            <h3>Результати парсингу</h3>
                         </div>
                     </div>
-                    <ResultsTable
-                        data={logic.parsedData}
-                        onEdit={(index, key, value) => logic.setParsedData(prev => prev.map((item, i) => i === index ? { ...item, [key]: value } : item))}
-                        onSave={handleSave}
-                        onRemove={logic.removeParsedItem}
-                    />
+                    <div className={styles.cardBodyOutless}>
+                        <ResultsTable
+                            data={logic.parsedData}
+                            onEdit={(index, key, value) => logic.setParsedData(prev => prev.map((item, i) => i === index ? { ...item, [key]: value } : item))}
+                            onSave={handleSave}
+                            onRemove={logic.removeParsedItem}
+                        />
+                    </div>
                 </div>
             )}
 

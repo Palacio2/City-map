@@ -12,7 +12,7 @@ export default function DistrictsManager({
         <div className={styles.districtsSplit}>
             <div className={styles.districtsList}>
                 <div className={styles.listHeader}>
-                    <h4>🔍 Знайдено в OSM <span>({foundDistricts.length})</span></h4>
+                    <h4>🔍 Знайдено в OSM <span className={styles.badge}>{foundDistricts.length}</span></h4>
                     <button onClick={onScan} disabled={loading} className={`${styles.btn} ${styles.scanBtn}`}>
                         {loading ? '⏳ Шукаю...' : 'Шукати в PBF/OSM'}
                     </button>
@@ -35,7 +35,7 @@ export default function DistrictsManager({
 
             <div className={styles.districtsList}>
                 <div className={styles.listHeader}>
-                    <h4>🗄️ Райони в базі <span>({dbDistricts.length})</span></h4>
+                    <h4>🗄️ Райони в базі <span className={styles.badge}>{foundDistricts.length}</span></h4>
                     <div className={styles.headerActions}>
                         <input 
                             type="file" 

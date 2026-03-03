@@ -14,38 +14,53 @@ export default function DashboardTab() {
         }).catch(() => setLoading(false));
     }, []);
 
-    if (loading) return <div style={{ padding: '40px', fontSize: '1.2rem', color: '#64748b', textAlign: 'center' }}>⏳ Завантаження статистики...</div>;
-    if (!stats) return <div style={{ padding: '40px', color: '#ef4444', textAlign: 'center' }}>❌ Помилка завантаження даних. Перевірте з'єднання з сервером.</div>;
+    if (loading) return <div className={styles.loadingState}>⏳ Завантаження статистики...</div>;
+    if (!stats) return <div className={styles.errorState}>❌ Помилка завантаження даних. Перевірте з'єднання з сервером.</div>;
 
     return (
         <div className={styles.container}>
             <div className={styles.statsGrid}>
                 <div className={styles.statCard}>
-                    <p className={styles.statTitle}><FaMap size={22} color="#3b82f6"/> Країни</p>
+                    <div className={styles.statHeader}>
+                        <div className={`${styles.iconWrapper} ${styles.iconBlue}`}><FaMap size={20} /></div>
+                        <p className={styles.statTitle}>Країни</p>
+                    </div>
                     <h3 className={styles.statValue}>{stats.totalCountries}</h3>
                 </div>
                 <div className={styles.statCard}>
-                    <p className={styles.statTitle}><FaCity size={22} color="#8b5cf6"/> Міста</p>
+                    <div className={styles.statHeader}>
+                        <div className={`${styles.iconWrapper} ${styles.iconPurple}`}><FaCity size={20} /></div>
+                        <p className={styles.statTitle}>Міста</p>
+                    </div>
                     <h3 className={styles.statValue}>{stats.totalCities}</h3>
                 </div>
                 <div className={styles.statCard}>
-                    <p className={styles.statTitle}><FaMapMarkedAlt size={22} color="#10b981"/> Райони (Всього)</p>
+                    <div className={styles.statHeader}>
+                        <div className={`${styles.iconWrapper} ${styles.iconEmerald}`}><FaMapMarkedAlt size={20} /></div>
+                        <p className={styles.statTitle}>Райони (Всього)</p>
+                    </div>
                     <h3 className={styles.statValue}>{stats.totalDistricts}</h3>
                 </div>
                 <div className={`${styles.statCard} ${styles.statCardSuccess}`}>
-                    <p className={`${styles.statTitle} ${styles.statTitleSuccess}`}><FaCheckCircle size={22} color="#166534"/> Опубліковані</p>
+                    <div className={styles.statHeader}>
+                        <div className={`${styles.iconWrapper} ${styles.iconGreen}`}><FaCheckCircle size={20} /></div>
+                        <p className={`${styles.statTitle} ${styles.statTitleSuccess}`}>Опубліковані</p>
+                    </div>
                     <h3 className={`${styles.statValue} ${styles.statValueSuccess}`}>{stats.publishedDistricts}</h3>
                 </div>
             </div>
 
             <div className={styles.problemsSection}>
                 <div className={styles.problemsHeader}>
-                    <FaExclamationCircle size={24} color="#ef4444" />
-                    <h3 className={styles.problemsTitle}>Потребують доопрацювання ({stats.problematicDistricts.length})</h3>
+                    <div className={styles.iconWrapperError}><FaExclamationCircle size={20} /></div>
+                    <h3 className={styles.problemsTitle}>Потребують доопрацювання <span className={styles.badge}>{stats.problematicDistricts.length}</span></h3>
                 </div>
                 
                 {stats.problematicDistricts.length === 0 ? (
-                    <div className={styles.emptyState}>🎉 Усі райони повністю заповнені! Ви чудово попрацювали.</div>
+                    <div className={styles.emptyState}>
+                        <div className={styles.emptyIcon}>🎉</div>
+                        <div>Усі райони повністю заповнені! Ви чудово попрацювали.</div>
+                    </div>
                 ) : (
                     <div className={styles.tableContainer}>
                         <table className={styles.table}>
@@ -64,7 +79,7 @@ export default function DashboardTab() {
                                         <td className={styles.districtCell}>{d.name}</td>
                                         <td>
                                             <span className={`${styles.statusBadge} ${d.isAvailable ? styles.statusPublished : styles.statusHidden}`}>
-                                                {d.isAvailable ? 'Опубліковано' : 'Приховано'}
+                                                {d.isAvailable ? '🟢 Опубліковано' : '⚪ Приховано'}
                                             </span>
                                         </td>
                                         <td>
