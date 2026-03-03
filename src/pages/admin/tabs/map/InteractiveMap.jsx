@@ -1,8 +1,26 @@
-import React from 'react';
-import { MapContainer, TileLayer, GeoJSON, Marker, Tooltip, useMapEvents } from 'react-leaflet';
+// InteractiveMap.jsx
+import React, { useEffect } from 'react';
+import { MapContainer, TileLayer, GeoJSON, Marker, Tooltip, useMapEvents, useMap } from 'react-leaflet';
+import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { ICON_MAP, getLabelForKey, createEmojiIcon } from './mapIcons';
 import styles from './InteractiveMap.module.css';
+
+function FitBounds({ geojson }) {
+    const map = useMap();
+    useEffect(() => {
+        if (geojson) {
+            try {
+                const layer = L.geoJSON(geojson);
+                const bounds = layer.getBounds();
+                if (bounds.isValid()) {
+                    map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16, animate: true, duration: 1.5 });
+                }
+            } catch (e) {}
+        }
+    }, [geojson, map]);
+    return null;
+}
 
 function MapClickHandler({ onMapClick, activeMetric }) {
     useMapEvents({
@@ -13,33 +31,38 @@ function MapClickHandler({ onMapClick, activeMetric }) {
     return null;
 }
 
-export default function InteractiveMap({ geojson, pois = [], activeMetric, onAddPoi, onRemovePoi }) {
-    
-    const getBounds = () => {
-        if (!geojson || !geojson.bbox) return [[52.2297, 21.0122], [52.23, 21.013]]; 
-        return [ [geojson.bbox[1], geojson.bbox[0]], [geojson.bbox[3], geojson.bbox[2]] ];
-    };
-
+export default function InteractiveMap({ geojson, pois = [], activeMetric, onAddPoi, onRemovePoi, onUpdatePoi }) {
     return (
         <div className={styles.mapWrapper}>
             {activeMetric && (
                 <div className={styles.activeMetricBanner}>
-                    <span className={styles.bannerPulse}></span>
-                    🎯 Клікніть на карту, щоб додати: 
-                    <strong>{ICON_MAP[activeMetric] || ICON_MAP.default} {getLabelForKey(activeMetric)}</strong>
+                    <div className={styles.bannerPulse}></div>
+                    <div className={styles.bannerText}>
+                        <span>Додавання:</span>
+                        <strong>{ICON_MAP[activeMetric] || ICON_MAP.default} {getLabelForKey(activeMetric)}</strong>
+                    </div>
+                    <div className={styles.bannerHint}>ESC для скасування</div>
                 </div>
             )}
 
-            <MapContainer bounds={getBounds()} className={styles.leafletContainer} zoomControl={true}>
+            <MapContainer 
+                center={[52.23, 21.01]} 
+                zoom={6} 
+                className={styles.leafletContainer} 
+                zoomControl={false}
+                style={{ cursor: activeMetric ? 'crosshair' : 'grab' }}
+            >
                 <TileLayer 
                     url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" 
-                    attribution='&copy; <a href="https://carto.com/">Carto</a>'
+                    attribution='© <a href="https://carto.com/">Carto</a>'
                 />
+                
+                <FitBounds geojson={geojson} />
                 
                 {geojson && (
                     <GeoJSON 
                         data={geojson} 
-                        style={{ color: '#3b82f6', weight: 3, fillColor: '#3b82f6', fillOpacity: 0.1, dashArray: '6, 6' }} 
+                        style={{ color: '#3b82f6', weight: 3, fillColor: '#3b82f6', fillOpacity: 0.08, dashArray: '8, 8' }} 
                     />
                 )}
 
@@ -48,15 +71,27 @@ export default function InteractiveMap({ geojson, pois = [], activeMetric, onAdd
                         key={poi.id} 
                         position={[poi.coord[1], poi.coord[0]]} 
                         icon={createEmojiIcon(poi.type, poi.source)}
-                        eventHandlers={{ click: () => onRemovePoi(poi.id) }}
+                        draggable={poi.source === 'manual'}
+                        eventHandlers={{ 
+                            click: () => onRemovePoi(poi.id),
+                            dragend: (e) => {
+                                const marker = e.target;
+                                const position = marker.getLatLng();
+                                if (onUpdatePoi) onUpdatePoi(poi.id, [position.lng, position.lat]);
+                            }
+                        }}
                     >
-                        <Tooltip direction="top" className={styles.customTooltip}>
+                        <Tooltip direction="top" className={styles.customTooltip} offset={[0, -15]}>
                             <div className={styles.tooltipContent}>
-                                <strong>{getLabelForKey(poi.type)}</strong>
-                                <span className={styles.sourceTag}>
-                                    {poi.source === 'parser' ? '🤖 Від парсера' : '👤 Додано вручну'}
+                                <div className={styles.tooltipTitle}>{getLabelForKey(poi.type)}</div>
+                                <span className={poi.source === 'parser' ? styles.tagParser : styles.tagManual}>
+                                    {poi.source === 'parser' ? '🤖 Парсер' : '👤 Вручну'}
                                 </span>
-                                <small className={styles.tooltipHint}>(клік щоб видалити)</small>
+                                {poi.source === 'manual' ? (
+                                    <div className={styles.tooltipAction}>Перетягніть або клікніть для видалення</div>
+                                ) : (
+                                    <div className={styles.tooltipActionAlert}>Клікніть для видалення</div>
+                                )}
                             </div>
                         </Tooltip>
                     </Marker>

@@ -1,7 +1,0 @@
-{
-  "ignore": [
-    "pending-results.json",
-    "data/logs/*",
-    "debug-*.json"
-  ]
-}

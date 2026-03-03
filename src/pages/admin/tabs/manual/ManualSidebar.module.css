@@ -1,85 +1,84 @@
 .sidebar {
     display: flex;
     flex-direction: column;
-    gap: 12px;
-    position: sticky;
-    top: 0;
-    max-height: calc(100vh - 32px);
-    overflow-y: auto;
-    padding-right: 4px;
-    margin-top: 0;
+    gap: 16px;
+    padding-bottom: 20px;
 }
-
-.sidebar::-webkit-scrollbar { width: 4px; }
-.sidebar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
 .listBlock {
     background: #ffffff;
     border: 1px solid #e2e8f0;
-    border-radius: 8px;
-    padding: 12px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border-radius: 16px;
+    padding: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
 }
 
 .listHeader {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .listTitle {
-    font-size: 0.95rem;
+    font-size: 1rem;
     font-weight: 700;
-    color: #1e293b;
+    color: #0f172a;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
 }
 
 .parentName {
     font-size: 0.8rem;
-    color: #94a3b8;
+    color: #64748b;
+    font-weight: 500;
 }
 
 .addGhostBtn {
     background: transparent;
     color: #3b82f6;
-    border: 1px dashed #cbd5e1;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 0.75rem;
-    cursor: pointer;
+    border: none;
+    font-size: 0.85rem;
     font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s;
 }
 
 .addGhostBtn:hover {
     background: #eff6ff;
-    border-color: #3b82f6;
+    color: #2563eb;
 }
 
 .searchInput {
     width: 100%;
-    padding: 6px 10px;
-    margin-bottom: 8px;
-    border: 1px solid #cbd5e1;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    outline: none;
+    padding: 10px 14px;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    transition: all 0.2s;
     background: #f8fafc;
-    box-sizing: border-box;
+    color: #1e293b;
+    outline: none;
 }
 
 .searchInput:focus {
+    background: #ffffff;
     border-color: #3b82f6;
-    background: #fff;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .list {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    max-height: 180px;
+    gap: 4px;
+    max-height: 300px;
     overflow-y: auto;
     padding-right: 4px;
 }
@@ -88,36 +87,30 @@
 .list::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
 
 .listItem {
-    padding: 6px 10px;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 0.85rem;
-    color: #475569;
+    font-size: 0.9rem;
+    color: #334155;
     font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.2s;
+    border: 1px solid transparent;
 }
 
 .listItem:hover {
-    background: #f1f5f9;
+    background: #f8fafc;
+    border-color: #e2e8f0;
 }
 
 .listItemSelected {
     background: #eff6ff;
     color: #1d4ed8;
     font-weight: 600;
-}
-
-/* Оновлюємо listItem, щоб він підтримував кнопку видалення */
-.listItem {
-    padding: 6px 10px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.85rem;
-    color: #475569;
-    font-weight: 500;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.2s;
+    border-color: #bfdbfe;
+    box-shadow: 0 2px 4px rgba(59, 130, 246, 0.05);
 }
 
 .itemText {
@@ -125,41 +118,37 @@
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
 }
 
-.deleteIconBtn {
+.actionGroup {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.listItem:hover .actionGroup,
+.listItem:hover .deleteIconBtn {
+    opacity: 1;
+}
+
+.mapIconBtn, .deleteIconBtn {
     background: transparent;
     border: none;
     cursor: pointer;
-    opacity: 0; /* Приховано за замовчуванням */
-    transition: all 0.2s ease;
-    font-size: 0.85rem;
-    padding: 4px;
-    border-radius: 4px;
+    padding: 6px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
+    transition: all 0.2s;
 }
 
-/* Показуємо кошик при наведенні на рядок */
-.listItem:hover .deleteIconBtn {
-    opacity: 0.5;
-}
+.mapIconBtn { color: #3b82f6; }
+.mapIconBtn:hover { background: #dbeafe; color: #1d4ed8; }
 
-/* Яскравіший кошик при наведенні на саму іконку */
-.deleteIconBtn:hover {
-    opacity: 1 !important;
-    background: #fee2e2;
-    color: #ef4444;
-    transform: scale(1.1);
-}
-
-.listItem:hover {
-    background: #f1f5f9;
-}
-
-.listItemSelected {
-    background: #eff6ff;
-    color: #1d4ed8;
-    font-weight: 600;
-}
+.deleteIconBtn { color: #ef4444; opacity: 0; }
+.deleteIconBtn:hover { background: #fee2e2; color: #b91c1c; }

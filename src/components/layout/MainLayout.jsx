@@ -1,5 +1,5 @@
-import React, { Suspense } from 'react';
-import { Outlet } from 'react-router-dom';
+import React, { Suspense, useEffect } from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '@ui/authForm/AuthContext';
 
@@ -16,6 +16,7 @@ import styles from './MainLayout.module.css';
 export default function MainLayout() {
   const { t } = useTranslation('rodo');
   const { session } = useAuth();
+  const { pathname } = useLocation();
 
   const { 
     showRodoModal, 
@@ -25,6 +26,11 @@ export default function MainLayout() {
   } = useUserConsent();
 
   useTimeTracker();
+
+
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [pathname]);
 
   const onAccept = async () => {
     try {

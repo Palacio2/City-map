@@ -48,8 +48,6 @@ export default function CountrySelect() {
         e.preventDefault();
         if (selected) navigate(`/city/${encodeURIComponent(selected)}`);
       }}
-      onBack={handleBack}
-      showBackButton
     />
   );
 }

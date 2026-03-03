@@ -1,16 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ManualSidebar from './ManualSidebar';
 import ManualEditor from './ManualEditor';
 import styles from './ManualTab.module.css';
 
 export default function ManualTab() {
-    const [selectedCountry, setSelectedCountry] = useState(null);
-    const [selectedCity, setSelectedCity] = useState(null);
+    const [selectedCountry, setSelectedCountry] = useState(() => {
+        const saved = localStorage.getItem('manual_country');
+        return saved ? JSON.parse(saved) : null;
+    });
+    const [selectedCity, setSelectedCity] = useState(() => {
+        const saved = localStorage.getItem('manual_city');
+        return saved ? JSON.parse(saved) : null;
+    });
     const [selectedDistrict, setSelectedDistrict] = useState(null);
+
+    useEffect(() => {
+        if (selectedCountry) localStorage.setItem('manual_country', JSON.stringify(selectedCountry));
+        else localStorage.removeItem('manual_country');
+    }, [selectedCountry]);
+
+    useEffect(() => {
+        if (selectedCity) localStorage.setItem('manual_city', JSON.stringify(selectedCity));
+        else localStorage.removeItem('manual_city');
+    }, [selectedCity]);
 
     return (
         <div className={styles.mainLayout}>
-            {/* Ліва колонка (Сайдбар) */}
             <div className={styles.leftPanel}>
                 <ManualSidebar 
                     selectedCountry={selectedCountry}
@@ -22,7 +37,6 @@ export default function ManualTab() {
                 />
             </div>
 
-            {/* Права колонка (Редактор) */}
             <div className={styles.rightPanel}>
                 <ManualEditor 
                     selectedCountry={selectedCountry}

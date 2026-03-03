@@ -5,7 +5,6 @@ export default function EntityModal({ isOpen, onClose, onSubmit, title, placehol
     const [inputValue, setInputValue] = useState('');
     const inputRef = useRef(null);
 
-    // Очищаємо поле та ставимо фокус при відкритті
     useEffect(() => {
         if (isOpen) {
             setInputValue('');

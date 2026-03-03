@@ -8,7 +8,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
         <div className={styles.overlay} onClick={onClose}>
             <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
                 <h3 className={styles.title}>{title}</h3>
-                <p style={{ margin: '0 0 20px 0', color: '#475569', fontSize: '0.95rem', lineHeight: '1.5' }}>
+                <p className={styles.messageText}>
                     {message}
                 </p>
                 <div className={styles.actions}>
@@ -18,8 +18,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
                     <button 
                         type="button" 
                         onClick={onConfirm} 
-                        className={`${styles.btn} ${styles.submitBtn}`} 
-                        style={{ background: '#ef4444', color: 'white' }} 
+                        className={`${styles.btn} ${styles.dangerBtn}`} 
                         disabled={isProcessing}
                     >
                         {isProcessing ? '⏳...' : '🗑️ Видалити'}

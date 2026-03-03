@@ -11,11 +11,16 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
   const [isTyping, setIsTyping] = useState(false);
   const [chatContext, setChatContext] = useState(null);
   
+  // Стейт для керування анімацією закриття
+  const [shouldRender, setShouldRender] = useState(false);
+  const [isClosing, setIsClosing] = useState(false);
+  
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
     if (isOpen) {
-      document.body.style.overflow = 'hidden';
+      setShouldRender(true);
+      setIsClosing(false);
       try {
         const savedPrefs = localStorage.getItem('geo_analyzer_ai_prefs');
         if (savedPrefs) {
@@ -24,11 +29,15 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
       } catch (err) {
         console.error("Failed to parse AI prefs", err);
       }
-    } else {
-      document.body.style.overflow = '';
+    } else if (shouldRender) {
+      setIsClosing(true);
+      const timer = setTimeout(() => {
+        setShouldRender(false);
+        setIsClosing(false);
+      }, 350); // Час має збігатися з часом CSS анімації
+      return () => clearTimeout(timer);
     }
-    return () => { document.body.style.overflow = ''; };
-  }, [isOpen]);
+  }, [isOpen, shouldRender]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -42,22 +51,23 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
     
     if (chatContext.purpose === 'investment') prompts.push(`Найкращі райони для інвестицій у м. ${city}`);
     if (chatContext.purpose === 'living') prompts.push(`Де краще жити у м. ${city}?`);
-    if (chatContext.budget) prompts.push(`Що можна купити за ${chatContext.budget}?`);
-    if (chatContext.propertyType === 'Будинок') prompts.push(`В яких районах найкраще купувати будинок?`);
+    if (chatContext.budget) prompts.push(`Райони, що підходять під бюджет ${chatContext.budget}`);
     if (chatContext.safetyImportance === 'Критично') prompts.push(`Назви найбезпечніші райони м. ${city}`);
     if (chatContext.ecologyImportance === 'Дуже важливо') prompts.push(`Райони з найкращим повітрям та парками`);
     if (chatContext.transport === 'public' && chatContext.maxCommute) prompts.push(`Райони з хорошим транспортом (до ${chatContext.maxCommute} хв)`);
-    if (chatContext.pets) prompts.push("Де найкраще жити з собакою?");
+    if (chatContext.pets) prompts.push("Райони з найбільшою кількістю парків");
+    if (chatContext.vibe === 'quiet') prompts.push(`Знайди найтихіші спальні райони м. ${city}`);
 
     if (prompts.length < 4) {
-      prompts.push(`Зроби загальний огляд ринку м. ${city}`);
-      prompts.push(`Які райони зараз найдешевші?`);
+      prompts.push(`Зроби загальний огляд районів м. ${city}`);
+      prompts.push(`Які райони зараз найдешевші для проживання?`);
     }
 
     return prompts.sort(() => 0.5 - Math.random()).slice(0, 4);
   }, [chatContext]);
 
-  if (!isOpen) return null;
+  // Замість isOpen тепер перевіряємо shouldRender
+  if (!shouldRender) return null;
 
   const handleSend = async (textOrEvent) => {
     if (typeof textOrEvent === 'object') textOrEvent.preventDefault();
@@ -113,8 +123,8 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
 
   const sidebarContent = (
     <>
-      <div className={styles.overlay} />
-      <div className={`${styles.sidebar} ${isOpen ? styles.open : ''}`}>
+      <div className={`${styles.overlay} ${isClosing ? styles.closing : ''}`} onClick={onClose} />
+      <div className={`${styles.sidebar} ${isClosing ? styles.closing : ''}`}>
         
         <div className={styles.header}>
           <div className={styles.headerInfo}>
@@ -122,7 +132,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
               <FaSketch />
             </div>
             <div>
-              <h3>AI Аналітик</h3>
+              <h3>AI Аналітик районів</h3>
               <span className={styles.status}>Онлайн</span>
             </div>
           </div>
@@ -146,18 +156,18 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
             <div className={styles.welcomeState}>
               <div className={styles.welcomeMessage}>
                 <FaSketch className={styles.welcomeIcon} />
-                <h4>Привіт! Я ваш AI-помічник.</h4>
+                <h4>Привіт! Я ваш AI-аналітик районів.</h4>
                 
                 {chatContext?.city ? (
                   <p>
                     Я налаштований на пошук у місті <strong>{chatContext.city}</strong>. 
-                    {chatContext.safetyImportance === 'Критично' && ' Буду звертати особливу увагу на рівень безпеки.'}
-                    {chatContext.ecologyImportance === 'Дуже важливо' && ' Врахую наявність парків та якість повітря.'}
+                    {chatContext.safetyImportance === 'Критично' && ' Буду звертати особливу увагу на рівень безпеки та злочинності.'}
+                    {chatContext.ecologyImportance === 'Дуже важливо' && ' Врахую наявність парків, якість повітря та озеленення.'}
                   </p>
                 ) : (
                   <div style={{ color: 'var(--warning-color)', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     <FaExclamationCircle />
-                    <span>Ви ще не налаштували параметри пошуку. Натисніть на шестірню зверху.</span>
+                    <span>Ви ще не налаштували параметри районів. Натисніть на шестірню зверху.</span>
                   </div>
                 )}
                 

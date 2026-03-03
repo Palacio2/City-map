@@ -19,6 +19,16 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
     const [updatingGroups, setUpdatingGroups] = useState({});
     const [isFullParsing, setIsFullParsing] = useState(false);
 
+    const updateFormDataWithDraft = (updater) => {
+        setFormData(prev => {
+            const nextState = typeof updater === 'function' ? updater(prev) : { ...prev, ...updater };
+            if (selectedDistrict?.id) {
+                localStorage.setItem(`draft_district_${selectedDistrict.id}`, JSON.stringify(nextState));
+            }
+            return nextState;
+        });
+    };
+
     useEffect(() => {
         if (selectedDistrict) loadDistrictData(selectedDistrict.id);
         else { setFormData({}); setInitialData({}); setPhotoPreview(null); setPhotoFile(null); }
@@ -30,14 +40,6 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
         };
     }, [photoPreview]);
 
-    useEffect(() => {
-        if (!selectedDistrict || Object.keys(formData).length === 0) return;
-        const timeoutId = setTimeout(() => {
-            localStorage.setItem(`draft_district_${selectedDistrict.id}`, JSON.stringify(formData));
-        }, 1000);
-        return () => clearTimeout(timeoutId);
-    }, [formData, selectedDistrict]);
-
     const loadDistrictData = async (districtId) => {
         try {
             const fetchedData = await api.geo.getDistrictData(districtId);
@@ -46,9 +48,20 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
 
             const savedDraft = localStorage.getItem(`draft_district_${districtId}`);
             if (savedDraft) {
-                if (window.confirm("У вас є незбережені дані для цього району з попередньої сесії. Бажаєте їх відновити?")) {
-                    setFormData(JSON.parse(savedDraft));
-                } else {
+                try {
+                    const parsedDraft = JSON.parse(savedDraft);
+                    if (JSON.stringify(parsedDraft) !== JSON.stringify(combinedData)) {
+                        if (window.confirm("У вас є незбережені зміни для цього району. Бажаєте їх відновити?")) {
+                            setFormData(parsedDraft);
+                        } else {
+                            localStorage.removeItem(`draft_district_${districtId}`);
+                            setFormData(combinedData);
+                        }
+                    } else {
+                        localStorage.removeItem(`draft_district_${districtId}`);
+                        setFormData(combinedData);
+                    }
+                } catch (err) {
                     localStorage.removeItem(`draft_district_${districtId}`);
                     setFormData(combinedData);
                 }
@@ -125,13 +138,13 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
     };
 
     const handleFieldChange = (key, value, type) => {
-        if (type === 'boolean') return setFormData(prev => ({ ...prev, [key]: value }));
+        if (type === 'boolean') return updateFormDataWithDraft(prev => ({ ...prev, [key]: value }));
         let parsedValue = value;
         if (type !== 'text' && value !== '') {
             parsedValue = type === 'float' ? parseFloat(value) : parseInt(value, 10);
             if (isNaN(parsedValue)) parsedValue = 0;
         }
-        setFormData(prev => ({ ...prev, [key]: parsedValue }));
+        updateFormDataWithDraft(prev => ({ ...prev, [key]: parsedValue }));
     };
 
     const handleSingleOtodomUpdate = async () => {
@@ -143,7 +156,7 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
         setUpdatingOtodom(true);
         try {
             const data = await api.parser.singleOtodom(url);
-            setFormData(prev => ({
+            updateFormDataWithDraft(prev => ({
                 ...prev,
                 average_property_price: data.sale?.avgPrice || prev.average_property_price,
                 average_sale_price_sqm: data.sale?.avgSqm || prev.average_sale_price_sqm,
@@ -158,7 +171,7 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
         setUpdatingGUS(true);
         try {
             const data = await api.parser.singleGus(selectedCity.name);
-            setFormData(prev => ({
+            updateFormDataWithDraft(prev => ({
                 ...prev,
                 average_salary: data.salary || prev.average_salary,
                 unemployment_rate: data.unemployment || prev.unemployment_rate
@@ -173,7 +186,7 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
         try {
             const bbox = formData.geojson.bbox;
             const data = await api.parser.singleWaqi((bbox[1] + bbox[3]) / 2, (bbox[0] + bbox[2]) / 2);
-            setFormData(prev => ({ ...prev, air_quality: data.aqi || prev.air_quality }));
+            updateFormDataWithDraft(prev => ({ ...prev, air_quality: data.aqi || prev.air_quality }));
         } catch (e) {} 
         finally { setUpdatingEco(false); }
     };
@@ -190,9 +203,17 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
             
             const updatedCounts = {};
             metricsList.forEach(m => { if (data[m] !== undefined) updatedCounts[m] = data[m]; });
-            const oldManualPois = (formData.poi_data || []).filter(poi => poi.source === 'manual' || !metricsList.includes(poi.type));
             
-            setFormData(prev => ({ ...prev, ...updatedCounts, poi_data: [...oldManualPois, ...(data.parsed_pois || [])] }));
+            const oldManualPois = (formData.poi_data || []).filter(poi => {
+                const source = Array.isArray(poi) ? (poi[3] || 'parser') : (poi.source || 'parser');
+                let type = Array.isArray(poi) ? poi[2] : poi.type;
+                if (type && !type.endsWith('_count')) type += '_count';
+                return source === 'manual' || !metricsList.includes(type);
+            });
+            
+            const newPois = data.parsed_pois || data.poi_data || [];
+            
+            updateFormDataWithDraft(prev => ({ ...prev, ...updatedCounts, poi_data: [...oldManualPois, ...newPois] }));
         } catch (e) {} 
         finally { setUpdatingGroups(prev => ({ ...prev, [groupId]: false })); }
     };
@@ -215,12 +236,16 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
             const osmData = await api.parser.singleOsm(selectedCity.name, selectedDistrict.name, pbfFile, allOsmMetrics).catch(() => ({}));
 
             const updatedCounts = {};
-            if (osmData.parsed_pois) {
+            if (osmData.parsed_pois || osmData.poi_data) {
                 allOsmMetrics.forEach(m => { if (osmData[m] !== undefined) updatedCounts[m] = osmData[m]; });
             }
-            const oldManualPois = (formData.poi_data || []).filter(poi => poi.source === 'manual');
+            
+            const oldManualPois = (formData.poi_data || []).filter(poi => {
+                const source = Array.isArray(poi) ? (poi[3] || 'parser') : (poi.source || 'parser');
+                return source === 'manual';
+            });
 
-            setFormData(prev => ({
+            updateFormDataWithDraft(prev => ({
                 ...prev,
                 average_salary: gusData.salary || prev.average_salary,
                 unemployment_rate: gusData.unemployment || prev.unemployment_rate,
@@ -229,18 +254,20 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
                 average_sale_price_sqm: otodomData.sale?.avgSqm || prev.average_sale_price_sqm,
                 average_rent_price: otodomData.rent?.avgPrice || prev.average_rent_price,
                 ...updatedCounts,
-                poi_data: [...oldManualPois, ...(osmData.parsed_pois || [])]
+                poi_data: [...oldManualPois, ...(osmData.parsed_pois || osmData.poi_data || [])]
             }));
         } catch (e) {} 
         finally { setIsFullParsing(false); }
     };
 
     const handleSaveMapData = (newManualPois, updatedCounts) => {
-        const freshFormData = { ...formData, poi_data: newManualPois, ...updatedCounts };
-        METRIC_GROUPS.flatMap(g => g.fields).forEach(f => {
-            if (f.type === 'number' && f.key.includes('_count') && !updatedCounts[f.key]) freshFormData[f.key] = 0;
+        updateFormDataWithDraft(prev => {
+            const freshFormData = { ...prev, poi_data: newManualPois, ...updatedCounts };
+            METRIC_GROUPS.flatMap(g => g.fields).forEach(f => {
+                if (f.type === 'number' && f.key.includes('_count') && !updatedCounts[f.key]) freshFormData[f.key] = 0;
+            });
+            return freshFormData;
         });
-        setFormData(freshFormData);
     };
 
     const handleCancel = () => {

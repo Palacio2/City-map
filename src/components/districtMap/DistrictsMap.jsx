@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './DistrictsMap.module.css';
@@ -89,6 +89,7 @@ export default function DistrictsMap({
   
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 15;
+  const mapContainerRef = useRef(null);
 
   const paginatedDistricts = useMemo(() => {
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -101,8 +102,16 @@ export default function DistrictsMap({
   const shownCount = districts.length;
   const realTotal = totalCount || shownCount;
 
+  useEffect(() => {
+    if (currentPage > 1 && mapContainerRef.current) {
+      const yOffset = -80; 
+      const y = mapContainerRef.current.getBoundingClientRect().top + window.pageYOffset + yOffset;
+      window.scrollTo({ top: y, behavior: 'smooth' });
+    }
+  }, [currentPage]);
+
   return (
-    <div className={styles.mapContainer}>
+    <div className={styles.mapContainer} ref={mapContainerRef}>
       <div className={styles.mapHeader}>
         <h1 className={styles.title}>
           {decodeURIComponent(city)}, {decodeURIComponent(country)}

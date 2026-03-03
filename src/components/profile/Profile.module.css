@@ -112,12 +112,33 @@
     opacity: 0.8;
 }
 
-/* --- Buttons (Profile Actions) --- */
-.profileActionsGrid {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Мобільний: на всю ширину */
-    gap: 0.75rem;
-    width: 100%;
+.profileActions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.profileActionButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 0.4rem 0.85rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: transparent;
+    border: 1px solid var(--border-color);
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.profileActionButton:hover {
+    color: var(--text-main);
+    border-color: var(--text-main);
+    background: var(--bg-hover);
+    transform: translateY(-1px);
 }
 
 .baseLinkButton {
@@ -142,26 +163,13 @@
   text-overflow: ellipsis;
 }
 
-
-.actionButton, .primaryButton {
+.primaryButton {
   background: var(--text-main);
   color: var(--bg-surface);
   border: 1px solid var(--text-main);
 }
 
-.actionButtonSecondary {
-  background: transparent;
-  border: 1px solid var(--border-color);
-  color: var(--text-main);
-}
-
-.actionButtonSecondary:hover {
-  border-color: var(--accent-color);
-  color: var(--accent-color);
-  background: rgba(197, 164, 126, 0.05);
-}
-
-.actionButton:hover, .primaryButton:hover {
+.primaryButton:hover {
   background: var(--accent-color);
   border-color: var(--accent-color);
   color: #fff;
@@ -169,7 +177,6 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* --- Subscription Card --- */
 .subscriptionCard {
   background: var(--bg-body);
   border-radius: var(--radius-md);
@@ -294,10 +301,8 @@
     width: 100%;
 }
 
-/* --- Quick Actions Grid --- */
 .quickActions {
   display: grid;
-  /* AUTO-FIT: Ключова зміна. Якщо елементів мало, вони розтягуються на всю ширину */
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 0.75rem;
 }
@@ -362,15 +367,15 @@
         flex-direction: row;
         justify-content: space-between;
     }
-    
-    /* ПК: Кнопки компактні */
-    .profileActionsGrid {
-        display: flex;
-        width: auto;
-        gap: 1rem;
+
+    .profileActions {
+        margin-top: 0;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-end;
+        gap: 0.4rem;
     }
     
-    /* ПК: Кнопки не розтягуються на всю ширину, а займають місце за змістом */
     .baseLinkButton {
         padding: 0.75rem 1.5rem;
         font-size: 0.9rem;
@@ -391,7 +396,6 @@
     }
 
     .quickActions {
-        /* ПК: те саме правило auto-fit гарантує розтягування */
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         gap: 1.5rem;
     }

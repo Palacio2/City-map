@@ -1,3 +1,4 @@
+// ParserTab.jsx
 import React, { useState, useEffect } from 'react';
 import { useParserLogic } from '../../hooks/useParserLogic';
 import ParserSettings from './ParserSettings';
@@ -124,7 +125,9 @@ export default function ParserTab() {
                         selectedIds={selectedDistrictIds} onToggleSelect={toggleDistrictSelection} onSelectAll={toggleSelectAll}
                         onScan={() => logic.scanOSM(city?.name)} onCreate={() => logic.createDistrictsInDb(logic.foundDistrictsOSM, city.id)}
                         onRemoveFromFound={(d) => logic.setFoundDistrictsOSM(prev => prev.filter(item => item !== d))}
-                        onDeleteDbDistrict={(id) => logic.deleteDbDistrict(id, city.id)} loading={logic.loading}
+                        onDeleteDbDistrict={(id) => logic.deleteDbDistrict(id, city.id)} 
+                        onImportGeoJson={(file) => logic.importBoundariesGeoJSON(file, city.id)}
+                        loading={logic.loading}
                     />
                 </div>
             )}

@@ -1,3 +1,4 @@
+// mapIcons.js
 import L from 'leaflet';
 import { METRIC_GROUPS } from '../../config/metricsConfig';
 
@@ -31,41 +32,38 @@ export const getLabelForKey = (key) => {
 export const createEmojiIcon = (type, source) => {
     const emoji = ICON_MAP[type] || ICON_MAP.default;
     
-    // Ручні точки виділяємо яскравіше, ніж точки від парсера
     const isManual = source === 'manual';
-    const bg = isManual ? '#3b82f6' : '#ffffff';
-    const border = isManual ? '#ffffff' : '#cbd5e1';
-    const shadow = isManual ? '0 4px 8px rgba(59, 130, 246, 0.5)' : '0 2px 4px rgba(0,0,0,0.2)';
-    const scale = isManual ? 'scale(1.1)' : 'scale(1)';
+    const bg = isManual ? '#eff6ff' : '#ffffff';
+    const border = isManual ? '#3b82f6' : '#cbd5e1';
+    const shadow = isManual ? '0 8px 16px rgba(59, 130, 246, 0.25)' : '0 4px 6px rgba(0,0,0,0.08)';
     const zIndex = isManual ? '1000' : '500';
 
     const htmlString = `
         <div style="
-            font-size: 16px; 
+            font-size: 18px; 
             background: ${bg}; 
-            border: 2px solid ${border}; 
+            border: 2.5px solid ${border}; 
             border-radius: 50%; 
-            width: 32px; 
-            height: 32px; 
+            width: 36px; 
+            height: 36px; 
             display: flex; 
             align-items: center; 
             justify-content: center; 
             box-shadow: ${shadow}; 
-            cursor: pointer; 
-            transform: ${scale};
-            transition: all 0.2s ease;
+            cursor: ${isManual ? 'grab' : 'pointer'}; 
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative;
             z-index: ${zIndex};
-        ">
+        " onmouseover="this.style.transform='scale(1.15) translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='${shadow}';">
             ${emoji}
         </div>
     `;
 
     return L.divIcon({
         html: htmlString,
-        className: 'custom-poi-icon', // Can be used for global hover effects if needed
-        iconSize: [32, 32],
-        iconAnchor: [16, 16],
-        tooltipAnchor: [0, -16]
+        className: '', 
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
+        tooltipAnchor: [0, -20]
     });
 };

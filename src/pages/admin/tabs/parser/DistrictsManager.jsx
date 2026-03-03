@@ -1,3 +1,4 @@
+// DistrictsManager.jsx
 import React from 'react';
 import styles from './DistrictsManager.module.css';
 
@@ -5,11 +6,10 @@ export default function DistrictsManager({
     foundDistricts, dbDistricts, 
     selectedIds, onToggleSelect, onSelectAll, 
     onScan, onCreate, onRemoveFromFound, onDeleteDbDistrict, 
-    loading 
+    onImportGeoJson, loading 
 }) {
     return (
         <div className={styles.districtsSplit}>
-            {/* Ліва колонка: OSM */}
             <div className={styles.districtsList}>
                 <div className={styles.listHeader}>
                     <h4>🔍 Знайдено в OSM <span>({foundDistricts.length})</span></h4>
@@ -33,11 +33,25 @@ export default function DistrictsManager({
                 )}
             </div>
 
-            {/* Права колонка: База Даних */}
             <div className={styles.districtsList}>
                 <div className={styles.listHeader}>
                     <h4>🗄️ Райони в базі <span>({dbDistricts.length})</span></h4>
                     <div className={styles.headerActions}>
+                        <input 
+                            type="file" 
+                            accept=".geojson,application/geo+json" 
+                            style={{ display: 'none' }} 
+                            id="geojson-upload" 
+                            onChange={(e) => {
+                                if (e.target.files[0]) {
+                                    onImportGeoJson(e.target.files[0]);
+                                    e.target.value = null;
+                                }
+                            }}
+                        />
+                        <button onClick={() => document.getElementById('geojson-upload').click()} disabled={loading} className={styles.textBtn}>
+                            🗺️ Імпорт GeoJSON
+                        </button>
                         <button onClick={() => onSelectAll(true)} className={styles.textBtn}>Всі</button>
                         <button onClick={() => onSelectAll(false)} className={styles.textBtn}>Зняти</button>
                     </div>

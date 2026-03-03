@@ -12,6 +12,7 @@ const requestLocal = async (endpoint, method = 'GET', body = null, isText = fals
             'Content-Type': 'application/json',
             'Cache-Control': 'no-store, no-cache',
             'Pragma': 'no-cache',
+            'ngrok-skip-browser-warning': 'true',
             ...(token && { 'Authorization': `Bearer ${token}` })
         } 
     };

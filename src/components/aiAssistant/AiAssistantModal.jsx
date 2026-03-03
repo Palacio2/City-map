@@ -6,19 +6,21 @@ import styles from './AiAssistantModal.module.css';
 const AI_PREFS_KEY = 'geo_analyzer_ai_prefs';
 
 const AMENITIES_OPTIONS = [
-  '🌳 Парки та природа', '🎓 Школи та садки', '🛒 Супермаркети', 
-  '🏥 Медицина', '🚇 Метро/Трамвай', '☕ Кав\'ярні/Ресторани', 
-  '🎉 Нічне життя', '💪 Спортзали', '🚗 Зручний паркінг',
-  '🏢 Коворкінги', '🐾 Майданчики для собак', '🚴 Велодоріжки'
+  '🛒 Супермаркети та ринки', '🛍 Торгові центри', 
+  '💪 Спортзали та басейни', '☕ Кав\'ярні та ресторани', 
+  '🍿 Кінотеатри та театри', '🏥 Медичні клініки/лікарні', 
+  '🎓 Школи та садки', '🎓 Університети', 
+  '🏢 Коворкінги', '🚴 Велодоріжки', 
+  '⚡ Зарядки для електромобілів', '🐾 Майданчики для собак',
+  '🏦 Банки та банкомати', '📦 Поштомати / Відділення'
 ];
 
 const DEFAULT_DATA = {
   city: '', purpose: 'living', budget: '',
-  areaMin: '', areaMax: '', marketType: 'any',
-  propertyType: 'apartment', rooms: 'any', 
-  household: 'single', pets: false, transport: 'public', maxCommute: '30',
+  vibe: 'any', populationDensity: 'medium',
+  transport: 'public', transportFrequency: 'medium', microMobility: false,
   safetyImportance: 'high', ecologyImportance: 'medium',
-  amenities: [], dealbreakers: '', priorities: ''
+  amenities: [], dealbreakers: ''
 };
 
 export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
@@ -87,36 +89,29 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
               </select>
             </div>
             <div className={styles.inputGroup}>
-              <label>Бюджет (або ціна оренди)</label>
-              <input type="text" name="budget" placeholder="Напр.: 500 000 PLN або 3000 PLN/міс" value={formData.budget} onChange={handleChange} />
+              <label>Орієнтовний бюджет району (ціна купівлі або оренди)</label>
+              <input type="text" name="budget" placeholder="Напр.: 5000 PLN/міс або Середній сегмент" value={formData.budget} onChange={handleChange} />
             </div>
           </div>
         );
       case 2:
         return (
           <div className={styles.stepContent}>
-            <h3>Крок 2: Нерухомість</h3>
+            <h3>Крок 2: Атмосфера та Соціум</h3>
             <div className={styles.inputGroup}>
-              <label>Тип нерухомості</label>
+              <label>Яка атмосфера району вам підходить?</label>
               <div className={styles.chipsRow}>
-                {['Квартира', 'Будинок', 'Кімната', 'Комерція'].map(pt => (
-                  <button key={pt} type="button" className={`${styles.chip} ${formData.propertyType === pt ? styles.activeChip : ''}`} onClick={() => handleChipSelect('propertyType', pt)}>{pt}</button>
+                {[{id: 'active', label: 'Активний центр'}, {id: 'quiet', label: 'Тихий спальний'}, {id: 'nature', label: 'Ближче до природи'}, {id: 'any', label: 'Не має значення'}].map(v => (
+                  <button key={v.id} type="button" className={`${styles.chip} ${formData.vibe === v.id ? styles.activeChip : ''}`} onClick={() => handleChipSelect('vibe', v.id)}>{v.label}</button>
                 ))}
               </div>
             </div>
-            <div className={styles.rowInputs}>
-              <div className={styles.inputGroup}>
-                <label>Площа від (м²)</label>
-                <input type="number" name="areaMin" placeholder="Мін." value={formData.areaMin} onChange={handleChange} />
-              </div>
-              <div className={styles.inputGroup}>
-                <label>Кімнат</label>
-                <select name="rooms" value={formData.rooms} onChange={handleChange}>
-                  <option value="any">Будь-яка</option>
-                  <option value="1">1 (Студія)</option>
-                  <option value="2">2 кімнати</option>
-                  <option value="3+">3 і більше</option>
-                </select>
+            <div className={styles.inputGroup}>
+              <label>Щільність населення (забудова)</label>
+              <div className={styles.chipsRow}>
+                {[{id: 'low', label: 'Низька (приватні будинки, таунхауси)'}, {id: 'medium', label: 'Середня'}, {id: 'high', label: 'Висока (багатоповерхівки)'}].map(d => (
+                  <button key={d.id} type="button" className={`${styles.chip} ${formData.populationDensity === d.id ? styles.activeChip : ''}`} onClick={() => handleChipSelect('populationDensity', d.id)}>{d.label}</button>
+                ))}
               </div>
             </div>
           </div>
@@ -124,41 +119,37 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
       case 3:
         return (
           <div className={styles.stepContent}>
-            <h3>Крок 3: Стиль життя</h3>
-            <div className={styles.inputGroup}>
-              <label>Хто буде проживати?</label>
-              <div className={styles.chipsRow}>
-                {['Один / Одна', 'Пара', 'Сім\'я з дітьми', 'З друзями'].map(ht => (
-                  <button key={ht} type="button" className={`${styles.chip} ${formData.household === ht ? styles.activeChip : ''}`} onClick={() => handleChipSelect('household', ht)}>{ht}</button>
-                ))}
-              </div>
-            </div>
+            <h3>Крок 3: Мобільність та Транспорт</h3>
             <div className={styles.rowInputs}>
               <div className={styles.inputGroup}>
-                <label>Транспорт</label>
+                <label>Основний транспорт</label>
                 <select name="transport" value={formData.transport} onChange={handleChange}>
                   <option value="public">Громадський</option>
                   <option value="car">Власне авто</option>
-                  <option value="walking">Пішки / Вело</option>
+                  <option value="walking">Пішки</option>
                 </select>
               </div>
               <div className={styles.inputGroup}>
-                <label>Макс. час на дорогу (хв)</label>
-                <input type="number" name="maxCommute" placeholder="Напр. 30" value={formData.maxCommute} onChange={handleChange} />
+                <label>Бажана частота курсування</label>
+                <select name="transportFrequency" value={formData.transportFrequency} onChange={handleChange}>
+                  <option value="high">Дуже часто (кожні 5-10 хв)</option>
+                  <option value="medium">Середньо (15-20 хв)</option>
+                  <option value="low">Не принципово</option>
+                </select>
               </div>
             </div>
             <label className={styles.checkboxLabel}>
-              <input type="checkbox" name="pets" checked={formData.pets} onChange={handleChange} />
-              <span>Маю домашніх тварин (собака/кіт)</span>
+              <input type="checkbox" name="microMobility" checked={formData.microMobility} onChange={handleChange} />
+              <span>Користуюсь мікромобільністю (електросамокати, велосипеди)</span>
             </label>
           </div>
         );
       case 4:
         return (
           <div className={styles.stepContent}>
-            <h3>Крок 4: Середовище</h3>
+            <h3>Крок 4: Середовище та Безпека</h3>
             <div className={styles.inputGroup}>
-              <label>Наскільки важлива безпека (рівень злочинності)?</label>
+              <label>Наскільки важлива безпека (камери, патрулі, освітлення)?</label>
               <div className={styles.chipsRow}>
                 {['Критично', 'Важливо', 'Не в пріоритеті'].map(s => (
                   <button key={s} type="button" className={`${styles.chip} ${formData.safetyImportance === s ? styles.activeChip : ''}`} onClick={() => handleChipSelect('safetyImportance', s)}>{s}</button>
@@ -166,7 +157,7 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
               </div>
             </div>
             <div className={styles.inputGroup}>
-              <label>Екологія (якість повітря, шум)</label>
+              <label>Екологія (якість повітря, парки, озеленення)</label>
               <div className={styles.chipsRow}>
                 {['Дуже важливо', 'Бажано', 'Все одно'].map(e => (
                   <button key={e} type="button" className={`${styles.chip} ${formData.ecologyImportance === e ? styles.activeChip : ''}`} onClick={() => handleChipSelect('ecologyImportance', e)}>{e}</button>
@@ -178,9 +169,9 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
       case 5:
         return (
           <div className={styles.stepContent}>
-            <h3>Крок 5: Інфраструктура та Деталі</h3>
+            <h3>Крок 5: Інфраструктура району</h3>
             <div className={styles.inputGroup}>
-              <label>Що обов'язково має бути поруч?</label>
+              <label>Що обов'язково має бути в районі?</label>
               <div className={styles.chipsGrid}>
                 {AMENITIES_OPTIONS.map(opt => (
                   <button key={opt} type="button" className={`${styles.chip} ${(formData.amenities || []).includes(opt) ? styles.activeChip : ''}`} onClick={() => toggleMultiSelect('amenities', opt)}>{opt}</button>
@@ -188,8 +179,8 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
               </div>
             </div>
             <div className={styles.inputGroup}>
-              <label>Ваші "Табу" (Dealbreakers)</label>
-              <input type="text" name="dealbreakers" placeholder="Без галасливих вулиць, не 1 поверх..." value={formData.dealbreakers} onChange={handleChange} />
+              <label>Ваші "Табу" щодо району</label>
+              <input type="text" name="dealbreakers" placeholder="Напр.: високий рівень безробіття, індустріальні зони..." value={formData.dealbreakers} onChange={handleChange} />
             </div>
           </div>
         );
@@ -205,13 +196,13 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
           <div className={styles.successState}>
             <FaCheckCircle className={styles.successIcon} />
             <h2>Налаштування збережено!</h2>
-            <p>Тепер AI знає ваші вподобання. Запускаємо чат...</p>
+            <p>Тепер AI знає, які райони вам підходять. Запускаємо чат...</p>
           </div>
         ) : (
           <div className={styles.wizardContainer}>
             <div className={styles.header}>
               <div className={styles.iconWrapper}><FaSketch /></div>
-              <h2>Персоналізація AI</h2>
+              <h2>Критерії пошуку районів</h2>
               <div className={styles.progressContainer}>
                 {[1, 2, 3, 4, 5].map(num => <div key={num} className={`${styles.progressDot} ${step >= num ? styles.activeDot : ''}`} />)}
               </div>

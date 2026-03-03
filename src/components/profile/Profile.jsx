@@ -211,11 +211,11 @@ export default function Profile() {
                 </div>
             </div>
 
-            <div className={styles.profileActionsGrid}>
-              <Link to="/profile/edit" className={`${styles.baseLinkButton} ${styles.actionButton}`}>
+            <div className={styles.profileActions}>
+              <Link to="/profile/edit" className={styles.profileActionButton}>
                 <FaEdit /> <span>{t('actions.edit')}</span>
               </Link>
-              <Link to="/profile/password" className={`${styles.baseLinkButton} ${styles.actionButtonSecondary}`}>
+              <Link to="/profile/password" className={styles.profileActionButton}>
                 <FaKey /> <span>{t('actions.change_password')}</span>
               </Link>
             </div>

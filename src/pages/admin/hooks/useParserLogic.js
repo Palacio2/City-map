@@ -1,5 +1,7 @@
+// useParserLogic.js
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../../../services/api';
+import { supabase } from '@supabaseClient';
 
 const BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
@@ -142,6 +144,77 @@ export const useParserLogic = () => {
         } catch (e) { setLoading(false); } 
     };
 
+  const importBoundariesGeoJSON = async (file, cityId) => {
+        setLoading(true);
+        clearLogs();
+        try {
+            const text = await file.text();
+            const geoJsonData = JSON.parse(text);
+
+            if (!geoJsonData.features) {
+                throw new Error('Неправильний формат GeoJSON');
+            }
+
+            let currentDistricts = await api.geo.getDistricts(cityId);
+            if (!currentDistricts) currentDistricts = [];
+
+            let successCount = 0;
+            let currentLogs = [];
+
+            const addLog = (msg) => {
+                currentLogs.unshift({
+                    id: Date.now() + Math.random(),
+                    time: new Date().toLocaleTimeString('uk-UA', { hour12: false }),
+                    msg,
+                    type: 'info'
+                });
+                setLogs([...currentLogs]);
+            };
+
+            for (const feature of geoJsonData.features) {
+                const osmName = feature.properties?.name;
+                if (!osmName) continue;
+
+                if (osmName.toLowerCase().includes('parafia')) {
+                    addLog(`⏭️ Пропущено (парафія): ${osmName}`);
+                    continue;
+                }
+
+                let dbDistrict = currentDistricts.find(d =>
+                    d.name.trim().toLowerCase() === osmName.trim().toLowerCase()
+                );
+
+                if (!dbDistrict) {
+                    addLog(`✨ Створюю новий район: ${osmName}`);
+                    dbDistrict = await api.geo.createDistrict(osmName, cityId);
+                    if (dbDistrict) currentDistricts.push(dbDistrict);
+                }
+
+                if (dbDistrict) {
+                    try {
+                        await api.geo.saveParsedResults([{
+                            district_id: dbDistrict.id,
+                            district_name: dbDistrict.name,
+                            geojson: feature
+                        }]);
+                        successCount++;
+                        addLog(`✅ Збережено межі для: ${osmName}`);
+                    } catch (err) {
+                        addLog(`❌ Помилка збереження ${osmName}: ${err.message}`);
+                    }
+                }
+            }
+
+            addLog(`🎉 Імпорт завершено. Успішно опрацьовано: ${successCount} районів.`);
+            await fetchDbDistricts(cityId);
+
+        } catch (e) {
+            setLogs([{ id: Date.now(), time: new Date().toLocaleTimeString('uk-UA', { hour12: false }), msg: `❌ ПОМИЛКА: ${e.message}`, type: 'error' }]);
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const fetchPendingResults = async () => {
         try {
             const data = await api.parser.getPendingResults();
@@ -190,7 +263,7 @@ export const useParserLogic = () => {
         foundDistrictsOSM, setFoundDistrictsOSM,
         dbDistricts, fetchDbDistricts, deleteDbDistrict,
         createDistrictsInDb, scanOSM,
-        runOfflineOsmParser, fetchPendingResults,
+        runOfflineOsmParser, fetchPendingResults, importBoundariesGeoJSON,
         parsedData, setParsedData, removeParsedItem,
         showResults, clearAllData, clearResultsSilent
     };
