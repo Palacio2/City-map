@@ -1,17 +1,18 @@
 .consoleSection {
-    background: #0f172a;
-    border-radius: 12px;
-    padding: 24px;
-    color: #f8fafc;
-    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
-    border: 1px solid #1e293b;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
 }
 
 .consoleTopRow {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
     flex-wrap: wrap;
     gap: 16px;
 }
@@ -28,48 +29,58 @@
     gap: 12px;
 }
 
-.consoleTitle {
-    margin: 0;
-    color: #f8fafc;
-    font-size: 1.25rem;
-    font-weight: 600;
+.stepIcon {
+    width: 32px;
+    height: 32px;
+    background: #eff6ff;
+    color: #3b82f6;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 800;
+    font-size: 1.1rem;
 }
 
-.stepIcon {
-    font-size: 1.5rem;
+.consoleTitle {
+    margin: 0;
+    font-size: 1.15rem;
+    color: #0f172a;
+    font-weight: 700;
 }
 
 .liveIndicator {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #38bdf8;
+    color: #2563eb;
     font-weight: 600;
     font-size: 0.85rem;
-    background: rgba(56, 189, 248, 0.1);
+    background: #eff6ff;
     padding: 6px 14px;
     border-radius: 30px;
-    border: 1px solid rgba(56, 189, 248, 0.2);
+    border: 1px solid #bfdbfe;
     animation: pulseBg 2s infinite;
 }
 
 @keyframes pulseBg {
-    0% { background: rgba(56, 189, 248, 0.1); }
-    50% { background: rgba(56, 189, 248, 0.2); }
-    100% { background: rgba(56, 189, 248, 0.1); }
+    0% { background: #eff6ff; }
+    50% { background: #dbeafe; }
+    100% { background: #eff6ff; }
 }
 
-.liveSpinner {
-    width: 14px;
-    height: 14px;
-    border: 2px solid rgba(56, 189, 248, 0.3);
-    border-top: 2px solid #38bdf8;
+.pulseDot {
+    width: 8px;
+    height: 8px;
+    background-color: #2563eb;
     border-radius: 50%;
-    animation: spinLoader 1s linear infinite;
+    animation: pulseDotAnim 1.5s infinite ease-in-out;
 }
 
-@keyframes spinLoader {
-    to { transform: rotate(360deg); }
+@keyframes pulseDotAnim {
+    0% { transform: scale(0.8); opacity: 0.5; }
+    50% { transform: scale(1.2); opacity: 1; }
+    100% { transform: scale(0.8); opacity: 0.5; }
 }
 
 .consoleActions {
@@ -78,91 +89,113 @@
 }
 
 .btn {
-    padding: 10px 20px;
-    border-radius: 8px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 10px;
     font-weight: 600;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     border: none;
-    font-size: 0.9rem;
 }
 
 .btn:disabled {
-    opacity: 0.5;
+    opacity: 0.6;
     cursor: not-allowed;
     transform: none !important;
 }
 
 .logBtn {
-    background: #1e293b;
-    color: #cbd5e1;
-    border: 1px solid #334155;
+    background: #f1f5f9;
+    color: #475569;
 }
 
-.logBtn:hover {
-    background: #334155;
-    color: #fff;
+.logBtn:hover:not(:disabled) {
+    background: #e2e8f0;
+    color: #0f172a;
 }
 
 .accentBtn {
-    background: #4f46e5;
-    color: #fff;
-    padding: 10px 24px;
-    box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+    background: #0f172a;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
 }
 
 .accentBtn:hover:not(:disabled) {
-    background: #4338ca;
-    transform: translateY(-1px);
+    background: #1e293b;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
+}
+
+.btnParsing {
+    background: #3b82f6 !important;
+    color: white !important;
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
+    animation: pulseBlue 2s infinite;
+}
+
+@keyframes pulseBlue {
+    0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
+    100% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+}
+
+.spinIcon {
+    animation: spin 1.5s linear infinite;
+}
+
+@keyframes spin {
+    100% { transform: rotate(360deg); }
 }
 
 .customConsole {
-    background: #020617;
-    border-radius: 8px;
+    background: #1e293b;
+    color: #cbd5e1;
     padding: 20px;
-    height: 380px;
-    overflow-y: auto;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
     font-family: 'Fira Code', 'Consolas', monospace;
-    border: 1px solid #1e293b;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
-    transition: box-shadow 0.3s ease;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    height: 400px;
+    overflow-y: auto;
+    transition: all 0.3s ease;
+    border-top: 1px solid #334155;
 }
 
 .liveConsole {
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 0 15px rgba(56, 189, 248, 0.15);
-    border-color: #0ea5e9;
+    background: #0f172a;
+    box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.05);
 }
 
-/* Custom Scrollbar for Terminal */
 .customConsole::-webkit-scrollbar { width: 8px; }
-.customConsole::-webkit-scrollbar-track { background: #0f172a; border-radius: 4px; }
-.customConsole::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
-.customConsole::-webkit-scrollbar-thumb:hover { background: #475569; }
+.customConsole::-webkit-scrollbar-track { background: #0f172a; border-radius: 8px; }
+.customConsole::-webkit-scrollbar-thumb { background: #475569; border-radius: 8px; }
+.customConsole::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
 .logLine {
-    font-size: 0.85rem;
-    line-height: 1.6;
     margin-bottom: 6px;
-    word-break: break-all;
-    color: #cbd5e1;
+    word-break: break-word;
 }
 
 .logTime {
-    color: #64748b;
+    color: #94a3b8;
     margin-right: 12px;
     user-select: none;
 }
 
-.logError { color: #f87171; }
-.logSuccess { color: #34d399; }
+.logError { color: #f87171; font-weight: 600; }
+.logSuccess { color: #34d399; font-weight: 600; }
 
 .placeholder {
     color: #475569;
     font-style: italic;
-    animation: blinkCursor 1s infinite;
+    animation: blinkCursor 1s step-end infinite;
 }
 
 @keyframes blinkCursor {
-    0%, 100% { opacity: 1; }
     50% { opacity: 0; }
 }

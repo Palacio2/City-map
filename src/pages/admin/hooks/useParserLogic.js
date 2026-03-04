@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { api } from '../../../services/api';
-import { supabase } from '@supabaseClient';
 
 export const useParserLogic = () => {
     const [loading, setLoading] = useState(false);
@@ -16,31 +15,51 @@ export const useParserLogic = () => {
     const prevLogContentRef = useRef("");
     const pollingInterval = useRef(null);
 
+    // 1. Початкове завантаження
     useEffect(() => {
         loadCountries();
         loadAvailableFiles();
-        checkParserStatusAndResume();
+        checkInitialStatus();
         return stopPolling;
     }, []);
 
+    // 2. Головний Watcher (Спостерігач) за процесом
     useEffect(() => {
-        if (loading) startPolling();
-        else stopPolling();
+        if (loading) {
+            startPolling();
+        } else {
+            stopPolling();
+        }
+        
+        // Очищення при знищенні компонента
+        return () => stopPolling();
     }, [loading]);
 
+    // 3. Механізм опитування (Polling)
     const startPolling = () => {
         if (pollingInterval.current) return;
+        
         pollingInterval.current = setInterval(async () => {
+            // 3.1 Тягнемо логи
             await fetchCurrentLogs();
             
+            // 3.2 Перевіряємо, чи сервер ще працює
             try {
                 const status = await api.parser.getStatus();
-                if (!status.isParsing && loading) {
-                    setLoading(false);
-                    fetchPendingResults();
+                // Якщо сервер сказав, що він вже НЕ ПАРСИТЬ
+                if (!status.isParsing) {
+                    stopPolling(); // Миттєво вбиваємо інтервал
+                    setLoading(false); // Кажемо React, що все скінчилося
+                    
+                    // Даємо серверу 1 секунду зберегти файл на диск і тягнемо результати
+                    setTimeout(() => {
+                        fetchPendingResults();
+                    }, 1000);
                 }
-            } catch (e) {}
-        }, 2500);
+            } catch (e) {
+                console.error("Помилка перевірки статусу:", e);
+            }
+        }, 2000); // Опитуємо кожні 2 секунди
     };
 
     const stopPolling = () => {
@@ -50,15 +69,19 @@ export const useParserLogic = () => {
         }
     };
 
-    const checkParserStatusAndResume = async () => {
+    const checkInitialStatus = async () => {
         try {
             const { isParsing } = await api.parser.getStatus();
-            if (isParsing) setLoading(true);
-            else fetchPendingResults();
+            if (isParsing) {
+                setLoading(true);
+            } else {
+                fetchPendingResults(); // Якщо зайшли, а воно вже не парсить - показуємо результати
+            }
         } catch (e) {}
         await fetchCurrentLogs();
     };
 
+    // Обробка логів
     const fetchCurrentLogs = async () => {
         try {
             const text = await api.parser.getCurrentLog();
@@ -71,12 +94,23 @@ export const useParserLogic = () => {
                         : { id: i, time: '', msg: line, type: 'info' };
                 });
                 setLogs(parsedLogs.reverse());
-
-                if (text.includes("✅ Парсинг завершено") || text.includes("❌ ПОМИЛКА:")) {
-                    setLoading(false);
-                }
             }
         } catch (e) {}
+    };
+
+    // Отримання результатів
+    const fetchPendingResults = async () => {
+        try {
+            const data = await api.parser.getPendingResults();
+            if (data && Array.isArray(data) && data.length > 0) {
+                setParsedData(data);
+                setShowResults(true); // Показуємо таблицю
+            } else {
+                setShowResults(false); // Ховаємо таблицю, якщо порожньо
+            }
+        } catch (e) {
+            console.error("Помилка завантаження результатів:", e);
+        }
     };
 
     const loadAvailableFiles = async () => { try { setAvailableFiles(await api.parser.getPbfFiles() || []); } catch (e) {} };
@@ -173,16 +207,6 @@ export const useParserLogic = () => {
         } catch (e) {
             setLogs([{ id: Date.now(), time: new Date().toLocaleTimeString('uk-UA', { hour12: false }), msg: `❌ ПОМИЛКА: ${e.message}`, type: 'error' }]);
         } finally { setLoading(false); }
-    };
-
-    const fetchPendingResults = async () => {
-        try {
-            const data = await api.parser.getPendingResults();
-            if (data && data.length > 0) {
-                setParsedData(data);
-                setShowResults(true);
-            }
-        } catch (e) {}
     };
 
     const removeParsedItem = useCallback((districtId) => {

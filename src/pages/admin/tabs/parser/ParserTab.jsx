@@ -146,13 +146,7 @@ return (
                 </div>
             )}
 
-            <div className={styles.card}>
-                <div className={styles.cardHeader}>
-                    <div className={styles.stepTitle}>
-                        <span className={styles.stepNumber}>4</span>
-                        <h3>Логи парсера</h3>
-                    </div>
-                </div>
+
                 <div className={styles.cardBodyOutless}>
                     <ParserConsole 
                         logs={logic.logs}
@@ -164,7 +158,6 @@ return (
                         selectedCount={selectedDistrictIds.length}
                     />
                 </div>
-            </div>
 
             {logic.showResults && logic.parsedData.length > 0 && (
                 <div className={`${styles.card} ${styles.resultsCard}`}>

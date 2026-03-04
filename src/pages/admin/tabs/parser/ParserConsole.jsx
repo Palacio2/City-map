@@ -1,7 +1,17 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import styles from './ParserConsole.module.css';
+import { FiTrash2, FiDownload, FiPlay, FiLoader } from 'react-icons/fi';
 
 export default function ParserConsole({ logs, loading, onClear, onDownload, onStartClick, isStartDisabled, selectedCount }) {
+    const consoleEndRef = useRef(null);
+
+    // Автоматичний скрол до останнього лога
+    useEffect(() => {
+        if (consoleEndRef.current) {
+            consoleEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        }
+    }, [logs]);
+
     return (
         <div className={styles.consoleSection}>
             <div className={styles.consoleTopRow}>
@@ -12,21 +22,33 @@ export default function ParserConsole({ logs, loading, onClear, onDownload, onSt
                     </div>
                     {loading && (
                         <div className={styles.liveIndicator}>
-                            <div className={styles.liveSpinner}></div>
-                            Парсинг у процесі...
+                            <div className={styles.pulseDot}></div>
+                            <span>Парсинг у процесі...</span>
                         </div>
                     )}
                 </div>
                 
                 <div className={styles.consoleActions}>
-                    <button onClick={onClear} className={`${styles.btn} ${styles.logBtn}`} title="Очистити">🧹</button>
-                    <button onClick={onDownload} className={`${styles.btn} ${styles.logBtn}`}>⬇️ Завантажити Лог</button>
+                    <button onClick={onClear} disabled={loading} className={`${styles.btn} ${styles.logBtn}`} title="Очистити">
+                        <FiTrash2 size={16} />
+                    </button>
+                    <button onClick={onDownload} disabled={loading} className={`${styles.btn} ${styles.logBtn}`}>
+                        <FiDownload size={16} /> Лог
+                    </button>
                     <button
-                        className={`${styles.btn} ${styles.accentBtn}`}
+                        className={`${styles.btn} ${styles.accentBtn} ${loading ? styles.btnParsing : ''}`}
                         onClick={onStartClick}
-                        disabled={isStartDisabled}
+                        disabled={isStartDisabled || loading} // Жорстко блокуємо, якщо йде завантаження
                     >
-                        {loading ? '⏳ ПРАЦЮЄ...' : `▶ ЗАПУСТИТИ (${selectedCount})`}
+                        {loading ? (
+                            <>
+                                <FiLoader className={styles.spinIcon} size={18} /> ПРАЦЮЄ...
+                            </>
+                        ) : (
+                            <>
+                                <FiPlay size={18} /> ЗАПУСТИТИ ({selectedCount})
+                            </>
+                        )}
                     </button>
                 </div>
             </div>
@@ -35,14 +57,17 @@ export default function ParserConsole({ logs, loading, onClear, onDownload, onSt
                 {logs.length === 0 ? (
                     <div className={styles.placeholder}>Готовий до запуску. Чекаю команд... █</div>
                 ) : (
-                    logs.map((log, index) => (
-                        <div key={index} className={`${styles.logLine} ${
-                            log.msg.includes('❌') ? styles.logError : 
-                            log.msg.includes('✅') ? styles.logSuccess : ''
-                        }`}>
-                            <span className={styles.logTime}>[{log.time}]</span> {log.msg}
-                        </div>
-                    ))
+                    <>
+                        {logs.map((log, index) => (
+                            <div key={index} className={`${styles.logLine} ${
+                                log.msg.includes('❌') ? styles.logError : 
+                                log.msg.includes('✅') ? styles.logSuccess : ''
+                            }`}>
+                                <span className={styles.logTime}>[{log.time}]</span> {log.msg}
+                            </div>
+                        ))}
+                        <div ref={consoleEndRef} />
+                    </>
                 )}
             </div>
         </div>

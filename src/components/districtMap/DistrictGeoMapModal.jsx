@@ -30,17 +30,24 @@ const ICON_MAP = {
 
 const ICON_CACHE = {};
 
+const getEmojiForType = (type) => {
+    if (!type) return ICON_MAP.default;
+    const base = type.replace('_count', '');
+    return ICON_MAP[`${base}_count`] || ICON_MAP[base] || ICON_MAP.default;
+};
+
 const getCachedIcon = (type) => {
-    if (!ICON_CACHE[type]) {
-        const emoji = ICON_MAP[type] || ICON_MAP.default;
+    const safeType = type || 'default';
+    if (!ICON_CACHE[safeType]) {
+        const emoji = getEmojiForType(safeType);
         const htmlString = `
             <div style="font-size: 16px; background: #ffffff; border: 2px solid #cbd5e1; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
                 ${emoji}
             </div>
         `;
-        ICON_CACHE[type] = L.divIcon({ html: htmlString, className: 'custom-poi-icon', iconSize: [32, 32], iconAnchor: [16, 16], tooltipAnchor: [0, -16] });
+        ICON_CACHE[safeType] = L.divIcon({ html: htmlString, className: 'custom-poi-icon', iconSize: [32, 32], iconAnchor: [16, 16], tooltipAnchor: [0, -16] });
     }
-    return ICON_CACHE[type];
+    return ICON_CACHE[safeType];
 };
 
 const createCustomClusterIcon = (cluster) => {
@@ -53,51 +60,56 @@ const createCustomClusterIcon = (cluster) => {
   });
 };
 
-const GEOJSON_STYLE = { 
-    color: '#c5a47e', 
-    weight: 3, 
-    fillColor: '#c5a47e', 
-    fillOpacity: 0.15, 
-    dashArray: '6, 6' 
+const GEOJSON_STYLE = { color: '#c5a47e', weight: 3, fillColor: '#c5a47e', fillOpacity: 0.15, dashArray: '6, 6' };
+
+const MapUpdater = ({ geoData }) => {
+    const map = useMap();
+    useEffect(() => {
+        if (!geoData || !map) return;
+        let bounds = null;
+        try {
+            if (geoData.geojson) {
+                bounds = L.geoJSON(geoData.geojson).getBounds();
+            } else if (geoData.poi_data && geoData.poi_data.length > 0) {
+                bounds = L.latLngBounds(geoData.poi_data.map(p => p.coord));
+            }
+            if (bounds && bounds.isValid()) {
+                const timer = setTimeout(() => {
+                    if (map && map._container) {
+                        try {
+                            map.invalidateSize();
+                            map.fitBounds(bounds, { padding: [30, 30], maxZoom: 16 });
+                        } catch(e) {}
+                    }
+                }, 250);
+                return () => clearTimeout(timer);
+            }
+        } catch (e) {}
+    }, [geoData, map]);
+    return null;
 };
 
 const FastMapMarkers = ({ pois, t }) => {
     const map = useMap();
-
     useEffect(() => {
         if (!pois || pois.length === 0) return;
-
         const clusterGroup = L.markerClusterGroup({
-            chunkedLoading: true,
-            iconCreateFunction: createCustomClusterIcon,
-            maxClusterRadius: 40,
-            showCoverageOnHover: false,
-            disableClusteringAtZoom: 17,
-            spiderfyOnMaxZoom: true
+            chunkedLoading: true, iconCreateFunction: createCustomClusterIcon,
+            maxClusterRadius: 40, showCoverageOnHover: false, disableClusteringAtZoom: 17, spiderfyOnMaxZoom: true
         });
 
         const leafletMarkers = pois.map(poi => {
-            const marker = L.marker([poi.coord[1], poi.coord[0]], {
-                icon: getCachedIcon(poi.type)
-            });
-            const rawName = poi.type.replace('_count', '');
+            const marker = L.marker(poi.coord, { icon: getCachedIcon(poi.type) });
+            const rawName = (poi.type || 'default').replace('_count', '');
             const labelText = t(`poi_types.${rawName}`, { defaultValue: rawName.replace(/_/g, ' ') });
-            
-            marker.bindTooltip(`<strong>${labelText}</strong>`, { 
-                direction: 'top', 
-                className: styles.customTooltip 
-            });
+            marker.bindTooltip(`<strong>${labelText}</strong>`, { direction: 'top', className: styles.customTooltip });
             return marker;
         });
 
         clusterGroup.addLayers(leafletMarkers);
         map.addLayer(clusterGroup);
-
-        return () => {
-            map.removeLayer(clusterGroup);
-        };
+        return () => map.removeLayer(clusterGroup);
     }, [pois, map, t]);
-
     return null;
 };
 
@@ -120,15 +132,44 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
                 const data = await geoApi.getDistrictGeoData(districtId);
                 
                 if (isMounted) {
-                    const allowedPois = (data.poi_data || []).filter(poi => {
-                        if (isRealtor) return true;
+                    let rawPois = data?.poi_data || [];
+                    if (typeof rawPois === 'string') {
+                        try { rawPois = JSON.parse(rawPois); } catch(e) { rawPois = []; }
+                    }
+                    if (!Array.isArray(rawPois)) rawPois = [];
 
+                    const normalizedPois = [];
+                    rawPois.forEach(poi => {
+                        try {
+                            let type, lat, lon;
+                            if (Array.isArray(poi)) {
+                                const str = poi.find(item => typeof item === 'string');
+                                const nums = poi.filter(item => typeof item === 'number');
+                                if (str && nums.length >= 2) {
+                                    type = str;
+                                    lat = nums[0] > 40 ? nums[0] : nums[1];
+                                    lon = nums[0] > 40 ? nums[1] : nums[0];
+                                    normalizedPois.push({ type, coord: [lat, lon] });
+                                }
+                            } else if (poi && typeof poi === 'object') {
+                                type = poi.type || poi.key || poi.dbKey;
+                                if (poi.coord && Array.isArray(poi.coord)) {
+                                    lat = poi.coord[0] > 40 ? poi.coord[0] : poi.coord[1];
+                                    lon = poi.coord[0] > 40 ? poi.coord[1] : poi.coord[0];
+                                    normalizedPois.push({ type, coord: [lat, lon] });
+                                }
+                            }
+                        } catch(e) {}
+                    });
+
+                    const allowedPois = normalizedPois.filter(poi => {
+                        if (isRealtor) return true;
                         let isPremiumPoi = false;
                         let isRealtorPoi = false;
                         let found = false;
 
                         for (const cat of Object.values(DISTRICT_CATEGORIES)) {
-                            const field = cat.fields.find(f => f.dbKey === poi.type);
+                            const field = cat.fields.find(f => f.dbKey === poi.type || f.dbKey === `${poi.type}_count`);
                             if (field) {
                                 found = true;
                                 if (field.isRealtorOnly) isRealtorPoi = true;
@@ -138,20 +179,11 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
                         }
 
                         if (!found) isPremiumPoi = true;
-
-                        if (isFree) {
-                            return !isPremiumPoi && !isRealtorPoi;
-                        } else {
-                            return !isRealtorPoi;
-                        }
+                        return isFree ? (!isPremiumPoi && !isRealtorPoi) : !isRealtorPoi;
                     });
 
-                    setGeoData({
-                        ...data,
-                        poi_data: allowedPois
-                    });
-                    
-                    const types = [...new Set(allowedPois.map(p => p.type))];
+                    setGeoData({ ...data, poi_data: allowedPois });
+                    const types = [...new Set(allowedPois.map(p => p.type))].sort();
                     setActiveFilters(types); 
                 }
             } catch (err) {
@@ -176,38 +208,21 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
     }, [geoData, activeFilters]);
 
     const toggleFilter = useCallback((type) => {
-        setActiveFilters(prev => 
-            prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]
-        );
+        setActiveFilters(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
     }, []);
 
     const toggleAll = useCallback(() => {
-        setActiveFilters(prevFilters => 
-            prevFilters.length === availableTypes.length ? [] : availableTypes
-        );
+        setActiveFilters(prevFilters => prevFilters.length === availableTypes.length ? [] : availableTypes);
     }, [availableTypes]);
-
-    const getBounds = useCallback(() => {
-        if (geoData?.geojson?.bbox) {
-            return [ [geoData.geojson.bbox[1], geoData.geojson.bbox[0]], [geoData.geojson.bbox[3], geoData.geojson.bbox[2]] ];
-        }
-        if (geoData?.poi_data && geoData.poi_data.length > 0) {
-           return [[geoData.poi_data[0].coord[1], geoData.poi_data[0].coord[0]], [geoData.poi_data[0].coord[1], geoData.poi_data[0].coord[0]]];
-        }
-        return [[50.45, 30.52], [50.45, 30.52]]; 
-    }, [geoData]);
 
     if (!isOpen) return null;
 
     return (
         <div className={styles.overlay} onClick={onClose}>
             <div className={styles.modal} onClick={e => e.stopPropagation()}>
-                
                 <div className={styles.header}>
                     <h3>{districtName} - {t('title')}</h3>
-                    <button className={styles.closeBtn} onClick={onClose} aria-label="Close modal">
-                        <FiX size={24} />
-                    </button>
+                    <button className={styles.closeBtn} onClick={onClose}><FiX size={24} /></button>
                 </div>
                 
                 <div className={styles.mapBody}>
@@ -221,18 +236,14 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
                                 <div className={`${styles.sidebar} ${isMobileFilterOpen ? styles.sidebarOpen : ''}`}>
                                     <div className={styles.sidebarHeader}>
                                         <h4>{t('filters_title')}</h4>
-                                        <button className={styles.mobileCloseFilter} onClick={() => setIsMobileFilterOpen(false)}>
-                                            <FiX size={20} />
-                                        </button>
+                                        <button className={styles.mobileCloseFilter} onClick={() => setIsMobileFilterOpen(false)}><FiX size={20} /></button>
                                     </div>
-                                    
                                     <div className={styles.sidebarControls}>
                                         <button onClick={toggleAll} className={styles.toggleAllBtn}>
                                             {activeFilters.length === availableTypes.length ? t('clear_all') : t('select_all')}
                                         </button>
                                         <span className={styles.counter}>{activeFilters.length} / {availableTypes.length}</span>
                                     </div>
-
                                     <div className={styles.filterList}>
                                         {availableTypes.map(type => {
                                             const isActive = activeFilters.includes(type);
@@ -241,15 +252,9 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
                                             const translatedName = t(`poi_types.${rawName}`, { defaultValue: rawName.replace(/_/g, ' ') });
 
                                             return (
-                                                <div 
-                                                    key={type} 
-                                                    className={`${styles.filterItem} ${isActive ? styles.activeItem : ''}`}
-                                                    onClick={() => toggleFilter(type)}
-                                                >
-                                                    <div className={`${styles.checkbox} ${isActive ? styles.checkboxActive : ''}`}>
-                                                        {isActive && <FiCheck size={14} />}
-                                                    </div>
-                                                    <span className={styles.filterIcon}>{ICON_MAP[type] || ICON_MAP.default}</span>
+                                                <div key={type} className={`${styles.filterItem} ${isActive ? styles.activeItem : ''}`} onClick={() => toggleFilter(type)}>
+                                                    <div className={`${styles.checkbox} ${isActive ? styles.checkboxActive : ''}`}>{isActive && <FiCheck size={14} />}</div>
+                                                    <span className={styles.filterIcon}>{getEmojiForType(type)}</span>
                                                     <span className={styles.filterName}>{translatedName}</span>
                                                     <span className={styles.filterCount}>{count}</span>
                                                 </div>
@@ -261,26 +266,15 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
 
                             <div className={styles.mapContainerWrapper}>
                                 {availableTypes.length > 0 && (
-                                    <button 
-                                        className={styles.mobileOpenFilterBtn} 
-                                        onClick={() => setIsMobileFilterOpen(true)}
-                                    >
-                                        <FiFilter size={20} />
-                                        <span>{t('filters')}</span>
+                                    <button className={styles.mobileOpenFilterBtn} onClick={() => setIsMobileFilterOpen(true)}>
+                                        <FiFilter size={20} /><span>{t('filters')}</span>
                                     </button>
                                 )}
                                 
-                                <MapContainer bounds={getBounds()} className={styles.leafletMap} zoomControl={true} maxZoom={18}>
-                                    <TileLayer 
-                                        url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" 
-                                        attribution='&copy; <a href="https://carto.com/">Carto</a>'
-                                    />
-                                    {geoData.geojson && (
-                                        <GeoJSON 
-                                            data={geoData.geojson} 
-                                            style={GEOJSON_STYLE} 
-                                        />
-                                    )}
+                                <MapContainer center={[52, 19]} zoom={6} className={styles.leafletMap} zoomControl={true} maxZoom={18}>
+                                    <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" attribution='&copy; Carto' />
+                                    <MapUpdater geoData={geoData} />
+                                    {geoData.geojson && <GeoJSON data={geoData.geojson} style={GEOJSON_STYLE} />}
                                     <FastMapMarkers pois={filteredPois} t={t} />
                                 </MapContainer>
                             </div>
