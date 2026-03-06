@@ -1,16 +1,19 @@
 import React from 'react';
 import styles from './ResultsTable.module.css';
-
-const getWarning = (key, val, row) => {
-    const isEmpty = val === 0 || val === null || val === '';
-    if (key === 'population' && isEmpty && (row.schools_count > 0 || row.grocery_stores_count > 0 || row.bus_stops_count > 0)) return "Є інфраструктура, але населення 0";
-    if (key === 'average_property_price' && val > 5000000) return "Аномально висока ціна продажу";
-    if (key === 'average_rent_price' && val > 15000) return "Аномально висока оренда";
-    if (key === 'average_salary' && val < 2000 && val > 0) return "Зарплата нижче мінімальної";
-    return null;
-};
+import { useTranslation } from 'react-i18next';
 
 export default function StatGroup({ label, icon, fields, data, onChange, bgColor }) {
+    const { t } = useTranslation('admin');
+
+    const getWarning = (key, val, row) => {
+        const isEmpty = val === 0 || val === null || val === '';
+        if (key === 'population' && isEmpty && (row.schools_count > 0 || row.grocery_stores_count > 0 || row.bus_stops_count > 0)) return t('resultsTable.warnNoPop');
+        if (key === 'average_property_price' && val > 5000000) return t('resultsTable.warnHighPrice');
+        if (key === 'average_rent_price' && val > 15000) return t('resultsTable.warnHighRent');
+        if (key === 'average_salary' && val < 2000 && val > 0) return t('resultsTable.warnLowSalary');
+        return null;
+    };
+
     return (
         <div className={styles.statGroup} style={{ background: bgColor || '#ffffff' }}>
             <div className={styles.statHeader}>{icon} {label}</div>
@@ -35,8 +38,8 @@ export default function StatGroup({ label, icon, fields, data, onChange, bgColor
                                 }}
                             >
                                 <option value="">-</option>
-                                <option value="true">Так</option>
-                                <option value="false">Ні</option>
+                                <option value="true">{t('resultsTable.yes')}</option>
+                                <option value="false">{t('resultsTable.no')}</option>
                             </select>
                         ) : (
                             <input

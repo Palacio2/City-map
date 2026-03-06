@@ -4,8 +4,10 @@ import { METRIC_GROUPS } from '../../config/metricsConfig';
 import MapEditorModal from '../map/MapEditorModal';
 import StatGroup from './StatGroup';
 import styles from './ResultsTable.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function DistrictRow({ row, index, onEdit, onSave, onRemove }) {
+    const { t } = useTranslation('admin');
     const [isOpen, setIsOpen] = useState(false);
     const [isMapEditorOpen, setIsMapEditorOpen] = useState(false);
     const [photoFile, setPhotoFile] = useState(null);
@@ -19,10 +21,10 @@ export default function DistrictRow({ row, index, onEdit, onSave, onRemove }) {
             const fileName = `${row.district_id}-${Date.now()}.${fileExt}`;
             const { error: upErr } = await supabase.storage.from('district-photos').upload(fileName, photoFile, { upsert: true });
             if (upErr) throw upErr;
-            alert("Фото успішно завантажено у сховище.");
+            alert(t('resultsTable.uploadSuccess'));
             setPhotoFile(null);
-        } catch (e) {
-            alert("Помилка завантаження фото");
+        } catch { // Виправлено Warning
+            alert(t('resultsTable.uploadError'));
         } finally { 
             setUploading(false);
         }
@@ -32,7 +34,7 @@ export default function DistrictRow({ row, index, onEdit, onSave, onRemove }) {
         try {
             await onSave([row]);
             onRemove(row.district_id); 
-        } catch (e) {}
+        } catch {} // Виправлено Warning
     };
 
     const handleDownloadJson = (e) => {
@@ -110,14 +112,14 @@ export default function DistrictRow({ row, index, onEdit, onSave, onRemove }) {
                         </div>
                         <div className={styles.footerRow}>
                             <div className={styles.photoBox}>
-                                <span className={styles.photoLabel}>📸 Фото району:</span>
+                                <span className={styles.photoLabel}>{t('resultsTable.photoLabel')}</span>
                                 <input type="file" accept="image/*" onChange={e => setPhotoFile(e.target.files[0])} className={styles.fileInput} />
                                 <button type="button" onClick={handlePhotoUpload} disabled={!photoFile || uploading} className={styles.uploadBtn}>
-                                    {uploading ? '⏳...' : 'Завантажити'}
+                                    {uploading ? t('resultsTable.uploading') : t('resultsTable.uploadBtn')}
                                 </button>
                             </div>
                             <button type="button" onClick={handleSaveAndHide} className={styles.saveRowBtn}>
-                                💾 Зберегти в базу
+                                {t('resultsTable.saveRow')}
                             </button>
                         </div>
                     </div>

@@ -192,3 +192,41 @@ textarea.input {
     font-size: 1.8rem; 
   }
 }
+
+.consentGroup {
+  margin: 15px 0;
+  padding: 10px;
+  background: var(--bg-body);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+}
+
+.checkboxLabel {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.checkboxLabel input {
+  width: 18px;
+  height: 18px;
+  margin-top: 3px;
+  cursor: pointer;
+}
+
+.consentText {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+.inlineLink {
+  color: var(--accent-color);
+  text-decoration: underline;
+  font-weight: 600;
+}
+
+.inlineLink:hover {
+  color: var(--accent-hover);
+}

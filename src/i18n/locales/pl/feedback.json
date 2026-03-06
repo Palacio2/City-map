@@ -1,0 +1,20 @@
+{
+  "hint_title": "Znalazłeś nieścisłość?",
+  "hint_subtitle": "Daj nam znać i odbierz kod promocyjny!",
+  "header_title": "Pomóż nam stać się lepszymi",
+  "header_subtitle": "Za każdy potwierdzony błąd dajemy kod promocyjny. Im bardziej krytyczny błąd, tym większa nagroda! 🎁",
+  "type_label": "Co dokładnie znalazłeś?",
+  "type_critical": "🔴 Błąd (coś nie działa)",
+  "type_data": "🟠 Niedokładne dane (brak obiektu)",
+  "type_ui": "🟡 Wygląd (coś wyświetla się krzywo)",
+  "type_suggestion": "🟢 Sugestia (jak ulepszyć stronę)",
+  "desc_label": "Opisz szczegółowo",
+  "desc_placeholder": "Czego oczekiwałeś, a co się właściwie stało?...",
+  "capture_btn": "Dołącz zrzut ekranu",
+  "capturing_btn": "Robienie zrzutu ekranu...",
+  "remove_btn": "Usuń",
+  "submit_btn": "Wyślij zgłoszenie",
+  "submitting_btn": "Wysyłanie...",
+  "success_title": "Dziękujemy za pomoc!",
+  "success_desc": "Już weryfikujemy Twoje informacje. Jeśli błąd się potwierdzi, kod promocyjny zostanie wysłany na Twój e-mail."
+}

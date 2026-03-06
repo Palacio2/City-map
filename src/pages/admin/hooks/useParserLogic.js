@@ -15,74 +15,7 @@ export const useParserLogic = () => {
     const prevLogContentRef = useRef("");
     const pollingInterval = useRef(null);
 
-    // 1. Початкове завантаження
-    useEffect(() => {
-        loadCountries();
-        loadAvailableFiles();
-        checkInitialStatus();
-        return stopPolling;
-    }, []);
-
-    // 2. Головний Watcher (Спостерігач) за процесом
-    useEffect(() => {
-        if (loading) {
-            startPolling();
-        } else {
-            stopPolling();
-        }
-        
-        // Очищення при знищенні компонента
-        return () => stopPolling();
-    }, [loading]);
-
-    // 3. Механізм опитування (Polling)
-    const startPolling = () => {
-        if (pollingInterval.current) return;
-        
-        pollingInterval.current = setInterval(async () => {
-            // 3.1 Тягнемо логи
-            await fetchCurrentLogs();
-            
-            // 3.2 Перевіряємо, чи сервер ще працює
-            try {
-                const status = await api.parser.getStatus();
-                // Якщо сервер сказав, що він вже НЕ ПАРСИТЬ
-                if (!status.isParsing) {
-                    stopPolling(); // Миттєво вбиваємо інтервал
-                    setLoading(false); // Кажемо React, що все скінчилося
-                    
-                    // Даємо серверу 1 секунду зберегти файл на диск і тягнемо результати
-                    setTimeout(() => {
-                        fetchPendingResults();
-                    }, 1000);
-                }
-            } catch (e) {
-                console.error("Помилка перевірки статусу:", e);
-            }
-        }, 2000); // Опитуємо кожні 2 секунди
-    };
-
-    const stopPolling = () => {
-        if (pollingInterval.current) {
-            clearInterval(pollingInterval.current);
-            pollingInterval.current = null;
-        }
-    };
-
-    const checkInitialStatus = async () => {
-        try {
-            const { isParsing } = await api.parser.getStatus();
-            if (isParsing) {
-                setLoading(true);
-            } else {
-                fetchPendingResults(); // Якщо зайшли, а воно вже не парсить - показуємо результати
-            }
-        } catch (e) {}
-        await fetchCurrentLogs();
-    };
-
-    // Обробка логів
-    const fetchCurrentLogs = async () => {
+    const fetchCurrentLogs = useCallback(async () => {
         try {
             const text = await api.parser.getCurrentLog();
             if (text && text !== prevLogContentRef.current) {
@@ -95,30 +28,92 @@ export const useParserLogic = () => {
                 });
                 setLogs(parsedLogs.reverse());
             }
-        } catch (e) {}
-    };
+        } catch {
+        }
+    }, []);
 
-    // Отримання результатів
-    const fetchPendingResults = async () => {
+    const fetchPendingResults = useCallback(async () => {
         try {
             const data = await api.parser.getPendingResults();
             if (data && Array.isArray(data) && data.length > 0) {
                 setParsedData(data);
-                setShowResults(true); // Показуємо таблицю
+                setShowResults(true);
             } else {
-                setShowResults(false); // Ховаємо таблицю, якщо порожньо
+                setShowResults(false);
             }
         } catch (e) {
             console.error("Помилка завантаження результатів:", e);
         }
-    };
+    }, []);
 
-    const loadAvailableFiles = async () => { try { setAvailableFiles(await api.parser.getPbfFiles() || []); } catch (e) {} };
-    const loadCountries = async () => { try { setCountries(await api.geo.getCountries() || []); } catch (e) {} };
-    
+    const checkInitialStatus = useCallback(async () => {
+        try {
+            const { isParsing } = await api.parser.getStatus();
+            if (isParsing) {
+                setLoading(true);
+            } else {
+                fetchPendingResults();
+            }
+        } catch {
+        }
+        await fetchCurrentLogs();
+    }, [fetchPendingResults, fetchCurrentLogs]);
+
+    const stopPolling = useCallback(() => {
+        if (pollingInterval.current) {
+            clearInterval(pollingInterval.current);
+            pollingInterval.current = null;
+        }
+    }, []);
+
+    const startPolling = useCallback(() => {
+        if (pollingInterval.current) return;
+        
+        pollingInterval.current = setInterval(async () => {
+            await fetchCurrentLogs();
+            
+            try {
+                const status = await api.parser.getStatus();
+                if (!status.isParsing) {
+                    stopPolling();
+                    setLoading(false);
+                    setTimeout(() => {
+                        fetchPendingResults();
+                    }, 1000);
+                }
+            } catch (e) {
+                console.error("Помилка перевірки статусу:", e);
+            }
+        }, 2000);
+    }, [fetchCurrentLogs, stopPolling, fetchPendingResults]);
+
+    const loadCountries = useCallback(async () => {
+        try { setCountries(await api.geo.getCountries() || []); } catch {}
+    }, []);
+
+    const loadAvailableFiles = useCallback(async () => {
+        try { setAvailableFiles(await api.parser.getPbfFiles() || []); } catch {}
+    }, []);
+
+    useEffect(() => {
+        loadCountries();
+        loadAvailableFiles();
+        checkInitialStatus();
+        return stopPolling;
+    }, [loadCountries, loadAvailableFiles, checkInitialStatus, stopPolling]);
+
+    useEffect(() => {
+        if (loading) {
+            startPolling();
+        } else {
+            stopPolling();
+        }
+        return () => stopPolling();
+    }, [loading, startPolling, stopPolling]);
+
     const loadCities = async (countryId) => {
         if (!countryId) return setCities([]);
-        try { setCities(await api.geo.getCities(countryId) || []); } catch (e) {}
+        try { setCities(await api.geo.getCities(countryId) || []); } catch {}
     };
 
     const fetchDbDistricts = async (cityId) => {
@@ -126,7 +121,7 @@ export const useParserLogic = () => {
         try {
             const data = await api.geo.getDistricts(cityId);
             setDbDistricts(data ? data.filter(d => d.is_available) : []);
-        } catch (e) {}
+        } catch {}
     };
 
     const scanOSM = async (cityName) => {
@@ -134,7 +129,8 @@ export const useParserLogic = () => {
         try {
             const res = await api.parser.findDistrictsOSM(cityName);
             setFoundDistrictsOSM(res.districts || []);
-        } catch (e) {} finally { setLoading(false); }
+        } catch {
+        } finally { setLoading(false); }
     };
 
     const createDistrictsInDb = async (districtObjects, cityId) => {
@@ -146,12 +142,13 @@ export const useParserLogic = () => {
             }
             await fetchDbDistricts(cityId);
             setFoundDistrictsOSM([]);
-        } catch(e) {} finally { setLoading(false); }
+        } catch {
+        } finally { setLoading(false); }
     };
 
     const deleteDbDistrict = async (id, cityId) => {
         if (!window.confirm("Обережно! Район буде видалено з БД назавжди.")) return;
-        try { await api.geo.deleteDistrict(id); await fetchDbDistricts(cityId); } catch (e) {} 
+        try { await api.geo.deleteDistrict(id); await fetchDbDistricts(cityId); } catch {} 
     };
 
     const runOfflineOsmParser = async (config) => {
@@ -161,7 +158,7 @@ export const useParserLogic = () => {
         try {
             await api.parser.deletePendingResults();
             await api.parser.runOfflineParser(config);
-        } catch (e) { setLoading(false); } 
+        } catch { setLoading(false); } 
     };
 
     const importBoundariesGeoJSON = async (file, cityId) => {
@@ -221,12 +218,12 @@ export const useParserLogic = () => {
     const clearAllData = async () => {
         if (!window.confirm("Скинути всі результати парсингу?")) return;
         setParsedData([]); setShowResults(false); clearLogs();
-        try { await api.parser.deletePendingResults(); } catch(e) {}
+        try { await api.parser.deletePendingResults(); } catch {}
     };
 
     const clearResultsSilent = async () => {
         setParsedData([]); setShowResults(false);
-        try { await api.parser.deletePendingResults(); } catch(e) {}
+        try { await api.parser.deletePendingResults(); } catch {}
     };
 
     const clearLogs = () => { setLogs([]); prevLogContentRef.current = ""; };
@@ -243,7 +240,7 @@ export const useParserLogic = () => {
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-        } catch (error) { alert("Не вдалося завантажити логи."); }
+        } catch { alert("Не вдалося завантажити логи."); }
     };
 
     return {

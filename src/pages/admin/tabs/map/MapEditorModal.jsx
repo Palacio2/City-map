@@ -6,10 +6,12 @@ import { getLabelForKey } from './mapIcons';
 import { FaEye, FaEyeSlash, FaMapMarkedAlt, FaGlobeEurope, FaTimes, FaSave } from 'react-icons/fa';
 import L from 'leaflet';
 import styles from './MapEditorModal.module.css';
+import { useTranslation } from 'react-i18next';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
 export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData }) {
+    const { t } = useTranslation('admin');
     const [activeMetric, setActiveMetric] = useState(null);
     const [activePois, setActivePois] = useState([]);
     const [visibleTypes, setVisibleTypes] = useState(new Set());
@@ -46,7 +48,7 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
                 try {
                     const center = L.geoJSON(rowData.geojson).getBounds().getCenter();
                     setMapCenter(center);
-                } catch (e) {}
+                } catch {} // Виправлено Warning
             }
         }
     }, [isOpen, rowData]);
@@ -118,7 +120,7 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
                     <h2 className={styles.title}>
                         <div className={styles.titleIcon}>🗺️</div>
                         <div className={styles.titleText}>
-                            <span>Редактор GIS</span>
+                            <span>{t('mapEditor.title')}</span>
                             <span className={styles.districtName}>{rowData.district_name}</span>
                         </div>
                     </h2>
@@ -126,19 +128,19 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
                         {mapCenter && (
                             <div className={styles.externalLinks}>
                                 <a href={googleUrl} target="_blank" rel="noreferrer" className={styles.externalBtnGoogle}>
-                                    <FaMapMarkedAlt /> Google Maps
+                                    <FaMapMarkedAlt /> {t('mapEditor.googleMaps')}
                                 </a>
                                 <a href={osmUrl} target="_blank" rel="noreferrer" className={styles.externalBtnOsm}>
-                                    <FaGlobeEurope /> OpenStreetMap
+                                    <FaGlobeEurope /> {t('mapEditor.osm')}
                                 </a>
                             </div>
                         )}
                         <div className={styles.actionDivider}></div>
                         <button onClick={onClose} className={styles.cancelBtn}>
-                            <FaTimes /> Скасувати
+                            <FaTimes /> {t('mapEditor.cancel')}
                         </button>
                         <button onClick={handleSave} className={styles.saveBtn}>
-                            <FaSave /> Зберегти
+                            <FaSave /> {t('mapEditor.save')}
                         </button>
                     </div>
                 </div>
@@ -146,10 +148,10 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
                 <div className={styles.body}>
                     <div className={styles.sidebar}>
                         <div className={styles.sidebarHelp}>
-                            <div className={styles.helpText}>Оберіть категорію для додавання. Керуйте видимістю міток на карті.</div>
+                            <div className={styles.helpText}>{t('mapEditor.helpText')}</div>
                             <div className={styles.visibilityControls}>
-                                <button onClick={showAll} className={styles.visBtn}>Показати всі</button>
-                                <button onClick={hideAll} className={styles.visBtn}>Сховати всі</button>
+                                <button onClick={showAll} className={styles.visBtn}>{t('mapTab.showAll')}</button>
+                                <button onClick={hideAll} className={styles.visBtn}>{t('mapTab.hideAll')}</button>
                             </div>
                         </div>
                         <div className={styles.metricsList}>

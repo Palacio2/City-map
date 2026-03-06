@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { supabase } from '@supabaseClient';
 import { QRCodeSVG } from 'qrcode.react';
 import styles from './Login.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function Login() {
+    const { t } = useTranslation('admin');
     const [step, setStep] = useState('pin'); 
     const [pin, setPin] = useState('');
     const [email, setEmail] = useState('');
@@ -23,7 +25,7 @@ export default function Login() {
             setStep('credentials');
             setError(null);
         } else {
-            setError('Невірний PIN-код панелі');
+            setError(t('login.invalidPin'));
         }
     };
 
@@ -36,10 +38,9 @@ export default function Login() {
             const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
             if (signInError) throw signInError;
 
-            // ПЕРЕВІРКА ТОКЕНА
             if (data.user.app_metadata?.role !== 'admin') {
                 await supabase.auth.signOut();
-                throw new Error('Доступ заборонено: Ваш акаунт не має прав адміністратора.');
+                throw new Error(t('login.accessDenied'));
             }
 
             const { data: factorsData, error: factorsError } = await supabase.auth.mfa.listFactors();
@@ -58,7 +59,7 @@ export default function Login() {
                 }
 
                 const safeFriendlyName = unverifiedFactors.length > 0 
-                    ? `${email} (Спроба ${unverifiedFactors.length + 1})` 
+                    ? `${email} (${t('login.attempt')} ${unverifiedFactors.length + 1})` 
                     : email;
 
                 const { data: enrollData, error: enrollError } = await supabase.auth.mfa.enroll({ 
@@ -73,7 +74,7 @@ export default function Login() {
                 setStep('mfa_setup');
             }
         } catch (err) {
-            setError(err.message || 'Помилка авторизації');
+            setError(err.message || t('login.authError'));
         } finally {
             setLoading(false);
         }
@@ -88,7 +89,7 @@ export default function Login() {
             const { data: challengeData, error: challengeError } = await supabase.auth.mfa.challenge({ factorId });
             if (challengeError) throw challengeError;
 
-            const { data: verifyData, error: verifyError } = await supabase.auth.mfa.verify({
+            const { error: verifyError } = await supabase.auth.mfa.verify({
                 factorId,
                 challengeId: challengeData.id,
                 code: mfaCode
@@ -96,8 +97,8 @@ export default function Login() {
 
             if (verifyError) throw verifyError;
             window.location.reload();
-        } catch (err) {
-            setError('Невірний код. Зачекайте на новий код у додатку і спробуйте ще раз.');
+        } catch {
+            setError(t('login.invalidCode'));
             setMfaCode(''); 
         } finally {
             setLoading(false);
@@ -113,8 +114,8 @@ export default function Login() {
         <div className={styles.loginContainer}>
             <div className={styles.loginCard}>
                 <div className={styles.header}>
-                    <h1 className={styles.title}>🔐 Вхід в систему</h1>
-                    <p className={styles.subtitle}>City Maps Admin v4.0</p>
+                    <h1 className={styles.title}>{t('login.title')}</h1>
+                    <p className={styles.subtitle}>{t('login.subtitle')}</p>
                 </div>
 
                 {error && <div className={styles.errorBox}>{error}</div>}
@@ -122,42 +123,42 @@ export default function Login() {
                 {step === 'pin' && (
                     <form onSubmit={handlePinSubmit} className={styles.form}>
                         <div className={styles.inputGroup}>
-                            <label className={styles.label}>Секретний PIN панелі</label>
+                            <label className={styles.label}>{t('login.pinLabel')}</label>
                             <input type="password" value={pin} onChange={e => setPin(e.target.value)} required className={styles.input} placeholder="••••" autoFocus />
                         </div>
-                        <button type="submit" className={styles.submitBtn}>Продовжити</button>
+                        <button type="submit" className={styles.submitBtn}>{t('login.continue')}</button>
                     </form>
                 )}
 
                 {step === 'credentials' && (
                     <form onSubmit={handleLoginSubmit} className={styles.form}>
                         <div className={styles.inputGroup}>
-                            <label className={styles.label}>Email адміністратора</label>
+                            <label className={styles.label}>{t('login.emailLabel')}</label>
                             <input type="email" value={email} onChange={e => setEmail(e.target.value)} required className={styles.input} />
                         </div>
                         <div className={styles.inputGroup}>
-                            <label className={styles.label}>Пароль</label>
+                            <label className={styles.label}>{t('login.passwordLabel')}</label>
                             <input type="password" value={password} onChange={e => setPassword(e.target.value)} required className={styles.input} />
                         </div>
-                        <button type="submit" disabled={loading} className={styles.submitBtn}>{loading ? '⏳ Перевірка...' : 'Увійти'}</button>
+                        <button type="submit" disabled={loading} className={styles.submitBtn}>{loading ? t('login.checking') : t('login.loginBtn')}</button>
                     </form>
                 )}
 
                 {step === 'mfa_setup' && (
                     <form onSubmit={handleMfaSubmit} className={styles.form}>
                         <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                            <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: '15px' }}>Відскануйте цей QR-код у додатку Google Authenticator.</p>
+                            <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: '15px' }}>{t('login.scanQr')}</p>
                             <div style={{ background: 'white', padding: '10px', display: 'inline-block', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
                                 {qrCodeUrl && <QRCodeSVG value={qrCodeUrl} size={200} />}
                             </div>
                         </div>
                         <div className={styles.inputGroup}>
-                            <label className={styles.label}>Введіть 6-значний код</label>
+                            <label className={styles.label}>{t('login.codeLabel')}</label>
                             <input type="text" value={mfaCode} onChange={e => setMfaCode(e.target.value)} required className={styles.input} placeholder="123456" maxLength="6" style={{ textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem' }} />
                         </div>
                         <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                            <button type="button" onClick={handleRestart} disabled={loading} className={styles.submitBtn} style={{ background: '#f1f5f9', color: '#475569', flex: 1 }}>Скасувати</button>
-                            <button type="submit" disabled={loading} className={styles.submitBtn} style={{ flex: 2 }}>{loading ? '⏳...' : 'Підтвердити'}</button>
+                            <button type="button" onClick={handleRestart} disabled={loading} className={styles.submitBtn} style={{ background: '#f1f5f9', color: '#475569', flex: 1 }}>{t('login.cancel')}</button>
+                            <button type="submit" disabled={loading} className={styles.submitBtn} style={{ flex: 2 }}>{loading ? t('login.wait') : t('login.confirm')}</button>
                         </div>
                     </form>
                 )}
@@ -165,12 +166,12 @@ export default function Login() {
                 {step === 'mfa_verify' && (
                     <form onSubmit={handleMfaSubmit} className={styles.form}>
                         <div className={styles.inputGroup}>
-                            <label className={styles.label}>Код двофакторної автентифікації</label>
+                            <label className={styles.label}>{t('login.mfaCodeLabel')}</label>
                             <input type="text" value={mfaCode} onChange={e => setMfaCode(e.target.value)} required className={styles.input} placeholder="123456" maxLength="6" style={{ textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem' }} autoFocus />
                         </div>
                         <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                            <button type="button" onClick={handleRestart} disabled={loading} className={styles.submitBtn} style={{ background: '#f1f5f9', color: '#475569', flex: 1 }}>Вийти</button>
-                            <button type="submit" disabled={loading} className={styles.submitBtn} style={{ flex: 2 }}>{loading ? '⏳...' : 'Увійти'}</button>
+                            <button type="button" onClick={handleRestart} disabled={loading} className={styles.submitBtn} style={{ background: '#f1f5f9', color: '#475569', flex: 1 }}>{t('login.exit')}</button>
+                            <button type="submit" disabled={loading} className={styles.submitBtn} style={{ flex: 2 }}>{loading ? t('login.wait') : t('login.loginBtn')}</button>
                         </div>
                     </form>
                 )}

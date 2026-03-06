@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './ParserSettings.module.css';
 import { getRegionsForCountry } from '../../utils/countryHelpers';
+import { useTranslation } from 'react-i18next';
 
 export default function ParserSettings({ 
     country, setCountry, 
@@ -9,12 +10,13 @@ export default function ParserSettings({
     countriesList, citiesList, 
     onCountryChange 
 }) {
+    const { t } = useTranslation('admin');
     const availableRegions = getRegionsForCountry(country?.name);
 
     return (
         <div className={styles.settingsGrid}>
             <div className={styles.inputGroup}>
-                <label>Країна</label>
+                <label>{t('parserSettings.country')}</label>
                 <select 
                     className={styles.textInput} 
                     value={country?.id || ''} 
@@ -26,13 +28,13 @@ export default function ParserSettings({
                         if (c) onCountryChange(c.id);
                     }}
                 >
-                    <option value="">-- Виберіть країну --</option>
+                    <option value="">{t('parserSettings.selectCountry')}</option>
                     {countriesList.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
             </div>
 
             <div className={styles.inputGroup}>
-                <label>Місто</label>
+                <label>{t('parserSettings.city')}</label>
                 <select 
                     className={styles.textInput} 
                     value={city?.id || ''} 
@@ -42,20 +44,20 @@ export default function ParserSettings({
                     }}
                     disabled={!country}
                 >
-                    <option value="">-- Виберіть місто --</option>
+                    <option value="">{t('parserSettings.selectCity')}</option>
                     {citiesList.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
             </div>
 
             <div className={styles.inputGroup}>
-                <label>Регіон / Воєводство</label>
+                <label>{t('parserSettings.region')}</label>
                 {availableRegions.length > 0 ? (
                     <select 
                         className={styles.textInput} 
                         value={region} 
                         onChange={e => setRegion(e.target.value)}
                     >
-                        <option value="">-- Виберіть регіон --</option>
+                        <option value="">{t('parserSettings.selectRegion')}</option>
                         {availableRegions.map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
                 ) : (
@@ -64,7 +66,7 @@ export default function ParserSettings({
                         className={styles.textInput} 
                         value={region} 
                         onChange={e => setRegion(e.target.value)} 
-                        placeholder="Введіть регіон вручну..." 
+                        placeholder={t('parserSettings.manualRegion')} 
                     />
                 )}
             </div>

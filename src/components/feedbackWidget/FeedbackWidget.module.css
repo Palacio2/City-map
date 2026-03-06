@@ -1,0 +1,314 @@
+.widgetWrapper {
+  position: fixed;
+  bottom: max(30px, var(--safe-bottom));
+  right: max(30px, var(--safe-right));
+  z-index: var(--z-fixed);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16px;
+}
+
+.mainBtn {
+  width: 64px;
+  height: 64px;
+  border-radius: var(--radius-full);
+  background: var(--primary-gradient);
+  color: var(--text-inverse);
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--shadow-hover);
+  transition: var(--transition);
+  border: 2px solid var(--glass-border);
+}
+
+.mainBtn:hover {
+  transform: translateY(-4px) scale(1.05);
+  background: var(--primary-light);
+  box-shadow: var(--shadow-modal);
+}
+
+.mainBtn.active {
+  background: var(--bg-surface);
+  color: var(--text-main);
+  border-color: var(--border-color);
+  transform: rotate(90deg);
+}
+
+.hint {
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  padding: 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-accent);
+  max-width: 300px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  box-shadow: var(--shadow-glass);
+  animation: slideIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.hintIcon {
+  color: var(--accent-color);
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.hintText {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  padding-right: 20px;
+}
+
+.hintText strong {
+  color: var(--text-main);
+  font-family: var(--font-heading);
+}
+
+.closeHint {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  color: var(--text-secondary);
+  opacity: 0.6;
+}
+
+.closeHint:hover {
+  opacity: 1;
+  color: var(--text-main);
+}
+
+.modal {
+  background: var(--bg-surface);
+  width: min(calc(100vw - 40px), 380px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  transform-origin: bottom right;
+}
+
+.modalHeader {
+  background: var(--bg-surface);
+  padding: 24px 24px 8px;
+}
+
+.modalHeader h3 {
+  margin-bottom: 8px;
+  font-size: 1.25rem;
+}
+
+.modalHeader p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.form {
+  padding: 16px 24px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.inputGroup label {
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+.modal select, .modal textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background: var(--bg-body);
+  color: var(--text-main);
+  transition: var(--transition);
+  font-size: 0.95rem;
+}
+
+.modal select:focus, .modal textarea:focus {
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px var(--border-accent);
+}
+
+.modal textarea {
+  height: 120px;
+  resize: none;
+}
+
+.captureBtn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: var(--bg-body);
+  color: var(--text-main);
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-md);
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.captureBtn:hover:not(:disabled) {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+  background: var(--bg-hover);
+}
+
+.previewContainer {
+  position: relative;
+  width: 100%;
+  height: 140px;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.previewImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+}
+
+.removeBtn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur));
+  color: var(--danger-color);
+  padding: 6px 12px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.removeBtn:hover {
+  background: var(--danger-color);
+  color: white;
+  border-color: transparent;
+}
+
+.submitBtn {
+  width: 100%;
+  background: var(--primary-gradient);
+  color: var(--text-inverse);
+  padding: 14px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 1rem;
+  margin-top: 8px;
+  box-shadow: var(--shadow-card);
+  transition: var(--transition);
+}
+
+.submitBtn:hover:not(:disabled) {
+  box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
+}
+
+.submitBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.successState {
+  padding: 40px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.successIcon {
+  font-size: 48px;
+  margin-bottom: 8px;
+  animation: bounce 1s infinite;
+}
+
+.successState h4 {
+  margin: 0;
+  color: var(--success-color);
+}
+
+.successState p {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.modal {
+  background: var(--bg-surface);
+  width: min(calc(100vw - 40px), 380px);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-modal);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  animation: scaleUp 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: bottom right;
+}
+
+.modalClosing {
+  animation: scaleDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes scaleDown {
+  from { opacity: 1; transform: scale(1); }
+  to { opacity: 0; transform: scale(0.95); pointer-events: none; }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}

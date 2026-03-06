@@ -8,6 +8,7 @@ import Footer from '@footer/Footer';
 import RodoModal from '@modals/RodoModal';
 import CookieBanner from '@modals/CookieBanner';
 import Loader from '@components/loader/Loader';
+import FeedbackWidget from '@components/FeedbackWidget/FeedbackWidget';
 
 import { useUserConsent } from '@hooks/useUserConsent';
 import { useTimeTracker } from '@hooks/useTimeTracker';
@@ -20,13 +21,13 @@ export default function MainLayout() {
 
   const { 
     showRodoModal, 
+    hasConsent,
     authReady, 
     handleAcceptRodo, 
     handleDeclineRodo 
   } = useUserConsent();
 
   useTimeTracker();
-
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -43,26 +44,24 @@ export default function MainLayout() {
   return (
     <div className={styles.layout}>
       <Header />
-
+      
       <main className={styles.mainContent}>
         <div className={styles.contentWrapper}>
-          
           <Suspense fallback={<Loader fullScreen={true} text={t('loading')} />}>
             <Outlet />
           </Suspense>
-
         </div>
       </main>
-
+      
       <Footer />
-
       <CookieBanner />
 
+      {authReady && session && hasConsent && (
+        <FeedbackWidget />
+      )}
+
       {authReady && session && showRodoModal && (
-        <RodoModal
-          onAccept={onAccept}
-          onDecline={handleDeclineRodo}
-        />
+        <RodoModal onAccept={onAccept} onDecline={handleDeclineRodo} />
       )}
     </div>
   );

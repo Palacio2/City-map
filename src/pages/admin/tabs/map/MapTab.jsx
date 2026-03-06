@@ -6,6 +6,7 @@ import { api } from '../../../../services/api';
 import { METRIC_GROUPS } from '../../config/metricsConfig';
 import { FaEye, FaEyeSlash, FaSync, FaMap } from 'react-icons/fa';
 import { createEmojiIcon, getLabelForKey } from './mapIcons';
+import { useTranslation } from 'react-i18next';
 
 const COLORS = ['#3b82f6', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#06b6d4', '#84cc16', '#d946ef', '#ea580c', '#6366f1'];
 
@@ -22,13 +23,14 @@ function MapTabFitBounds({ mapData }) {
                         map.fitBounds(bounds, { padding: [40, 40], animate: true, duration: 1.5 });
                     }
                 }
-            } catch (e) {}
+            } catch {} // Виправлено Warning (e)
         }
     }, [mapData, map]);
     return null;
 }
 
 export default function MapTab() {
+    const { t } = useTranslation('admin');
     const [countries, setCountries] = useState([]);
     const [cities, setCities] = useState([]);
     const [selectedCountry, setSelectedCountry] = useState('');
@@ -125,8 +127,8 @@ export default function MapTab() {
                         <FaMap />
                     </div>
                     <div>
-                        <h2 style={{ margin: 0, fontSize: '1.1rem', color: '#0f172a' }}>Глобальна карта</h2>
-                        <span style={{ fontSize: '0.85rem', color: '#64748b' }}>Огляд покриття районів</span>
+                        <h2 style={{ margin: 0, fontSize: '1.1rem', color: '#0f172a' }}>{t('mapTab.title')}</h2>
+                        <span style={{ fontSize: '0.85rem', color: '#64748b' }}>{t('mapTab.subtitle')}</span>
                     </div>
                 </div>
 
@@ -135,7 +137,7 @@ export default function MapTab() {
                     onChange={e => { setSelectedCountry(e.target.value); setSelectedCity(''); }} 
                     style={{ padding: '12px 16px', borderRadius: '12px', border: '1px solid #e2e8f0', minWidth: '220px', fontSize: '0.95rem', background: '#f8fafc', outline: 'none', cursor: 'pointer', fontWeight: 500, color: '#334155' }}
                 >
-                    <option value="">-- Оберіть країну --</option>
+                    <option value="">{t('mapTab.selectCountry')}</option>
                     {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
 
@@ -145,7 +147,7 @@ export default function MapTab() {
                     disabled={!selectedCountry} 
                     style={{ padding: '12px 16px', borderRadius: '12px', border: '1px solid #e2e8f0', minWidth: '220px', fontSize: '0.95rem', background: selectedCountry ? '#f8fafc' : '#f1f5f9', outline: 'none', cursor: selectedCountry ? 'pointer' : 'not-allowed', fontWeight: 500, color: '#334155', opacity: selectedCountry ? 1 : 0.6 }}
                 >
-                    <option value="">-- Оберіть місто --</option>
+                    <option value="">{t('mapTab.selectCity')}</option>
                     {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
                 </select>
 
@@ -155,7 +157,7 @@ export default function MapTab() {
                     onMouseOver={(e) => { e.currentTarget.style.background = '#e2e8f0'; e.currentTarget.style.color = '#0f172a'; }}
                     onMouseOut={(e) => { e.currentTarget.style.background = '#f1f5f9'; e.currentTarget.style.color = '#475569'; }}
                 >
-                    <FaSync /> Скинути
+                    <FaSync /> {t('mapTab.reset')}
                 </button>
             </div>
 
@@ -163,10 +165,10 @@ export default function MapTab() {
                  {mapData.length > 0 && (
                      <div style={{ width: '300px', background: '#ffffff', border: '1px solid #e2e8f0', borderRadius: '16px', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)' }}>
                         <div style={{ padding: '20px', borderBottom: '1px solid #f1f5f9' }}>
-                             <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#0f172a' }}>Фільтри відображення</h3>
+                             <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', color: '#0f172a' }}>{t('mapTab.filtersTitle')}</h3>
                              <div style={{ display: 'flex', gap: '8px' }}>
-                                 <button onClick={showAll} style={{ flex: 1, padding: '8px', fontSize: '0.85rem', fontWeight: 600, background: '#eff6ff', color: '#2563eb', border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}>Показати всі</button>
-                                 <button onClick={hideAll} style={{ flex: 1, padding: '8px', fontSize: '0.85rem', fontWeight: 600, background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}>Сховати всі</button>
+                                 <button onClick={showAll} style={{ flex: 1, padding: '8px', fontSize: '0.85rem', fontWeight: 600, background: '#eff6ff', color: '#2563eb', border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}>{t('mapTab.showAll')}</button>
+                                 <button onClick={hideAll} style={{ flex: 1, padding: '8px', fontSize: '0.85rem', fontWeight: 600, background: '#f1f5f9', color: '#475569', border: 'none', borderRadius: '8px', cursor: 'pointer', transition: 'all 0.2s' }}>{t('mapTab.hideAll')}</button>
                              </div>
                         </div>
                         <div style={{ padding: '16px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -213,18 +215,18 @@ export default function MapTab() {
                     {!selectedCity ? (
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', color: '#94a3b8' }}>
                             <FaMap style={{ fontSize: '3rem', opacity: 0.5 }} />
-                            <div style={{ fontSize: '1.1rem', fontWeight: 500 }}>Оберіть країну та місто для відображення</div>
+                            <div style={{ fontSize: '1.1rem', fontWeight: 500 }}>{t('mapTab.placeholder')}</div>
                         </div>
                     ) : loading ? (
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', color: '#3b82f6' }}>
                             <div style={{ width: '40px', height: '40px', border: '3px solid #bfdbfe', borderTopColor: '#3b82f6', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-                            <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>Завантаження геоданих...</div>
+                            <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('mapTab.loading')}</div>
                             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                         </div>
                     ) : mapData.length === 0 ? (
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', color: '#f59e0b' }}>
                             <div style={{ fontSize: '2rem' }}>⚠️</div>
-                            <div style={{ fontSize: '1.1rem', fontWeight: 500 }}>У базі немає меж районів для цього міста</div>
+                            <div style={{ fontSize: '1.1rem', fontWeight: 500 }}>{t('mapTab.noData')}</div>
                         </div>
                     ) : (
                         <MapContainer center={[52.23, 21.01]} zoom={6} style={{ height: '100%', width: '100%' }} zoomControl={false}>
@@ -262,7 +264,7 @@ export default function MapTab() {
                                                     <div style="text-align:center;">
                                                         <strong style="font-size:1.1rem;color:#0f172a;">${dist.name}</strong><br/>
                                                         <span style="font-size:0.85rem;color:#64748b;margin-top:4px;display:block;">
-                                                            ${dist.is_available ? '🟢 Опубліковано' : '⚪ Приховано'}
+                                                            ${dist.is_available ? t('mapTab.published') : t('mapTab.hidden')}
                                                         </span>
                                                     </div>
                                                 `, { direction: 'top', sticky: true, className: 'modern-tooltip' });
@@ -278,7 +280,7 @@ export default function MapTab() {
                                                     <div style={{ textAlign: 'center' }}>
                                                         <strong style={{ fontSize: '0.95rem', color: '#0f172a' }}>{getLabelForKey(poi.type)}</strong><br/>
                                                         <span style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>
-                                                            {poi.source === 'parser' ? '🤖 Від парсера' : '👤 Додано вручну'}
+                                                            {poi.source === 'parser' ? t('mapTab.fromParser') : t('mapTab.manualAdd')}
                                                         </span>
                                                     </div>
                                                 </Tooltip>

@@ -1,0 +1,225 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background: var(--bg-surface, #ffffff);
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-main, #333);
+}
+
+.refreshBtn {
+  padding: 8px 16px;
+  background: var(--accent-color, #007bff);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: opacity 0.2s;
+}
+
+.refreshBtn:hover {
+  opacity: 0.9;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-color, #eee);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.table th, .table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-color, #eee);
+  color: var(--text-main, #333);
+}
+
+.table th {
+  background: var(--bg-hover, #f8f9fa);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary, #666);
+}
+
+.table tr:hover {
+  background: var(--bg-hover, #f8f9fa);
+}
+
+.idCell {
+  font-family: monospace;
+  color: var(--text-secondary, #888);
+}
+
+.badgePremium {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(255, 193, 7, 0.15);
+  color: #d97706;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.badgeRealtor {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(16, 185, 129, 0.15);
+  color: #059669;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.badgeAdmin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: rgba(239, 68, 68, 0.15);
+  color: #dc2626;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.badgeBasic {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  background: rgba(107, 114, 128, 0.15);
+  color: #4b5563;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+.statusYes { color: #059669; font-weight: 500; }
+.statusNo { color: #dc2626; font-weight: 500; }
+
+.searchCount {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-secondary, #666);
+}
+
+.empty {
+  text-align: center;
+  padding: 30px !important;
+  color: var(--text-secondary, #888);
+}
+
+.loader, .error {
+  padding: 40px;
+  text-align: center;
+  font-size: 1.1rem;
+  color: var(--text-secondary, #666);
+}
+
+.error {
+  color: #dc2626;
+}
+
+.actionsCell {
+  display: flex;
+  gap: 10px;
+}
+
+.actionBtn {
+  padding: 8px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: #fff;
+  transition: opacity 0.2s;
+}
+
+.actionBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btnSuccess {
+  background: var(--success-color, #10b981);
+}
+
+.btnDanger {
+  background: var(--danger-color, #ef4444);
+}
+
+.rodoBtn {
+  background: transparent;
+  border: 1px dashed var(--border-color, #ccc);
+  border-radius: 4px;
+  padding: 4px 8px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rodoBtn:hover:not(:disabled) {
+  background: var(--bg-hover, #f3f4f6);
+}
+
+.rodoBtn:disabled {
+  cursor: not-allowed;
+}
+
+.headerControls {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+}
+
+.searchWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: 12px;
+  color: var(--text-secondary, #888);
+}
+
+.searchInput {
+  padding: 8px 12px 8px 35px;
+  border: 1px solid var(--border-color, #ccc);
+  border-radius: 6px;
+  outline: none;
+  width: 250px;
+  font-size: 0.95rem;
+  background: var(--bg-body, #fff);
+  color: var(--text-main, #333);
+  transition: border-color 0.2s;
+}
+
+.searchInput:focus {
+  border-color: var(--accent-color, #007bff);
+}

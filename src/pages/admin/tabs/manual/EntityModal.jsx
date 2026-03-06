@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import styles from './EntityModal.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function EntityModal({ isOpen, onClose, onSubmit, title, placeholder, isSubmitting }) {
+    const { t } = useTranslation('admin');
     const [inputValue, setInputValue] = useState('');
     const inputRef = useRef(null);
 
@@ -37,10 +39,10 @@ export default function EntityModal({ isOpen, onClose, onSubmit, title, placehol
                     />
                     <div className={styles.actions}>
                         <button type="button" onClick={onClose} className={`${styles.btn} ${styles.cancelBtn}`} disabled={isSubmitting}>
-                            Скасувати
+                            {t('entityModal.cancelBtn')}
                         </button>
                         <button type="submit" className={`${styles.btn} ${styles.submitBtn}`} disabled={!inputValue.trim() || isSubmitting}>
-                            {isSubmitting ? '⏳...' : 'Створити'}
+                            {isSubmitting ? t('entityModal.processing') : t('entityModal.createBtn')}
                         </button>
                     </div>
                 </form>

@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import { FaTimes, FaSketch, FaCheckCircle, FaArrowRight, FaArrowLeft } from 'react-icons/fa';
+import { useTranslation } from 'react-i18next';
 import styles from './AiAssistantModal.module.css';
 
 const AI_PREFS_KEY = 'geo_analyzer_ai_prefs';
 
-const AMENITIES_OPTIONS = [
-  '🛒 Супермаркети та ринки', '🛍 Торгові центри', 
-  '💪 Спортзали та басейни', '☕ Кав\'ярні та ресторани', 
-  '🍿 Кінотеатри та театри', '🏥 Медичні клініки/лікарні', 
-  '🎓 Школи та садки', '🎓 Університети', 
-  '🏢 Коворкінги', '🚴 Велодоріжки', 
-  '⚡ Зарядки для електромобілів', '🐾 Майданчики для собак',
-  '🏦 Банки та банкомати', '📦 Поштомати / Відділення'
+const AMENITIES_KEYS = [
+  'supermarkets', 'malls', 'gyms', 'cafes', 
+  'cinemas', 'clinics', 'schools', 'universities', 
+  'coworking', 'bike_paths', 'ev_charging', 'dog_parks',
+  'banks', 'post_offices'
 ];
 
 const DEFAULT_DATA = {
@@ -24,6 +22,7 @@ const DEFAULT_DATA = {
 };
 
 export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
+  const { t } = useTranslation('assistant');
   const [step, setStep] = useState(1);
   const [isSaved, setIsSaved] = useState(false);
 
@@ -75,41 +74,50 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
       case 1:
         return (
           <div className={styles.stepContent}>
-            <h3>Крок 1: Базові параметри</h3>
+            <h3>{t('modal.step1_title')}</h3>
             <div className={styles.inputGroup}>
-              <label>Цільове місто / регіон</label>
-              <input type="text" name="city" placeholder="Наприклад: Варшава, Київ..." value={formData.city} onChange={handleChange} required />
+              <label>{t('modal.city_label')}</label>
+              <input type="text" name="city" placeholder={t('modal.city_placeholder')} value={formData.city} onChange={handleChange} required />
             </div>
             <div className={styles.inputGroup}>
-              <label>Мета пошуку</label>
+              <label>{t('modal.purpose_label')}</label>
               <select name="purpose" value={formData.purpose} onChange={handleChange}>
-                <option value="living">Для власного проживання</option>
-                <option value="investment">Інвестиція / Оренда</option>
-                <option value="commercial">Для бізнесу</option>
+                <option value="living">{t('modal.purpose_living')}</option>
+                <option value="investment">{t('modal.purpose_investment')}</option>
+                <option value="commercial">{t('modal.purpose_commercial')}</option>
               </select>
             </div>
             <div className={styles.inputGroup}>
-              <label>Орієнтовний бюджет району (ціна купівлі або оренди)</label>
-              <input type="text" name="budget" placeholder="Напр.: 5000 PLN/міс або Середній сегмент" value={formData.budget} onChange={handleChange} />
+              <label>{t('modal.budget_label')}</label>
+              <input type="text" name="budget" placeholder={t('modal.budget_placeholder')} value={formData.budget} onChange={handleChange} />
             </div>
           </div>
         );
       case 2:
         return (
           <div className={styles.stepContent}>
-            <h3>Крок 2: Атмосфера та Соціум</h3>
+            <h3>{t('modal.step2_title')}</h3>
             <div className={styles.inputGroup}>
-              <label>Яка атмосфера району вам підходить?</label>
+              <label>{t('modal.vibe_label')}</label>
               <div className={styles.chipsRow}>
-                {[{id: 'active', label: 'Активний центр'}, {id: 'quiet', label: 'Тихий спальний'}, {id: 'nature', label: 'Ближче до природи'}, {id: 'any', label: 'Не має значення'}].map(v => (
+                {[
+                  {id: 'active', label: t('modal.vibe_active')}, 
+                  {id: 'quiet', label: t('modal.vibe_quiet')}, 
+                  {id: 'nature', label: t('modal.vibe_nature')}, 
+                  {id: 'any', label: t('modal.vibe_any')}
+                ].map(v => (
                   <button key={v.id} type="button" className={`${styles.chip} ${formData.vibe === v.id ? styles.activeChip : ''}`} onClick={() => handleChipSelect('vibe', v.id)}>{v.label}</button>
                 ))}
               </div>
             </div>
             <div className={styles.inputGroup}>
-              <label>Щільність населення (забудова)</label>
+              <label>{t('modal.density_label')}</label>
               <div className={styles.chipsRow}>
-                {[{id: 'low', label: 'Низька (приватні будинки, таунхауси)'}, {id: 'medium', label: 'Середня'}, {id: 'high', label: 'Висока (багатоповерхівки)'}].map(d => (
+                {[
+                  {id: 'low', label: t('modal.density_low')}, 
+                  {id: 'medium', label: t('modal.density_medium')}, 
+                  {id: 'high', label: t('modal.density_high')}
+                ].map(d => (
                   <button key={d.id} type="button" className={`${styles.chip} ${formData.populationDensity === d.id ? styles.activeChip : ''}`} onClick={() => handleChipSelect('populationDensity', d.id)}>{d.label}</button>
                 ))}
               </div>
@@ -119,48 +127,56 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
       case 3:
         return (
           <div className={styles.stepContent}>
-            <h3>Крок 3: Мобільність та Транспорт</h3>
+            <h3>{t('modal.step3_title')}</h3>
             <div className={styles.rowInputs}>
               <div className={styles.inputGroup}>
-                <label>Основний транспорт</label>
+                <label>{t('modal.transport_label')}</label>
                 <select name="transport" value={formData.transport} onChange={handleChange}>
-                  <option value="public">Громадський</option>
-                  <option value="car">Власне авто</option>
-                  <option value="walking">Пішки</option>
+                  <option value="public">{t('modal.transport_public')}</option>
+                  <option value="car">{t('modal.transport_car')}</option>
+                  <option value="walking">{t('modal.transport_walking')}</option>
                 </select>
               </div>
               <div className={styles.inputGroup}>
-                <label>Бажана частота курсування</label>
+                <label>{t('modal.frequency_label')}</label>
                 <select name="transportFrequency" value={formData.transportFrequency} onChange={handleChange}>
-                  <option value="high">Дуже часто (кожні 5-10 хв)</option>
-                  <option value="medium">Середньо (15-20 хв)</option>
-                  <option value="low">Не принципово</option>
+                  <option value="high">{t('modal.freq_high')}</option>
+                  <option value="medium">{t('modal.freq_medium')}</option>
+                  <option value="low">{t('modal.freq_low')}</option>
                 </select>
               </div>
             </div>
             <label className={styles.checkboxLabel}>
               <input type="checkbox" name="microMobility" checked={formData.microMobility} onChange={handleChange} />
-              <span>Користуюсь мікромобільністю (електросамокати, велосипеди)</span>
+              <span>{t('modal.micro_mobility')}</span>
             </label>
           </div>
         );
       case 4:
         return (
           <div className={styles.stepContent}>
-            <h3>Крок 4: Середовище та Безпека</h3>
+            <h3>{t('modal.step4_title')}</h3>
             <div className={styles.inputGroup}>
-              <label>Наскільки важлива безпека (камери, патрулі, освітлення)?</label>
+              <label>{t('modal.safety_label')}</label>
               <div className={styles.chipsRow}>
-                {['Критично', 'Важливо', 'Не в пріоритеті'].map(s => (
-                  <button key={s} type="button" className={`${styles.chip} ${formData.safetyImportance === s ? styles.activeChip : ''}`} onClick={() => handleChipSelect('safetyImportance', s)}>{s}</button>
+                {[
+                  {id: 'critical', label: t('modal.safety_critical')}, 
+                  {id: 'important', label: t('modal.safety_important')}, 
+                  {id: 'low', label: t('modal.safety_low')}
+                ].map(s => (
+                  <button key={s.id} type="button" className={`${styles.chip} ${formData.safetyImportance === s.id ? styles.activeChip : ''}`} onClick={() => handleChipSelect('safetyImportance', s.id)}>{s.label}</button>
                 ))}
               </div>
             </div>
             <div className={styles.inputGroup}>
-              <label>Екологія (якість повітря, парки, озеленення)</label>
+              <label>{t('modal.ecology_label')}</label>
               <div className={styles.chipsRow}>
-                {['Дуже важливо', 'Бажано', 'Все одно'].map(e => (
-                  <button key={e} type="button" className={`${styles.chip} ${formData.ecologyImportance === e ? styles.activeChip : ''}`} onClick={() => handleChipSelect('ecologyImportance', e)}>{e}</button>
+                {[
+                  {id: 'high', label: t('modal.eco_high')}, 
+                  {id: 'medium', label: t('modal.eco_medium')}, 
+                  {id: 'low', label: t('modal.eco_low')}
+                ].map(e => (
+                  <button key={e.id} type="button" className={`${styles.chip} ${formData.ecologyImportance === e.id ? styles.activeChip : ''}`} onClick={() => handleChipSelect('ecologyImportance', e.id)}>{e.label}</button>
                 ))}
               </div>
             </div>
@@ -169,18 +185,18 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
       case 5:
         return (
           <div className={styles.stepContent}>
-            <h3>Крок 5: Інфраструктура району</h3>
+            <h3>{t('modal.step5_title')}</h3>
             <div className={styles.inputGroup}>
-              <label>Що обов'язково має бути в районі?</label>
+              <label>{t('modal.amenities_label')}</label>
               <div className={styles.chipsGrid}>
-                {AMENITIES_OPTIONS.map(opt => (
-                  <button key={opt} type="button" className={`${styles.chip} ${(formData.amenities || []).includes(opt) ? styles.activeChip : ''}`} onClick={() => toggleMultiSelect('amenities', opt)}>{opt}</button>
+                {AMENITIES_KEYS.map(optKey => (
+                  <button key={optKey} type="button" className={`${styles.chip} ${(formData.amenities || []).includes(optKey) ? styles.activeChip : ''}`} onClick={() => toggleMultiSelect('amenities', optKey)}>{t(`modal.amenities.${optKey}`)}</button>
                 ))}
               </div>
             </div>
             <div className={styles.inputGroup}>
-              <label>Ваші "Табу" щодо району</label>
-              <input type="text" name="dealbreakers" placeholder="Напр.: високий рівень безробіття, індустріальні зони..." value={formData.dealbreakers} onChange={handleChange} />
+              <label>{t('modal.dealbreakers_label')}</label>
+              <input type="text" name="dealbreakers" placeholder={t('modal.dealbreakers_placeholder')} value={formData.dealbreakers} onChange={handleChange} />
             </div>
           </div>
         );
@@ -191,18 +207,18 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
   const modalContent = (
     <div className={styles.modalOverlay}>
       <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose} aria-label="Закрити"><FaTimes /></button>
+        <button className={styles.closeButton} onClick={onClose} aria-label={t('sidebar.tooltip_close')}><FaTimes /></button>
         {isSaved ? (
           <div className={styles.successState}>
             <FaCheckCircle className={styles.successIcon} />
-            <h2>Налаштування збережено!</h2>
-            <p>Тепер AI знає, які райони вам підходять. Запускаємо чат...</p>
+            <h2>{t('modal.success_title')}</h2>
+            <p>{t('modal.success_desc')}</p>
           </div>
         ) : (
           <div className={styles.wizardContainer}>
             <div className={styles.header}>
               <div className={styles.iconWrapper}><FaSketch /></div>
-              <h2>Критерії пошуку районів</h2>
+              <h2>{t('modal.title')}</h2>
               <div className={styles.progressContainer}>
                 {[1, 2, 3, 4, 5].map(num => <div key={num} className={`${styles.progressDot} ${step >= num ? styles.activeDot : ''}`} />)}
               </div>
@@ -210,8 +226,8 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
             <form onSubmit={handleSubmit} className={styles.form}>
               <div className={styles.scrollableContent}>{renderStepContent()}</div>
               <div className={styles.wizardActions}>
-                {step > 1 ? <button type="button" className={styles.backBtn} onClick={prevStep}><FaArrowLeft /> Назад</button> : <div />}
-                {step < 5 ? <button type="button" className={styles.nextBtn} onClick={nextStep}>Далі <FaArrowRight /></button> : <button type="submit" className={styles.submitBtn}>Завершити</button>}
+                {step > 1 ? <button type="button" className={styles.backBtn} onClick={prevStep}><FaArrowLeft /> {t('modal.back')}</button> : <div />}
+                {step < 5 ? <button type="button" className={styles.nextBtn} onClick={nextStep}>{t('modal.next')} <FaArrowRight /></button> : <button type="submit" className={styles.submitBtn}>{t('modal.finish')}</button>}
               </div>
             </form>
           </div>

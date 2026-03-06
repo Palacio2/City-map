@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useTranslation, Trans } from 'react-i18next';
+import { Link } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaComment, FaPaperPlane, FaPhone, FaCheckCircle } from 'react-icons/fa';
 import { contactsAPI } from '@api/contactsAPI';
 import styles from './Contacts.module.css';
@@ -7,6 +8,7 @@ import styles from './Contacts.module.css';
 export default function Contacts() {
   const { t } = useTranslation('contacts');
   const [form, setForm] = useState({ name: '', email: '', message: '' });
+  const [consent, setConsent] = useState(false);
   const [status, setStatus] = useState('idle'); 
   const [errorMsg, setErrorMsg] = useState('');
 
@@ -44,13 +46,19 @@ export default function Contacts() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!consent) return;
+
     setStatus('loading');
     setErrorMsg('');
 
     try {
-      await contactsAPI.submitMessage(form);
+      await contactsAPI.submitMessage({
+        ...form,
+        consent_accepted: true
+      });
       setStatus('success');
       setForm({ name: '', email: '', message: '' });
+      setConsent(false);
     } catch {
       setStatus('error');
       setErrorMsg(t('errors.generic'));
@@ -94,7 +102,6 @@ export default function Contacts() {
         <form onSubmit={handleSubmit} className={styles.form}>
           {fields.map((field) => {
             const Icon = field.icon;
-            
             return (
               <div key={field.name} className={styles.fieldGroup}>
                 <label htmlFor={field.id} className={styles.label}>
@@ -132,6 +139,24 @@ export default function Contacts() {
             );
           })}
 
+          <div className={styles.consentGroup}>
+            <label className={styles.checkboxLabel}>
+              <input 
+                type="checkbox" 
+                checked={consent} 
+                onChange={(e) => setConsent(e.target.checked)}
+                required
+              />
+              <span className={styles.consentText}>
+                <Trans
+                  i18nKey="contacts:form.consent"
+                  defaults="Я погоджуюсь на обробку персональних даних згідно з <0>Політикою конфіденційності</0>"
+                  components={[<Link to="/terms" className={styles.inlineLink} key="terms-link" />]}
+                />
+              </span>
+            </label>
+          </div>
+
           {status === 'error' && (
             <div className={styles.errorMessage} role="alert">
               {errorMsg}
@@ -141,7 +166,7 @@ export default function Contacts() {
           <button 
             type="submit" 
             className={styles.button} 
-            disabled={status === 'loading'}
+            disabled={status === 'loading' || !consent}
           >
             {status === 'loading' ? t('buttons.sending') : (
               <>{t('buttons.submit')} <FaPaperPlane aria-hidden="true" /></>

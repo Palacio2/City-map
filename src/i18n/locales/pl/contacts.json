@@ -13,7 +13,8 @@
     "message": {
       "label": "Wiadomość",
       "placeholder": "Treść wiadomości..."
-    }
+    },
+    "consent": "Wyrażam zgodę na przetwarzanie danych osobowych zgodnie z <0>Polityką prywatności</0>"
   },
   "buttons": {
     "submit": "Wyślij",

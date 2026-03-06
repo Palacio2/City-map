@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback, memo } from 'react';
+import React, { useEffect, useState, useCallback, memo, useRef } from 'react'; // Додано useRef
 import styles from './Header.module.css';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { FaGlobe, FaHeart, FaBars, FaTimes, FaSun, FaMoon } from 'react-icons/fa';
@@ -10,6 +10,7 @@ import Loader from '@components/loader/Loader';
 import AiAssistantModal from '../aiAssistant/AiAssistantModal'; 
 import AiSidebar from '../aiAssistant/AiSidebar';
 import { useBodyScrollLock } from '@hooks/useBodyScrollLock';
+import { useUserConsent } from '@hooks/useUserConsent';
 
 const Header = () => {
   const location = useLocation();
@@ -18,13 +19,34 @@ const Header = () => {
   const { isPremium, isRealtor } = useSubscription();
   const { theme, toggleTheme } = useTheme(); 
   const { isAuthenticated, isLoading, signOut } = useAuth();
+  const { hasConsent } = useUserConsent();
   
   const [showLanguageDropdown, setShowLanguageDropdown] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isAiModalOpen, setIsAiModalOpen] = useState(false);
   const [isAiSidebarOpen, setIsAiSidebarOpen] = useState(false);
 
+  // Створюємо реф для контейнера вибору мови
+  const languageRef = useRef(null);
+
   useBodyScrollLock(isMenuOpen);
+
+  // Ефект для обробки кліку за межами дропдауна
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (languageRef.current && !languageRef.current.contains(event.target)) {
+        setShowLanguageDropdown(false);
+      }
+    };
+
+    if (showLanguageDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showLanguageDropdown]);
 
   useEffect(() => {
     setIsMenuOpen(false);
@@ -108,7 +130,8 @@ const Header = () => {
                 </button>
               )}
 
-              <div className={styles.languageContainer}>
+              {/* Додаємо ref до контейнера */}
+              <div className={styles.languageContainer} ref={languageRef}>
                 <button 
                   className={styles.navButton} 
                   onClick={() => setShowLanguageDropdown(!showLanguageDropdown)}
@@ -126,7 +149,7 @@ const Header = () => {
                 )}
               </div>
 
-              {isAuthenticated && isRealtor && (
+              {isAuthenticated && isRealtor && hasConsent && (
                 <button 
                   className={styles.navButton} 
                   onClick={handleAiClick} 

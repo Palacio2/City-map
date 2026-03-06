@@ -1,11 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import styles from './ParserConsole.module.css';
 import { FiTrash2, FiDownload, FiPlay, FiLoader } from 'react-icons/fi';
+import { useTranslation } from 'react-i18next';
 
 export default function ParserConsole({ logs, loading, onClear, onDownload, onStartClick, isStartDisabled, selectedCount }) {
+    const { t } = useTranslation('admin');
     const consoleEndRef = useRef(null);
 
-    // Автоматичний скрол до останнього лога
     useEffect(() => {
         if (consoleEndRef.current) {
             consoleEndRef.current.scrollIntoView({ behavior: 'smooth' });
@@ -18,35 +19,35 @@ export default function ParserConsole({ logs, loading, onClear, onDownload, onSt
                 <div className={styles.headerLeft}>
                     <div className={styles.stepHeader}>
                         <span className={styles.stepIcon}>🚀</span>
-                        <h3 className={styles.consoleTitle}>Крок 4. Консоль Парсера</h3>
+                        <h3 className={styles.consoleTitle}>{t('parserConsole.title')}</h3>
                     </div>
                     {loading && (
                         <div className={styles.liveIndicator}>
                             <div className={styles.pulseDot}></div>
-                            <span>Парсинг у процесі...</span>
+                            <span>{t('parserConsole.parsingInProcess')}</span>
                         </div>
                     )}
                 </div>
                 
                 <div className={styles.consoleActions}>
-                    <button onClick={onClear} disabled={loading} className={`${styles.btn} ${styles.logBtn}`} title="Очистити">
+                    <button onClick={onClear} disabled={loading} className={`${styles.btn} ${styles.logBtn}`} title={t('parserConsole.clearBtn')}>
                         <FiTrash2 size={16} />
                     </button>
                     <button onClick={onDownload} disabled={loading} className={`${styles.btn} ${styles.logBtn}`}>
-                        <FiDownload size={16} /> Лог
+                        <FiDownload size={16} /> {t('parserConsole.logBtn')}
                     </button>
                     <button
                         className={`${styles.btn} ${styles.accentBtn} ${loading ? styles.btnParsing : ''}`}
                         onClick={onStartClick}
-                        disabled={isStartDisabled || loading} // Жорстко блокуємо, якщо йде завантаження
+                        disabled={isStartDisabled || loading}
                     >
                         {loading ? (
                             <>
-                                <FiLoader className={styles.spinIcon} size={18} /> ПРАЦЮЄ...
+                                <FiLoader className={styles.spinIcon} size={18} /> {t('parserConsole.workingBtn')}
                             </>
                         ) : (
                             <>
-                                <FiPlay size={18} /> ЗАПУСТИТИ ({selectedCount})
+                                <FiPlay size={18} /> {t('parserConsole.startBtn')} ({selectedCount})
                             </>
                         )}
                     </button>
@@ -55,7 +56,7 @@ export default function ParserConsole({ logs, loading, onClear, onDownload, onSt
             
             <div className={`${styles.customConsole} ${loading ? styles.liveConsole : ''}`}>
                 {logs.length === 0 ? (
-                    <div className={styles.placeholder}>Готовий до запуску. Чекаю команд... █</div>
+                    <div className={styles.placeholder}>{t('parserConsole.readyPlaceholder')}</div>
                 ) : (
                     <>
                         {logs.map((log, index) => (

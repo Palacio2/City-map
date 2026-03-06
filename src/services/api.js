@@ -18,18 +18,14 @@ const requestLocal = async (endpoint, method = 'GET', body = null, isText = fals
     };
     if (body) options.body = JSON.stringify(body);
     
-    try {
-        const url = method === 'GET' ? `${LOCAL_API_URL}${endpoint}?t=${Date.now()}` : `${LOCAL_API_URL}${endpoint}`;
-        const response = await fetch(url, options);
-        
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({}));
-            throw new Error(errorData.error || `HTTP Error ${response.status}`);
-        }
-        return isText ? await response.text() : await response.json();
-    } catch (error) { 
-        throw error; 
+    const url = method === 'GET' ? `${LOCAL_API_URL}${endpoint}?t=${Date.now()}` : `${LOCAL_API_URL}${endpoint}`;
+    const response = await fetch(url, options);
+    
+    if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.error || `HTTP Error ${response.status}`);
     }
+    return isText ? await response.text() : await response.json();
 };
 
 export const api = {

@@ -1,16 +1,19 @@
 import React from 'react';
 import DistrictRow from './DistrictRow';
 import styles from './ResultsTable.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function ResultsTable({ data, onEdit, onSave, onRemove }) {
+    const { t } = useTranslation('admin');
+    
     if (!data || data.length === 0) return null;
     
     return (
         <div className={styles.tableWrapper}>
             <div className={styles.headerRow}>
-                <h3>📊 Результати до збереження ({data.length})</h3>
+                <h3>📊 {t('resultsTable.title')} ({data.length})</h3>
                 <button type="button" onClick={() => onSave(data)} className={`${styles.btn} ${styles.saveBtn}`}>
-                    💾 ЗБЕРЕГТИ ВСІ ({data.length})
+                    {t('resultsTable.saveAll')} ({data.length})
                 </button>
             </div>
             <div className={styles.queueList}>

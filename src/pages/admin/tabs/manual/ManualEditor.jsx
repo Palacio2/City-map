@@ -4,6 +4,7 @@ import MapEditorModal from '../map/MapEditorModal';
 import { useManualEditor } from '../../hooks/useManualEditor';
 import { FaMapMarkedAlt, FaImage, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaSyncAlt, FaSave, FaTimes } from 'react-icons/fa';
 import styles from './ManualEditor.module.css';
+import { useTranslation } from 'react-i18next';
 
 const DataBadge = ({ icon: Icon, label, status }) => {
     const colors = {
@@ -21,14 +22,15 @@ const DataBadge = ({ icon: Icon, label, status }) => {
 };
 
 export default function ManualEditor({ selectedCountry, selectedCity, selectedDistrict, setSelectedDistrict }) {
+    const { t } = useTranslation('admin');
     const logic = useManualEditor(selectedCountry, selectedCity, selectedDistrict, setSelectedDistrict);
 
     if (!selectedDistrict) {
         return (
             <div className={styles.emptyState}>
                 <div className={styles.emptyStateIcon}>✏️</div>
-                <h3 style={{ color: '#0f172a', margin: '0 0 8px 0', fontSize: '1.2rem' }}>Редактор не активний</h3>
-                <p>Оберіть район зліва, щоб розпочати редагування даних</p>
+                <h3 style={{ color: '#0f172a', margin: '0 0 8px 0', fontSize: '1.2rem' }}>{t('manualEditor.inactiveTitle')}</h3>
+                <p>{t('manualEditor.inactiveDesc')}</p>
             </div>
         );
     }
@@ -43,23 +45,23 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
                     <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, color: '#334155', background: '#f1f5f9', padding: '8px 16px', borderRadius: '10px' }}>
                         <input type="checkbox" checked={!!logic.formData.is_available} onChange={e => logic.handleFieldChange('is_available', e.target.checked, 'boolean')} style={{ width: '16px', height: '16px', accentColor: '#3b82f6' }} />
-                        Публічно доступний
+                        {t('manualEditor.publiclyAvailable')}
                     </label>
                     <button onClick={logic.handleFullParse} disabled={logic.isFullParsing} className={`${styles.btn} ${styles.actionBtn}`}>
                         <FaSyncAlt className={logic.isFullParsing ? styles.spinIcon : ''} />
-                        {logic.isFullParsing ? 'Збираємо...' : 'Оновити все (Парсер)'}
+                        {logic.isFullParsing ? t('manualEditor.collecting') : t('manualEditor.updateParserBtn')}
                     </button>
                 </div>
             </div>
 
             <div className={styles.statusGrid}>
-                <DataBadge icon={FaMapMarkedAlt} label="Геодані (GeoJSON)" status={logic.completeness.geo} />
-                <DataBadge icon={FaImage} label="Головне фото" status={logic.completeness.photo} />
+                <DataBadge icon={FaMapMarkedAlt} label={t('manualEditor.badgeGeo')} status={logic.completeness.geo} />
+                <DataBadge icon={FaImage} label={t('manualEditor.badgePhoto')} status={logic.completeness.photo} />
             </div>
 
             <div className={styles.card}>
                 <div className={styles.cardHeader}>
-                    <h3 className={styles.cardTitle}>📸 Головне фото району</h3>
+                    <h3 className={styles.cardTitle}>{t('manualEditor.photoTitle')}</h3>
                 </div>
                 <div className={styles.photoUploadArea}>
                     <input type="file" accept="image/*" onChange={logic.handleFileChange} className={styles.fileInput} id="district-photo" />
@@ -67,12 +69,12 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
                         {logic.photoPreview ? (
                             <div className={styles.previewContainer}>
                                 <img src={logic.photoPreview} alt="Preview" className={styles.previewImg} />
-                                <div className={styles.previewOverlay}><span>Змінити фото</span></div>
+                                <div className={styles.previewOverlay}><span>{t('manualEditor.changePhoto')}</span></div>
                             </div>
                         ) : (
                             <div className={styles.uploadPlaceholder}>
                                 <FaImage size={32} color="#94a3b8" />
-                                <span>Натисніть, щоб завантажити фото</span>
+                                <span>{t('manualEditor.uploadPrompt')}</span>
                             </div>
                         )}
                     </label>
@@ -81,14 +83,14 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
 
             <div className={styles.card}>
                 <div className={styles.cardHeader}>
-                    <h3 className={styles.cardTitle}>🗺️ Карта та Інфраструктура (POI)</h3>
+                    <h3 className={styles.cardTitle}>{t('manualEditor.mapPoisTitle')}</h3>
                     <button onClick={() => logic.setIsMapEditorOpen(true)} className={`${styles.btn} ${styles.mapBtn}`}>
-                        <FaMapMarkedAlt /> Відкрити GIS Редактор
+                        <FaMapMarkedAlt /> {t('manualEditor.openGisBtn')}
                     </button>
                 </div>
                 <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '0.9rem', color: '#475569' }}>
-                    <strong>Всього точок:</strong> {logic.formData.poi_data?.length || 0}. 
-                    Використовуйте GIS Редактор для додавання, видалення та коригування міток на карті.
+                    <strong>{t('manualEditor.totalPoints')}</strong> {logic.formData.poi_data?.length || 0}. 
+                    {t('manualEditor.gisHint')}
                 </div>
             </div>
 
@@ -132,7 +134,7 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
                                         className={styles.input} 
                                         value={logic.formData[field.key] === undefined || logic.formData[field.key] === null ? '' : logic.formData[field.key]} 
                                         onChange={e => logic.handleFieldChange(field.key, e.target.value, field.type)} 
-                                        placeholder={`Введіть значення...`} 
+                                        placeholder={t('manualEditor.inputPlaceholder')} 
                                     />
                                 </div>
                             ))}
@@ -143,10 +145,10 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
 
             <div className={styles.stickyActions}>
                 <button onClick={logic.handleCancel} className={`${styles.btn} ${styles.cancelBtn}`}>
-                    <FaTimes /> Скасувати
+                    <FaTimes /> {t('manualEditor.cancelBtn')}
                 </button>
                 <button onClick={logic.handleSaveDistrict} disabled={logic.loading} className={`${styles.btn} ${styles.saveBtn}`}>
-                    <FaSave /> {logic.loading ? 'Зберігаємо...' : 'Зберегти зміни'}
+                    <FaSave /> {logic.loading ? t('manualEditor.saving') : t('manualEditor.saveBtn')}
                 </button>
             </div>
 

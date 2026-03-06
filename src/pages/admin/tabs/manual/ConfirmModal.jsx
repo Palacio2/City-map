@@ -1,7 +1,10 @@
 import React from 'react';
 import styles from './EntityModal.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function ConfirmModal({ isOpen, onClose, onConfirm, title, message, isProcessing }) {
+    const { t } = useTranslation('admin');
+    
     if (!isOpen) return null;
 
     return (
@@ -13,7 +16,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
                 </p>
                 <div className={styles.actions}>
                     <button type="button" onClick={onClose} className={`${styles.btn} ${styles.cancelBtn}`} disabled={isProcessing}>
-                        Скасувати
+                        {t('confirmModal.cancelBtn')}
                     </button>
                     <button 
                         type="button" 
@@ -21,7 +24,7 @@ export default function ConfirmModal({ isOpen, onClose, onConfirm, title, messag
                         className={`${styles.btn} ${styles.dangerBtn}`} 
                         disabled={isProcessing}
                     >
-                        {isProcessing ? '⏳...' : '🗑️ Видалити'}
+                        {isProcessing ? t('confirmModal.processing') : t('confirmModal.deleteBtn')}
                     </button>
                 </div>
             </div>

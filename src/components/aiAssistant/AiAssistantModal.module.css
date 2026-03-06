@@ -1,9 +1,9 @@
 .modalOverlay {
   position: fixed;
   inset: 0;
-  background: var(--glass-bg); /* Оновлено */
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   z-index: var(--z-modal-overlay);
   display: flex;
   align-items: center;
@@ -67,7 +67,7 @@
 .iconWrapper {
   width: 56px;
   height: 56px;
-  background: var(--primary-gradient); /* Оновлено */
+  background: var(--primary-gradient);
   color: var(--bg-surface);
   border-radius: var(--radius-full);
   display: flex;
@@ -115,7 +115,7 @@
   padding: var(--spacing-lg);
   overflow-y: auto;
   flex: 1;
-  background: var(--bg-body); /* Контраст для контенту */
+  background: var(--bg-body);
 }
 
 .stepContent h3 {

@@ -1,16 +1,18 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { api } from '../../../../services/api';
 import EntityModal from './EntityModal';
 import ConfirmModal from './ConfirmModal';
 import CityMapModal from './CityMapModal';
 import { FaEyeSlash, FaPlus, FaTrash, FaMapMarkedAlt } from 'react-icons/fa';
 import styles from './ManualSidebar.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function ManualSidebar({ 
     selectedCountry, setSelectedCountry, 
     selectedCity, setSelectedCity, 
     selectedDistrict, setSelectedDistrict 
 }) {
+    const { t } = useTranslation('admin');
     const [countries, setCountries] = useState([]);
     const [cities, setCities] = useState([]);
     const [districts, setDistricts] = useState([]);
@@ -25,31 +27,39 @@ export default function ManualSidebar({
     
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    useEffect(() => { loadCountries(); }, []);
+    const loadCountries = useCallback(async () => {
+        try { setCountries(await api.geo.getCountries() || []); } catch {} // Виправлено warning
+    }, []);
+
+    useEffect(() => { loadCountries(); }, [loadCountries]);
 
     useEffect(() => {
         setSearchCity('');
+        const loadCities = async (countryId) => {
+            try { setCities(await api.geo.getCities(countryId) || []); } catch {} // Виправлено warning
+        };
+
         if (selectedCountry) loadCities(selectedCountry.id);
         else { setCities([]); setSelectedCity(null); }
-    }, [selectedCountry]);
+    }, [selectedCountry, setSelectedCity]);
 
     useEffect(() => {
         setSearchDistrict('');
+        const loadDistricts = async (cityId) => {
+            try { setDistricts(await api.geo.getDistricts(cityId) || []); } catch {} // Виправлено warning
+        };
+
         if (selectedCity) loadDistricts(selectedCity.id);
         else { setDistricts([]); setSelectedDistrict(null); }
-    }, [selectedCity]);
-
-    const loadCountries = async () => setCountries(await api.geo.getCountries() || []);
-    const loadCities = async (countryId) => setCities(await api.geo.getCities(countryId) || []);
-    const loadDistricts = async (cityId) => setDistricts(await api.geo.getDistricts(cityId) || []);
+    }, [selectedCity, setSelectedDistrict]);
 
     const filteredCountries = useMemo(() => countries.filter(c => c.name.toLowerCase().includes(searchCountry.toLowerCase())), [countries, searchCountry]);
     const filteredCities = useMemo(() => cities.filter(c => c.name.toLowerCase().includes(searchCity.toLowerCase())), [cities, searchCity]);
     const filteredDistricts = useMemo(() => districts.filter(d => d.name.toLowerCase().includes(searchDistrict.toLowerCase())), [districts, searchDistrict]);
 
     const openModal = (type) => {
-        const titles = { country: 'Нова країна', city: 'Нове місто', district: 'Новий район' };
-        setModal({ isOpen: true, type, title: titles[type], placeholder: `Введіть назву...` });
+        const titles = { country: t('manualSidebar.newCountry'), city: t('manualSidebar.newCity'), district: t('manualSidebar.newDistrict') };
+        setModal({ isOpen: true, type, title: titles[type], placeholder: t('manualSidebar.enterName') });
     };
 
     const openConfirmModal = (type, item) => {
@@ -73,7 +83,7 @@ export default function ManualSidebar({
                 setSelectedDistrict(newD);
             }
             setModal({ ...modal, isOpen: false });
-        } catch (e) {}
+        } catch {} // Виправлено warning
         setIsSubmitting(false);
     };
 
@@ -95,7 +105,7 @@ export default function ManualSidebar({
                 setDistricts(prev => prev.filter(d => d.id !== item.id));
             }
             setConfirmModal({ ...confirmModal, isOpen: false });
-        } catch (e) {}
+        } catch {} // Виправлено warning
         setIsSubmitting(false);
     };
 
@@ -103,10 +113,10 @@ export default function ManualSidebar({
         <div className={styles.sidebar}>
             <div className={styles.listBlock}>
                 <div className={styles.listHeader}>
-                    <div className={styles.listTitle}>🌍 Країни</div>
-                    <button onClick={() => openModal('country')} className={styles.addGhostBtn}><FaPlus /> Додати</button>
+                    <div className={styles.listTitle}>{t('manualSidebar.countries')}</div>
+                    <button onClick={() => openModal('country')} className={styles.addGhostBtn}><FaPlus /> {t('manualSidebar.addBtn')}</button>
                 </div>
-                <input type="text" placeholder="Пошук країни..." className={styles.searchInput} value={searchCountry} onChange={e => setSearchCountry(e.target.value)} />
+                <input type="text" placeholder={t('manualSidebar.searchCountry')} className={styles.searchInput} value={searchCountry} onChange={e => setSearchCountry(e.target.value)} />
                 <div className={styles.list}>
                     {filteredCountries.map(c => (
                         <div key={c.id} onClick={() => setSelectedCountry(c)} className={`${styles.listItem} ${selectedCountry?.id === c.id ? styles.listItemSelected : ''}`}>
@@ -119,10 +129,10 @@ export default function ManualSidebar({
             {selectedCountry && (
                 <div className={styles.listBlock}>
                     <div className={styles.listHeader}>
-                        <div className={styles.listTitle}>🏙️ Міста <span className={styles.parentName}>({selectedCountry.name})</span></div>
-                        <button onClick={() => openModal('city')} className={styles.addGhostBtn}><FaPlus /> Додати</button>
+                        <div className={styles.listTitle}>{t('manualSidebar.cities')} <span className={styles.parentName}>({selectedCountry.name})</span></div>
+                        <button onClick={() => openModal('city')} className={styles.addGhostBtn}><FaPlus /> {t('manualSidebar.addBtn')}</button>
                     </div>
-                    <input type="text" placeholder="Пошук міста..." className={styles.searchInput} value={searchCity} onChange={e => setSearchCity(e.target.value)} />
+                    <input type="text" placeholder={t('manualSidebar.searchCity')} className={styles.searchInput} value={searchCity} onChange={e => setSearchCity(e.target.value)} />
                     <div className={styles.list}>
                         {filteredCities.map(c => (
                             <div key={c.id} onClick={() => setSelectedCity(c)} className={`${styles.listItem} ${selectedCity?.id === c.id ? styles.listItemSelected : ''}`}>
@@ -140,10 +150,10 @@ export default function ManualSidebar({
             {selectedCity && (
                 <div className={styles.listBlock}>
                     <div className={styles.listHeader}>
-                        <div className={styles.listTitle}>🏘️ Райони <span className={styles.parentName}>({selectedCity.name})</span></div>
-                        <button onClick={() => openModal('district')} className={styles.addGhostBtn}><FaPlus /> Додати</button>
+                        <div className={styles.listTitle}>{t('manualSidebar.districts')} <span className={styles.parentName}>({selectedCity.name})</span></div>
+                        <button onClick={() => openModal('district')} className={styles.addGhostBtn}><FaPlus /> {t('manualSidebar.addBtn')}</button>
                     </div>
-                    <input type="text" placeholder="Пошук району..." className={styles.searchInput} value={searchDistrict} onChange={e => setSearchDistrict(e.target.value)} />
+                    <input type="text" placeholder={t('manualSidebar.searchDistrict')} className={styles.searchInput} value={searchDistrict} onChange={e => setSearchDistrict(e.target.value)} />
                     <div className={styles.list}>
                         {filteredDistricts.map(d => (
                             <div key={d.id} onClick={() => setSelectedDistrict(d)} className={`${styles.listItem} ${selectedDistrict?.id === d.id ? styles.listItemSelected : ''}`}>
@@ -170,8 +180,8 @@ export default function ManualSidebar({
                 isOpen={confirmModal.isOpen}
                 onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
                 onConfirm={handleDelete}
-                title="Підтвердження видалення"
-                message={`Ви впевнені, що хочете видалити "${confirmModal.item?.name}"? Всі пов'язані дані будуть втрачені.`}
+                title={t('manualSidebar.confirmDeleteTitle')}
+                message={t('manualSidebar.confirmDeleteMsg', { name: confirmModal.item?.name })}
                 isProcessing={isSubmitting}
             />
 

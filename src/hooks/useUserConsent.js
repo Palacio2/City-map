@@ -9,7 +9,10 @@ const SAFE_ROUTES = ['/terms', '/about', '/faq', '/contacts', '/payment-success'
 export const useUserConsent = () => {
   const location = useLocation();
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const [hasConsent, setHasConsent] = useState(false);
+  
+  const [hasConsent, setHasConsent] = useState(() => {
+    return localStorage.getItem('rodo_accepted') === 'true';
+  });
   const [authReady, setAuthReady] = useState(false);
   
   const isSafeRoute = SAFE_ROUTES.includes(location.pathname);
@@ -23,25 +26,27 @@ export const useUserConsent = () => {
       checkRunning.current = true;
 
       if (isAuthenticated && user) {
-        const metaConsent = user.user_metadata?.rodo_accepted;
-        
-        if (metaConsent) {
-          if (mounted) setHasConsent(true);
-        }
-
         try {
           const dbStatus = await userConsentApi.checkConsentStatus();
           
           if (mounted) {
-            if (dbStatus === false) {
+            if (dbStatus === true) {
+              setHasConsent(true);
+              localStorage.setItem('rodo_accepted', 'true');
+            } else {
               setHasConsent(false);
               localStorage.removeItem('rodo_accepted');
-            } else {
-              setHasConsent(true);
+              
+              if (user.user_metadata?.rodo_accepted) {
+                await supabase.auth.updateUser({
+                  data: { rodo_accepted: false }
+                });
+              }
             }
           }
-        } catch {
-          if (mounted && metaConsent) setHasConsent(true);
+        } catch (err) {
+          const metaConsent = user.user_metadata?.rodo_accepted;
+          if (mounted) setHasConsent(!!metaConsent || localStorage.getItem('rodo_accepted') === 'true');
         }
       } else {
         const localConsent = localStorage.getItem('rodo_accepted');
@@ -60,33 +65,36 @@ export const useUserConsent = () => {
   }, [isAuthenticated, user, authLoading]);
 
   const handleAcceptRodo = async () => {
-    setHasConsent(true);
     localStorage.setItem('rodo_accepted', 'true');
+    setHasConsent(true);
 
     if (isAuthenticated && user) {
-      const { error } = await userConsentApi.acceptConsent();
-      
-      if (!error) {
+      try {
+        const { error } = await userConsentApi.acceptConsent();
+        if (error) throw error;
+
         await supabase.auth.updateUser({
           data: { rodo_accepted: true }
         });
-      } else {
-        setHasConsent(false);
-        localStorage.removeItem('rodo_accepted');
-        throw new Error('Failed to save consent');
+      } catch (err) {
+        console.error(err);
       }
     }
   };
 
   const handleDeclineRodo = async () => {
-    await userConsentApi.signOut();
     localStorage.removeItem('rodo_accepted');
+    if (isAuthenticated) {
+      await userConsentApi.signOut();
+    }
+    setHasConsent(false);
     window.location.href = '/';
   };
 
   return { 
     showRodoModal: authReady && !hasConsent && !isSafeRoute,
     authReady, 
+    hasConsent,
     handleAcceptRodo, 
     handleDeclineRodo 
   };

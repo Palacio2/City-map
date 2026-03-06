@@ -5,6 +5,7 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import { ICON_MAP, getLabelForKey, createEmojiIcon } from './mapIcons';
 import styles from './InteractiveMap.module.css';
+import { useTranslation } from 'react-i18next';
 
 function FitBounds({ geojson }) {
     const map = useMap();
@@ -16,7 +17,7 @@ function FitBounds({ geojson }) {
                 if (bounds.isValid()) {
                     map.fitBounds(bounds, { padding: [40, 40], maxZoom: 16, animate: true, duration: 1.5 });
                 }
-            } catch (e) {}
+            } catch {} // Виправлено Warning
         }
     }, [geojson, map]);
     return null;
@@ -32,16 +33,18 @@ function MapClickHandler({ onMapClick, activeMetric }) {
 }
 
 export default function InteractiveMap({ geojson, pois = [], activeMetric, onAddPoi, onRemovePoi, onUpdatePoi }) {
+    const { t } = useTranslation('admin');
+
     return (
         <div className={styles.mapWrapper}>
             {activeMetric && (
                 <div className={styles.activeMetricBanner}>
                     <div className={styles.bannerPulse}></div>
                     <div className={styles.bannerText}>
-                        <span>Додавання:</span>
+                        <span>{t('interactiveMap.adding')}</span>
                         <strong>{ICON_MAP[activeMetric] || ICON_MAP.default} {getLabelForKey(activeMetric)}</strong>
                     </div>
-                    <div className={styles.bannerHint}>ESC для скасування</div>
+                    <div className={styles.bannerHint}>{t('interactiveMap.escCancel')}</div>
                 </div>
             )}
 
@@ -85,12 +88,12 @@ export default function InteractiveMap({ geojson, pois = [], activeMetric, onAdd
                             <div className={styles.tooltipContent}>
                                 <div className={styles.tooltipTitle}>{getLabelForKey(poi.type)}</div>
                                 <span className={poi.source === 'parser' ? styles.tagParser : styles.tagManual}>
-                                    {poi.source === 'parser' ? '🤖 Парсер' : '👤 Вручну'}
+                                    {poi.source === 'parser' ? t('interactiveMap.parserTag') : t('interactiveMap.manualTag')}
                                 </span>
                                 {poi.source === 'manual' ? (
-                                    <div className={styles.tooltipAction}>Перетягніть або клікніть для видалення</div>
+                                    <div className={styles.tooltipAction}>{t('interactiveMap.dragToDelete')}</div>
                                 ) : (
-                                    <div className={styles.tooltipActionAlert}>Клікніть для видалення</div>
+                                    <div className={styles.tooltipActionAlert}>{t('interactiveMap.clickToDelete')}</div>
                                 )}
                             </div>
                         </Tooltip>

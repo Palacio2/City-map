@@ -3,15 +3,16 @@ import ReactDOM from 'react-dom';
 import { FaTimes, FaPaperPlane, FaSketch, FaCog, FaTrashAlt, FaExclamationCircle } from 'react-icons/fa';
 import { supabase } from '@supabaseClient';
 import ReactMarkdown from 'react-markdown';
+import { useTranslation } from 'react-i18next';
 import styles from './AiSidebar.module.css';
 
 export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
+  const { t } = useTranslation('assistant');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
   const [chatContext, setChatContext] = useState(null);
   
-  // Стейт для керування анімацією закриття
   const [shouldRender, setShouldRender] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   
@@ -27,14 +28,14 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
           setChatContext(JSON.parse(savedPrefs));
         }
       } catch (err) {
-        console.error("Failed to parse AI prefs", err);
+        console.error(err);
       }
     } else if (shouldRender) {
       setIsClosing(true);
       const timer = setTimeout(() => {
         setShouldRender(false);
         setIsClosing(false);
-      }, 350); // Час має збігатися з часом CSS анімації
+      }, 350);
       return () => clearTimeout(timer);
     }
   }, [isOpen, shouldRender]);
@@ -44,29 +45,33 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
   }, [messages, isTyping]);
 
   const quickPrompts = useMemo(() => {
-    if (!chatContext?.city) return ["Як працює пошук?", "Які міста доступні?", "Як оцінюється безпека?", "Що таке рейтинг районів?"];
+    if (!chatContext?.city) return [
+      t('sidebar.prompts.def1'), 
+      t('sidebar.prompts.def2'), 
+      t('sidebar.prompts.def3'), 
+      t('sidebar.prompts.def4')
+    ];
     
     const city = chatContext.city;
     let prompts = [];
     
-    if (chatContext.purpose === 'investment') prompts.push(`Найкращі райони для інвестицій у м. ${city}`);
-    if (chatContext.purpose === 'living') prompts.push(`Де краще жити у м. ${city}?`);
-    if (chatContext.budget) prompts.push(`Райони, що підходять під бюджет ${chatContext.budget}`);
-    if (chatContext.safetyImportance === 'Критично') prompts.push(`Назви найбезпечніші райони м. ${city}`);
-    if (chatContext.ecologyImportance === 'Дуже важливо') prompts.push(`Райони з найкращим повітрям та парками`);
-    if (chatContext.transport === 'public' && chatContext.maxCommute) prompts.push(`Райони з хорошим транспортом (до ${chatContext.maxCommute} хв)`);
-    if (chatContext.pets) prompts.push("Райони з найбільшою кількістю парків");
-    if (chatContext.vibe === 'quiet') prompts.push(`Знайди найтихіші спальні райони м. ${city}`);
+    if (chatContext.purpose === 'investment') prompts.push(t('sidebar.prompts.investment', { city }));
+    if (chatContext.purpose === 'living') prompts.push(t('sidebar.prompts.living', { city }));
+    if (chatContext.budget) prompts.push(t('sidebar.prompts.budget', { budget: chatContext.budget }));
+    if (chatContext.safetyImportance === 'critical') prompts.push(t('sidebar.prompts.safety', { city }));
+    if (chatContext.ecologyImportance === 'high') prompts.push(t('sidebar.prompts.ecology'));
+    if (chatContext.transport === 'public') prompts.push(t('sidebar.prompts.transport'));
+    if (chatContext.amenities?.includes('dog_parks')) prompts.push(t('sidebar.prompts.pets'));
+    if (chatContext.vibe === 'quiet') prompts.push(t('sidebar.prompts.quiet', { city }));
 
     if (prompts.length < 4) {
-      prompts.push(`Зроби загальний огляд районів м. ${city}`);
-      prompts.push(`Які райони зараз найдешевші для проживання?`);
+      prompts.push(t('sidebar.prompts.overview', { city }));
+      prompts.push(t('sidebar.prompts.cheapest'));
     }
 
     return prompts.sort(() => 0.5 - Math.random()).slice(0, 4);
-  }, [chatContext]);
+  }, [chatContext, t]);
 
-  // Замість isOpen тепер перевіряємо shouldRender
   if (!shouldRender) return null;
 
   const handleSend = async (textOrEvent) => {
@@ -96,7 +101,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
         })
       });
 
-      if (!response.ok) throw new Error('Помилка сервера AI');
+      if (!response.ok) throw new Error('API Error');
 
       const data = await response.json();
       
@@ -112,7 +117,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
         sender: 'ai', 
-        text: "⚠️ Вибачте, сталася помилка при підключенні до AI. Спробуйте пізніше або перевірте інтернет-з'єднання." 
+        text: t('sidebar.error_msg') 
       }]);
     } finally {
       setIsTyping(false);
@@ -132,20 +137,20 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
               <FaSketch />
             </div>
             <div>
-              <h3>AI Аналітик районів</h3>
-              <span className={styles.status}>Онлайн</span>
+              <h3>{t('sidebar.title')}</h3>
+              <span className={styles.status}>{t('sidebar.status_online')}</span>
             </div>
           </div>
           <div className={styles.headerActions}>
             {messages.length > 0 && (
-              <button className={styles.iconBtn} onClick={clearChat} title="Очистити чат">
+              <button className={styles.iconBtn} onClick={clearChat} title={t('sidebar.tooltip_clear')}>
                 <FaTrashAlt />
               </button>
             )}
-            <button className={styles.iconBtn} onClick={onOpenSettings} title="Налаштування пошуку">
+            <button className={styles.iconBtn} onClick={onOpenSettings} title={t('sidebar.tooltip_settings')}>
               <FaCog />
             </button>
-            <button className={styles.iconBtn} onClick={onClose} title="Закрити">
+            <button className={styles.iconBtn} onClick={onClose} title={t('sidebar.tooltip_close')}>
               <FaTimes />
             </button>
           </div>
@@ -156,22 +161,22 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
             <div className={styles.welcomeState}>
               <div className={styles.welcomeMessage}>
                 <FaSketch className={styles.welcomeIcon} />
-                <h4>Привіт! Я ваш AI-аналітик районів.</h4>
+                <h4>{t('sidebar.welcome_title')}</h4>
                 
                 {chatContext?.city ? (
                   <p>
-                    Я налаштований на пошук у місті <strong>{chatContext.city}</strong>. 
-                    {chatContext.safetyImportance === 'Критично' && ' Буду звертати особливу увагу на рівень безпеки та злочинності.'}
-                    {chatContext.ecologyImportance === 'Дуже важливо' && ' Врахую наявність парків, якість повітря та озеленення.'}
+                    {t('sidebar.welcome_city')} <strong>{chatContext.city}</strong>. 
+                    {chatContext.safetyImportance === 'critical' && t('sidebar.welcome_safety')}
+                    {chatContext.ecologyImportance === 'high' && t('sidebar.welcome_ecology')}
                   </p>
                 ) : (
                   <div style={{ color: 'var(--warning-color)', marginTop: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
                     <FaExclamationCircle />
-                    <span>Ви ще не налаштували параметри районів. Натисніть на шестірню зверху.</span>
+                    <span>{t('sidebar.welcome_no_prefs')}</span>
                   </div>
                 )}
                 
-                <p style={{ marginTop: '1rem' }}>Оберіть швидке питання або напишіть своє:</p>
+                <p style={{ marginTop: '1rem' }}>{t('sidebar.welcome_choose_prompt')}</p>
               </div>
               
               <div className={styles.quickPrompts}>
@@ -221,7 +226,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="Запитайте про райони, ціни, інфраструктуру..."
+            placeholder={t('sidebar.input_placeholder')}
             className={styles.input}
           />
           <button type="submit" className={styles.sendBtn} disabled={!message.trim() && !isTyping}>

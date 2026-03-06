@@ -13,12 +13,13 @@
     "message": {
       "label": "Message",
       "placeholder": "Your message..."
-    }
+    },
+    "consent": "I agree to the processing of personal data in accordance with the <0>Privacy Policy</0>"
   },
   "buttons": {
     "submit": "Send",
     "sending": "Sending...",
-    "send_again": "Send Again"
+    "send_again": "Send again"
   },
   "success": {
     "title": "Thank you!",

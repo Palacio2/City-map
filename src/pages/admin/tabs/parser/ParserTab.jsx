@@ -8,8 +8,10 @@ import MetricsModal from './MetricsModal';
 import ResultsTable from '../resultsTable/ResultsTable';
 import { api } from '../../../../services/api';
 import styles from './ParserTab.module.css';
+import { useTranslation } from 'react-i18next';
 
 export default function ParserTab() {
+    const { t } = useTranslation('admin');
     const logic = useParserLogic();
     const [pbfFile, setPbfFile] = useState(() => localStorage.getItem('parser_file') || '');
     const [country, setCountry] = useState(() => JSON.parse(localStorage.getItem('parser_country')) || null);
@@ -46,7 +48,7 @@ export default function ParserTab() {
     };
 
     const handleResetAll = () => {
-        if (!window.confirm("Скинути всі налаштування та очистити результати?")) return;
+        if (!window.confirm(t('parserTab.confirmReset'))) return;
         setCity(null); setCountry(null); setRegion(''); setPbfFile(logic.availableFiles[0] || ''); setSelectedDistrictIds([]);
         logic.clearAllData(); 
         localStorage.removeItem('parser_city'); localStorage.removeItem('parser_country'); localStorage.removeItem('parser_region');
@@ -70,7 +72,7 @@ export default function ParserTab() {
                 logic.clearResultsSilent();
             }
         } catch (e) {
-            alert(`Помилка збереження: ${e.message}`);
+            alert(`${t('parserTab.saveError')} ${e.message}`);
             throw e; 
         }
     };
@@ -79,10 +81,10 @@ return (
         <div className={styles.mainWrapper}>
             <div className={styles.pageHeader}>
                 <div>
-                    <h2 className={styles.pageTitle}>Парсер Даних</h2>
-                    <p className={styles.pageSubtitle}>Автоматичний збір інфраструктури та цін для районів</p>
+                    <h2 className={styles.pageTitle}>{t('parserTab.pageTitle')}</h2>
+                    <p className={styles.pageSubtitle}>{t('parserTab.pageSubtitle')}</p>
                 </div>
-                <button onClick={handleResetAll} className={`${styles.btn} ${styles.dangerBtn}`}>🔄 Скинути все</button>
+                <button onClick={handleResetAll} className={`${styles.btn} ${styles.dangerBtn}`}>{t('parserTab.resetAll')}</button>
             </div>
 
             <div className={styles.topGrid}>
@@ -90,13 +92,13 @@ return (
                     <div className={styles.cardHeader}>
                         <div className={styles.stepTitle}>
                             <span className={styles.stepNumber}>1</span>
-                            <h3>Файл карти (.pbf)</h3>
+                            <h3>{t('parserTab.step1')}</h3>
                         </div>
-                        <button onClick={logic.loadAvailableFiles} className={styles.iconBtnText}>🔄 Оновити</button>
+                        <button onClick={logic.loadAvailableFiles} className={styles.iconBtnText}>{t('parserTab.refresh')}</button>
                     </div>
                     <div className={styles.cardBody}>
                         {logic.availableFiles.length === 0 ? (
-                            <div className={styles.emptyFolderBox}>Папка server/data порожня. Додайте .pbf файли.</div>
+                            <div className={styles.emptyFolderBox}>{t('parserTab.emptyFolder')}</div>
                         ) : (
                             <select className={styles.selectInput} value={pbfFile} onChange={(e) => setPbfFile(e.target.value)}>
                                 {logic.availableFiles.map(file => <option key={file} value={file}>{file}</option>)}
@@ -109,7 +111,7 @@ return (
                     <div className={styles.cardHeader}>
                         <div className={styles.stepTitle}>
                             <span className={styles.stepNumber}>2</span>
-                            <h3>Локація</h3>
+                            <h3>{t('parserTab.step2')}</h3>
                         </div>
                     </div>
                     <div className={styles.cardBody}>
@@ -129,7 +131,7 @@ return (
                     <div className={styles.cardHeader}>
                         <div className={styles.stepTitle}>
                             <span className={styles.stepNumber}>3</span>
-                            <h3>Управління районами ({city.name})</h3>
+                            <h3>{t('parserTab.step3')} ({city.name})</h3>
                         </div>
                     </div>
                     <div className={styles.cardBodyOutless}>
@@ -164,7 +166,7 @@ return (
                     <div className={styles.cardHeader}>
                         <div className={styles.stepTitle}>
                             <span className={`${styles.stepNumber} ${styles.stepNumberSuccess}`}>5</span>
-                            <h3>Результати парсингу</h3>
+                            <h3>{t('parserTab.step5')}</h3>
                         </div>
                     </div>
                     <div className={styles.cardBodyOutless}>
