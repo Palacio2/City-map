@@ -8,7 +8,7 @@ import Footer from '@footer/Footer';
 import RodoModal from '@modals/RodoModal';
 import CookieBanner from '@modals/CookieBanner';
 import Loader from '@components/loader/Loader';
-import FeedbackWidget from '@components/FeedbackWidget/FeedbackWidget';
+import FeedbackWidget from '@components/feedbackWidget/FeedbackWidget';
 
 import { useUserConsent } from '@hooks/useUserConsent';
 import { useTimeTracker } from '@hooks/useTimeTracker';
