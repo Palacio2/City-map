@@ -1,4 +1,3 @@
-// MapEditorModal.jsx
 import React, { useState, useEffect, useMemo } from 'react';
 import InteractiveMap from './InteractiveMap';
 import { METRIC_GROUPS } from '../../config/metricsConfig';
@@ -6,6 +5,8 @@ import { getLabelForKey } from './mapIcons';
 import { FaEye, FaEyeSlash, FaMapMarkedAlt, FaGlobeEurope, FaTimes, FaSave } from 'react-icons/fa';
 import L from 'leaflet';
 import styles from './MapEditorModal.module.css';
+import uiStyles from '../../ui/AdminUI.module.css';
+import BaseModal from '../../ui/BaseModal';
 import { useTranslation } from 'react-i18next';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -48,7 +49,7 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
                 try {
                     const center = L.geoJSON(rowData.geojson).getBounds().getCenter();
                     setMapCenter(center);
-                } catch {} // Виправлено Warning
+                } catch {} 
             }
         }
     }, [isOpen, rowData]);
@@ -104,98 +105,106 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
     if (!isOpen || !rowData) return null;
     const countableMetrics = METRIC_GROUPS.flatMap(g => g.fields).filter(f => f.type === 'number' && f.key.includes('_count'));
 
-    let googleUrl = mapCenter ? `https://www.google.com/maps/@$$${mapCenter.lat},${mapCenter.lng},16z` : '#';
+    let googleUrl = mapCenter ? `https://www.google.com/maps/@$$$${mapCenter.lat},${mapCenter.lng},16z` : '#';
     let osmUrl = mapCenter ? `https://www.openstreetmap.org/#map=16/${mapCenter.lat}/${mapCenter.lng}` : '#';
 
     if (activeMetric && mapCenter) {
         const query = encodeURIComponent(getLabelForKey(activeMetric));
-        googleUrl = `https://www.google.com/maps/search/$$${query}/@${mapCenter.lat},${mapCenter.lng},16z`;
+        googleUrl = `https://www.google.com/maps/search/$$$${query}/@${mapCenter.lat},${mapCenter.lng},16z`;
         osmUrl = `https://www.openstreetmap.org/search?query=${query}#map=16/${mapCenter.lat}/${mapCenter.lng}`;
     }
 
-    return (
-        <div className={styles.modalOverlay}>
-            <div className={styles.modalContainer}>
-                <div className={styles.header}>
-                    <h2 className={styles.title}>
-                        <div className={styles.titleIcon}>🗺️</div>
-                        <div className={styles.titleText}>
-                            <span>{t('mapEditor.title')}</span>
-                            <span className={styles.districtName}>{rowData.district_name}</span>
-                        </div>
-                    </h2>
-                    <div className={styles.headerActions}>
-                        {mapCenter && (
-                            <div className={styles.externalLinks}>
-                                <a href={googleUrl} target="_blank" rel="noreferrer" className={styles.externalBtnGoogle}>
-                                    <FaMapMarkedAlt /> {t('mapEditor.googleMaps')}
-                                </a>
-                                <a href={osmUrl} target="_blank" rel="noreferrer" className={styles.externalBtnOsm}>
-                                    <FaGlobeEurope /> {t('mapEditor.osm')}
-                                </a>
-                            </div>
-                        )}
-                        <div className={styles.actionDivider}></div>
-                        <button onClick={onClose} className={styles.cancelBtn}>
-                            <FaTimes /> {t('mapEditor.cancel')}
-                        </button>
-                        <button onClick={handleSave} className={styles.saveBtn}>
-                            <FaSave /> {t('mapEditor.save')}
-                        </button>
-                    </div>
-                </div>
+    const modalTitle = (
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span>🗺️ {t('mapEditor.title')}</span>
+            <span style={{ color: 'var(--primary)' }}>{rowData.district_name}</span>
+        </div>
+    );
 
-                <div className={styles.body}>
-                    <div className={styles.sidebar}>
-                        <div className={styles.sidebarHelp}>
-                            <div className={styles.helpText}>{t('mapEditor.helpText')}</div>
-                            <div className={styles.visibilityControls}>
-                                <button onClick={showAll} className={styles.visBtn}>{t('mapTab.showAll')}</button>
-                                <button onClick={hideAll} className={styles.visBtn}>{t('mapTab.hideAll')}</button>
-                            </div>
-                        </div>
-                        <div className={styles.metricsList}>
-                            {countableMetrics.map(m => {
-                                const count = dynamicCounts[m.key] || 0;
-                                const isActive = activeMetric === m.key;
-                                const isVisible = visibleTypes.has(m.key);
-                                
-                                return (
-                                    <div 
-                                        key={m.key} 
-                                        className={`${styles.metricItem} ${isActive ? styles.metricItemActive : styles.metricItemInactive} ${!isVisible ? styles.metricItemHidden : ''}`}
-                                        onClick={() => setActiveMetric(isActive ? null : m.key)}
-                                    >
-                                        <span className={styles.metricLabel}>{m.label}</span>
-                                        <div className={styles.metricControls}>
-                                            <span className={`${styles.metricCount} ${isActive ? styles.countActive : styles.countInactive}`}>
-                                                {count}
-                                            </span>
-                                            <button 
-                                                className={`${styles.eyeBtn} ${isVisible ? styles.eyeBtnVisible : styles.eyeBtnHidden}`}
-                                                onClick={(e) => toggleVisibility(e, m.key)}
-                                            >
-                                                {isVisible ? <FaEye /> : <FaEyeSlash />}
-                                            </button>
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    <div className={styles.mapContainer}>
-                        <InteractiveMap 
-                            geojson={rowData.geojson}
-                            pois={activePois.filter(p => visibleTypes.has(p.type))}
-                            activeMetric={activeMetric}
-                            onAddPoi={handleAddPoi}
-                            onRemovePoi={handleRemovePoi}
-                            onUpdatePoi={handleUpdatePoi}
-                        />
-                    </div>
-                </div>
+    const modalActions = (
+        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
+            <div style={{ display: 'flex', gap: '12px' }}>
+                {mapCenter && (
+                    <>
+                        {/* ТУТ ДОДАНО ПЕРЕКЛАДИ */}
+                        <a href={googleUrl} target="_blank" rel="noreferrer" className={styles.externalBtnGoogle}>
+                            <FaMapMarkedAlt /> {t('mapEditor.googleMaps')}
+                        </a>
+                        <a href={osmUrl} target="_blank" rel="noreferrer" className={styles.externalBtnOsm}>
+                            <FaGlobeEurope /> {t('mapEditor.osm')}
+                        </a>
+                    </>
+                )}
+            </div>
+            <div style={{ display: 'flex', gap: '12px' }}>
+                <button onClick={onClose} className={`${uiStyles.btn} ${uiStyles.btnCancel}`}>
+                    <FaTimes /> {t('mapEditor.cancel')}
+                </button>
+                <button onClick={handleSave} className={`${uiStyles.btn} ${uiStyles.btnSuccess}`}>
+                    <FaSave /> {t('mapEditor.save')}
+                </button>
             </div>
         </div>
+    );
+
+    return (
+        <BaseModal 
+            isOpen={isOpen} 
+            onClose={onClose} 
+            title={modalTitle} 
+            maxWidth="1200px" 
+            actions={modalActions}
+            bodyStyle={{ padding: 0, display: 'flex', height: '70vh', overflow: 'hidden' }}
+        >
+            <div className={styles.sidebar}>
+                <div className={styles.sidebarHelp}>
+                    <div className={styles.helpText}>{t('mapEditor.helpText')}</div>
+                    <div className={styles.visibilityControls}>
+                        {/* Ці кнопки використовують переклади з mapTab */}
+                        <button onClick={showAll} className={styles.visBtn}>{t('mapTab.showAll')}</button>
+                        <button onClick={hideAll} className={styles.visBtn}>{t('mapTab.hideAll')}</button>
+                    </div>
+                </div>
+                <div className={styles.metricsList}>
+                    {countableMetrics.map(m => {
+                        const count = dynamicCounts[m.key] || 0;
+                        const isActive = activeMetric === m.key;
+                        const isVisible = visibleTypes.has(m.key);
+                        
+                        return (
+                            <div 
+                                key={m.key} 
+                                className={`${styles.metricItem} ${isActive ? styles.metricItemActive : styles.metricItemInactive} ${!isVisible ? styles.metricItemHidden : ''}`}
+                                onClick={() => setActiveMetric(isActive ? null : m.key)}
+                            >
+                                <span className={styles.metricLabel}>{m.label}</span>
+                                <div className={styles.metricControls}>
+                                    <span className={`${styles.metricCount} ${isActive ? styles.countActive : styles.countInactive}`}>
+                                        {count}
+                                    </span>
+                                    <button 
+                                        className={`${styles.eyeBtn} ${isVisible ? styles.eyeBtnVisible : styles.eyeBtnHidden}`}
+                                        onClick={(e) => toggleVisibility(e, m.key)}
+                                    >
+                                        {isVisible ? <FaEye /> : <FaEyeSlash />}
+                                    </button>
+                                </div>
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+
+            <div className={styles.mapContainer}>
+                <InteractiveMap 
+                    geojson={rowData.geojson}
+                    pois={activePois.filter(p => visibleTypes.has(p.type))}
+                    activeMetric={activeMetric}
+                    onAddPoi={handleAddPoi}
+                    onRemovePoi={handleRemovePoi}
+                    onUpdatePoi={handleUpdatePoi}
+                />
+            </div>
+        </BaseModal>
     );
 }

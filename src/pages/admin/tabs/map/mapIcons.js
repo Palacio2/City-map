@@ -1,4 +1,3 @@
-// mapIcons.js
 import L from 'leaflet';
 import { METRIC_GROUPS } from '../../config/metricsConfig';
 
@@ -23,9 +22,7 @@ export const getLabelForKey = (key) => {
             const field = group.fields.find(f => f.key === key);
             if (field) return field.label;
         }
-    } catch (e) {
-        console.error('Error finding label for key:', key, e);
-    }
+    } catch {}
     return key;
 };
 
@@ -33,9 +30,9 @@ export const createEmojiIcon = (type, source) => {
     const emoji = ICON_MAP[type] || ICON_MAP.default;
     
     const isManual = source === 'manual';
-    const bg = isManual ? '#eff6ff' : '#ffffff';
-    const border = isManual ? '#3b82f6' : '#cbd5e1';
-    const shadow = isManual ? '0 8px 16px rgba(59, 130, 246, 0.25)' : '0 4px 6px rgba(0,0,0,0.08)';
+    const bg = isManual ? 'rgba(59, 130, 246, 0.1)' : 'var(--bg-surface)';
+    const border = isManual ? 'var(--primary)' : 'var(--border)';
+    const shadow = isManual ? '0 8px 16px rgba(59, 130, 246, 0.25)' : 'var(--shadow-md)';
     const zIndex = isManual ? '1000' : '500';
 
     const htmlString = `
@@ -51,10 +48,10 @@ export const createEmojiIcon = (type, source) => {
             justify-content: center; 
             box-shadow: ${shadow}; 
             cursor: ${isManual ? 'grab' : 'pointer'}; 
-            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: var(--transition);
             position: relative;
             z-index: ${zIndex};
-        " onmouseover="this.style.transform='scale(1.15) translateY(-2px)'; this.style.boxShadow='0 10px 20px rgba(0,0,0,0.15)';" onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='${shadow}';">
+        " onmouseover="this.style.transform='scale(1.15) translateY(-2px)'; this.style.boxShadow='var(--shadow-lg)';" onmouseout="this.style.transform='scale(1) translateY(0)'; this.style.boxShadow='${shadow}';">
             ${emoji}
         </div>
     `;

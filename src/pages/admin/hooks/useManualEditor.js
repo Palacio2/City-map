@@ -73,7 +73,8 @@ export const useManualEditor = (selectedCountry, selectedCity, selectedDistrict,
                 .from('district_photos')
                 .select('photo_url')
                 .eq('district_id', districtId)
-                .eq('is_main', true)
+                // ВИДАЛЕНО: .eq('is_main', true)
+                .limit(1) // Додаємо ліміт, щоб взяти хоча б одне
                 .maybeSingle();
                 
             setPhotoPreview(photoData ? photoData.photo_url : null);

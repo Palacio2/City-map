@@ -4,27 +4,46 @@ import { METRIC_GROUPS } from '../../config/metricsConfig';
 import MapEditorModal from '../map/MapEditorModal';
 import StatGroup from './StatGroup';
 import styles from './ResultsTable.module.css';
+import uiStyles from '../../ui/AdminUI.module.css';
 import { useTranslation } from 'react-i18next';
 
-export default function DistrictRow({ row, index, onEdit, onSave, onRemove }) {
+const DistrictRow = ({ row, index, onEdit, onSave, onRemove }) => {
     const { t } = useTranslation('admin');
     const [isOpen, setIsOpen] = useState(false);
     const [isMapEditorOpen, setIsMapEditorOpen] = useState(false);
     const [photoFile, setPhotoFile] = useState(null);
     const [uploading, setUploading] = useState(false);
 
-    const handlePhotoUpload = async () => {
+const handlePhotoUpload = async () => {
         if (!photoFile) return;
         setUploading(true);
         try {
             const fileExt = photoFile.name.split('.').pop();
             const fileName = `${row.district_id}-${Date.now()}.${fileExt}`;
+            
+            // 1. Завантажуємо фізичний файл у бакет
             const { error: upErr } = await supabase.storage.from('district-photos').upload(fileName, photoFile, { upsert: true });
             if (upErr) throw upErr;
-            alert(t('resultsTable.uploadSuccess'));
+            
+            // 2. Дістаємо публічне посилання на це фото
+            const { data: urlData } = supabase.storage.from('district-photos').getPublicUrl(fileName);
+            
+            // 3. РОБИМО ЗАПИС У БАЗУ ДАНИХ (ось цього кроку нам не вистачало!)
+            const { error: dbErr } = await supabase
+                .from('district_photos')
+                .upsert({ 
+                    district_id: row.district_id, 
+                    photo_url: urlData.publicUrl, 
+                    is_main: true 
+                }, { onConflict: 'district_id' });
+                
+            if (dbErr) throw dbErr;
+
+            alert(t('resultsTable.uploadSuccess', {defaultValue: 'Фото успішно збережено!'}));
             setPhotoFile(null);
-        } catch { // Виправлено Warning
-            alert(t('resultsTable.uploadError'));
+        } catch (error) {
+            console.error("Помилка завантаження фото:", error);
+            alert(t('resultsTable.uploadError', {defaultValue: 'Помилка завантаження'}) + ': ' + error.message);
         } finally { 
             setUploading(false);
         }
@@ -34,7 +53,9 @@ export default function DistrictRow({ row, index, onEdit, onSave, onRemove }) {
         try {
             await onSave([row]);
             onRemove(row.district_id); 
-        } catch {} // Виправлено Warning
+        } catch (error) {
+            console.error(error);
+        } 
     };
 
     const handleDownloadJson = (e) => {
@@ -113,12 +134,12 @@ export default function DistrictRow({ row, index, onEdit, onSave, onRemove }) {
                         <div className={styles.footerRow}>
                             <div className={styles.photoBox}>
                                 <span className={styles.photoLabel}>{t('resultsTable.photoLabel')}</span>
-                                <input type="file" accept="image/*" onChange={e => setPhotoFile(e.target.files[0])} className={styles.fileInput} />
-                                <button type="button" onClick={handlePhotoUpload} disabled={!photoFile || uploading} className={styles.uploadBtn}>
+                                <input type="file" accept="image/*" onChange={e => setPhotoFile(e.target.files[0])} style={{fontSize: '0.85rem', color: 'var(--text-muted)'}} />
+                                <button type="button" onClick={handlePhotoUpload} disabled={!photoFile || uploading} className={`${uiStyles.btn} ${uiStyles.btnCancel}`} style={{padding: '6px 12px'}}>
                                     {uploading ? t('resultsTable.uploading') : t('resultsTable.uploadBtn')}
                                 </button>
                             </div>
-                            <button type="button" onClick={handleSaveAndHide} className={styles.saveRowBtn}>
+                            <button type="button" onClick={handleSaveAndHide} className={`${uiStyles.btn} ${uiStyles.btnSuccess}`}>
                                 {t('resultsTable.saveRow')}
                             </button>
                         </div>
@@ -127,4 +148,6 @@ export default function DistrictRow({ row, index, onEdit, onSave, onRemove }) {
             </div>
         </div>
     );
-}
+};
+
+export default React.memo(DistrictRow);

@@ -3,9 +3,14 @@ import { supabase } from '@supabaseClient';
 import { FaBug, FaLightbulb, FaEnvelope, FaImage, FaExternalLinkAlt, FaExclamationTriangle, FaTrash } from 'react-icons/fa';
 import styles from './FeedbackTab.module.css';
 import { useTranslation } from 'react-i18next';
+import DataTable from '../../ui/DataTable';
+import { useAdmin } from '../../hooks/AdminContext';
 
 export default function FeedbackTab() {
     const { t } = useTranslation('admin');
+    const { currentAdmin } = useAdmin();
+    const isSuperAdmin = currentAdmin?.role === 'super_admin';
+
     const [messages, setMessages] = useState([]);
     const [loading, setLoading] = useState(true);
     const [filter, setFilter] = useState('all');
@@ -25,23 +30,20 @@ export default function FeedbackTab() {
             if (error) throw error;
             setMessages(data || []);
         } catch {
-            //
         } finally {
             setLoading(false);
         }
     };
 
     const handleDelete = async (id, screenshotUrl) => {
+        if (!isSuperAdmin) return;
         if (!window.confirm(t('feedbackTab.confirmDelete'))) return;
         
         try {
             if (screenshotUrl) {
                 const urlParts = screenshotUrl.split('/');
                 const fileName = urlParts[urlParts.length - 1];
-                
-                if (fileName) {
-                    await supabase.storage.from('feedback_images').remove([fileName]);
-                }
+                if (fileName) await supabase.storage.from('feedback_images').remove([fileName]);
             }
 
             const { error: dbError } = await supabase.from('contacts_messages').delete().eq('id', id);
@@ -62,9 +64,7 @@ export default function FeedbackTab() {
                 
             if (error) throw error;
             
-            setMessages(messages.map(msg => 
-                msg.id === id ? { ...msg, status: newStatus } : msg
-            ));
+            setMessages(messages.map(msg => msg.id === id ? { ...msg, status: newStatus } : msg));
         } catch (error) {
             alert(t('feedbackTab.statusError') + error.message);
         }
@@ -89,6 +89,88 @@ export default function FeedbackTab() {
         return true;
     });
 
+    const columns = [
+        {
+            header: t('feedbackTab.colDate'),
+            render: (msg) => (
+                <>
+                    <div className={styles.dateMain}>
+                        {new Date(msg.created_at).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' })}
+                    </div>
+                    <div className={styles.timeSub}>
+                        {new Date(msg.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
+                    </div>
+                </>
+            )
+        },
+        {
+            header: t('feedbackTab.colUser'),
+            render: (msg) => {
+                const typeConfig = getTypeConfig(msg.type);
+                return (
+                    <>
+                        <div className={styles.email} title={msg.email}>{msg.email}</div>
+                        {msg.name && <div className={styles.name}>{msg.name}</div>}
+                        <div className={`${styles.typeBadge} ${typeConfig.class}`}>
+                            {typeConfig.icon} {typeConfig.label}
+                        </div>
+                    </>
+                );
+            }
+        },
+        {
+            header: t('feedbackTab.colMsg'),
+            render: (msg) => (
+                <>
+                    <div className={styles.messageContent}>{msg.message}</div>
+                    <div className={styles.metaTags}>
+                        {msg.screenshot_url && (
+                            <a href={msg.screenshot_url} target="_blank" rel="noopener noreferrer" className={styles.metaTagLink}>
+                                <FaImage /> {t('feedbackTab.screenshot')}
+                            </a>
+                        )}
+                        {msg.page_url && (
+                            <a href={msg.page_url} target="_blank" rel="noopener noreferrer" className={styles.metaTagLink} title={msg.page_url}>
+                                <FaExternalLinkAlt /> URL
+                            </a>
+                        )}
+                        {msg.screen_size && (
+                            <span className={styles.metaTagInfo} title={msg.browser_info}>
+                                🖥️ {msg.screen_size}
+                            </span>
+                        )}
+                    </div>
+                </>
+            )
+        },
+        {
+            header: t('feedbackTab.colStatus'),
+            render: (msg) => (
+                <select 
+                    className={`${styles.statusSelect} ${styles[`status_${msg.status || 'new'}`]}`}
+                    value={msg.status || 'new'}
+                    onChange={(e) => handleStatusChange(msg.id, e.target.value)}
+                >
+                    <option value="new">{t('feedbackTab.statusNew')}</option>
+                    <option value="in_progress">{t('feedbackTab.statusInProgress')}</option>
+                    <option value="resolved">{t('feedbackTab.statusResolved')}</option>
+                </select>
+            )
+        },
+        {
+            header: t('feedbackTab.colAction'),
+            render: (msg) => isSuperAdmin ? (
+                <button 
+                    className={styles.deleteBtn}
+                    onClick={() => handleDelete(msg.id, msg.screenshot_url)}
+                    title={t('feedbackTab.deleteBtnTitle')}
+                >
+                    <FaTrash />
+                </button>
+            ) : <span style={{color: 'var(--border)', fontSize: '0.8rem'}}>No access</span>
+        }
+    ];
+
     if (loading) return <div className={styles.loadingState}>{t('feedbackTab.loading')}</div>;
 
     return (
@@ -103,94 +185,12 @@ export default function FeedbackTab() {
                 </div>
             </div>
 
-            {filteredMessages.length === 0 ? (
-                <div className={styles.emptyState}>
-                    <div className={styles.emptyIcon}>📭</div>
-                    <div>{t('feedbackTab.emptyState')}</div>
-                </div>
-            ) : (
-                <div className={styles.tableContainer}>
-                    <table className={styles.table}>
-                        <thead>
-                            <tr>
-                                <th className={styles.colDate}>{t('feedbackTab.colDate')}</th>
-                                <th className={styles.colUser}>{t('feedbackTab.colUser')}</th>
-                                <th className={styles.colMsg}>{t('feedbackTab.colMsg')}</th>
-                                <th className={styles.colStatus}>{t('feedbackTab.colStatus')}</th>
-                                <th className={styles.colAction}>{t('feedbackTab.colAction')}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {filteredMessages.map(msg => {
-                                const typeConfig = getTypeConfig(msg.type);
-                                return (
-                                    <tr key={msg.id} className={msg.status === 'resolved' ? styles.rowResolved : ''}>
-                                        <td>
-                                            <div className={styles.dateMain}>
-                                                {new Date(msg.created_at).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                                            </div>
-                                            <div className={styles.timeSub}>
-                                                {new Date(msg.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
-                                            </div>
-                                        </td>
-                                        
-                                        <td>
-                                            <div className={styles.email} title={msg.email}>{msg.email}</div>
-                                            {msg.name && <div className={styles.name}>{msg.name}</div>}
-                                            <div className={`${styles.typeBadge} ${typeConfig.class}`} style={{marginTop: '8px'}}>
-                                                {typeConfig.icon} {typeConfig.label}
-                                            </div>
-                                        </td>
-                                        
-                                        <td>
-                                            <div className={styles.messageContent}>{msg.message}</div>
-                                            <div className={styles.metaTags}>
-                                                {msg.screenshot_url && (
-                                                    <a href={msg.screenshot_url} target="_blank" rel="noopener noreferrer" className={styles.metaTagLink}>
-                                                        <FaImage /> {t('feedbackTab.screenshot')}
-                                                    </a>
-                                                )}
-                                                {msg.page_url && (
-                                                    <a href={msg.page_url} target="_blank" rel="noopener noreferrer" className={styles.metaTagLink} title={msg.page_url}>
-                                                        <FaExternalLinkAlt /> URL
-                                                    </a>
-                                                )}
-                                                {msg.screen_size && (
-                                                    <span className={styles.metaTagInfo} title={msg.browser_info}>
-                                                        🖥️ {msg.screen_size}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        </td>
-                                        
-                                        <td>
-                                            <select 
-                                                className={`${styles.statusSelect} ${styles[`status_${msg.status || 'new'}`]}`}
-                                                value={msg.status || 'new'}
-                                                onChange={(e) => handleStatusChange(msg.id, e.target.value)}
-                                            >
-                                                <option value="new">{t('feedbackTab.statusNew')}</option>
-                                                <option value="in_progress">{t('feedbackTab.statusInProgress')}</option>
-                                                <option value="resolved">{t('feedbackTab.statusResolved')}</option>
-                                            </select>
-                                        </td>
-                                        
-                                        <td className={styles.actionCell}>
-                                            <button 
-                                                className={styles.deleteBtn}
-                                                onClick={() => handleDelete(msg.id, msg.screenshot_url)}
-                                                title={t('feedbackTab.deleteBtnTitle')}
-                                            >
-                                                <FaTrash />
-                                            </button>
-                                        </td>
-                                    </tr>
-                                );
-                            })}
-                        </tbody>
-                    </table>
-                </div>
-            )}
+            <DataTable 
+                columns={columns}
+                data={filteredMessages}
+                emptyMessage={t('feedbackTab.emptyState')}
+                rowClassName={(msg) => msg.status === 'resolved' ? styles.rowResolved : ''}
+            />
         </div>
     );
 }

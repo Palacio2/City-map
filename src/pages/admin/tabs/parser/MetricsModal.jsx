@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ALL_METRICS } from '../../config/metricsConfig';
 import { generatePropertyLink } from '../../utils/countryHelpers';
-import styles from './MetricsModal.module.css';
-import { useTranslation } from 'react-i18next';
+import { getLabelForKey } from '../map/mapIcons'; 
+import BaseModal from '../../ui/BaseModal';
+import uiStyles from '../../ui/AdminUI.module.css';
+import styles from './ParserTab.module.css';
+import { FaExternalLinkAlt } from 'react-icons/fa'; // ДОДАНО ІКОНКУ
 
-export default function MetricsModal({ isOpen, onClose, onConfirm, selectedDistricts, country, city, region }) {
+const MetricsModal = ({ isOpen, onClose, onConfirm, selectedDistricts, country, city, region }) => {
     const { t } = useTranslation('admin');
     const [useOSM, setUseOSM] = useState(true);
     const [useWAQI, setUseWAQI] = useState(true);
@@ -23,80 +27,119 @@ export default function MetricsModal({ isOpen, onClose, onConfirm, selectedDistr
         }
     }, [isOpen, selectedDistricts, country, city, region]);
 
-    if (!isOpen) return null;
-
     const toggleMetric = (dbName) => {
         setSelectedMetrics(prev => prev.includes(dbName) ? prev.filter(m => m !== dbName) : [...prev, dbName]);
     };
 
+    const handleConfirm = () => {
+        onConfirm({ useOSM, useWAQI, useOtodom, useGUS, selectedMetrics, otodomUrls });
+        onClose();
+    };
+
+    if (!isOpen) return null;
+
+    const modalActions = (
+        <>
+            <button className={`${uiStyles.btn} ${uiStyles.btnCancel}`} onClick={onClose}>
+                {t('metricsModal.cancel', {defaultValue: 'Скасувати'})}
+            </button>
+            <button className={`${uiStyles.btn} ${uiStyles.btnPrimary}`} onClick={handleConfirm}>
+                {t('metricsModal.start', {defaultValue: 'Запустити парсер'})}
+            </button>
+        </>
+    );
+
     return (
-        <div className={styles.modalOverlay}>
-            <div className={styles.modalContent}>
-                <h3 className={styles.modalTitle}>{t('metricsModal.title')}</h3>
-                
-                <div className={styles.mainSettingsGrid}>
-                    <label className={styles.toggleLabel}>
-                        <input type="checkbox" checked={useOSM} onChange={e => setUseOSM(e.target.checked)} className={styles.checkbox}/> 
-                        <span>{t('metricsModal.osm')}</span>
-                    </label>
-                    <label className={styles.toggleLabel}>
-                        <input type="checkbox" checked={useWAQI} onChange={e => setUseWAQI(e.target.checked)} className={styles.checkbox}/> 
-                        <span>{t('metricsModal.waqi')}</span>
-                    </label>
-                    <label className={styles.toggleLabel}>
-                        <input type="checkbox" checked={useGUS} onChange={e => setUseGUS(e.target.checked)} className={styles.checkbox}/> 
-                        <span>{t('metricsModal.gus')}</span>
-                    </label>
-                    <label className={styles.toggleLabel}>
-                        <input type="checkbox" checked={useOtodom} onChange={e => setUseOtodom(e.target.checked)} className={styles.checkbox}/> 
-                        <span>{t('metricsModal.otodom')}</span>
-                    </label>
+        <BaseModal isOpen={isOpen} onClose={onClose} title={t('metricsModal.title', {defaultValue: '⚙️ Налаштування Парсера'})} maxWidth="600px" actions={modalActions}>
+            <div className={styles.metricsModalBody}>
+                <div className={styles.metricsSection}>
+                    <h4 className={styles.metricsTitle}>{t('metricsModal.dataSource', {defaultValue: 'Джерела даних'})}</h4>
+                    <div className={styles.metricsGrid}>
+                        <label className={styles.metricCheckbox}>
+                            <input type="checkbox" checked={useOSM} onChange={(e) => setUseOSM(e.target.checked)} /> {t('metricsModal.osm', {defaultValue: '🗺️ OSM (Інфраструктура)'})}
+                        </label>
+                        <label className={styles.metricCheckbox}>
+                            <input type="checkbox" checked={useWAQI} onChange={(e) => setUseWAQI(e.target.checked)} /> {t('metricsModal.waqi', {defaultValue: '🍃 WAQI (Повітря)'})}
+                        </label>
+                        <label className={styles.metricCheckbox}>
+                            <input type="checkbox" checked={useOtodom} onChange={(e) => setUseOtodom(e.target.checked)} /> {t('metricsModal.otodom', {defaultValue: '🏠 Otodom (Ціни)'})}
+                        </label>
+                        <label className={styles.metricCheckbox}>
+                            <input type="checkbox" checked={useGUS} onChange={(e) => setUseGUS(e.target.checked)} /> {t('metricsModal.gus', {defaultValue: '📈 GUS (Зарплата)'})}
+                        </label>
+                    </div>
                 </div>
 
                 {useOSM && (
-                    <div className={styles.section}>
-                        <h4 className={styles.sectionTitle}>{t('metricsModal.osmMetrics')}</h4>
+                    <div className={styles.metricsSection}>
+                        <h4 className={styles.metricsTitle}>{t('metricsModal.selectMetrics', {defaultValue: 'Оберіть метрики OSM'})}</h4>
                         <div className={styles.metricsGrid}>
-                            {ALL_METRICS.map(m => {
-                                const isChecked = selectedMetrics.includes(m.db);
-                                return (
-                                    <label key={m.db} className={`${styles.metricLabel} ${isChecked ? styles.metricLabelHasChecked : ''}`}>
-                                        <input type="checkbox" checked={isChecked} onChange={() => toggleMetric(m.db)} className={styles.checkbox}/>
-                                        {m.db}
-                                    </label>
-                                );
-                            })}
-                        </div>
-                    </div>
-                )}
-
-                {useOtodom && (
-                    <div className={styles.section}>
-                        <h4 className={styles.sectionTitle}>{t('metricsModal.otodomCheck')}</h4>
-                        <div className={styles.urlList}>
-                            {selectedDistricts.map(d => (
-                                <div key={d.id} className={styles.urlItem}>
-                                    <span className={styles.urlLabel}>{d.name}</span>
+                            {ALL_METRICS.map(m => (
+                                <label key={m.db} className={styles.metricCheckbox}>
                                     <input 
-                                        type="text" 
-                                        className={styles.textInput} 
-                                        value={otodomUrls[d.id] || ''} 
-                                        onChange={(e) => setOtodomUrls(prev => ({...prev, [d.id]: e.target.value}))}
-                                        placeholder="https://..."
+                                        type="checkbox" 
+                                        checked={selectedMetrics.includes(m.db)} 
+                                        onChange={() => toggleMetric(m.db)} 
                                     />
-                                </div>
+                                    {m.label || getLabelForKey(m.db)}
+                                </label>
                             ))}
                         </div>
                     </div>
                 )}
 
-                <div className={styles.modalActions}>
-                    <button onClick={onClose} className={`${styles.btn} ${styles.defaultBtn}`}>{t('metricsModal.cancel')}</button>
-                    <button onClick={() => onConfirm({ selectedMetrics, useOSM, useWAQI, useOtodom, useGUS, otodomUrls })} className={`${styles.btn} ${styles.primaryBtn}`}>
-                        {t('metricsModal.start')}
-                    </button>
-                </div>
+                {useOtodom && selectedDistricts.length > 0 && (
+                    <div className={styles.metricsSection}>
+                        <h4 className={styles.metricsTitle}>{t('metricsModal.otodomCheck', {defaultValue: 'Перевірка посилань Otodom'})}</h4>
+                        <div className={styles.urlList}>
+                            {selectedDistricts.map(d => {
+                                const currentUrl = otodomUrls[d.id] || '';
+                                const isValidUrl = currentUrl.startsWith('http');
+
+                                return (
+                                    <div key={d.id} className={styles.urlRow} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                                        <span className={styles.urlLabel} style={{ minWidth: '120px', fontWeight: '500' }}>{d.name}</span>
+                                        <div style={{ display: 'flex', flex: 1, gap: '8px' }}>
+                                            <input 
+                                                type="text" 
+                                                className={uiStyles.input}
+                                                value={currentUrl} 
+                                                onChange={(e) => setOtodomUrls(prev => ({...prev, [d.id]: e.target.value}))}
+                                                placeholder="https://..."
+                                                style={{ flex: 1, margin: 0 }}
+                                            />
+                                            {/* КНОПКА ПЕРЕХОДУ ПО ПОСИЛАННЮ */}
+                                            <a 
+                                                href={isValidUrl ? currentUrl : '#'} 
+                                                target={isValidUrl ? "_blank" : "_self"} 
+                                                rel="noopener noreferrer"
+                                                className={`${uiStyles.btn}`}
+                                                style={{ 
+                                                    padding: '0 12px', 
+                                                    display: 'flex', 
+                                                    alignItems: 'center', 
+                                                    justifyContent: 'center',
+                                                    background: isValidUrl ? 'rgba(59, 130, 246, 0.1)' : 'var(--bg-main)',
+                                                    color: isValidUrl ? 'var(--primary)' : 'var(--text-muted)',
+                                                    border: `1px solid ${isValidUrl ? 'rgba(59, 130, 246, 0.3)' : 'var(--border)'}`,
+                                                    cursor: isValidUrl ? 'pointer' : 'not-allowed',
+                                                    opacity: isValidUrl ? 1 : 0.6
+                                                }}
+                                                title="Відкрити посилання у новій вкладці"
+                                                onClick={(e) => !isValidUrl && e.preventDefault()}
+                                            >
+                                                <FaExternalLinkAlt />
+                                            </a>
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                )}
             </div>
-        </div>
+        </BaseModal>
     );
-}
+};
+
+export default React.memo(MetricsModal);

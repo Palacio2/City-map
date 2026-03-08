@@ -1,10 +1,18 @@
-.header {
+/* НОВИЙ ОБГОРТКА ДЛЯ БАНЕРА І ХЕДЕРА */
+.headerFixedWrapper {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  height: var(--header-height);
   z-index: 1000;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ОНОВЛЕНИЙ ХЕДЕР */
+.header {
+  width: 100%;
+  height: var(--header-height);
   background: var(--glass-bg);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
@@ -13,7 +21,6 @@
   
   /* Support for notches */
   padding-top: env(safe-area-inset-top);
-  height: calc(var(--header-height) + env(safe-area-inset-top));
 }
 
 .container {
@@ -238,9 +245,14 @@
 }
 
 @media (max-width: 1024px) {
+  .headerFixedWrapper {
+    /* На мобільних не забуваємо про padding */
+    padding-top: env(safe-area-inset-top);
+  }
+
   .header {
     height: var(--header-height);
-    padding-top: env(safe-area-inset-top);
+    padding-top: 0; /* Бо padding-top тепер на обгортці */
   }
 
   .burgerButton {
@@ -259,7 +271,6 @@
     justify-content: flex-start;
     align-items: flex-start;
     
-    /* Відступ зверху для меню на мобільному */
     padding: calc(var(--header-height) + 2rem + env(safe-area-inset-top)) var(--spacing-lg) var(--spacing-lg);
     
     gap: 2rem;

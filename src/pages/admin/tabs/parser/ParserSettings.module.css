@@ -1,8 +1,0 @@
-.settingsGrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
-
-.inputGroup { display: flex; flex-direction: column; gap: 8px; }
-.inputGroup label { font-size: 0.8rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 4px; }
-
-.textInput { padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 10px; font-size: 0.95rem; font-weight: 500; color: #0f172a; outline: none; width: 100%; box-sizing: border-box; background-color: #ffffff; transition: all 0.2s; appearance: auto; }
-.textInput:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
-.textInput:disabled { background-color: #f1f5f9; color: #94a3b8; cursor: not-allowed; border-color: #e2e8f0; }

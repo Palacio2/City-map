@@ -1,33 +1,27 @@
 import React from 'react';
-import styles from './EntityModal.module.css';
 import { useTranslation } from 'react-i18next';
+import BaseModal from '../../ui/BaseModal';
+import uiStyles from '../../ui/AdminUI.module.css';
 
 export default function ConfirmModal({ isOpen, onClose, onConfirm, title, message, isProcessing }) {
     const { t } = useTranslation('admin');
     
-    if (!isOpen) return null;
+    const actions = (
+        <>
+            <button type="button" onClick={onClose} className={`${uiStyles.btn} ${uiStyles.btnCancel}`} disabled={isProcessing}>
+                {t('confirmModal.cancelBtn', {defaultValue: 'Cancel'})}
+            </button>
+            <button type="button" onClick={onConfirm} className={`${uiStyles.btn} ${uiStyles.btnDanger}`} disabled={isProcessing}>
+                {isProcessing ? t('confirmModal.processing', {defaultValue: '...'}) : t('confirmModal.deleteBtn', {defaultValue: 'Delete'})}
+            </button>
+        </>
+    );
 
     return (
-        <div className={styles.overlay} onClick={onClose}>
-            <div className={styles.modal} onClick={(e) => e.stopPropagation()}>
-                <h3 className={styles.title}>{title}</h3>
-                <p className={styles.messageText}>
-                    {message}
-                </p>
-                <div className={styles.actions}>
-                    <button type="button" onClick={onClose} className={`${styles.btn} ${styles.cancelBtn}`} disabled={isProcessing}>
-                        {t('confirmModal.cancelBtn')}
-                    </button>
-                    <button 
-                        type="button" 
-                        onClick={onConfirm} 
-                        className={`${styles.btn} ${styles.dangerBtn}`} 
-                        disabled={isProcessing}
-                    >
-                        {isProcessing ? t('confirmModal.processing') : t('confirmModal.deleteBtn')}
-                    </button>
-                </div>
-            </div>
-        </div>
+        <BaseModal isOpen={isOpen} onClose={onClose} title={title} maxWidth="450px" actions={actions}>
+            <p className={uiStyles.modalSubtitle}>
+                {message}
+            </p>
+        </BaseModal>
     );
 }

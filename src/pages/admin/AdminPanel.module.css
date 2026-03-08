@@ -1,100 +1,114 @@
 :root {
-  --bg-main: #f1f5f9;
-  --bg-surface: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --border: #e2e8f0;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --success: #10b981;
-  --success-hover: #059669;
-  --danger: #ef4444;
-  --danger-hover: #dc2626;
-  --warning: #f59e0b;
-  --radius-lg: 16px;
-  --radius-md: 12px;
-  --radius-sm: 8px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -2px rgba(0,0,0,0.05);
-  --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.05), 0 4px 6px -4px rgba(0,0,0,0.05);
-  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  --font-body: system-ui, -apple-system, sans-serif;
+    /* Світла тема (за замовчуванням) */
+    --bg-main: #f4f5f7;
+    --bg-surface: #ffffff;
+    --bg-hover: #e2e8f0;
+    
+    --text-main: #0f172a;
+    --text-muted: #475569;
+    
+    --border: rgba(0, 0, 0, 0.08);
+    --primary: #3b82f6;
+    --primary-hover: #2563eb;
+    --success: #22c55e;
+    --danger: #ef4444;
+    --warning: #eab308;
+
+    --radius-lg: 20px;
+    --radius-md: 12px;
+    --radius-sm: 8px;
+
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.1);
+    
+    --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+[data-theme='dark'] {
+    --bg-main: #111318;
+    --bg-surface: #1a1d24;
+    --bg-hover: #232730;
+    
+    --text-main: #f1f5f9;
+    --text-muted: #94a3b8;
+    
+    --border: rgba(255, 255, 255, 0.1);
+    --primary: #60a5fa; /* Трохи світліший синій для темного фону */
+    --primary-hover: #93c5fd;
+    
+    --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.5);
+    --shadow-lg: 0 10px 25px -5px rgba(0,0,0,0.6);
 }
 
 .container {
-  padding: 30px;
-  min-height: 100vh;
-  background-color: var(--bg-main);
-  font-family: var(--font-body);
-  color: var(--text-main);
+    padding: 30px;
+    min-height: 100vh;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Новий контейнер для шапки (щоб рознести заголовок і кнопку виходу) */
 .headerContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 30px;
 }
 
 .title {
-  font-size: 2rem;
-  font-weight: 800;
-  margin-bottom: 15px; /* Трохи зменшив, бо таби йдуть одразу під ним */
-  color: var(--text-main);
-  letter-spacing: -0.02em;
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 15px;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
 }
 
 .tabs {
-  display: inline-flex;
-  background: var(--bg-surface);
-  padding: 6px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-sm);
-  gap: 8px;
-  flex-wrap: wrap; /* Додано, щоб на менших екранах таби переносилися */
+    display: inline-flex;
+    background: var(--bg-surface);
+    padding: 6px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    gap: 8px;
+    border: 1px solid var(--border);
 }
 
 .tabBtn {
-  padding: 10px 24px;
-  border-radius: var(--radius-sm);
-  color: var(--text-muted);
-  font-weight: 600;
-  font-size: 0.95rem;
-  background: transparent;
-  transition: var(--transition);
-  cursor: pointer;
-  border: none;
+    padding: 10px 24px;
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: var(--transition);
 }
 
 .tabBtn:hover {
-  background: var(--bg-main);
-  color: var(--text-main);
+    background: var(--bg-main);
+    color: var(--text-main);
 }
 
 .tabBtn.active {
-  background: var(--text-main);
-  color: var(--bg-surface);
-  box-shadow: var(--shadow-sm);
+    background: var(--text-main);
+    color: var(--bg-surface);
+    box-shadow: var(--shadow-md);
 }
 
-/* Стилі для кнопки виходу */
 .logoutBtn {
-  padding: 10px 16px;
-  background: #fee2e2;
-  color: var(--danger);
-  border: 1px solid #fecaca;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: var(--transition);
+    padding: 10px 16px;
+    background: rgba(239, 68, 68, 0.1);
+    color: var(--danger);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    transition: var(--transition);
 }
 
 .logoutBtn:hover {
-  background: #fca5a5;
-  color: #7f1d1d;
+    background: var(--danger);
+    color: white;
 }

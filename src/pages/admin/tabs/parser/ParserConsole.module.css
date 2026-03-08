@@ -1,20 +1,17 @@
 .consoleSection {
-    background: #ffffff;
+    background: #1e293b;
     border-radius: 16px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
-    display: flex;
-    flex-direction: column;
+    overflow: hidden;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2);
 }
 
 .consoleTopRow {
-    padding: 20px 24px;
-    border-bottom: 1px solid #f1f5f9;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 16px;
+    padding: 16px 24px;
+    background: #0f172a;
+    border-bottom: 1px solid #334155;
 }
 
 .headerLeft {
@@ -30,117 +27,57 @@
 }
 
 .stepIcon {
-    width: 32px;
-    height: 32px;
-    background: #eff6ff;
-    color: #3b82f6;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 1.1rem;
+    font-size: 1.2rem;
 }
 
 .consoleTitle {
     margin: 0;
-    font-size: 1.15rem;
-    color: #0f172a;
+    color: #f8fafc;
+    font-size: 1.1rem;
     font-weight: 700;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
 }
 
 .liveIndicator {
     display: flex;
     align-items: center;
     gap: 8px;
-    color: #2563eb;
-    font-weight: 600;
+    color: #34d399;
     font-size: 0.85rem;
-    background: #eff6ff;
-    padding: 6px 14px;
-    border-radius: 30px;
-    border: 1px solid #bfdbfe;
-    animation: pulseBg 2s infinite;
-}
-
-@keyframes pulseBg {
-    0% { background: #eff6ff; }
-    50% { background: #dbeafe; }
-    100% { background: #eff6ff; }
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(52, 211, 153, 0.1);
+    padding: 4px 12px;
+    border-radius: 20px;
+    border: 1px solid rgba(52, 211, 153, 0.2);
 }
 
 .pulseDot {
     width: 8px;
     height: 8px;
-    background-color: #2563eb;
+    background-color: #10b981;
     border-radius: 50%;
-    animation: pulseDotAnim 1.5s infinite ease-in-out;
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+    animation: pulse 1.5s infinite cubic-bezier(0.66, 0, 0, 1);
 }
 
-@keyframes pulseDotAnim {
-    0% { transform: scale(0.8); opacity: 0.5; }
-    50% { transform: scale(1.2); opacity: 1; }
-    100% { transform: scale(0.8); opacity: 0.5; }
+@keyframes pulse {
+    to { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
 }
 
 .consoleActions {
     display: flex;
     gap: 12px;
-}
-
-.btn {
-    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    gap: 8px;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    border: none;
-}
-
-.btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-    transform: none !important;
-}
-
-.logBtn {
-    background: #f1f5f9;
-    color: #475569;
-}
-
-.logBtn:hover:not(:disabled) {
-    background: #e2e8f0;
-    color: #0f172a;
-}
-
-.accentBtn {
-    background: #0f172a;
-    color: #ffffff;
-    box-shadow: 0 4px 12px rgba(15, 23, 42, 0.15);
-}
-
-.accentBtn:hover:not(:disabled) {
-    background: #1e293b;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.2);
 }
 
 .btnParsing {
-    background: #3b82f6 !important;
-    color: white !important;
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7);
-    animation: pulseBlue 2s infinite;
-}
-
-@keyframes pulseBlue {
-    0% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
-    100% { transform: scale(0.98); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
+    background: #059669 !important;
+    opacity: 1 !important;
+    cursor: not-allowed;
+    border-color: #047857 !important;
 }
 
 .spinIcon {
@@ -152,50 +89,111 @@
 }
 
 .customConsole {
-    background: #1e293b;
-    color: #cbd5e1;
+    background-color: #0f172a;
+    color: #f1f5f9;
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
     padding: 20px;
-    border-bottom-left-radius: 16px;
-    border-bottom-right-radius: 16px;
-    font-family: 'Fira Code', 'Consolas', monospace;
-    font-size: 0.9rem;
-    line-height: 1.6;
-    height: 400px;
+    height: 450px;
     overflow-y: auto;
-    transition: all 0.3s ease;
-    border-top: 1px solid #334155;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    border: 1px solid #334155;
 }
 
-.liveConsole {
+.customConsole::-webkit-scrollbar {
+    width: 8px;
+}
+
+.customConsole::-webkit-scrollbar-track {
     background: #0f172a;
-    box-shadow: inset 0 0 20px rgba(59, 130, 246, 0.05);
 }
 
-.customConsole::-webkit-scrollbar { width: 8px; }
-.customConsole::-webkit-scrollbar-track { background: #0f172a; border-radius: 8px; }
-.customConsole::-webkit-scrollbar-thumb { background: #475569; border-radius: 8px; }
-.customConsole::-webkit-scrollbar-thumb:hover { background: #64748b; }
+.customConsole::-webkit-scrollbar-thumb {
+    background: #475569;
+    border-radius: 4px;
+}
+
+.customConsole::-webkit-scrollbar-thumb:hover {
+    background: #64748b;
+}
+
+.logContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
 
 .logLine {
-    margin-bottom: 6px;
-    word-break: break-word;
+    display: flex;
+    gap: 8px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    transition: background 0.2s;
+    word-break: break-all;
+}
+
+.logLine:hover {
+    background: rgba(255, 255, 255, 0.05);
 }
 
 .logTime {
-    color: #94a3b8;
-    margin-right: 12px;
-    user-select: none;
+    color: #64748b;
+    flex-shrink: 0;
+    min-width: 75px;
 }
 
-.logError { color: #f87171; font-weight: 600; }
-.logSuccess { color: #34d399; font-weight: 600; }
+.logHeader {
+    font-weight: 700;
+    flex-shrink: 0;
+    min-width: 90px;
+}
+
+.logBody {
+    color: #cbd5e1;
+}
+
+.logSuccess .logHeader { color: #22c55e; }
+.logSuccess .logBody { color: #86efac; }
+
+.logError .logHeader { color: #ef4444; }
+.logError .logBody { color: #fca5a5; }
+
+.logWarning .logHeader { color: #f59e0b; }
+.logWarning .logBody { color: #fcd34d; }
+
+.logLine:not(.logSuccess):not(.logError):not(.logWarning) .logHeader {
+    color: #3b82f6;
+}
+
+.actionBtn {
+    background-color: #1e293b !important; /* Трохи світліший за фон шапки */
+    color: #e2e8f0 !important; /* Світло-сірий текст */
+    border: 1px solid #475569 !important; /* Видима рамка */
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: all 0.2s ease;
+}
+
+.actionBtn:hover {
+    background-color: #334155 !important; /* Світлішає при наведенні */
+    color: #ffffff !important; /* Білий текст при наведенні */
+    border-color: #64748b !important;
+}
 
 .placeholder {
-    color: #475569;
+    color: #64748b;
+    text-align: center;
+    margin-top: 150px;
     font-style: italic;
-    animation: blinkCursor 1s step-end infinite;
+    opacity: 0.5;
+    animation: blink 2s infinite;
 }
 
-@keyframes blinkCursor {
-    50% { opacity: 0; }
+@keyframes blink {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.2; }
 }

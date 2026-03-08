@@ -1,18 +1,98 @@
-import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { api } from '../../../../services/api';
 import EntityModal from './EntityModal';
 import ConfirmModal from './ConfirmModal';
 import CityMapModal from './CityMapModal';
 import { FaEyeSlash, FaPlus, FaTrash, FaMapMarkedAlt } from 'react-icons/fa';
 import styles from './ManualSidebar.module.css';
+import uiStyles from '../../ui/AdminUI.module.css'; // ДОДАНО ЦЕЙ РЯДОК
 import { useTranslation } from 'react-i18next';
+import { useAdmin } from '../../hooks/AdminContext';
 
-export default function ManualSidebar({ 
-    selectedCountry, setSelectedCountry, 
-    selectedCity, setSelectedCity, 
-    selectedDistrict, setSelectedDistrict 
-}) {
+// ФУНКЦІЯ ДЛЯ СВІТЛОФОРА
+const getFreshnessColor = (lastUpdated) => {
+    if (!lastUpdated) return '#ef4444'; // Червоний (немає дати)
+    const now = new Date();
+    const updated = new Date(lastUpdated);
+    const diffMonths = (now.getTime() - updated.getTime()) / (1000 * 60 * 60 * 24 * 30);
+    
+    if (diffMonths < 3) return '#10b981'; // Зелений
+    if (diffMonths < 6) return '#f59e0b'; // Жовтий
+    return '#ef4444'; // Червоний (>6 міс)
+};
+
+const SidebarList = ({ 
+    title, parentName, onAdd, searchVal, onSearch, searchPlaceholder, 
+    items, selectedItem, onSelect, onMapClick, onDelete, showEyeIcon, showFreshness 
+}) => (
+    <div className={styles.listBlock}>
+        <div className={styles.listHeader}>
+            <div className={styles.listTitle}>
+                {title} {parentName && <span className={styles.parentName}>({parentName})</span>}
+            </div>
+            {onAdd && (
+                <button onClick={onAdd} className={styles.addGhostBtn}>
+                    <FaPlus /> Додати
+                </button>
+            )}
+        </div>
+        
+        {/* ВИКОРИСТОВУЄМО ГЛОБАЛЬНИЙ КЛАС ДЛЯ ІНПУТУ */}
+        <input 
+            type="text" 
+            placeholder={searchPlaceholder} 
+            className={uiStyles.input} 
+            style={{ marginBottom: '12px' }}
+            value={searchVal} 
+            onChange={e => onSearch(e.target.value)} 
+        />
+        
+        <div className={styles.list}>
+            {items.map(item => (
+                <div 
+                    key={item.id} 
+                    onClick={() => onSelect(item)} 
+                    className={`${styles.listItem} ${selectedItem?.id === item.id ? styles.listItemSelected : ''}`}
+                >
+                    <span className={styles.itemText} style={{ color: item.is_available === false ? '#94a3b8' : 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {showFreshness && (
+                            <div 
+                                style={{ 
+                                    width: '10px', height: '10px', borderRadius: '50%', flexShrink: 0,
+                                    backgroundColor: getFreshnessColor(item.last_updated),
+                                    boxShadow: `0 0 4px ${getFreshnessColor(item.last_updated)}`
+                                }} 
+                                title={item.last_updated ? `Останнє оновлення: ${new Date(item.last_updated).toLocaleDateString()}` : 'Ніколи не оновлювалось'}
+                            />
+                        )}
+                        {item.name} 
+                        {showEyeIcon && !item.is_available && <FaEyeSlash style={{marginLeft: 'auto'}} size={12} />}
+                    </span>
+                    <div className={styles.actionGroup}>
+                        {onMapClick && (
+                            <button className={styles.mapIconBtn} onClick={(e) => { e.stopPropagation(); onMapClick(item); }}>
+                                <FaMapMarkedAlt />
+                            </button>
+                        )}
+                        {onDelete && (
+                            <button className={styles.deleteIconBtn} onClick={(e) => { e.stopPropagation(); onDelete(item); }}>
+                                <FaTrash />
+                            </button>
+                        )}
+                    </div>
+                </div>
+            ))}
+        </div>
+    </div>
+);
+
+export default function ManualSidebar({ selectedCountry, setSelectedCountry, selectedCity, setSelectedCity, selectedDistrict, setSelectedDistrict }) {
     const { t } = useTranslation('admin');
+    
+    const { currentAdmin } = useAdmin();
+    const isSuperAdmin = currentAdmin?.role === 'super_admin';
+    const adminCityIds = currentAdmin?.cities || [];
+
     const [countries, setCountries] = useState([]);
     const [cities, setCities] = useState([]);
     const [districts, setDistricts] = useState([]);
@@ -28,62 +108,63 @@ export default function ManualSidebar({
     const [isSubmitting, setIsSubmitting] = useState(false);
 
     const loadCountries = useCallback(async () => {
-        try { setCountries(await api.geo.getCountries() || []); } catch {} // Виправлено warning
+        try { setCountries(await api.geo.getCountries() || []); } catch {}
     }, []);
 
     useEffect(() => { loadCountries(); }, [loadCountries]);
 
     useEffect(() => {
         setSearchCity('');
-        const loadCities = async (countryId) => {
-            try { setCities(await api.geo.getCities(countryId) || []); } catch {} // Виправлено warning
+        const loadCities = async (countryId) => { 
+            try { 
+                const fetchedCities = await api.geo.getCities(countryId) || []; 
+                if (isSuperAdmin) {
+                    setCities(fetchedCities);
+                } else {
+                    setCities(fetchedCities.filter(c => adminCityIds.includes(c.id)));
+                }
+            } catch {} 
         };
-
+        
         if (selectedCountry) loadCities(selectedCountry.id);
         else { setCities([]); setSelectedCity(null); }
-    }, [selectedCountry, setSelectedCity]);
+    }, [selectedCountry, setSelectedCity, isSuperAdmin, adminCityIds]);
 
     useEffect(() => {
         setSearchDistrict('');
-        const loadDistricts = async (cityId) => {
-            try { setDistricts(await api.geo.getDistricts(cityId) || []); } catch {} // Виправлено warning
-        };
-
+        const loadDistricts = async (cityId) => { try { setDistricts(await api.geo.getDistricts(cityId) || []); } catch {} };
         if (selectedCity) loadDistricts(selectedCity.id);
         else { setDistricts([]); setSelectedDistrict(null); }
     }, [selectedCity, setSelectedDistrict]);
 
-    const filteredCountries = useMemo(() => countries.filter(c => c.name.toLowerCase().includes(searchCountry.toLowerCase())), [countries, searchCountry]);
-    const filteredCities = useMemo(() => cities.filter(c => c.name.toLowerCase().includes(searchCity.toLowerCase())), [cities, searchCity]);
-    const filteredDistricts = useMemo(() => districts.filter(d => d.name.toLowerCase().includes(searchDistrict.toLowerCase())), [districts, searchDistrict]);
+    const filterList = (list, search) => list.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
 
     const openModal = (type) => {
         const titles = { country: t('manualSidebar.newCountry'), city: t('manualSidebar.newCity'), district: t('manualSidebar.newDistrict') };
         setModal({ isOpen: true, type, title: titles[type], placeholder: t('manualSidebar.enterName') });
     };
 
-    const openConfirmModal = (type, item) => {
-        setConfirmModal({ isOpen: true, type, item });
-    };
+    const openConfirmModal = (type, item) => setConfirmModal({ isOpen: true, type, item });
 
     const handleCreate = async (name) => {
         setIsSubmitting(true);
         try {
+            let newItem;
             if (modal.type === 'country') {
-                const newC = await api.geo.createCountry(name);
-                setCountries(prev => [...prev, newC].sort((a, b) => a.name.localeCompare(b.name)));
-                setSelectedCountry(newC);
+                newItem = await api.geo.createCountry(name);
+                setCountries(prev => [...prev, newItem].sort((a, b) => a.name.localeCompare(b.name)));
+                setSelectedCountry(newItem);
             } else if (modal.type === 'city') {
-                const newC = await api.geo.createCity(name, selectedCountry.id);
-                setCities(prev => [...prev, newC].sort((a, b) => a.name.localeCompare(b.name)));
-                setSelectedCity(newC);
+                newItem = await api.geo.createCity(name, selectedCountry.id);
+                setCities(prev => [...prev, newItem].sort((a, b) => a.name.localeCompare(b.name)));
+                setSelectedCity(newItem);
             } else if (modal.type === 'district') {
-                const newD = await api.geo.createDistrict(name, selectedCity.id);
-                setDistricts(prev => [...prev, newD].sort((a, b) => a.name.localeCompare(b.name)));
-                setSelectedDistrict(newD);
+                newItem = await api.geo.createDistrict(name, selectedCity.id);
+                setDistricts(prev => [...prev, newItem].sort((a, b) => a.name.localeCompare(b.name)));
+                setSelectedDistrict(newItem);
             }
             setModal({ ...modal, isOpen: false });
-        } catch {} // Виправлено warning
+        } catch {}
         setIsSubmitting(false);
     };
 
@@ -105,90 +186,61 @@ export default function ManualSidebar({
                 setDistricts(prev => prev.filter(d => d.id !== item.id));
             }
             setConfirmModal({ ...confirmModal, isOpen: false });
-        } catch {} // Виправлено warning
-        setIsSubmitting(false);
+        } catch (error) {
+            console.error("Delete Error:", error);
+            alert("Помилка видалення: " + error.message);
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
         <div className={styles.sidebar}>
-            <div className={styles.listBlock}>
-                <div className={styles.listHeader}>
-                    <div className={styles.listTitle}>{t('manualSidebar.countries')}</div>
-                    <button onClick={() => openModal('country')} className={styles.addGhostBtn}><FaPlus /> {t('manualSidebar.addBtn')}</button>
-                </div>
-                <input type="text" placeholder={t('manualSidebar.searchCountry')} className={styles.searchInput} value={searchCountry} onChange={e => setSearchCountry(e.target.value)} />
-                <div className={styles.list}>
-                    {filteredCountries.map(c => (
-                        <div key={c.id} onClick={() => setSelectedCountry(c)} className={`${styles.listItem} ${selectedCountry?.id === c.id ? styles.listItemSelected : ''}`}>
-                            <span className={styles.itemText}>{c.name}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
+            <SidebarList 
+                title={t('manualSidebar.countries')}
+                onAdd={isSuperAdmin ? () => openModal('country') : null}
+                onDelete={isSuperAdmin ? (country) => openConfirmModal('country', country) : null}
+                searchVal={searchCountry} onSearch={setSearchCountry} searchPlaceholder={t('manualSidebar.searchCountry')}
+                items={filterList(countries, searchCountry)} selectedItem={selectedCountry} onSelect={setSelectedCountry}
+            />
 
             {selectedCountry && (
-                <div className={styles.listBlock}>
-                    <div className={styles.listHeader}>
-                        <div className={styles.listTitle}>{t('manualSidebar.cities')} <span className={styles.parentName}>({selectedCountry.name})</span></div>
-                        <button onClick={() => openModal('city')} className={styles.addGhostBtn}><FaPlus /> {t('manualSidebar.addBtn')}</button>
-                    </div>
-                    <input type="text" placeholder={t('manualSidebar.searchCity')} className={styles.searchInput} value={searchCity} onChange={e => setSearchCity(e.target.value)} />
-                    <div className={styles.list}>
-                        {filteredCities.map(c => (
-                            <div key={c.id} onClick={() => setSelectedCity(c)} className={`${styles.listItem} ${selectedCity?.id === c.id ? styles.listItemSelected : ''}`}>
-                                <span className={styles.itemText}>{c.name}</span>
-                                <div className={styles.actionGroup}>
-                                    <button className={styles.mapIconBtn} onClick={(e) => { e.stopPropagation(); setMapModal({ isOpen: true, city: c }); }}><FaMapMarkedAlt /></button>
-                                    <button className={styles.deleteIconBtn} onClick={(e) => { e.stopPropagation(); openConfirmModal('city', c); }}><FaTrash /></button>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <SidebarList 
+                    title={t('manualSidebar.cities')} parentName={selectedCountry.name}
+                    onAdd={isSuperAdmin ? () => openModal('city') : null}
+                    onDelete={isSuperAdmin ? (city) => openConfirmModal('city', city) : null}
+                    searchVal={searchCity} onSearch={setSearchCity} searchPlaceholder={t('manualSidebar.searchCity')}
+                    items={filterList(cities, searchCity)} selectedItem={selectedCity} onSelect={setSelectedCity}
+                    onMapClick={(city) => setMapModal({ isOpen: true, city })}
+                />
             )}
 
             {selectedCity && (
-                <div className={styles.listBlock}>
-                    <div className={styles.listHeader}>
-                        <div className={styles.listTitle}>{t('manualSidebar.districts')} <span className={styles.parentName}>({selectedCity.name})</span></div>
-                        <button onClick={() => openModal('district')} className={styles.addGhostBtn}><FaPlus /> {t('manualSidebar.addBtn')}</button>
-                    </div>
-                    <input type="text" placeholder={t('manualSidebar.searchDistrict')} className={styles.searchInput} value={searchDistrict} onChange={e => setSearchDistrict(e.target.value)} />
-                    <div className={styles.list}>
-                        {filteredDistricts.map(d => (
-                            <div key={d.id} onClick={() => setSelectedDistrict(d)} className={`${styles.listItem} ${selectedDistrict?.id === d.id ? styles.listItemSelected : ''}`}>
-                                <span className={styles.itemText} style={{ color: d.is_available ? 'inherit' : '#94a3b8' }}>
-                                    {d.name} {!d.is_available && <FaEyeSlash style={{marginLeft: '6px'}} size={12} />}
-                                </span>
-                                <button className={styles.deleteIconBtn} onClick={(e) => { e.stopPropagation(); openConfirmModal('district', d); }}><FaTrash /></button>
-                            </div>
-                        ))}
-                    </div>
-                </div>
+                <SidebarList 
+                    title={t('manualSidebar.districts')} parentName={selectedCity.name}
+                    onAdd={() => openModal('district')}
+                    onDelete={isSuperAdmin ? (district) => openConfirmModal('district', district) : null}
+                    searchVal={searchDistrict} onSearch={setSearchDistrict} searchPlaceholder={t('manualSidebar.searchDistrict')}
+                    items={filterList(districts, searchDistrict)} selectedItem={selectedDistrict} onSelect={setSelectedDistrict}
+                    showEyeIcon={true}
+                    showFreshness={true} // Увімкнули світлофори!
+                />
             )}
 
             <EntityModal 
-                isOpen={modal.isOpen} 
-                onClose={() => setModal({ ...modal, isOpen: false })}
-                onSubmit={handleCreate}
-                title={modal.title}
-                placeholder={modal.placeholder}
-                isSubmitting={isSubmitting}
+                isOpen={modal.isOpen} onClose={() => setModal({ ...modal, isOpen: false })}
+                onSubmit={handleCreate} title={modal.title} placeholder={modal.placeholder} isSubmitting={isSubmitting}
             />
 
             <ConfirmModal 
-                isOpen={confirmModal.isOpen}
-                onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
-                onConfirm={handleDelete}
-                title={t('manualSidebar.confirmDeleteTitle')}
+                isOpen={confirmModal.isOpen} onClose={() => setConfirmModal({ ...confirmModal, isOpen: false })}
+                onConfirm={handleDelete} title={t('manualSidebar.confirmDeleteTitle')}
                 message={t('manualSidebar.confirmDeleteMsg', { name: confirmModal.item?.name })}
                 isProcessing={isSubmitting}
             />
 
             <CityMapModal 
-                isOpen={mapModal.isOpen} 
-                onClose={() => setMapModal({ isOpen: false, city: null })} 
-                city={mapModal.city} 
+                isOpen={mapModal.isOpen} onClose={() => setMapModal({ isOpen: false, city: null })} city={mapModal.city} 
             />
         </div>
     );

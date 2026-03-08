@@ -2,7 +2,7 @@ import React from 'react';
 import styles from './ResultsTable.module.css';
 import { useTranslation } from 'react-i18next';
 
-export default function StatGroup({ label, icon, fields, data, onChange, bgColor }) {
+const StatGroup = ({ label, icon, fields, data, onChange, bgColor }) => {
     const { t } = useTranslation('admin');
 
     const getWarning = (key, val, row) => {
@@ -15,7 +15,7 @@ export default function StatGroup({ label, icon, fields, data, onChange, bgColor
     };
 
     return (
-        <div className={styles.statGroup} style={{ background: bgColor || '#ffffff' }}>
+        <div className={styles.statGroup} style={bgColor ? { background: bgColor } : {}}>
             <div className={styles.statHeader}>{icon} {label}</div>
             {fields.map(f => {
                 if (data[f.key] === undefined) return null; 
@@ -63,4 +63,6 @@ export default function StatGroup({ label, icon, fields, data, onChange, bgColor
             })}
         </div>
     );
-}
+};
+
+export default React.memo(StatGroup);

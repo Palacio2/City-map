@@ -1,9 +1,12 @@
 {
+  "cancel": "Скасувати",
+  "startParsing": "Запустити парсер",
   "mapTab": {
     "title": "Глобальна карта",
     "subtitle": "Огляд покриття районів",
     "selectCountry": "-- Оберіть країну --",
     "selectCity": "-- Оберіть місто --",
+    "noCitiesAvailable": "Немає міст для цієї країни", 
     "reset": "Скинути",
     "filtersTitle": "Фільтри відображення",
     "showAll": "Показати всі",
@@ -20,7 +23,9 @@
     "title": "Редактор GIS",
     "cancel": "Скасувати",
     "save": "Зберегти",
-    "helpText": "Оберіть категорію для додавання. Керуйте видимістю міток на карті."
+    "helpText": "Оберіть категорію для додавання. Керуйте видимістю міток на карті.",
+    "googleMaps": "Google Maps",
+    "osm": "OpenStreetMap"
   },
   "interactiveMap": {
     "adding": "Додавання:",
@@ -60,8 +65,10 @@
     "emptyDb": "Немає районів у базі",
     "deleteFromDb": "Видалити з БД"
   },
-  "metricsModal": {
+"metricsModal": {
     "title": "⚙️ Налаштування Парсера",
+    "dataSource": "Джерела даних",
+    "selectMetrics": "Оберіть метрики OSM",
     "osm": "🗺️ OSM (Інфраструктура)",
     "waqi": "🍃 WAQI (Повітря)",
     "gus": "📈 GUS (Зарплата)",
@@ -93,13 +100,12 @@
     "confirmReset": "Скинути всі налаштування та очистити результати?",
     "saveError": "Помилка збереження:"
   },
-  "parserConsole": {
+"parserConsole": {
     "title": "Крок 4. Консоль Парсера",
-    "parsingInProcess": "Парсинг у процесі...",
-    "clearBtn": "Очистити",
-    "logBtn": "Лог",
-    "workingBtn": "ПРАЦЮЄ...",
-    "startBtn": "ЗАПУСТИТИ",
+    "parsing": "Парсинг у процесі...",
+    "clear": "Очистити",
+    "download": "Завантажити лог",
+    "startParsing": "ЗАПУСТИТИ",
     "readyPlaceholder": "Готовий до запуску. Чекаю команд... █"
   },
   "feedbackTab": {
@@ -146,7 +152,13 @@
     "statusPub": "🟢 Опубліковано",
     "statusHidden": "⚪ Приховано",
     "issuePhoto": "📸 Немає фото",
-    "issueGeo": "🗺️ Немає GeoJSON"
+    "issueGeo": "🗺️ Немає GeoJSON",
+    "chartNewUsers": "Реєстрації за останні 7 днів",
+    "outdatedTitle": "Застарілі дані",
+    "allFresh": "Усі дані актуальні!",
+    "needsUpdate": "Потребує оновлення",
+    "lastParsed": "Останній парсинг",
+    "never": "Ніколи"
   },
   "aiLogsTab": {
     "confirmToggle": "Ви впевнені, що хочете змінити статус AI Assistant?",
@@ -180,6 +192,7 @@
     "colId": "ID",
     "colEmail": "Email",
     "colPlan": "План (Роль)",
+    "colCities": "Міста",
     "colRodo": "Згода RODO",
     "colSearches": "Пошуків",
     "colReg": "Реєстрація",
@@ -188,17 +201,40 @@
     "no": "❌ Ні",
     "revokeAdmin": "Забрати права адміна",
     "makeAdmin": "Зробити адміном",
-    "empty": "Користувачів не знайдено"
+    "empty": "Користувачів не знайдено",
+    "btnPromoCodes": "🎟️ Промокоди",
+    "giftPremium": "Подарувати Premium",
+    "promoModal": {
+      "title": "🎟️ Промокоди Stripe",
+      "codeLabel": "Код (напр. SALE50)",
+      "offLabel": "% знижки",
+      "durationLabel": "Тривалість",
+      "addBtn": "Додати",
+      "activeTitle": "Активні коди",
+      "colCode": "Код",
+      "colDiscount": "Знижка",
+      "colDuration": "Тип",
+      "colUses": "Використано"
+    },
+    "giftModal": {
+      "title": "🎁 Надати підписку",
+      "subtitle": "Надайте безкоштовний доступ для {{email}}. Це оминає білінг Stripe.",
+      "planLabel": "Рівень плану",
+      "daysLabel": "Тривалість (днів)",
+      "grantBtn": "Надати доступ"
+    }
   },
   "adminPanel": {
     "title": "🛠 City Maps Admin v4.0",
-    "tabDashboard": "📊 Дашборд",
-    "tabUsers": "👥 Користувачі",
-    "tabAi": "🤖 ШІ Аналітика",
-    "tabParser": "⚙️ Парсер",
-    "tabManual": "🌍 Редагування",
-    "tabMap": "🗺️ Карта",
-    "tabFeedback": "💬 Фідбек",
+    "tabDashboard": "Дашборд",
+    "tabUsers": "Користувачі",
+    "tabAi": "ШІ Аналітика",
+    "tabParser": "Парсер",
+    "tabManual": "Редагування",
+    "tabMap": "Карта",
+    "tabFeedback": "Фідбек",
+    "tabNotifications": "Сповіщення",
+    "tabAudit": "Журнал аудиту",
     "logout": "Вийти"
   },
   "login": {
@@ -275,5 +311,57 @@
     "enterName": "Введіть назву...",
     "confirmDeleteTitle": "Підтвердження видалення",
     "confirmDeleteMsg": "Ви впевнені, що хочете видалити \"{{name}}\"? Всі пов'язані дані будуть втрачені."
+  },
+"logs": {
+    "startParsing": "🚀 Початок парсингу: {{p1}} ({{p2}} районів)",
+    "infraDone": "✅ Інфраструктуру пораховано для району: {{p1}}",
+    "pricesDone": "🏠 [{{p1}}/{{p2}}] Ціни зібрано. Продаж: {{p3}}zł, Оренда: {{p4}}zł",
+    "aqiDone": "🍃 AQI для {{p1}} отримано: {{p2}}",
+    "noGeojson": "⚠️ Район {{p1}} пропущено: немає меж GeoJSON",
+    "error": "❌ Помилка: {{p1}}",
+    "finish": "🏁 Парсинг завершено. Оброблено {{p1}} районів."
+  },
+  "notificationsTab": {
+    "title": "Глобальні сповіщення",
+    "subtitle": "Транслюйте повідомлення всім користувачам на сайті. Тільки одне повідомлення може бути активним.",
+    "msgLabel": "Текст повідомлення",
+    "msgPlaceholder": "Наприклад, Використайте промокод SALE50 для знижки 50%!",
+    "styleLabel": "Стиль / Колір",
+    "typeInfo": "Інфо (Синій)",
+    "typeSuccess": "Успіх (Зелений)",
+    "typeWarning": "Увага (Жовтий)",
+    "typeError": "Терміново (Червоний)",
+    "publishBtn": "Опублікувати зараз",
+    "processing": "Обробка...",
+    "loading": "Завантаження...",
+    "empty": "Ще немає створених сповіщень.",
+    "colStatus": "Статус",
+    "statusActive": "Активно",
+    "statusHidden": "Приховано",
+    "colType": "Тип",
+    "colMessage": "Повідомлення",
+    "colCreated": "Створено",
+    "colAction": "Дії",
+    "deleteConfirm": "Видалити це сповіщення?",
+    "errorCreate": "Помилка створення сповіщення: ",
+    "errorStatus": "Помилка оновлення статусу: ",
+    "errorDelete": "Помилка видалення: "
+  },
+  "auditLogsTab": {
+    "title": "Журнал аудиту безпеки",
+    "subtitle": "Відстеження критичних дій адміністраторів у системі.",
+    "refresh": "Оновити",
+    "loading": "Завантаження журналів аудиту...",
+    "empty": "Записів аудиту ще немає.",
+    "colTime": "Час",
+    "colAdmin": "Адмін",
+    "colAction": "Дія",
+    "colTarget": "Цільова таблиця",
+    "colDetails": "Деталі (Нові дані)",
+    "systemUser": "Система",
+    "assignedItems": "Призначено {{count}} елементів",
+    "planDetails": "План: {{plan}} ({{days}} днів)",
+    "codeDetails": "Код: {{code}} (-{{discount}}%)",
+    "complexData": "Складні дані"
   }
 }

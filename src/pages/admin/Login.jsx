@@ -20,7 +20,7 @@ export default function Login() {
 
     const handlePinSubmit = (e) => {
         e.preventDefault();
-        const correctPin = import.meta.env.VITE_PANEL_PIN || '1234';
+        const correctPin = import.meta.env.VITE_PANEL_PIN;
         if (pin === correctPin) {
             setStep('credentials');
             setError(null);
@@ -38,7 +38,8 @@ export default function Login() {
             const { data, error: signInError } = await supabase.auth.signInWithPassword({ email, password });
             if (signInError) throw signInError;
 
-            if (data.user.app_metadata?.role !== 'admin') {
+            const userRole = data.user.app_metadata?.role;
+            if (userRole !== 'admin' && userRole !== 'super_admin') {
                 await supabase.auth.signOut();
                 throw new Error(t('login.accessDenied'));
             }
@@ -146,18 +147,18 @@ export default function Login() {
 
                 {step === 'mfa_setup' && (
                     <form onSubmit={handleMfaSubmit} className={styles.form}>
-                        <div style={{ textAlign: 'center', marginBottom: '15px' }}>
-                            <p style={{ fontSize: '0.9rem', color: '#475569', marginBottom: '15px' }}>{t('login.scanQr')}</p>
-                            <div style={{ background: 'white', padding: '10px', display: 'inline-block', borderRadius: '8px', border: '1px solid #e2e8f0' }}>
+                        <div className={styles.mfaQrSection}>
+                            <p>{t('login.scanQr')}</p>
+                            <div className={styles.qrCodeWrapper}>
                                 {qrCodeUrl && <QRCodeSVG value={qrCodeUrl} size={200} />}
                             </div>
                         </div>
                         <div className={styles.inputGroup}>
                             <label className={styles.label}>{t('login.codeLabel')}</label>
-                            <input type="text" value={mfaCode} onChange={e => setMfaCode(e.target.value)} required className={styles.input} placeholder="123456" maxLength="6" style={{ textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem' }} />
+                            <input type="text" value={mfaCode} onChange={e => setMfaCode(e.target.value)} required className={`${styles.input} ${styles.mfaInput}`} placeholder="123456" maxLength="6" />
                         </div>
-                        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                            <button type="button" onClick={handleRestart} disabled={loading} className={styles.submitBtn} style={{ background: '#f1f5f9', color: '#475569', flex: 1 }}>{t('login.cancel')}</button>
+                        <div className={styles.buttonGroup}>
+                            <button type="button" onClick={handleRestart} disabled={loading} className={styles.cancelBtn}>{t('login.cancel')}</button>
                             <button type="submit" disabled={loading} className={styles.submitBtn} style={{ flex: 2 }}>{loading ? t('login.wait') : t('login.confirm')}</button>
                         </div>
                     </form>
@@ -167,10 +168,10 @@ export default function Login() {
                     <form onSubmit={handleMfaSubmit} className={styles.form}>
                         <div className={styles.inputGroup}>
                             <label className={styles.label}>{t('login.mfaCodeLabel')}</label>
-                            <input type="text" value={mfaCode} onChange={e => setMfaCode(e.target.value)} required className={styles.input} placeholder="123456" maxLength="6" style={{ textAlign: 'center', letterSpacing: '4px', fontSize: '1.2rem' }} autoFocus />
+                            <input type="text" value={mfaCode} onChange={e => setMfaCode(e.target.value)} required className={`${styles.input} ${styles.mfaInput}`} placeholder="123456" maxLength="6" autoFocus />
                         </div>
-                        <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-                            <button type="button" onClick={handleRestart} disabled={loading} className={styles.submitBtn} style={{ background: '#f1f5f9', color: '#475569', flex: 1 }}>{t('login.exit')}</button>
+                        <div className={styles.buttonGroup}>
+                            <button type="button" onClick={handleRestart} disabled={loading} className={styles.cancelBtn}>{t('login.exit')}</button>
                             <button type="submit" disabled={loading} className={styles.submitBtn} style={{ flex: 2 }}>{loading ? t('login.wait') : t('login.loginBtn')}</button>
                         </div>
                     </form>

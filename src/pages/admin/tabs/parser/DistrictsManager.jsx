@@ -1,14 +1,15 @@
-// DistrictsManager.jsx
 import React from 'react';
 import styles from './DistrictsManager.module.css';
+import uiStyles from '../../ui/AdminUI.module.css';
 import { useTranslation } from 'react-i18next';
+import { FaTrash, FaPlus } from 'react-icons/fa';
 
-export default function DistrictsManager({ 
+const DistrictsManager = ({ 
     foundDistricts, dbDistricts, 
     selectedIds, onToggleSelect, onSelectAll, 
     onScan, onCreate, onRemoveFromFound, onDeleteDbDistrict, 
-    onImportGeoJson, loading 
-}) {
+    onImportGeoJson, loading, isSuperAdmin 
+}) => {
     const { t } = useTranslation('admin');
 
     return (
@@ -16,43 +17,35 @@ export default function DistrictsManager({
             <div className={styles.districtsList}>
                 <div className={styles.listHeader}>
                     <h4>{t('districtsManager.foundOSM')} <span className={styles.badge}>{foundDistricts.length}</span></h4>
-                    <button onClick={onScan} disabled={loading} className={`${styles.btn} ${styles.scanBtn}`}>
-                        {loading ? t('districtsManager.searching') : t('districtsManager.searchBtn')}
-                    </button>
+                    <div className={styles.headerActions}>
+                        <button onClick={onScan} disabled={loading} className={`${uiStyles.btn} ${uiStyles.btnPrimary} ${styles.scanBtn}`}>
+                            {loading ? t('districtsManager.searching') : t('districtsManager.searchBtn')}
+                        </button>
+                    </div>
                 </div>
                 <div className={styles.listContent}>
                     {foundDistricts.length === 0 && <div className={styles.emptyMsg}>{t('districtsManager.emptyFound')}</div>}
                     {foundDistricts.map((d, i) => (
                         <div key={i} className={styles.districtItem}>
                             <span className={styles.itemName}>{d.name}</span>
-                            <button onClick={() => onRemoveFromFound(d)} className={styles.iconBtn} title={t('districtsManager.deleteTitle')}>❌</button>
+                            <div className={styles.itemActions}>
+                                <button onClick={() => onCreate([d])} className={styles.textBtn} style={{ color: 'var(--success)' }}>
+                                    <FaPlus />
+                                </button>
+                                <button onClick={() => onRemoveFromFound(d.name)} className={styles.iconBtn} title="Remove">
+                                    <FaTrash />
+                                </button>
+                            </div>
                         </div>
                     ))}
                 </div>
-                {foundDistricts.length > 0 && (
-                    <button onClick={onCreate} disabled={loading} className={`${styles.btn} ${styles.saveBtn} ${styles.fullWidthBtn}`}>
-                        {t('districtsManager.saveAllDb')}
-                    </button>
-                )}
             </div>
 
             <div className={styles.districtsList}>
                 <div className={styles.listHeader}>
                     <h4>{t('districtsManager.dbDistricts')} <span className={styles.badge}>{dbDistricts.length}</span></h4>
                     <div className={styles.headerActions}>
-                        <input 
-                            type="file" 
-                            accept=".geojson,application/geo+json" 
-                            style={{ display: 'none' }} 
-                            id="geojson-upload" 
-                            onChange={(e) => {
-                                if (e.target.files[0]) {
-                                    onImportGeoJson(e.target.files[0]);
-                                    e.target.value = null;
-                                }
-                            }}
-                        />
-                        <button onClick={() => document.getElementById('geojson-upload').click()} disabled={loading} className={styles.textBtn}>
+                        <button onClick={onImportGeoJson} className={styles.textBtn}>
                             {t('districtsManager.importGeo')}
                         </button>
                         <button onClick={() => onSelectAll(true)} className={styles.textBtn}>{t('districtsManager.selectAll')}</button>
@@ -67,11 +60,17 @@ export default function DistrictsManager({
                                 <input type="checkbox" checked={selectedIds.includes(d.id)} readOnly className={styles.checkbox} />
                                 <span className={styles.itemName}>{d.name}</span>
                             </label>
-                            <button onClick={(e) => { e.stopPropagation(); onDeleteDbDistrict(d.id); }} className={styles.iconBtn} title={t('districtsManager.deleteFromDb')}>🗑️</button>
+                            {isSuperAdmin && (
+                                <button onClick={(e) => { e.stopPropagation(); onDeleteDbDistrict(d.id); }} className={styles.iconBtn} style={{color: 'var(--danger)'}} title={t('districtsManager.deleteFromDb')}>
+                                    <FaTrash />
+                                </button>
+                            )}
                         </div>
                     ))}
                 </div>
             </div>
         </div>
     );
-}
+};
+
+export default React.memo(DistrictsManager);

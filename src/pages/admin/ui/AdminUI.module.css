@@ -1,0 +1,91 @@
+/* --- MODALS --- */
+.modalOverlay {
+    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+    animation: fadeInOverlay 0.2s var(--transition);
+}
+
+.modalContent {
+    background: var(--bg-surface);
+    width: 100%;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    display: flex; flex-direction: column;
+    animation: slideUpModal 0.3s var(--transition);
+    max-height: 90vh;
+    overflow: hidden;
+}
+
+.modalHeader {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-surface);
+}
+
+.modalTitle {
+    margin: 0; font-size: 1.25rem; color: var(--text-main); font-weight: 700;
+    display: flex; align-items: center; gap: 10px;
+}
+
+.modalCloseBtn {
+    background: transparent; border: none; font-size: 1.2rem;
+    color: var(--text-muted); cursor: pointer; transition: var(--transition);
+    padding: 4px; display: flex; align-items: center; justify-content: center;
+}
+.modalCloseBtn:hover { color: var(--danger); transform: scale(1.1); }
+
+.modalBody {
+    padding: 24px; overflow-y: auto; background: var(--bg-main);
+}
+
+.modalActions {
+    padding: 16px 24px; background: var(--bg-surface);
+    border-top: 1px solid var(--border);
+    display: flex; justify-content: flex-end; gap: 12px;
+}
+
+/* --- СТАНДАРТНІ КНОПКИ --- */
+.btn {
+    padding: 10px 20px; border-radius: var(--radius-sm); font-weight: 600;
+    font-size: 0.95rem; cursor: pointer; transition: var(--transition); border: none;
+    display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+}
+.btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btnCancel { background: var(--bg-main); color: var(--text-muted); }
+.btnCancel:hover:not(:disabled) { background: var(--border); color: var(--text-main); }
+
+.btnPrimary { background: var(--primary); color: #fff; box-shadow: var(--shadow-sm); }
+.btnPrimary:hover:not(:disabled) { background: var(--primary-hover); box-shadow: var(--shadow-md); }
+
+.btnDanger { background: #fee2e2; color: var(--danger); }
+.btnDanger:hover:not(:disabled) { background: #fecaca; }
+
+@keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUpModal { from { opacity: 0; transform: translateY(20px) scale(0.98); } to { opacity: 1; transform: translateY(0) scale(1); } }
+
+/* --- СТАНДАРТНІ ЕЛЕМЕНТИ ФОРМ (ГЛОБАЛЬНО) --- */
+.formGroup { display: flex; flex-direction: column; gap: 6px; }
+.label { font-size: 0.85rem; font-weight: 600; color: var(--text-main); }
+.input {
+    padding: 10px; border-radius: var(--radius-sm); border: 1px solid var(--border);
+    outline: none; background: var(--bg-surface); color: var(--text-main);
+    width: 100%; box-sizing: border-box; transition: var(--transition);
+}
+.input:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15); }
+
+.modalSubtitle { font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px; line-height: 1.5; }
+.modalSubtitle strong { color: var(--text-main); }
+
+/* --- ДОДАТКОВІ КНОПКИ --- */
+.btnSuccess { background: var(--success); color: #fff; }
+.btnSuccess:hover:not(:disabled) { filter: brightness(0.9); box-shadow: var(--shadow-md); }
+
+.btnPurple { background: #8b5cf6; color: #fff; }
+.btnPurple:hover:not(:disabled) { filter: brightness(0.9); box-shadow: var(--shadow-md); }

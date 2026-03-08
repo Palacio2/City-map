@@ -1,69 +1,65 @@
 import React from 'react';
-import styles from './ParserSettings.module.css';
 import { getRegionsForCountry } from '../../utils/countryHelpers';
 import { useTranslation } from 'react-i18next';
+import uiStyles from '../../ui/AdminUI.module.css';
 
-export default function ParserSettings({ 
-    country, setCountry, 
-    city, setCity, 
-    region, setRegion, 
-    countriesList, citiesList, 
-    onCountryChange 
-}) {
+const SelectGroup = React.memo(({ label, value, onChange, disabled, defaultOption, options }) => (
+    <div className={uiStyles.formGroup}>
+        <label className={uiStyles.label}>{label}</label>
+        <select className={uiStyles.input} value={value || ''} onChange={onChange} disabled={disabled}>
+            <option value="">{defaultOption}</option>
+            {options.map(opt => (
+                <option key={opt.id || opt} value={opt.id || opt}>
+                    {opt.name || opt}
+                </option>
+            ))}
+        </select>
+    </div>
+));
+
+const ParserSettings = ({ 
+    country, setCountry, city, setCity, region, setRegion, 
+    countriesList, citiesList, onCountryChange 
+}) => {
     const { t } = useTranslation('admin');
     const availableRegions = getRegionsForCountry(country?.name);
 
     return (
-        <div className={styles.settingsGrid}>
-            <div className={styles.inputGroup}>
-                <label>{t('parserSettings.country')}</label>
-                <select 
-                    className={styles.textInput} 
-                    value={country?.id || ''} 
-                    onChange={(e) => {
-                        const c = countriesList.find(x => x.id === e.target.value);
-                        setCountry(c);
-                        setCity(null);
-                        setRegion('');
-                        if (c) onCountryChange(c.id);
-                    }}
-                >
-                    <option value="">{t('parserSettings.selectCountry')}</option>
-                    {countriesList.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
-            </div>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px' }}>
+            <SelectGroup 
+                label={t('parserSettings.country')}
+                value={country?.id}
+                defaultOption={t('parserSettings.selectCountry')}
+                options={countriesList}
+                onChange={(e) => {
+                    const c = countriesList.find(x => x.id === e.target.value);
+                    setCountry(c); 
+                    setCity(null); 
+                    setRegion('');
+                    if (c) onCountryChange(c.id);
+                }}
+            />
 
-            <div className={styles.inputGroup}>
-                <label>{t('parserSettings.city')}</label>
-                <select 
-                    className={styles.textInput} 
-                    value={city?.id || ''} 
-                    onChange={(e) => {
-                        const c = citiesList.find(x => x.id === e.target.value);
-                        setCity(c);
-                    }}
-                    disabled={!country}
-                >
-                    <option value="">{t('parserSettings.selectCity')}</option>
-                    {citiesList.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
-            </div>
+            <SelectGroup 
+                label={t('parserSettings.city')}
+                value={city?.id}
+                disabled={!country}
+                defaultOption={t('parserSettings.selectCity')}
+                options={citiesList}
+                onChange={(e) => setCity(citiesList.find(x => x.id === e.target.value))}
+            />
 
-            <div className={styles.inputGroup}>
-                <label>{t('parserSettings.region')}</label>
+            <div className={uiStyles.formGroup}>
+                <label className={uiStyles.label}>{t('parserSettings.region')}</label>
                 {availableRegions.length > 0 ? (
-                    <select 
-                        className={styles.textInput} 
-                        value={region} 
-                        onChange={e => setRegion(e.target.value)}
-                    >
+                    <select className={uiStyles.input} value={region} onChange={e => setRegion(e.target.value)}>
                         <option value="">{t('parserSettings.selectRegion')}</option>
                         {availableRegions.map(r => <option key={r} value={r}>{r}</option>)}
                     </select>
                 ) : (
                     <input 
                         type="text" 
-                        className={styles.textInput} 
+                        className={uiStyles.input} 
                         value={region} 
                         onChange={e => setRegion(e.target.value)} 
                         placeholder={t('parserSettings.manualRegion')} 
@@ -72,4 +68,6 @@ export default function ParserSettings({
             </div>
         </div>
     );
-}
+};
+
+export default React.memo(ParserSettings);

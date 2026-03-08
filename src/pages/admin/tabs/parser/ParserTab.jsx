@@ -1,4 +1,3 @@
-// ParserTab.jsx
 import React, { useState, useEffect } from 'react';
 import { useParserLogic } from '../../hooks/useParserLogic';
 import ParserSettings from './ParserSettings';
@@ -8,17 +7,26 @@ import MetricsModal from './MetricsModal';
 import ResultsTable from '../resultsTable/ResultsTable';
 import { api } from '../../../../services/api';
 import styles from './ParserTab.module.css';
+import uiStyles from '../../ui/AdminUI.module.css';
 import { useTranslation } from 'react-i18next';
+import { useAdmin } from '../../hooks/AdminContext';
 
 export default function ParserTab() {
     const { t } = useTranslation('admin');
     const logic = useParserLogic();
+    
+    const { currentAdmin } = useAdmin();
+    const isSuperAdmin = currentAdmin?.role === 'super_admin';
+    const adminCityIds = currentAdmin?.cities || [];
+
     const [pbfFile, setPbfFile] = useState(() => localStorage.getItem('parser_file') || '');
     const [country, setCountry] = useState(() => JSON.parse(localStorage.getItem('parser_country')) || null);
     const [city, setCity] = useState(() => JSON.parse(localStorage.getItem('parser_city')) || null);
     const [region, setRegion] = useState(() => localStorage.getItem('parser_region') || '');
     const [selectedDistrictIds, setSelectedDistrictIds] = useState([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
+
+    const allowedCities = isSuperAdmin ? logic.cities : logic.cities.filter(c => adminCityIds.includes(c.id));
 
     useEffect(() => {
         if (city?.id) logic.fetchDbDistricts(city.id);
@@ -65,9 +73,32 @@ export default function ParserTab() {
         logic.runOfflineOsmParser(payload);
     };
 
-    const handleSave = async (rows) => {
+const handleSave = async (rows) => {
         try {
-            await api.geo.saveParsedResults(rows);
+            // Очищаємо дробові числа перед збереженням у БД
+            const sanitizedRows = rows.map(row => {
+                const cleanRow = { ...row };
+                const intFields = ['average_property_price', 'average_rent_price', 'average_sale_price_sqm', 'population', 'average_salary'];
+                
+                // Округлюємо основні поля
+                intFields.forEach(field => {
+                    if (cleanRow[field] !== undefined && cleanRow[field] !== null) {
+                        cleanRow[field] = Math.round(Number(cleanRow[field]));
+                    }
+                });
+
+                // Округлюємо всі поля, які закінчуються на _count
+                Object.keys(cleanRow).forEach(key => {
+                    if (key.endsWith('_count') && cleanRow[key] !== null) {
+                        cleanRow[key] = Math.round(Number(cleanRow[key]));
+                    }
+                });
+
+                return cleanRow;
+            });
+
+            await api.geo.saveParsedResults(sanitizedRows);
+            
             if (rows.length > 1 || logic.parsedData.length <= 1) {
                 logic.clearResultsSilent();
             }
@@ -77,14 +108,16 @@ export default function ParserTab() {
         }
     };
 
-return (
+    return (
         <div className={styles.mainWrapper}>
             <div className={styles.pageHeader}>
                 <div>
                     <h2 className={styles.pageTitle}>{t('parserTab.pageTitle')}</h2>
                     <p className={styles.pageSubtitle}>{t('parserTab.pageSubtitle')}</p>
                 </div>
-                <button onClick={handleResetAll} className={`${styles.btn} ${styles.dangerBtn}`}>{t('parserTab.resetAll')}</button>
+                <button onClick={handleResetAll} className={`${uiStyles.btn} ${uiStyles.btnDanger}`}>
+                    {t('parserTab.resetAll')}
+                </button>
             </div>
 
             <div className={styles.topGrid}>
@@ -97,14 +130,14 @@ return (
                         <button onClick={logic.loadAvailableFiles} className={styles.iconBtnText}>{t('parserTab.refresh')}</button>
                     </div>
                     <div className={styles.cardBody}>
-                        {logic.availableFiles.length === 0 ? (
-                            <div className={styles.emptyFolderBox}>{t('parserTab.emptyFolder')}</div>
-                        ) : (
-                            <select className={styles.selectInput} value={pbfFile} onChange={(e) => setPbfFile(e.target.value)}>
-                                {logic.availableFiles.map(file => <option key={file} value={file}>{file}</option>)}
-                            </select>
-                        )}
-                    </div>
+    {logic.availableFiles.length === 0 ? (
+        <div className={styles.emptyFolderBox}>{t('parserTab.emptyFolder')}</div>
+    ) : (
+        <select className={uiStyles.input} value={pbfFile} onChange={(e) => setPbfFile(e.target.value)}>
+            {logic.availableFiles.map(file => <option key={file} value={file}>{file}</option>)}
+        </select>
+    )}
+</div>
                 </div>
 
                 <div className={styles.card}>
@@ -119,7 +152,7 @@ return (
                             country={country} setCountry={setCountry}
                             city={city} setCity={setCity}
                             region={region} setRegion={setRegion}
-                            countriesList={logic.countries} citiesList={logic.cities}
+                            countriesList={logic.countries} citiesList={allowedCities}
                             onCountryChange={logic.loadCities}
                         />
                     </div>
@@ -143,23 +176,23 @@ return (
                             onDeleteDbDistrict={(id) => logic.deleteDbDistrict(id, city.id)} 
                             onImportGeoJson={(file) => logic.importBoundariesGeoJSON(file, city.id)}
                             loading={logic.loading}
+                            isSuperAdmin={isSuperAdmin}
                         />
                     </div>
                 </div>
             )}
 
-
-                <div className={styles.cardBodyOutless}>
-                    <ParserConsole 
-                        logs={logic.logs}
-                        loading={logic.loading}
-                        onClear={logic.clearLogs}
-                        onDownload={logic.downloadLogs}
-                        onStartClick={() => setIsModalOpen(true)}
-                        isStartDisabled={logic.loading || !city || selectedDistrictIds.length === 0 || !pbfFile}
-                        selectedCount={selectedDistrictIds.length}
-                    />
-                </div>
+            <div className={styles.cardBodyOutless}>
+                <ParserConsole 
+                    logs={logic.logs}
+                    loading={logic.loading}
+                    onClear={logic.clearLogs}
+                    onDownload={logic.downloadLogs}
+                    onStartClick={() => setIsModalOpen(true)}
+                    isStartDisabled={logic.loading || !city || selectedDistrictIds.length === 0 || !pbfFile}
+                    selectedCount={selectedDistrictIds.length}
+                />
+            </div>
 
             {logic.showResults && logic.parsedData.length > 0 && (
                 <div className={`${styles.card} ${styles.resultsCard}`}>

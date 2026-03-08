@@ -4,18 +4,19 @@ import MapEditorModal from '../map/MapEditorModal';
 import { useManualEditor } from '../../hooks/useManualEditor';
 import { FaMapMarkedAlt, FaImage, FaCheckCircle, FaExclamationTriangle, FaTimesCircle, FaSyncAlt, FaSave, FaTimes } from 'react-icons/fa';
 import styles from './ManualEditor.module.css';
+import uiStyles from '../../ui/AdminUI.module.css';
 import { useTranslation } from 'react-i18next';
 
 const DataBadge = ({ icon: Icon, label, status }) => {
-    const colors = {
-        green: { bg: '#dcfce7', text: '#166534', icon: <FaCheckCircle /> },
-        yellow: { bg: '#fef3c7', text: '#854d0e', icon: <FaExclamationTriangle /> },
-        red: { bg: '#fee2e2', text: '#991b1b', icon: <FaTimesCircle /> }
+    const statusConfig = {
+        green: { bg: 'rgba(16, 185, 129, 0.1)', text: 'var(--success)', icon: <FaCheckCircle /> },
+        yellow: { bg: 'rgba(245, 158, 11, 0.1)', text: 'var(--warning)', icon: <FaExclamationTriangle /> },
+        red: { bg: 'rgba(239, 68, 68, 0.1)', text: 'var(--danger)', icon: <FaTimesCircle /> }
     };
-    const c = colors[status] || colors.red;
+    const c = statusConfig[status] || statusConfig.red;
 
     return (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: '10px', backgroundColor: c.bg, color: c.text, fontSize: '0.85rem', fontWeight: '600', border: `1px solid ${c.text}30` }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 12px', borderRadius: 'var(--radius-sm)', backgroundColor: c.bg, color: c.text, fontSize: '0.85rem', fontWeight: '600', border: `1px solid ${c.text}30` }}>
             <Icon size={16} /><span>{label}</span><span style={{ marginLeft: 'auto', paddingLeft: '8px' }}>{c.icon}</span>
         </div>
     );
@@ -29,7 +30,7 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
         return (
             <div className={styles.emptyState}>
                 <div className={styles.emptyStateIcon}>✏️</div>
-                <h3 style={{ color: '#0f172a', margin: '0 0 8px 0', fontSize: '1.2rem' }}>{t('manualEditor.inactiveTitle')}</h3>
+                <h3 style={{ color: 'var(--text-main)', margin: '0 0 8px 0', fontSize: '1.2rem' }}>{t('manualEditor.inactiveTitle')}</h3>
                 <p>{t('manualEditor.inactiveDesc')}</p>
             </div>
         );
@@ -43,11 +44,11 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
                     <span className={styles.breadcrumbs}>{selectedCountry?.name} / {selectedCity?.name}</span>
                 </div>
                 <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
-                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, color: '#334155', background: '#f1f5f9', padding: '8px 16px', borderRadius: '10px' }}>
-                        <input type="checkbox" checked={!!logic.formData.is_available} onChange={e => logic.handleFieldChange('is_available', e.target.checked, 'boolean')} style={{ width: '16px', height: '16px', accentColor: '#3b82f6' }} />
+                    <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '0.9rem', fontWeight: 600, color: 'var(--text-main)', background: 'var(--bg-main)', padding: '8px 16px', borderRadius: 'var(--radius-sm)' }}>
+                        <input type="checkbox" checked={!!logic.formData.is_available} onChange={e => logic.handleFieldChange('is_available', e.target.checked, 'boolean')} style={{ width: '16px', height: '16px', accentColor: 'var(--primary)' }} />
                         {t('manualEditor.publiclyAvailable')}
                     </label>
-                    <button onClick={logic.handleFullParse} disabled={logic.isFullParsing} className={`${styles.btn} ${styles.actionBtn}`}>
+                    <button onClick={logic.handleFullParse} disabled={logic.isFullParsing} className={`${uiStyles.btn} ${uiStyles.btnPrimary}`}>
                         <FaSyncAlt className={logic.isFullParsing ? styles.spinIcon : ''} />
                         {logic.isFullParsing ? t('manualEditor.collecting') : t('manualEditor.updateParserBtn')}
                     </button>
@@ -73,7 +74,7 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
                             </div>
                         ) : (
                             <div className={styles.uploadPlaceholder}>
-                                <FaImage size={32} color="#94a3b8" />
+                                <FaImage size={32} color="var(--text-muted)" />
                                 <span>{t('manualEditor.uploadPrompt')}</span>
                             </div>
                         )}
@@ -84,54 +85,30 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
             <div className={styles.card}>
                 <div className={styles.cardHeader}>
                     <h3 className={styles.cardTitle}>{t('manualEditor.mapPoisTitle')}</h3>
-                    <button onClick={() => logic.setIsMapEditorOpen(true)} className={`${styles.btn} ${styles.mapBtn}`}>
+                    <button onClick={() => logic.setIsMapEditorOpen(true)} className={`${uiStyles.btn} ${styles.mapBtn}`}>
                         <FaMapMarkedAlt /> {t('manualEditor.openGisBtn')}
                     </button>
                 </div>
-                <div style={{ padding: '16px', background: '#f8fafc', borderRadius: '12px', border: '1px solid #e2e8f0', fontSize: '0.9rem', color: '#475569' }}>
+                <div style={{ padding: '16px', background: 'var(--bg-main)', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', fontSize: '0.9rem', color: 'var(--text-muted)' }}>
                     <strong>{t('manualEditor.totalPoints')}</strong> {logic.formData.poi_data?.length || 0}. 
                     {t('manualEditor.gisHint')}
                 </div>
             </div>
 
             {METRIC_GROUPS.map(group => {
-                const isOtodom = group.id === 'real_estate';
-                const isGus = group.id === 'demographics';
-                const isEco = group.id === 'ecology';
-                const isOsm = !isOtodom && !isGus && !isEco;
-
                 return (
                     <div key={group.id} className={styles.card}>
                         <div className={styles.cardHeader}>
+                            {/* ВСІ КНОПКИ "ОНОВИТИ" (singleOtodom, singleGus, тощо) БУЛО ВИДАЛЕНО ЗВІДСИ */}
                             <h3 className={styles.cardTitle}>{group.icon} {group.label}</h3>
-                            {isOtodom && (
-                                <button onClick={logic.handleSingleOtodomUpdate} disabled={logic.updatingOtodom} className={`${styles.btn} ${styles.ghostBtn}`}>
-                                    <FaSyncAlt className={logic.updatingOtodom ? styles.spinIcon : ''} /> {logic.updatingOtodom ? '...' : 'Otodom'}
-                                </button>
-                            )}
-                            {isGus && (
-                                <button onClick={logic.handleGusUpdate} disabled={logic.updatingGUS} className={`${styles.btn} ${styles.ghostBtn}`}>
-                                    <FaSyncAlt className={logic.updatingGUS ? styles.spinIcon : ''} /> {logic.updatingGUS ? '...' : 'GUS'}
-                                </button>
-                            )}
-                            {isEco && (
-                                <button onClick={logic.handleEcoUpdate} disabled={logic.updatingEco} className={`${styles.btn} ${styles.ghostBtn}`}>
-                                    <FaSyncAlt className={logic.updatingEco ? styles.spinIcon : ''} /> {logic.updatingEco ? '...' : 'WAQI'}
-                                </button>
-                            )}
-                            {isOsm && (
-                                <button onClick={() => logic.handleGroupOsmUpdate(group.id)} disabled={logic.updatingGroups[group.id]} className={`${styles.btn} ${styles.ghostBtn}`}>
-                                    <FaSyncAlt className={logic.updatingGroups[group.id] ? styles.spinIcon : ''} /> {logic.updatingGroups[group.id] ? '...' : 'OSM'}
-                                </button>
-                            )}
                         </div>
                         <div className={styles.formGrid}>
                             {group.fields.map(field => (
-                                <div key={field.key} className={styles.inputGroup}>
-                                    <label className={styles.label}>{field.label}</label>
+                                <div key={field.key} className={uiStyles.formGroup}>
+                                    <label className={uiStyles.label}>{field.label}</label>
                                     <input 
                                         type={field.type === 'text' ? 'text' : 'number'} 
-                                        className={styles.input} 
+                                        className={uiStyles.input} 
                                         value={logic.formData[field.key] === undefined || logic.formData[field.key] === null ? '' : logic.formData[field.key]} 
                                         onChange={e => logic.handleFieldChange(field.key, e.target.value, field.type)} 
                                         placeholder={t('manualEditor.inputPlaceholder')} 
@@ -143,11 +120,11 @@ export default function ManualEditor({ selectedCountry, selectedCity, selectedDi
                 );
             })}
 
-            <div className={styles.stickyActions}>
-                <button onClick={logic.handleCancel} className={`${styles.btn} ${styles.cancelBtn}`}>
+            <div className={styles.actionsRow}>
+                <button onClick={logic.handleCancel} className={`${uiStyles.btn} ${uiStyles.btnCancel}`}>
                     <FaTimes /> {t('manualEditor.cancelBtn')}
                 </button>
-                <button onClick={logic.handleSaveDistrict} disabled={logic.loading} className={`${styles.btn} ${styles.saveBtn}`}>
+                <button onClick={logic.handleSaveDistrict} disabled={logic.loading} className={`${uiStyles.btn} ${uiStyles.btnPrimary}`}>
                     <FaSave /> {logic.loading ? t('manualEditor.saving') : t('manualEditor.saveBtn')}
                 </button>
             </div>

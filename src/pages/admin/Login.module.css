@@ -3,17 +3,17 @@
     justify-content: center;
     align-items: center;
     min-height: 100vh;
-    background: #f8fafc;
+    background: var(--bg-main);
 }
 
 .loginCard {
-    background: white;
+    background: var(--bg-surface);
     padding: 40px;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
     width: 100%;
     max-width: 400px;
-    animation: slideUp 0.4s ease-out;
+    animation: slideUp 0.4s var(--transition);
 }
 
 @keyframes slideUp {
@@ -28,26 +28,26 @@
 
 .title {
     font-size: 1.8rem;
-    color: #0f172a;
+    color: var(--text-main);
     margin: 0 0 8px 0;
     font-weight: 800;
 }
 
 .subtitle {
-    color: #64748b;
+    color: var(--text-muted);
     margin: 0;
     font-size: 0.95rem;
 }
 
 .errorBox {
     background: #fee2e2;
-    color: #991b1b;
+    color: var(--danger);
     padding: 12px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     margin-bottom: 20px;
     font-size: 0.9rem;
     text-align: center;
-    font-weight: 500;
+    font-weight: 600;
     border: 1px solid #fecaca;
 }
 
@@ -64,7 +64,7 @@
 }
 
 .label {
-    color: #334155;
+    color: var(--text-main);
     font-weight: 600;
     font-size: 0.9rem;
 }
@@ -72,37 +72,44 @@
 .input {
     width: 100%;
     padding: 12px 16px;
-    border-radius: 8px;
-    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
     font-size: 1rem;
-    transition: all 0.2s;
+    transition: var(--transition);
     box-sizing: border-box;
-    background: #f8fafc;
+    background: var(--bg-main);
+    color: var(--text-main);
 }
 
 .input:focus {
     outline: none;
-    border-color: #3b82f6;
-    background: #ffffff;
+    border-color: var(--primary);
+    background: var(--bg-surface);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.mfaInput {
+    text-align: center;
+    letter-spacing: 4px;
+    font-size: 1.2rem;
 }
 
 .submitBtn {
     width: 100%;
     padding: 14px;
-    background: #3b82f6;
+    background: var(--primary);
     color: white;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     font-size: 1rem;
     font-weight: bold;
     cursor: pointer;
     margin-top: 10px;
-    transition: background 0.2s, transform 0.1s;
+    transition: var(--transition);
 }
 
 .submitBtn:hover:not(:disabled) {
-    background: #2563eb;
+    background: var(--primary-hover);
 }
 
 .submitBtn:active:not(:disabled) {
@@ -110,6 +117,51 @@
 }
 
 .submitBtn:disabled {
-    background: #94a3b8;
+    background: var(--text-muted);
     cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.cancelBtn {
+    padding: 14px;
+    background: var(--bg-main);
+    color: var(--text-muted);
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: var(--transition);
+    flex: 1;
+}
+
+.cancelBtn:hover:not(:disabled) {
+    background: var(--border);
+    color: var(--text-main);
+}
+
+.buttonGroup {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.mfaQrSection {
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.mfaQrSection p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+}
+
+.qrCodeWrapper {
+    background: white;
+    padding: 10px;
+    display: inline-block;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
 }
