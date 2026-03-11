@@ -49,8 +49,8 @@ export default function AppRoutes() {
           <Route path="register-success" element={<RegisterSuccess />} />
           <Route path="auth/callback" element={<AuthCallback />} />
 
-          <Route path="parser" element={<AdminPanel />} />
-
+          <Route path="parser" element={<PrivateRoute><AdminPanel /></PrivateRoute>} />
+          
           <Route 
             path="favorites"
             element={

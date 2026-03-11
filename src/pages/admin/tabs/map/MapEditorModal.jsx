@@ -8,6 +8,7 @@ import styles from './MapEditorModal.module.css';
 import uiStyles from '../../ui/AdminUI.module.css';
 import BaseModal from '../../ui/BaseModal';
 import { useTranslation } from 'react-i18next';
+import { api } from '../../../../services/api';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
 
@@ -17,14 +18,21 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
     const [activePois, setActivePois] = useState([]);
     const [visibleTypes, setVisibleTypes] = useState(new Set());
     const [mapCenter, setMapCenter] = useState(null);
+    const [districtGeojson, setDistrictGeojson] = useState(null);
 
     useEffect(() => {
         const handleKeyDown = (e) => {
-            if (e.key === 'Escape') setActiveMetric(null);
+            if (e.key === 'Escape' && activeMetric !== null) {
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+                setActiveMetric(null);
+            }
         };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, []);
+        if (isOpen) {
+            window.addEventListener('keydown', handleKeyDown, { capture: true });
+        }
+        return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+    }, [isOpen, activeMetric]);
 
     useEffect(() => {
         if (isOpen && rowData) {
@@ -45,12 +53,50 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
             setActiveMetric(null);
             setVisibleTypes(new Set(poisWithIds.map(p => p.type)));
 
-            if (rowData.geojson) {
-                try {
-                    const center = L.geoJSON(rowData.geojson).getBounds().getCenter();
-                    setMapCenter(center);
-                } catch {} 
-            }
+            const setFallbackCenter = () => {
+                if (poisWithIds.length > 0) {
+                    let sumLat = 0, sumLng = 0;
+                    poisWithIds.forEach(p => {
+                        sumLat += p.coord[0];
+                        sumLng += p.coord[1];
+                    });
+                    setMapCenter({
+                        lat: sumLat / poisWithIds.length,
+                        lng: sumLng / poisWithIds.length
+                    });
+                } else {
+                    setMapCenter({ lat: 52.23, lng: 21.01 });
+                }
+            };
+
+            const fetchGeoData = async () => {
+                if (rowData.geojson) {
+                    setDistrictGeojson(rowData.geojson);
+                    try {
+                        const center = L.geoJSON(rowData.geojson).getBounds().getCenter();
+                        setMapCenter(center);
+                    } catch {
+                        setFallbackCenter();
+                    }
+                } else if (rowData.district_id) {
+                    try {
+                        const data = await api.geo.getDistrictData(rowData.district_id);
+                        if (data && data.geojson) {
+                            setDistrictGeojson(data.geojson);
+                            const center = L.geoJSON(data.geojson).getBounds().getCenter();
+                            setMapCenter(center);
+                        } else {
+                            setFallbackCenter();
+                        }
+                    } catch {
+                        setFallbackCenter();
+                    }
+                } else {
+                    setFallbackCenter();
+                }
+            };
+
+            fetchGeoData();
         }
     }, [isOpen, rowData]);
 
@@ -105,12 +151,12 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
     if (!isOpen || !rowData) return null;
     const countableMetrics = METRIC_GROUPS.flatMap(g => g.fields).filter(f => f.type === 'number' && f.key.includes('_count'));
 
-    let googleUrl = mapCenter ? `https://www.google.com/maps/@$$$${mapCenter.lat},${mapCenter.lng},16z` : '#';
+    let googleUrl = mapCenter ? `https://www.google.com/maps/@$$$$${mapCenter.lat},${mapCenter.lng},16z` : '#';
     let osmUrl = mapCenter ? `https://www.openstreetmap.org/#map=16/${mapCenter.lat}/${mapCenter.lng}` : '#';
 
     if (activeMetric && mapCenter) {
         const query = encodeURIComponent(getLabelForKey(activeMetric));
-        googleUrl = `https://www.google.com/maps/search/$$$${query}/@${mapCenter.lat},${mapCenter.lng},16z`;
+        googleUrl = `https://www.google.com/maps/search/$$$$${query}/@${mapCenter.lat},${mapCenter.lng},16z`;
         osmUrl = `https://www.openstreetmap.org/search?query=${query}#map=16/${mapCenter.lat}/${mapCenter.lng}`;
     }
 
@@ -126,7 +172,6 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
             <div style={{ display: 'flex', gap: '12px' }}>
                 {mapCenter && (
                     <>
-                        {/* ТУТ ДОДАНО ПЕРЕКЛАДИ */}
                         <a href={googleUrl} target="_blank" rel="noreferrer" className={styles.externalBtnGoogle}>
                             <FaMapMarkedAlt /> {t('mapEditor.googleMaps')}
                         </a>
@@ -155,12 +200,12 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
             maxWidth="1200px" 
             actions={modalActions}
             bodyStyle={{ padding: 0, display: 'flex', height: '70vh', overflow: 'hidden' }}
+            disableEscClose={true}
         >
             <div className={styles.sidebar}>
                 <div className={styles.sidebarHelp}>
                     <div className={styles.helpText}>{t('mapEditor.helpText')}</div>
                     <div className={styles.visibilityControls}>
-                        {/* Ці кнопки використовують переклади з mapTab */}
                         <button onClick={showAll} className={styles.visBtn}>{t('mapTab.showAll')}</button>
                         <button onClick={hideAll} className={styles.visBtn}>{t('mapTab.hideAll')}</button>
                     </div>
@@ -197,7 +242,7 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
 
             <div className={styles.mapContainer}>
                 <InteractiveMap 
-                    geojson={rowData.geojson}
+                    geojson={districtGeojson}
                     pois={activePois.filter(p => visibleTypes.has(p.type))}
                     activeMetric={activeMetric}
                     onAddPoi={handleAddPoi}

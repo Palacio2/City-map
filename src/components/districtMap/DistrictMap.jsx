@@ -13,6 +13,7 @@ import { filterDistrictsByCriteria } from '@filtersPanel/filterLogic';
 import { transformDistrictsForDisplay } from '@utils/dataTransformers';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
 import { useSubscription } from '@subscription/SubscriptionContext';
+import SeoMeta from '@components/seo/SeoMeta'; // ДОДАНО: Імпорт нашого SEO компонента
 
 const FREE_ALLOWED_CATEGORIES = Object.values(DISTRICT_CATEGORIES)
   .filter(cat => !cat.isPremium)
@@ -111,11 +112,32 @@ export default function DistrictMap() {
     setAllDistricts(prev => updateDistrictInList(prev));
   }, []);
 
-  if (!country) return <CountrySelect />;
-  if (!city) return <CitySelect country={country} />;
+  // ДОДАНО: SEO для сторінок без обраного міста
+  if (!country) return (
+    <>
+      <SeoMeta title="Оберіть країну | City Maps" description="Оберіть країну для перегляду карти районів." />
+      <CountrySelect />
+    </>
+  );
+  if (!city) return (
+    <>
+      <SeoMeta title={`Міста: ${country} | City Maps`} description={`Оберіть місто в ${country} для перегляду статистики районів.`} />
+      <CitySelect country={country} />
+    </>
+  );
+
+  const pageTitle = city 
+    ? `Інфраструктура та ціни: ${city} | City Maps` 
+    : 'Карта районів | City Maps';
+    
+  const pageDesc = city 
+    ? `Детальна статистика, ціни на нерухомість, якість повітря та інфраструктура для міста ${city}. Порівняйте райони.`
+    : 'Оберіть місто для перегляду аналітики та статистики районів.';
 
   return (
     <div className={styles.container}>
+      <SeoMeta title={pageTitle} description={pageDesc} />
+
       <div className={styles.contentWrapper}>
         <FiltersPanel 
           onFiltersChange={handleFiltersChange}

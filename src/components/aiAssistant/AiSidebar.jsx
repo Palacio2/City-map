@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import styles from './AiSidebar.module.css';
 
 export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
-  const { t } = useTranslation('assistant');
+  const { t, i18n } = useTranslation('assistant');
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState([]);
   const [isTyping, setIsTyping] = useState(false);
@@ -97,7 +97,8 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
         body: JSON.stringify({
           message: textToSend,
           context: chatContext,
-          history: messages
+          history: messages,
+          language: i18n.language // <--- ОСЬ ТУТ ДОДАНО ПЕРЕДАЧУ МОВИ
         })
       });
 

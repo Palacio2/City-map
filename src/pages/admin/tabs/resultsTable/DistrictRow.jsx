@@ -98,17 +98,20 @@ const handlePhotoUpload = async () => {
                     <strong className={styles.headerTitle}>{row.district_name}</strong> 
                     {row.population !== undefined && <span className={styles.popBadge}>👥 {row.population || 0}</span>}
                 </div>
-                <div className={styles.headerRight}>
-                    {row.air_quality > 0 && <span className={styles.airBadge}>🍃 AQI: {row.air_quality}</span>}
-                    <button type="button" onClick={handleDownloadJson} className={styles.actionBtn}>📥 JSON</button>
-                    {row.geojson && (
-                        <button type="button" onClick={(e) => { e.stopPropagation(); setIsMapEditorOpen(true); }} className={`${styles.actionBtn} ${styles.gisBtn}`}>
-                            🗺️ GIS
-                        </button>
-                    )}
-                    <button type="button" onClick={handleRemove} className={`${styles.actionBtn} ${styles.deleteBtn}`}>🗑️</button>
-                    <span className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ''}`}>▼</span>
-                </div>
+<div className={styles.headerRight}>
+    {row.air_quality > 0 && <span className={styles.airBadge}>🍃 AQI: {row.air_quality}</span>}
+    <button type="button" onClick={handleDownloadJson} className={styles.actionBtn}>📥 JSON</button>
+    
+    {/* ОНОВЛЕНО: Тепер кнопка GIS показується завжди, якщо є хоч якісь гео-дані або точки */}
+    {(row.geojson || row.poi_data || row.parsed_pois) && (
+        <button type="button" onClick={(e) => { e.stopPropagation(); setIsMapEditorOpen(true); }} className={`${styles.actionBtn} ${styles.gisBtn}`}>
+            🗺️ GIS
+        </button>
+    )}
+    
+    <button type="button" onClick={handleRemove} className={`${styles.actionBtn} ${styles.deleteBtn}`}>🗑️</button>
+    <span className={`${styles.arrow} ${isOpen ? styles.arrowOpen : ''}`}>▼</span>
+</div>
             </div>
 
             <div className={`${styles.accordionBody} ${isOpen ? styles.open : ''}`}>

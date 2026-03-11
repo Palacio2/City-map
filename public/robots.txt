@@ -1,7 +1,17 @@
 User-agent: *
 Allow: /
-Disallow: /profile
-Disallow: /payment
-Disallow: /payment-success
+Allow: /map/
+Allow: /about
+Allow: /contacts
+Allow: /faq
+
+# Закриваємо технічні та приватні сторінки
+Disallow: /profile/
+Disallow: /payment/
+Disallow: /payment-success/
+Disallow: /parser/
+Disallow: /auth/
+Disallow: /login
+Disallow: /register
 
 Sitemap: https://city-map-alpha.vercel.app/sitemap.xml

@@ -12,10 +12,11 @@ import { usePdfExport } from '@hooks/usePdfExport';
 import { useBodyScrollLock } from '@hooks/useBodyScrollLock';
 import DistrictPdfTemplate from './DistrictPdfTemplate';
 import DistrictGeoMapModal from './DistrictGeoMapModal';
+import SeoMeta from '@components/seo/SeoMeta'; // ДОДАНО: Імпорт SEO
 
 export default function DistrictDetailsModal({ district, selectedCategory, isOpen, onClose }) {
   const { t } = useTranslation('districts');
-  const { country: paramCountry } = useParams();
+  const { country: paramCountry, city: paramCity } = useParams();
   
   const { isRealtor, isFree } = useSubscription();
   const fileName = district ? `${district.name}_report` : 'district_report';
@@ -63,8 +64,16 @@ export default function DistrictDetailsModal({ district, selectedCategory, isOpe
 
   if (!isOpen || !district) return null;
 
+  const districtTitle = `${district.name}, ${paramCity || ''} | City Maps`;
+  const districtDesc = t('seo.districtDesc', { 
+    district: district.name, 
+    city: paramCity || '', 
+  });
+
   const modalContent = (
     <>
+      <SeoMeta title={districtTitle} description={districtDesc} />
+      
       <div className={styles.modalOverlay} onClick={onClose}>
         <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
           <HeaderSection 

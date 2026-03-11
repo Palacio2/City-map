@@ -6,6 +6,7 @@ import { useSubscription } from './SubscriptionContext';
 import { subscriptionPlans } from './subscriptionPlans';
 import Loader from '@components/loader/Loader';
 import styles from './Subscription.module.css';
+import SeoMeta from '@components/seo/SeoMeta';
 
 export default function Subscription() {
   const { subscription, isLoading } = useSubscription(); 
@@ -34,6 +35,11 @@ export default function Subscription() {
 
   return (
     <div className={styles.container}>
+      <SeoMeta 
+        title={t('seo.title')} 
+        description={t('seo.desc')} 
+      />
+
       <div className={styles.header}>
         <h1 className={styles.title}>{t('subscription.title')}</h1>
         <p className={styles.subtitle}>{t('subscription.subtitle')}</p>

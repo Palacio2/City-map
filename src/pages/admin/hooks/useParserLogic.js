@@ -136,12 +136,16 @@ export const useParserLogic = () => {
     const createDistrictsInDb = async (districtObjects, cityId) => {
         setLoading(true);
         try {
+            const addedNames = [];
             for (const d of districtObjects) {
                 const name = typeof d === 'string' ? d : d.name;
                 await api.geo.createDistrict(name, cityId, null);
+                addedNames.push(name);
             }
             await fetchDbDistricts(cityId);
-            setFoundDistrictsOSM([]);
+            
+            setFoundDistrictsOSM(prev => prev.filter(d => !addedNames.includes(d.name)));
+            
         } catch {
         } finally { setLoading(false); }
     };

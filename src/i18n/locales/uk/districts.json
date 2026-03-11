@@ -38,5 +38,12 @@
     "hidden_districts_title": "Приховано ще {{count}} районів",
     "hidden_districts_desc": "Оформіть Premium, щоб побачити всі райони та детальну аналітику",
     "upgrade_button": "Отримати Premium"
+  },
+  "seo": {
+    "cityTitle": "Інфраструктура та ціни: {{city}} | City Maps",
+    "defaultTitle": "Карта районів | City Maps",
+    "cityDesc": "Детальна статистика, ціни на нерухомість та інфраструктура для міста {{city}}.",
+    "defaultDesc": "Оберіть місто для перегляду аналітики та статистики районів.",
+    "districtDesc": "Детальна аналітика, ціни та інфраструктура для району {{district}}, {{city}}."
   }
 }

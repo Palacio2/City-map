@@ -6,6 +6,7 @@ import {
 } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import styles from './FaqPage.module.css';
+import SeoMeta from '@components/seo/SeoMeta';
 
 export default function FaqPage() {
   const { t } = useTranslation('faq');
@@ -27,6 +28,11 @@ export default function FaqPage() {
 
   return (
     <div className={styles.container}>
+      <SeoMeta 
+        title={t('seo.title')} 
+        description={t('seo.desc')} 
+      />
+
       <div className={styles.header}>
         <div className={styles.iconWrapper}>
           <FaQuestionCircle />

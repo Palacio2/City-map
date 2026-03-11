@@ -171,7 +171,7 @@ const handleSave = async (rows) => {
                         <DistrictsManager
                             foundDistricts={logic.foundDistrictsOSM} dbDistricts={logic.dbDistricts}
                             selectedIds={selectedDistrictIds} onToggleSelect={toggleDistrictSelection} onSelectAll={toggleSelectAll}
-                            onScan={() => logic.scanOSM(city?.name)} onCreate={() => logic.createDistrictsInDb(logic.foundDistrictsOSM, city.id)}
+                            onScan={() => logic.scanOSM(city?.name)} onCreate={(districtsToCreate) => logic.createDistrictsInDb(districtsToCreate, city.id)}
                             onRemoveFromFound={(d) => logic.setFoundDistrictsOSM(prev => prev.filter(item => item !== d))}
                             onDeleteDbDistrict={(id) => logic.deleteDbDistrict(id, city.id)} 
                             onImportGeoJson={(file) => logic.importBoundariesGeoJSON(file, city.id)}

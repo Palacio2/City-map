@@ -272,3 +272,32 @@
 @keyframes slideIn { from { transform: translateX(100%); } to { transform: translateX(0); } }
 @keyframes slideOut { from { transform: translateX(0); } to { transform: translateX(100%); } }
 @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+
+.markdownContent {
+  width: 100%;
+}
+
+.markdownContent ul,
+.markdownContent ol {
+  padding-left: 24px;
+  margin-top: 8px;
+  margin-bottom: 12px;
+}
+
+.markdownContent li {
+  margin-bottom: 6px;
+  line-height: 1.5;
+}
+
+.markdownContent > *:first-child {
+  margin-top: 0;
+}
+
+.markdownContent > *:last-child {
+  margin-bottom: 0;
+}
+
+.markdownContent strong {
+  color: var(--text-main);
+  font-weight: 700;
+}

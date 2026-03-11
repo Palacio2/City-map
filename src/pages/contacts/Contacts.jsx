@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { FaUser, FaEnvelope, FaComment, FaPaperPlane, FaPhone, FaCheckCircle } from 'react-icons/fa';
 import { contactsAPI } from '@api/contactsAPI';
 import styles from './Contacts.module.css';
+import SeoMeta from '@components/seo/SeoMeta';
 
 export default function Contacts() {
   const { t } = useTranslation('contacts');
@@ -68,6 +69,7 @@ export default function Contacts() {
   if (status === 'success') {
     return (
       <div className={styles.container}>
+        <SeoMeta title={t('seo.title')} />
         <div className={styles.card}>
           <div className={styles.successState} role="alert">
             <FaCheckCircle className={styles.successIcon} />
@@ -93,6 +95,11 @@ export default function Contacts() {
 
   return (
     <div className={styles.container}>
+      <SeoMeta 
+        title={t('seo.title')} 
+        description={t('seo.desc')} 
+      />
+
       <div className={styles.card}>
         <div className={styles.header}>
           <h1 className={styles.title}>{t('title')}</h1>
@@ -150,7 +157,6 @@ export default function Contacts() {
               <span className={styles.consentText}>
                 <Trans
                   i18nKey="contacts:form.consent"
-                  defaults="Я погоджуюсь на обробку персональних даних згідно з <0>Політикою конфіденційності</0>"
                   components={[<Link to="/terms" className={styles.inlineLink} key="terms-link" />]}
                 />
               </span>

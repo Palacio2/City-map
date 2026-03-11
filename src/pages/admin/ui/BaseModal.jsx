@@ -10,15 +10,16 @@ const BaseModal = ({
     children, 
     maxWidth = '500px', 
     actions = null,
-    bodyStyle = {}
+    bodyStyle = {},
+    disableEscClose = false
 }) => {
     useEffect(() => {
         const handleEsc = (e) => {
-            if (e.key === 'Escape') onClose();
+            if (e.key === 'Escape' && !disableEscClose) onClose();
         };
         if (isOpen) window.addEventListener('keydown', handleEsc);
         return () => window.removeEventListener('keydown', handleEsc);
-    }, [isOpen, onClose]);
+    }, [isOpen, onClose, disableEscClose]);
 
     useEffect(() => {
         if (isOpen) {

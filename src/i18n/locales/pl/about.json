@@ -11,29 +11,29 @@
     "audience": "Dla kogo pracujemy"
   },
   "mission": {
-    "text_1": "To inteligentna odpowiedź na brak przejrzystości rynku nieruchomości. Udowadniamy, że jakość życia i komfort to nie subiektywne odczucia, lecz konkretne wskaźniki, które można mierzyć. Nasza platforma przekształca miliony jednostek surowych danych miejskich w precyzyjne ratingi analityczne.",
-    "text_2": "Tworzymy nowy standard analityki miejskiej. Naszym celem jest zapewnienie każdemu użytkownikowi — od najemcy po strategicznego inwestora — narzędzia do dogłębnego zrozumienia infrastruktury, bezpieczeństwa i potencjału dowolnej dzielnicy."
+    "text_1": "To inteligentna odpowiedź na brak przejrzystości rynku nieruchomości. Udowadniamy, że jakość życia i komfort to nie subiektywne odczucia, ale konkretne, mierzalne wskaźniki. Nasza platforma przekształca miliony jednostek surowych danych miejskich w precyzyjne rankingi analityczne.",
+    "text_2": "Tworzymy nowy standard analityki miejskiej. Naszym celem jest zapewnienie każdemu użytkownikowi — od najemcy po inwestora strategicznego — narzędzia do głębokiego zrozumienia infrastruktury, bezpieczeństwa i potencjału dowolnej dzielnicy."
   },
   "features": [
-    { "title": "Infrastruktura społeczna", "text": "Dogłębna analiza sieci edukacyjnej i medycznej. Ocenia nie tylko liczbę szkół i szpitali, ale także ich realną dostępność oraz zagęszczenie na mieszkańca." },
-    { "title": "Logistyka transportowa", "text": "Kompleksowa ocena mobilności: od bliskości metra i linii tramwajowych po długość ścieżek rowerowych oraz obłożenie stref parkingowych." },
-    { "title": "Bezpieczeństwo i porządek publiczny", "text": "Monitoring poziomu przestępczości, jakości oświetlenia ulicznego oraz gęstości systemów monitoringu (CCTV) dla Twojego bezpieczeństwa." },
-    { "title": "Ekologia i środowisko miejskie", "text": "Obiektywne dane o jakości powietrza, poziomie hałasu, udziale terenów zielonych oraz dostępności stref rekreacyjnych w zasięgu spaceru." },
-    { "title": "Potencjał komercyjny", "text": "Analiza nasycenia rynku: od sieci spożywczych i centrów handlowych po oddziały banków i lokale gastronomiczne." },
-    { "title": "Wskaźniki ekonomiczne", "text": "Analityka ceny za metr kwadratowy, dynamika stawek najmu oraz średnie wynagrodzenie w dzielnicy dla precyzyjnego obliczenia ROI." }
+    { "title": "Infrastruktura społeczna", "text": "Głęboka analiza sieci edukacyjnej i medycznej. Oceniamy nie tylko liczbę szkół i szpitali, ale także ich rzeczywistą dostępność oraz zagęszczenie na mieszkańca." },
+    { "title": "Logistyka transportowa", "text": "Kompleksowa ocena mobilności: od bliskości metra i linii tramwajowych po długość ścieżek rowerowych i obłożenie stref parkowania." },
+    { "title": "Bezpieczeństwo i porządek", "text": "Monitorowanie poziomu przestępczości, jakości oświetlenia ulicznego oraz zagęszczenia systemów monitoringu (CCTV) dla Twojego bezpieczeństwa." },
+    { "title": "Ekologia i środowisko miejskie", "text": "Obiektywne dane o jakości powietrza, poziomie hałasu, procencie terenów zielonych oraz dostępności stref wypoczynku w zasięgu spaceru." },
+    { "title": "Potencjał komercyjny", "text": "Analiza nasycenia rynku: od sieci spożywczych i galerii handlowych po oddziały bankowe i punkty gastronomiczne." },
+    { "title": "Wskaźniki ekonomiczne", "text": "Analityka ceny za metr kwadratowy, dynamika stawek najmu oraz średnie wynagrodzenie w okolicy dla dokładnego obliczenia ROI." }
   ],
   "process": [
-    { "title": "Fokus geograficzny", "text": "Korzystaj z interaktywnej mapy, aby natychmiast wybrać miasto lub wyznaczyć konkretny obszar wyszukiwania na terenie Polski." },
-    { "title": "Inteligentny scoring", "text": "Algorytm automatycznie analizuje lokalizację według ponad 50 parametrów Big Data i tworzy szczegółowe ratingi jakości środowiska." },
-    { "title": "Analiza porównawcza", "text": "Porównuj wskaźniki kilku dzielnic równolegle, aby zidentyfikować ukryte atuty oraz krytyczne słabości każdej lokalizacji." },
-    { "title": "Ocena końcowa i raport", "text": "Otrzymuj kompleksową analizę wartości, infrastruktury i ryzyk w wygodnym formacie do podjęcia przemyślanej decyzji." }
+    { "title": "Skupienie geograficzne", "text": "Skorzystaj z interaktywnej mapy, aby błyskawicznie wybrać miasto lub zakreślić specyficzny obszar wyszukiwania na terytorium Polski." },
+    { "title": "Inteligentny scoring", "text": "Algorytm automatycznie analizuje lokalizację pod kątem ponad 50 parametrów Big Data i generuje szczegółowe rankingi jakości środowiska." },
+    { "title": "Analityka porównawcza", "text": "Zestawiaj wskaźniki kilku dzielnic obok siebie, aby odkryć ukryte zalety i krytyczne wady każdej lokalizacji." },
+    { "title": "Ocena końcowa i raport", "text": "Otrzymuj wyczerpującą analizę kosztów, infrastruktury oraz ryzyk w wygodnym formacie, ułatwiającym podjęcie świadomej decyzji." }
   ],
   "data_sources": [
     {
       "title": "Źródła informacji:",
       "items": [
         "Oficjalne rejestry państwowe",
-        "Międzynarodowe systemy monitoringu środowiska",
+        "Międzynarodowe systemy monitoringu ekologicznego",
         "Otwarte geodane i serwisy kartograficzne",
         "Partnerskie sieci agregatorów nieruchomości"
       ]
@@ -41,25 +41,29 @@
     {
       "title": "Metodologia i przetwarzanie danych:",
       "items": [
-        "Wielopoziomowa weryfikacja i czyszczenie surowych danych",
-        "Automatyczna agregacja wskaźników przy użyciu autorskich algorytmów",
-        "Codzienna aktualizacja dynamicznych wskaźników (ceny, ekologia)",
-        "Geoprzestrzenne przypisanie obiektów infrastruktury do granic dzielnic",
-        "Inteligentne wykrywanie anomalii oraz walidacja wyników przez analityków"
+        "Wielopoziomowa weryfikacja i oczyszczanie surowych danych",
+        "Automatyczna agregacja wskaźników za pomocą własnych algorytmów",
+        "Codzienna aktualizacja dynamicznych indykatorów (ceny, ekologia)",
+        "Geoprzestrzenne powiązanie obiektów infrastruktury z granicami dzielnic",
+        "Intelektualna weryfikacja anomalii i walidacja wyników przez analityków"
       ]
     }
   ],
   "audience": [
-    { "title": "Osoby prywatne", "text": "Dla tych, którzy szukają idealnej równowagi między ceną a jakością życia. Znajdź spokojną dzielnicę ze szkołą lub dynamiczne centrum dla młodych." },
-    { "title": "Inwestorzy prywatni", "text": "Minimalizuj ryzyko, opierając się na twardych danych, a nie intuicji. Oceniaj potencjał wzrostu kapitalizacji dzielnicy." },
-    { "title": "Agenci i agencje nieruchomości", "text": "Buduj ekspercki wizerunek w oczach klientów. Korzystaj z naszych profesjonalnych raportów (White Label)." },
-    { "title": "Deweloperzy", "text": "Analizuj środowisko konkurencyjne i potrzeby infrastrukturalne dzielnicy przed rozpoczęciem inwestycji." }
+    { "title": "Osoby prywatne", "text": "Dla tych, którzy szukają idealnego balansu między ceną a jakością życia. Znajdź cichą dzielnicę ze szkołą lub tętniące życiem centrum dla młodych." },
+    { "title": "Inwestorzy prywatni", "text": "Minimalizuj ryzyko, opierając się na twardych faktach, a nie intuicji. Oceniaj potencjał wzrostu kapitalizacji dzielnicy." },
+    { "title": "Agent nieruchomości i Agencje", "text": "Zwiększaj swoją eksperckość w oczach klientów. Wykorzystuj nasze profesjonalne raporty (White Label)." },
+    { "title": "Deweloperzy", "text": "Analizuj otoczenie konkurencyjne oraz potrzeby infrastrukturalne dzielnicy przed rozpoczęciem inwestycji." }
   ],
   "cta": {
     "title": "Podejmuj decyzje w oparciu o fakty",
     "text": "Dołącz do tysięcy użytkowników, którzy już znaleźli swoją idealną przestrzeń",
     "map_btn": "Przejdź do mapy",
     "plans_btn": "Wybierz plan",
-    "support_btn": "Skontaktuj się z nami"
+    "support_btn": "Skontaktuj się з nami"
+  },
+  "seo": {
+    "title": "O nas | City Maps",
+    "desc": "Dowiedz się więcej o City Maps — innowacyjnej platformie do analizy dzielnic miejskich."
   }
 }

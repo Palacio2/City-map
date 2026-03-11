@@ -22,8 +22,7 @@ const DEFAULT_DATA = {
 };
 
 export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
-  const { t } = useTranslation('assistant');
-  const [step, setStep] = useState(1);
+  const { t, i18n } = useTranslation('assistant');  const [step, setStep] = useState(1);
   const [isSaved, setIsSaved] = useState(false);
 
   const [formData, setFormData] = useState(() => {

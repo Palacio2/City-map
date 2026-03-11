@@ -3,12 +3,18 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaMapMarkedAlt, FaHome } from 'react-icons/fa';
 import styles from './NotFoundPage.module.css';
+import SeoMeta from '@components/seo/SeoMeta';
 
 export default function NotFoundPage() {
   const { t } = useTranslation('404');
 
   return (
     <div className={styles.container}>
+      <SeoMeta 
+        title={t('seo.title')} 
+        noIndex={true} 
+      />
+
       <div className={styles.content}>
         <div className={styles.iconWrapper} aria-hidden="true">
           <FaMapMarkedAlt />

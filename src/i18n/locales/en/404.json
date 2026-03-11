@@ -1,5 +1,8 @@
 {
   "title": "Page Not Found",
-  "desc": "Looks like you're lost. This page does not exist.",
-  "button": "Go to Home"
+  "desc": "It looks like you've lost your way. This page does not exist.",
+  "button": "Back to Home",
+  "seo": {
+    "title": "Page Not Found (404) | City Maps"
+  }
 }

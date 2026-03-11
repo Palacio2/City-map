@@ -1,49 +1,53 @@
 {
   "subscription": {
-    "title": "Choose a Subscription",
-    "subtitle": "Flexible plans for property search and professionals",
-    "wait_expire": "Please wait for your current subscription to end before changing the plan.",
-    "included_title": "Included:",
-    "disabled_title": "Unavailable:",
+    "title": "Wybierz subskrypcję",
+    "subtitle": "Elastyczne plany dla poszukujących nieruchomości oraz profesjonalistów",
+    "wait_expire": "Poczekaj na zakończenie obecnej subskrypcji, aby zmienić plan.",
+    "included_title": "Co zawiera plan:",
+    "disabled_title": "Niedostępne:",
     "status": {
-      "free": "Free"
+      "free": "Za darmo"
     },
     "buttons": {
-      "active": "Active",
-      "stay_free": "Stay on Free",
-      "choose": "Choose {{plan}}",
-      "has_active_sub": "Subscription already active"
+      "active": "Aktywny",
+      "stay_free": "Zostań przy Free",
+      "choose": "Wybierz {{plan}}",
+      "has_active_sub": "Subskrypcja jest już aktywna"
     },
     "plans": {
-      "free": { "name": "Free", "price": "€0" },
-      "weekly": { "name": "Weekly", "price": "€2.99 / week" },
-      "premium": { "name": "Premium", "price": "€8.99 / month" },
-      "realtor": { "name": "Realtor Pro", "price": "€29.00 / month" }
+      "free": { "name": "Bezpłatny", "price": "€0" },
+      "weekly": { "name": "Tygodniowy", "price": "€2.99 / tydzień" },
+      "premium": { "name": "Premium", "price": "€8.99 / mies." },
+      "realtor": { "name": "Realtor Pro", "price": "€29.00 / mies." }
     },
     "features": {
-      "district_limit_5": "View up to 5 districts per city",
-      "filters_limit_2": "Limited access to only 2 filter blocks",
-      "basic_rating": "Basic location attractiveness rating",
-      "safety_edu_analytics": "Detailed safety and education analytics",
-      "financial_stats": "Full financial statistics and price per m²",
-      "favorites_save": "Save districts to Favorites",
-      "compare_tools": "Tools to compare multiple districts",
-      "pdf_export": "Export professional PDF reports",
-      "unlimited_districts": "Unlimited access to all city districts",
-      "extended_filters": "Extended filter access",
-      "partial_analytics": "Partial access to analytics page",
-      "personal_stats": "Personal statistics",
-      "save_favorites": "Ability to save favorite districts",
-      "pdf_download": "Download PDF files with district information",
-      "all_weekly_features": "All weekly subscription features included in monthly plan",
-      "all_premium_features": "All benefits of the Premium plan",
-      "roi_calculator": "Investment calculator (ROI)",
-      "white_label_pdf": "White-label PDF reports with your personal info",
-      "compare_4_districts": "Compare up to 4 districts at once",
-      "full_filter_access": "Full filter access",
-      "full_district_info": "Complete district information",
-      "popular_districts_monitor": "Monitor the most popular districts",
-      "growth_tracking": "Track growth of selected districts"
+      "district_limit_5": "Wyświetlanie tylko do 5 dzielnic dla jednego miasta",
+      "filters_limit_2": "Ograniczony dostęp tylko do 2 bloków filtracji",
+      "basic_rating": "Podstawowy ranking atrakcyjności lokalizacji",
+      "safety_edu_analytics": "Szczegółowa analityka bezpieczeństwa i edukacji",
+      "financial_stats": "Pełne statystyki finansowe i ceny za m²",
+      "favorites_save": "Zapisywanie dzielnic w „Ulubionych”",
+      "compare_tools": "Narzędzia do porównywania kilku dzielnic",
+      "pdf_export": "Eksport profesjonalnych raportów PDF",
+      "unlimited_districts": "Nielimitowany dostęp do wszystkich dzielnic miasta",
+      "extended_filters": "Rozszerzony dostęp do filtrowania",
+      "partial_analytics": "Częściowy dostęp do strony analitycznej",
+      "personal_stats": "Statystyki osobiste",
+      "save_favorites": "Możliwość zapisywania ulubionych dzielnic",
+      "pdf_download": "Pobieranie plików PDF z informacjami o dzielnicy",
+      "all_weekly_features": "Wszystkie funkcje subskrypcji tygodniowej w planie miesięcznym",
+      "all_premium_features": "Wszystkie zalety planu Premium",
+      "roi_calculator": "Kalkulator inwestycyjny (ROI)",
+      "white_label_pdf": "Raporty PDF z możliwością dodania Twoich danych personalnych",
+      "compare_4_districts": "Porównywanie do 4 dzielnic jednocześnie",
+      "full_filter_access": "Pełny dostęp do filtrowania",
+      "full_district_info": "Pełne informacje o dzielnicach",
+      "popular_districts_monitor": "Monitorowanie najpopularniejszych dzielnic w miastach",
+      "growth_tracking": "Śledzenie wzrostu wybranych dzielnic"
     }
+  },
+  "seo": {
+    "title": "Cennik i subskrypcje | City Maps",
+    "desc": "Wybierz najlepszy plan, aby uzyskać dostęp do rozszerzonej analityki nieruchomości i dzielnic."
   }
 }

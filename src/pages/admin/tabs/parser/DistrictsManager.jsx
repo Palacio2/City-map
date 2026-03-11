@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import styles from './DistrictsManager.module.css';
 import uiStyles from '../../ui/AdminUI.module.css';
 import { useTranslation } from 'react-i18next';
-import { FaTrash, FaPlus } from 'react-icons/fa';
+import { FaTrash, FaPlus, FaCheckDouble } from 'react-icons/fa';
 
 const DistrictsManager = ({ 
     foundDistricts, dbDistricts, 
@@ -11,6 +11,15 @@ const DistrictsManager = ({
     onImportGeoJson, loading, isSuperAdmin 
 }) => {
     const { t } = useTranslation('admin');
+    const fileInputRef = useRef(null);
+
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            onImportGeoJson(file);
+        }
+        e.target.value = null; 
+    };
 
     return (
         <div className={styles.districtsSplit}>
@@ -18,9 +27,22 @@ const DistrictsManager = ({
                 <div className={styles.listHeader}>
                     <h4>{t('districtsManager.foundOSM')} <span className={styles.badge}>{foundDistricts.length}</span></h4>
                     <div className={styles.headerActions}>
+                        {/* Кнопка "Шукати" */}
                         <button onClick={onScan} disabled={loading} className={`${uiStyles.btn} ${uiStyles.btnPrimary} ${styles.scanBtn}`}>
                             {loading ? t('districtsManager.searching') : t('districtsManager.searchBtn')}
                         </button>
+                        
+                        {/* НОВА КНОПКА: "Додати всі" (показується тільки якщо є знайдені райони) */}
+                        {foundDistricts.length > 0 && (
+                            <button 
+                                onClick={() => onCreate(foundDistricts)} 
+                                className={`${uiStyles.btn} ${uiStyles.btnSuccess}`}
+                                title={t('districtsManager.addAll', {defaultValue: 'Додати всі знайдені'})}
+                                style={{ padding: '8px 12px' }}
+                            >
+                                <FaCheckDouble />
+                            </button>
+                        )}
                     </div>
                 </div>
                 <div className={styles.listContent}>
@@ -45,7 +67,14 @@ const DistrictsManager = ({
                 <div className={styles.listHeader}>
                     <h4>{t('districtsManager.dbDistricts')} <span className={styles.badge}>{dbDistricts.length}</span></h4>
                     <div className={styles.headerActions}>
-                        <button onClick={onImportGeoJson} className={styles.textBtn}>
+                        <input 
+                            type="file" 
+                            accept=".geojson,.json" 
+                            style={{ display: 'none' }} 
+                            ref={fileInputRef} 
+                            onChange={handleFileChange} 
+                        />
+                        <button onClick={() => fileInputRef.current?.click()} className={styles.textBtn}>
                             {t('districtsManager.importGeo')}
                         </button>
                         <button onClick={() => onSelectAll(true)} className={styles.textBtn}>{t('districtsManager.selectAll')}</button>

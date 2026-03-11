@@ -6,6 +6,7 @@ import {
   FaDatabase, FaMobile, FaMapMarkedAlt, FaHeart, FaCity
 } from 'react-icons/fa';
 import styles from './About.module.css';
+import SeoMeta from '@components/seo/SeoMeta';
 
 const HeroSection = ({ t }) => (
   <div className={styles.heroSection}>
@@ -119,6 +120,11 @@ export default function About() {
 
   return (
     <div className={styles.container}>
+      <SeoMeta 
+        title={t('seo.title')} 
+        description={t('seo.desc')} 
+      />
+
       <HeroSection t={t} />
       <div className={styles.content}>
         

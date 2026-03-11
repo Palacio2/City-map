@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import styles from './TermsOfService.module.css';
+import SeoMeta from '@components/seo/SeoMeta'; 
 
 const UPDATE_DATE = '2025-06-20';
 
@@ -22,6 +23,11 @@ export default function TermsOfService() {
 
   return (
     <div className={styles.container}>
+      <SeoMeta 
+        title={t('seo.title')} 
+        description={t('seo.desc')} 
+      />
+
       <div className={styles.card}>
         <div className={styles.header}>
           <h1>{t('title')}</h1>
