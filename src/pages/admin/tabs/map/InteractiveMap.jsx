@@ -11,11 +11,11 @@ import { useTranslation } from 'react-i18next';
 
 const createCustomClusterIcon = (cluster) => {
     return L.divIcon({
-        html: `<div style="background-color: var(--primary, #3b82f6); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-family: sans-serif; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+        html: `<div style="background-color: var(--primary, #3b82f6); color: white; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-family: var(--font-body); font-size: 1rem; border: 3px solid white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
                 ${cluster.getChildCount()}
               </div>`,
         className: 'custom-marker-cluster',
-        iconSize: L.point(40, 40, true),
+        iconSize: L.point(44, 44, true),
     });
 };
 
@@ -140,7 +140,7 @@ export default function InteractiveMap({ geojson, pois = [], activeMetric, onAdd
                 {geojson && (
                     <GeoJSON 
                         data={geojson} 
-                        style={{ color: '#3b82f6', weight: 3, fillColor: '#3b82f6', fillOpacity: 0.08, dashArray: '8, 8' }} 
+                        style={{ color: 'var(--primary)', weight: 3, fillColor: 'var(--primary)', fillOpacity: 0.1, dashArray: '8, 8' }} 
                     />
                 )}
 

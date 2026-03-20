@@ -1,9 +1,30 @@
 .tableWrapper {
     overflow-x: auto;
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     border: 1px solid var(--border);
     background: var(--bg-surface);
     box-shadow: var(--shadow-sm);
+    max-height: 70vh;
+    scrollbar-width: thin;
+}
+
+.tableWrapper::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+.tableWrapper::-webkit-scrollbar-track {
+    background: var(--bg-main);
+    border-radius: var(--radius-md);
+}
+
+.tableWrapper::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: var(--radius-full);
+}
+
+.tableWrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
 }
 
 .table {
@@ -11,31 +32,55 @@
     border-collapse: collapse;
     font-size: 0.95rem;
     text-align: left;
+    position: relative;
 }
 
 .table th, .table td {
-    padding: 14px 16px;
+    padding: 16px 20px;
     border-bottom: 1px solid var(--border);
     vertical-align: middle;
     color: var(--text-main);
 }
 
 .table th {
-    background: var(--bg-main);
+    background: var(--bg-surface);
     color: var(--text-muted);
-    font-weight: 600;
+    font-weight: 700;
     white-space: nowrap;
     text-transform: uppercase;
-    font-size: 0.85rem;
-    letter-spacing: 0.05em;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
-.table tr:last-child td { border-bottom: none; }
-.table tr:hover td { background: var(--bg-main); }
+.table th::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    border-bottom: 2px solid var(--border);
+}
+
+.table tr {
+    transition: background-color 0.2s ease;
+}
+
+.table tr:last-child td { 
+    border-bottom: none; 
+}
+
+.table tr:hover td { 
+    background: var(--bg-main); 
+}
 
 .empty {
     text-align: center;
-    padding: 40px !important;
+    padding: 60px 20px !important;
     color: var(--text-muted);
     font-style: italic;
+    font-size: 1rem;
+    background: var(--bg-surface);
 }

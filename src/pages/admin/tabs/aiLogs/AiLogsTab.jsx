@@ -5,7 +5,7 @@ import { FaRobot, FaPowerOff, FaHistory, FaTools } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import DataTable from '../../ui/DataTable';
 import uiStyles from '../../ui/AdminUI.module.css';
-import { useAdmin } from '../../hooks/AdminContext'; // Додали контекст
+import { useAdmin } from '../../hooks/AdminContext'; 
 
 export default function AiLogsTab() {
     const { t } = useTranslation('admin');
@@ -44,7 +44,7 @@ export default function AiLogsTab() {
     };
 
     const toggleAi = async () => {
-        if (!isSuperAdmin) return; // Подвійний захист
+        if (!isSuperAdmin) return; 
         if (!window.confirm(t('aiLogsTab.confirmToggle'))) return;
         
         setSaving(true);
@@ -77,38 +77,48 @@ export default function AiLogsTab() {
                 ? <span className={styles.badgeSystem}><FaTools/> {t('aiLogsTab.typeSystem')}</span> 
                 : <span className={styles.badgeChat}>{t('aiLogsTab.typeChat')}</span>
         },
-        { header: t('aiLogsTab.colUser'), render: (log) => log.user_email || t('aiLogsTab.unknownUser') },
+        { header: t('aiLogsTab.colUser'), render: (log) => <span className={styles.userCell}>{log.user_email || t('aiLogsTab.unknownUser')}</span> },
         { 
             header: t('aiLogsTab.colDetails'), 
             render: (log) => log.log_type === 'system' ? (
-                <strong>{log.system_action === 'enabled_ai' ? t('aiLogsTab.aiEnabled') : t('aiLogsTab.aiDisabled')}</strong>
+                <strong className={log.system_action === 'enabled_ai' ? styles.textSuccess : styles.textDanger}>
+                    {log.system_action === 'enabled_ai' ? t('aiLogsTab.aiEnabled') : t('aiLogsTab.aiDisabled')}
+                </strong>
             ) : (
                 <div className={styles.detailsCell}>
-                    <div className={styles.promptText}><strong>Q:</strong> {log.prompt}</div>
-                    <div className={styles.responseText}><strong>A:</strong> {log.response?.substring(0, 100)}...</div>
+                    <div className={styles.promptText}><strong style={{color: 'var(--primary)'}}>Q:</strong> {log.prompt}</div>
+                    <div className={styles.responseText}><strong style={{color: 'var(--success)'}}>A:</strong> {log.response?.substring(0, 100)}...</div>
                 </div>
             ) 
         }
     ];
 
-    if (loading && logs.length === 0) return <div className={styles.loader}>{t('aiLogsTab.loading')}</div>;
+    if (loading && logs.length === 0) {
+        return (
+            <div className={styles.loadingState}>
+                <div className={styles.spinner}></div>
+                <div>{t('aiLogsTab.loading')}</div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.container}>
             <div className={styles.settingsCard}>
                 <div className={styles.settingsInfo}>
-                    <FaRobot className={styles.robotIcon} />
+                    <div className={styles.iconWrapper}>
+                        <FaRobot className={styles.robotIcon} />
+                    </div>
                     <div>
-                        <h3>{t('aiLogsTab.globalStatus')}</h3>
-                        <p>{t('aiLogsTab.globalDesc')}</p>
+                        <h3 className={styles.cardTitle}>{t('aiLogsTab.globalStatus')}</h3>
+                        <p className={styles.cardDesc}>{t('aiLogsTab.globalDesc')}</p>
                     </div>
                 </div>
-                {/* ТІЛЬКИ СУПЕР АДМІН БАЧИТЬ КНОПКУ */}
                 {isSuperAdmin && (
                     <button 
                         onClick={toggleAi} 
                         disabled={saving}
-                        className={`${uiStyles.btn} ${aiEnabled ? uiStyles.btnDanger : uiStyles.btnPrimary}`}
+                        className={`${uiStyles.btn} ${aiEnabled ? uiStyles.btnDanger : uiStyles.btnPrimary} ${styles.toggleBtn}`}
                     >
                         <FaPowerOff />
                         {saving ? t('aiLogsTab.processing') : (aiEnabled ? t('aiLogsTab.turnOff') : t('aiLogsTab.turnOn'))}
@@ -118,19 +128,25 @@ export default function AiLogsTab() {
 
             <div className={styles.historySection}>
                 <div className={styles.historyHeader}>
-                    <FaHistory />
-                    <h3>{t('aiLogsTab.historyTitle')}</h3>
+                    <div className={styles.historyTitleWrapper}>
+                        <div className={styles.iconWrapperSmall}>
+                            <FaHistory />
+                        </div>
+                        <h3 className={styles.historyTitle}>{t('aiLogsTab.historyTitle')}</h3>
+                    </div>
                     <button onClick={fetchData} className={`${uiStyles.btn} ${uiStyles.btnCancel}`}>
                         {t('aiLogsTab.refresh')}
                     </button>
                 </div>
 
-                <DataTable 
-                    columns={columns} 
-                    data={logs} 
-                    emptyMessage={t('aiLogsTab.emptyHistory')}
-                    rowClassName={(log) => log.log_type === 'system' ? styles.systemRow : ''}
-                />
+                <div className={styles.tableWrapper}>
+                    <DataTable 
+                        columns={columns} 
+                        data={logs} 
+                        emptyMessage={t('aiLogsTab.emptyHistory')}
+                        rowClassName={(log) => log.log_type === 'system' ? styles.systemRow : ''}
+                    />
+                </div>
             </div>
         </div>
     );

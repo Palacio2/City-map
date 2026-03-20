@@ -21,19 +21,20 @@ export default function EntityModal({ isOpen, onClose, onSubmit, title, placehol
     };
 
     const actions = (
-        <>
+        <div style={{ display: 'flex', gap: '12px', width: '100%', justifyContent: 'flex-end' }}>
             <button type="button" onClick={onClose} className={`${uiStyles.btn} ${uiStyles.btnCancel}`} disabled={isSubmitting}>
                 {t('entityModal.cancelBtn', {defaultValue: 'Cancel'})}
             </button>
             <button type="submit" form="entityForm" className={`${uiStyles.btn} ${uiStyles.btnPrimary}`} disabled={!inputValue.trim() || isSubmitting}>
-                {isSubmitting ? t('entityModal.processing', {defaultValue: '...'}) : t('entityModal.createBtn', {defaultValue: 'Create'})}
+                {isSubmitting ? t('entityModal.processing', {defaultValue: 'Processing...'}) : t('entityModal.createBtn', {defaultValue: 'Create'})}
             </button>
-        </>
+        </div>
     );
 
     return (
-        <BaseModal isOpen={isOpen} onClose={onClose} title={title} maxWidth="400px" actions={actions}>
-            <form id="entityForm" onSubmit={handleSubmit} className={uiStyles.formGroup}>
+        <BaseModal isOpen={isOpen} onClose={onClose} title={title} maxWidth="420px" actions={actions}>
+            <form id="entityForm" onSubmit={handleSubmit} className={uiStyles.formGroup} style={{ marginTop: '10px' }}>
+                <label className={uiStyles.label} style={{ marginBottom: '8px' }}>Name</label>
                 <input
                     ref={inputRef}
                     type="text"

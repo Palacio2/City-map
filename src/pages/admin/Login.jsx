@@ -11,10 +11,8 @@ export default function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [mfaCode, setMfaCode] = useState('');
-    
     const [factorId, setFactorId] = useState(null);
     const [qrCodeUrl, setQrCodeUrl] = useState(null);
-    
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 

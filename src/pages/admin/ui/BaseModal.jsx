@@ -41,7 +41,7 @@ const BaseModal = ({
             >
                 <div className={styles.modalHeader}>
                     <h3 className={styles.modalTitle}>{title}</h3>
-                    <button onClick={onClose} className={styles.modalCloseBtn} aria-label="Закрити">
+                    <button onClick={onClose} className={styles.modalCloseBtn} aria-label="Close">
                         <FaTimes />
                     </button>
                 </div>

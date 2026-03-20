@@ -160,23 +160,32 @@ export default function FeedbackTab() {
         {
             header: t('feedbackTab.colAction'),
             render: (msg) => isSuperAdmin ? (
-                <button 
-                    className={styles.deleteBtn}
-                    onClick={() => handleDelete(msg.id, msg.screenshot_url)}
-                    title={t('feedbackTab.deleteBtnTitle')}
-                >
-                    <FaTrash />
-                </button>
-            ) : <span style={{color: 'var(--border)', fontSize: '0.8rem'}}>No access</span>
+                <div className={styles.actionCell}>
+                    <button 
+                        className={styles.deleteBtn}
+                        onClick={() => handleDelete(msg.id, msg.screenshot_url)}
+                        title={t('feedbackTab.deleteBtnTitle')}
+                    >
+                        <FaTrash />
+                    </button>
+                </div>
+            ) : <span style={{color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 600}}>No access</span>
         }
     ];
 
-    if (loading) return <div className={styles.loadingState}>{t('feedbackTab.loading')}</div>;
+    if (loading) {
+        return (
+            <div className={styles.loadingState}>
+                <div className={styles.spinner}></div>
+                <div>{t('feedbackTab.loading')}</div>
+            </div>
+        );
+    }
 
     return (
         <div className={styles.container}>
             <div className={styles.header}>
-                <h2>{t('feedbackTab.title')} <span className={styles.badge}>{filteredMessages.length}</span></h2>
+                <h2 className={styles.title}>{t('feedbackTab.title')} <span className={styles.badge}>{filteredMessages.length}</span></h2>
                 <div className={styles.filters}>
                     <button className={`${styles.filterBtn} ${filter === 'all' ? styles.active : ''}`} onClick={() => setFilter('all')}>{t('feedbackTab.filterAll')}</button>
                     <button className={`${styles.filterBtn} ${filter === 'bug' ? styles.active : ''}`} onClick={() => setFilter('bug')}>{t('feedbackTab.filterBugs')}</button>
@@ -188,7 +197,12 @@ export default function FeedbackTab() {
             <DataTable 
                 columns={columns}
                 data={filteredMessages}
-                emptyMessage={t('feedbackTab.emptyState')}
+                emptyMessage={
+                    <div className={styles.emptyState}>
+                        <div className={styles.emptyIcon}>🎉</div>
+                        <div>{t('feedbackTab.emptyState')}</div>
+                    </div>
+                }
                 rowClassName={(msg) => msg.status === 'resolved' ? styles.rowResolved : ''}
             />
         </div>

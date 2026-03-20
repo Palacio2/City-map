@@ -1,28 +1,35 @@
 .chartCard {
     background: var(--bg-surface);
-    padding: 20px;
+    padding: 24px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--border);
     box-shadow: var(--shadow-sm);
     flex: 1;
     min-width: 300px;
+    transition: var(--transition);
+}
+
+.chartCard:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
 }
 
 .chartTitle {
-    margin: 0 0 20px 0;
-    font-size: 0.9rem;
+    margin: 0 0 24px 0;
+    font-size: 0.95rem;
     color: var(--text-muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.08em;
+    font-weight: 700;
 }
 
 .barContainer {
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
-    height: 150px;
-    gap: 10px;
-    padding-top: 20px;
+    height: 160px;
+    gap: 12px;
+    padding-top: 24px;
 }
 
 .barGroup {
@@ -30,7 +37,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 8px;
+    gap: 10px;
     height: 100%;
 }
 
@@ -43,40 +50,59 @@
 }
 
 .bar {
-    width: 70%;
+    width: 65%;
     background: var(--primary);
-    border-radius: 4px 4px 0 0;
+    border-radius: var(--radius-sm) var(--radius-sm) 0 0;
     position: relative;
-    transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    min-height: 2px;
+    transition: height 0.8s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+    min-height: 4px;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.2);
 }
 
 .bar:hover {
     background: var(--primary-hover);
-    filter: brightness(1.1);
+    filter: brightness(1.05);
 }
 
 .label {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
+    font-weight: 600;
     color: var(--text-muted);
     white-space: nowrap;
 }
 
 .tooltip {
     position: absolute;
-    top: -25px;
+    top: -30px;
     left: 50%;
-    transform: translateX(-50%);
+    transform: translateX(-50%) translateY(5px);
     background: var(--text-main);
     color: var(--bg-surface);
-    padding: 2px 6px;
-    border-radius: 4px;
-    font-size: 0.7rem;
-    font-weight: bold;
+    padding: 4px 8px;
+    border-radius: var(--radius-sm);
+    font-size: 0.75rem;
+    font-weight: 700;
     opacity: 0;
-    transition: opacity 0.2s;
+    visibility: hidden;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: var(--shadow-md);
+    white-space: nowrap;
+    z-index: 10;
+}
+
+.tooltip::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 4px 4px 0;
+    border-style: solid;
+    border-color: var(--text-main) transparent transparent transparent;
 }
 
 .bar:hover .tooltip {
     opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
 }

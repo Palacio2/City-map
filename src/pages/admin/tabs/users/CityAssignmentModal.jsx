@@ -6,40 +6,40 @@ import styles from './UsersTab.module.css';
 
 const CityAssignmentModal = ({ 
     isOpen, onClose, selectedAdmin, availableCities, adminCities, 
-    toggleCitySelection, saveCityAssignments, processingId 
+    toggleCitySelection, saveCityAssignments, processingId, t 
 }) => {
     if (!isOpen || !selectedAdmin) return null;
 
     const modalTitle = (
-        <>
-            <FaMapMarkerAlt className={styles.sortIconActive} /> 
-            <span>Manage Territories</span>
-        </>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <FaMapMarkerAlt style={{ color: 'var(--primary)' }} /> 
+            <span>{t('usersTab.cityModal.title')}</span>
+        </div>
     );
 
     const modalActions = (
         <>
             <button className={`${uiStyles.btn} ${uiStyles.btnCancel}`} onClick={onClose} disabled={processingId === selectedAdmin.id}>
-                Cancel
+                {t('usersTab.cityModal.cancel')}
             </button>
             <button className={`${uiStyles.btn} ${uiStyles.btnPrimary}`} onClick={saveCityAssignments} disabled={processingId === selectedAdmin.id}>
-                {processingId === selectedAdmin.id ? 'Saving...' : <><FaSave /> Save Changes</>}
+                {processingId === selectedAdmin.id ? t('usersTab.cityModal.saving') : <><FaSave /> {t('usersTab.cityModal.save')}</>}
             </button>
         </>
     );
 
     return (
-        <BaseModal isOpen={isOpen} onClose={onClose} title={modalTitle} maxWidth="400px" actions={modalActions}>
+        <BaseModal isOpen={isOpen} onClose={onClose} title={modalTitle} maxWidth="450px" actions={modalActions}>
             <div className={styles.modalFormWrapper}>
-                <p className={styles.modalSubtitle}>
-                    Assign cities to <strong>{selectedAdmin.email}</strong>. 
-                    They will only be able to view and edit data for these selected locations.
+                <p className={uiStyles.modalSubtitle}>
+                    {t('usersTab.cityModal.assignTo')} <strong style={{color: 'var(--primary)'}}>{selectedAdmin.email}</strong>. 
+                    {' '}{t('usersTab.cityModal.assignDesc')}
                 </p>
                 
                 <div className={styles.cityChecklist}>
                     {availableCities.length === 0 ? (
                         <div className={styles.placeholderWrapper}>
-                            <span className={styles.placeholder}>No cities found in database.</span>
+                            <span className={styles.placeholder}>{t('usersTab.cityModal.empty')}</span>
                         </div>
                     ) : (
                         availableCities.map(city => (
@@ -51,7 +51,7 @@ const CityAssignmentModal = ({
                                     className={styles.hiddenInput}
                                 />
                                 <span className={styles.checkboxFake}></span>
-                                {city.name}
+                                <span className={styles.cityName}>{city.name}</span>
                             </label>
                         ))
                     )}

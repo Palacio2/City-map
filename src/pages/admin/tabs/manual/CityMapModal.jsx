@@ -18,7 +18,7 @@ function MapTabFitBounds({ mapData }) {
                     const layer = L.geoJSON(features);
                     const bounds = layer.getBounds();
                     if (bounds.isValid()) {
-                        map.fitBounds(bounds, { padding: [30, 30] });
+                        map.fitBounds(bounds, { padding: [30, 30], animate: true, duration: 1 });
                     }
                 }
             } catch {} 
@@ -77,19 +77,26 @@ export default function CityMapModal({ isOpen, onClose, city }) {
         <BaseModal 
             isOpen={isOpen} 
             onClose={onClose} 
-            title={`${t('cityMapModal.title', {defaultValue: 'City Map:'})} ${city?.name || ''}`} 
+            title={
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <span>🗺️ {t('cityMapModal.title', {defaultValue: 'City Map:'})}</span>
+                    <strong style={{ color: 'var(--primary)' }}>{city?.name || ''}</strong>
+                </div>
+            }
             maxWidth="1000px"
             bodyStyle={{ padding: 0 }}
         >
-            <div style={{ width: '100%', height: '65vh', minHeight: '400px', position: 'relative' }}>
+            <div style={{ width: '100%', height: '70vh', minHeight: '450px', position: 'relative' }}>
                 {loading ? (
-                    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)', fontSize: '1.1rem', fontWeight: 600, background: 'var(--bg-main)' }}>
-                        {t('cityMapModal.loading', {defaultValue: 'Loading map...'})}
+                    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--primary)', background: 'var(--bg-main)', gap: '16px' }}>
+                        <div style={{ width: '40px', height: '40px', border: '3px solid rgba(59, 130, 246, 0.2)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite' }}></div>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('cityMapModal.loading', {defaultValue: 'Loading map...'})}</div>
+                        <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                     </div>
                 ) : mapData.length === 0 ? (
-                    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--warning)', fontSize: '1.1rem', fontWeight: 600, background: 'var(--bg-main)' }}>
-                        <div style={{ fontSize: '2rem', marginBottom: '8px' }}>⚠️</div>
-                        {t('cityMapModal.noData', { city: city?.name, defaultValue: 'No map data found' })}
+                    <div style={{ height: '100%', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: 'var(--warning)', background: 'var(--bg-main)', gap: '16px' }}>
+                        <div style={{ fontSize: '2.5rem', background: 'rgba(234, 179, 8, 0.1)', padding: '20px', borderRadius: '50%' }}>⚠️</div>
+                        <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('cityMapModal.noData', { city: city?.name, defaultValue: 'No map data found' })}</div>
                     </div>
                 ) : (
                     <MapContainer center={[0, 0]} zoom={2} style={{ height: '100%', width: '100%' }} zoomControl={false}>
@@ -112,9 +119,9 @@ export default function CityMapModal({ isOpen, onClose, city }) {
                                 }}
                                 onEachFeature={(feature, layer) => {
                                     layer.bindTooltip(`
-                                        <div style="text-align:center;">
-                                            <strong style="font-size:1.05rem;color:var(--text-main);">${dist.name}</strong><br/>
-                                            <span style="font-size:0.85rem;color:var(--text-muted);margin-top:2px;display:block;">
+                                        <div style="text-align:center; display: flex; flex-direction: column; gap: 4px;">
+                                            <strong style="font-size:1.1rem; color:var(--text-main); font-weight: 800;">${dist.name}</strong>
+                                            <span style="font-size:0.85rem; font-weight: 600; color:${dist.is_available ? 'var(--success)' : 'var(--text-muted)'}; background:${dist.is_available ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-hover)'}; padding: 2px 8px; border-radius: var(--radius-sm);">
                                                 ${dist.is_available ? t('cityMapModal.published', {defaultValue: 'Published'}) : t('cityMapModal.hidden', {defaultValue: 'Hidden'})}
                                             </span>
                                         </div>
@@ -126,9 +133,10 @@ export default function CityMapModal({ isOpen, onClose, city }) {
                 )}
             </div>
             <style>{`
-                .modern-tooltip { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border: none; box-shadow: var(--shadow-md); border-radius: var(--radius-sm); padding: 8px 14px; }
-                .modern-tooltip::before { display: none; }
+                .modern-tooltip { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border: 1px solid var(--border); box-shadow: var(--shadow-md); border-radius: var(--radius-md); padding: 10px 14px; }
+                .modern-tooltip::before { border-top-color: rgba(255,255,255,0.95); }
+                .leaflet-control-container { display: none; }
             `}</style>
         </BaseModal>
-    );
+    ); 
 }

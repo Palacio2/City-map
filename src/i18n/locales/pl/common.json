@@ -113,5 +113,10 @@
     "km": "km",
     "m": "m",
     "people_sqkm": "os./km²"
+  },
+  "errorBoundary": {
+    "title": "Ups! Coś poszło nie tak",
+    "subtitle": "Zostaliśmy powiadomieni o tym problemie i pracujemy nad jego rozwiązaniem. Proszę, spróbuj odświeżyć stronę.",
+    "refreshBtn": "Odśwież stronę"
   }
 }

@@ -3,7 +3,7 @@ import { FaGift } from 'react-icons/fa';
 import BaseModal from '../../ui/BaseModal';
 import uiStyles from '../../ui/AdminUI.module.css';
 
-const GiftSubscriptionModal = ({ isOpen, onClose, selectedUser, onGrant }) => {
+const GiftSubscriptionModal = ({ isOpen, onClose, selectedUser, onGrant, t }) => {
     const [planName, setPlanName] = useState('premium');
     const [days, setDays] = useState(30);
     const [loading, setLoading] = useState(false);
@@ -14,7 +14,6 @@ const GiftSubscriptionModal = ({ isOpen, onClose, selectedUser, onGrant }) => {
         setLoading(true);
         try {
             await onGrant(selectedUser.id, planName, parseInt(days));
-            onClose();
         } catch (error) {
             console.error(error);
         } finally {
@@ -25,44 +24,50 @@ const GiftSubscriptionModal = ({ isOpen, onClose, selectedUser, onGrant }) => {
     const modalTitle = (
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <FaGift style={{ color: 'var(--success)' }} /> 
-            <span>Grant Subscription</span>
+            <span>{t('usersTab.giftModal.title')}</span>
         </div>
     );
 
     const modalActions = (
         <>
             <button className={`${uiStyles.btn} ${uiStyles.btnCancel}`} onClick={onClose} disabled={loading}>
-                Cancel
+                {t('usersTab.giftModal.cancel')}
             </button>
             <button className={`${uiStyles.btn} ${uiStyles.btnSuccess}`} onClick={handleSubmit} disabled={loading || days < 1}>
-                {loading ? 'Processing...' : 'Grant Access'}
+                {loading ? t('usersTab.giftModal.processing') : t('usersTab.giftModal.grantBtn')}
             </button>
         </>
     );
 
     return (
-        <BaseModal isOpen={isOpen} onClose={onClose} title={modalTitle} maxWidth="400px" actions={modalActions}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        <BaseModal isOpen={isOpen} onClose={onClose} title={modalTitle} maxWidth="420px" actions={modalActions}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
                 <p className={uiStyles.modalSubtitle}>
-                    Grant free access to <strong>{selectedUser.email}</strong>. This bypasses Stripe billing.
+                    {t('usersTab.giftModal.grantAccessTo')} <strong style={{color: 'var(--success)'}}>{selectedUser.email}</strong>. 
+                    {' '}{t('usersTab.giftModal.bypassStripe')}
                 </p>
                 
                 <div className={uiStyles.formGroup}>
-                    <label className={uiStyles.label}>Plan Tier</label>
-                    <select value={planName} onChange={e => setPlanName(e.target.value)} className={uiStyles.input}>
-                        <option value="premium">Premium</option>
-                        <option value="realtor">Realtor Pro</option>
-                    </select>
+                    <label className={uiStyles.label}>{t('usersTab.giftModal.planLabel')}</label>
+                    <div className={uiStyles.selectWrapper}>
+                        <select value={planName} onChange={e => setPlanName(e.target.value)} className={uiStyles.input}>
+                            <option value="premium">{t('usersTab.giftModal.planPremium')}</option>
+                            <option value="realtor">{t('usersTab.giftModal.planRealtor')}</option>
+                        </select>
+                    </div>
                 </div>
 
                 <div className={uiStyles.formGroup}>
-                    <label className={uiStyles.label}>Duration (Days)</label>
+                    <label className={uiStyles.label}>{t('usersTab.giftModal.daysLabel')}</label>
                     <input 
                         type="number" min="1" max="365" 
                         value={days} 
                         onChange={e => setDays(e.target.value)} 
                         className={uiStyles.input} 
                     />
+                    <small style={{color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '4px'}}>
+                        {t('usersTab.giftModal.daysHint')}
+                    </small>
                 </div>
             </div>
         </BaseModal>

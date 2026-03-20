@@ -8,20 +8,28 @@ export default function ManualTab() {
         const saved = localStorage.getItem('manual_country');
         return saved ? JSON.parse(saved) : null;
     });
+    
     const [selectedCity, setSelectedCity] = useState(() => {
         const saved = localStorage.getItem('manual_city');
         return saved ? JSON.parse(saved) : null;
     });
+    
     const [selectedDistrict, setSelectedDistrict] = useState(null);
 
     useEffect(() => {
-        if (selectedCountry) localStorage.setItem('manual_country', JSON.stringify(selectedCountry));
-        else localStorage.removeItem('manual_country');
+        if (selectedCountry) {
+            localStorage.setItem('manual_country', JSON.stringify(selectedCountry));
+        } else {
+            localStorage.removeItem('manual_country');
+        }
     }, [selectedCountry]);
 
     useEffect(() => {
-        if (selectedCity) localStorage.setItem('manual_city', JSON.stringify(selectedCity));
-        else localStorage.removeItem('manual_city');
+        if (selectedCity) {
+            localStorage.setItem('manual_city', JSON.stringify(selectedCity));
+        } else {
+            localStorage.removeItem('manual_city');
+        }
     }, [selectedCity]);
 
     return (

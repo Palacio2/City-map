@@ -4,6 +4,7 @@
     position: relative;
     background: var(--bg-main);
     overflow: hidden;
+    border-radius: inherit;
 }
 
 .leafletContainer {
@@ -22,17 +23,18 @@
     left: 50%;
     transform: translateX(-50%);
     z-index: 1000;
-    background: rgba(15, 23, 42, 0.75);
+    background: rgba(15, 23, 42, 0.85);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
-    color: var(--bg-surface);
-    padding: 12px 28px;
-    border-radius: 40px;
+    color: var(--text-inverse);
+    padding: 14px 32px;
+    border-radius: var(--radius-full);
     display: flex;
     align-items: center;
     gap: 16px;
-    box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.1);
-    animation: slideDownFade 0.4s var(--transition);
+    box-shadow: var(--shadow-glass);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    animation: slideDownFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     pointer-events: none;
 }
 
@@ -42,55 +44,55 @@
 }
 
 .bannerPulse {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
     background-color: var(--primary);
     border-radius: 50%;
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6);
-    animation: pulseObj 2s infinite var(--transition);
+    animation: pulseObj 2s infinite cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes pulseObj {
     0% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.6); }
-    70% { transform: scale(1.2); box-shadow: 0 0 0 8px rgba(59, 130, 246, 0); }
+    70% { transform: scale(1.2); box-shadow: 0 0 0 10px rgba(59, 130, 246, 0); }
     100% { transform: scale(0.8); box-shadow: 0 0 0 0 rgba(59, 130, 246, 0); }
 }
 
 .bannerText {
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 1rem;
+    gap: 10px;
+    font-size: 1.05rem;
 }
 
 .bannerText span {
-    color: var(--border);
+    color: var(--text-inverse-secondary);
     font-weight: 500;
 }
 
 .bannerText strong {
-    font-weight: 600;
-    letter-spacing: 0.3px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
 }
 
 .bannerHint {
-    font-size: 0.75rem;
-    color: var(--border);
-    background: rgba(255, 255, 255, 0.1);
-    padding: 4px 10px;
+    font-size: 0.8rem;
+    color: var(--text-inverse);
+    background: rgba(255, 255, 255, 0.15);
+    padding: 6px 12px;
     border-radius: var(--radius-sm);
-    font-weight: 600;
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
 .customTooltip {
     background: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(8px);
-    border: none !important;
+    border: 1px solid var(--border) !important;
     box-shadow: var(--shadow-lg) !important;
     border-radius: var(--radius-md) !important;
-    padding: 10px 14px !important;
+    padding: 12px 16px !important;
     color: var(--text-main) !important;
 }
 
@@ -102,45 +104,48 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 8px;
     text-align: center;
 }
 
 .tooltipTitle {
-    font-weight: 700;
-    font-size: 0.95rem;
+    font-weight: 800;
+    font-size: 1rem;
     color: var(--text-main);
+    letter-spacing: -0.01em;
 }
 
 .tagParser, .tagManual {
     font-size: 0.75rem;
-    font-weight: 600;
-    padding: 3px 8px;
-    border-radius: 6px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    letter-spacing: 0.05em;
 }
 
 .tagParser {
-    color: var(--text-muted);
-    background: var(--bg-main);
+    color: var(--text-secondary);
+    background: var(--bg-hover);
+    border: 1px solid var(--border);
 }
 
 .tagManual {
-    color: var(--primary-hover);
+    color: var(--primary);
     background: rgba(59, 130, 246, 0.1);
+    border: 1px solid rgba(59, 130, 246, 0.2);
 }
 
 .tooltipAction {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--primary);
-    margin-top: 2px;
-    font-weight: 500;
+    margin-top: 4px;
+    font-weight: 600;
 }
 
 .tooltipActionAlert {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     color: var(--danger);
-    margin-top: 2px;
-    font-weight: 500;
+    margin-top: 4px;
+    font-weight: 600;
 }

@@ -98,7 +98,6 @@ export default function AdminPanel() {
 function AdminContent() {
     const { t } = useTranslation('admin');
     const [activeTab, setActiveTab] = useState('dashboard');
-    
     const { currentAdmin, loadingAdmin } = useAdmin();
 
     const handleLogout = async () => {
@@ -109,67 +108,65 @@ function AdminContent() {
     if (loadingAdmin) return null; 
 
     const isSuperAdmin = currentAdmin?.role === 'super_admin';
-
-    const tabStyle = { display: 'flex', alignItems: 'center', gap: '10px' };
     
     const getIconStyle = (tabName, color) => ({
-        fontSize: '1.2rem',
-        color: activeTab === tabName ? color : 'var(--text-muted)',
-        transition: 'color 0.2s ease'
+        fontSize: '1.25rem',
+        color: activeTab === tabName ? color : 'currentColor',
+        transition: 'color 0.3s ease, transform 0.3s ease',
+        transform: activeTab === tabName ? 'scale(1.1)' : 'scale(1)'
     });
 
     return (
         <div className={styles.container}>
             <header className={styles.headerContainer}>
-                <div>
+                <div className={styles.headerTop}>
                     <h1 className={styles.title}>{t('adminPanel.title')}</h1>
+                    <button onClick={handleLogout} className={styles.logoutBtn}>
+                        <FaSignOutAlt /> <span>{t('adminPanel.logout')}</span>
+                    </button>
+                </div>
+                <div className={styles.tabsWrapper}>
                     <div className={styles.tabs}>
-                        
-                        <button className={`${styles.tabBtn} ${activeTab === 'dashboard' ? styles.active : ''}`} style={tabStyle} onClick={() => setActiveTab('dashboard')}>
-                            <FaChartPie style={getIconStyle('dashboard', '#3b82f6')} /> {t('adminPanel.tabDashboard')}
+                        <button className={`${styles.tabBtn} ${activeTab === 'dashboard' ? styles.active : ''}`} onClick={() => setActiveTab('dashboard')}>
+                            <FaChartPie style={getIconStyle('dashboard', '#3b82f6')} /> <span>{t('adminPanel.tabDashboard')}</span>
                         </button>
-                        <button className={`${styles.tabBtn} ${activeTab === 'map' ? styles.active : ''}`} style={tabStyle} onClick={() => setActiveTab('map')}>
-                            <FaMapMarkedAlt style={getIconStyle('map', '#10b981')} /> {t('adminPanel.tabMap')}
+                        <button className={`${styles.tabBtn} ${activeTab === 'map' ? styles.active : ''}`} onClick={() => setActiveTab('map')}>
+                            <FaMapMarkedAlt style={getIconStyle('map', '#10b981')} /> <span>{t('adminPanel.tabMap')}</span>
                         </button>
-                        <button className={`${styles.tabBtn} ${activeTab === 'parser' ? styles.active : ''}`} style={tabStyle} onClick={() => setActiveTab('parser')}>
-                            <FaCloudDownloadAlt style={getIconStyle('parser', '#8b5cf6')} /> {t('adminPanel.tabParser')}
+                        <button className={`${styles.tabBtn} ${activeTab === 'parser' ? styles.active : ''}`} onClick={() => setActiveTab('parser')}>
+                            <FaCloudDownloadAlt style={getIconStyle('parser', '#8b5cf6')} /> <span>{t('adminPanel.tabParser')}</span>
                         </button>
-                        <button className={`${styles.tabBtn} ${activeTab === 'manual' ? styles.active : ''}`} style={tabStyle} onClick={() => setActiveTab('manual')}>
-                            <FaEdit style={getIconStyle('manual', '#f59e0b')} /> {t('adminPanel.tabManual')}
+                        <button className={`${styles.tabBtn} ${activeTab === 'manual' ? styles.active : ''}`} onClick={() => setActiveTab('manual')}>
+                            <FaEdit style={getIconStyle('manual', '#f59e0b')} /> <span>{t('adminPanel.tabManual')}</span>
                         </button>
-                        <button className={`${styles.tabBtn} ${activeTab === 'feedback' ? styles.active : ''}`} style={tabStyle} onClick={() => setActiveTab('feedback')}>
-                            <FaComments style={getIconStyle('feedback', '#ec4899')} /> {t('adminPanel.tabFeedback')}
+                        <button className={`${styles.tabBtn} ${activeTab === 'feedback' ? styles.active : ''}`} onClick={() => setActiveTab('feedback')}>
+                            <FaComments style={getIconStyle('feedback', '#ec4899')} /> <span>{t('adminPanel.tabFeedback')}</span>
                         </button>
-                        <button className={`${styles.tabBtn} ${activeTab === 'ai' ? styles.active : ''}`} style={tabStyle} onClick={() => setActiveTab('ai')}>
-                            <FaBrain style={getIconStyle('ai', '#06b6d4')} /> {t('adminPanel.tabAi')}
+                        <button className={`${styles.tabBtn} ${activeTab === 'ai' ? styles.active : ''}`} onClick={() => setActiveTab('ai')}>
+                            <FaBrain style={getIconStyle('ai', '#06b6d4')} /> <span>{t('adminPanel.tabAi')}</span>
                         </button>
 
                         {isSuperAdmin && (
                             <>
-                                <div style={{ width: '2px', height: '24px', background: 'var(--border)', margin: '0 8px', borderRadius: '2px' }}></div>
-                                <button className={`${styles.tabBtn} ${activeTab === 'users' ? styles.active : ''}`} style={tabStyle} onClick={() => setActiveTab('users')}>
-                                    <FaUsers style={getIconStyle('users', '#6366f1')} /> {t('adminPanel.tabUsers')}
+                                <div className={styles.divider}></div>
+                                <button className={`${styles.tabBtn} ${activeTab === 'users' ? styles.active : ''}`} onClick={() => setActiveTab('users')}>
+                                    <FaUsers style={getIconStyle('users', '#6366f1')} /> <span>{t('adminPanel.tabUsers')}</span>
                                 </button>
-                                {/* ДОДАНО ПЕРЕКЛАД */}
-                                <button className={`${styles.tabBtn} ${activeTab === 'notifications' ? styles.active : ''}`} style={tabStyle} onClick={() => setActiveTab('notifications')}>
-                                    <FaBullhorn style={getIconStyle('notifications', '#f97316')} /> {t('adminPanel.tabNotifications')}
+                                <button className={`${styles.tabBtn} ${activeTab === 'notifications' ? styles.active : ''}`} onClick={() => setActiveTab('notifications')}>
+                                    <FaBullhorn style={getIconStyle('notifications', '#f97316')} /> <span>{t('adminPanel.tabNotifications')}</span>
                                 </button>
-                                {/* ДОДАНО ПЕРЕКЛАД */}
-                                <button className={`${styles.tabBtn} ${activeTab === 'audit' ? styles.active : ''}`} style={tabStyle} onClick={() => setActiveTab('audit')}>
-                                    <FaShieldAlt style={getIconStyle('audit', '#ef4444')} /> {t('adminPanel.tabAudit')}
+                                <button className={`${styles.tabBtn} ${activeTab === 'audit' ? styles.active : ''}`} onClick={() => setActiveTab('audit')}>
+                                    <FaShieldAlt style={getIconStyle('audit', '#ef4444')} /> <span>{t('adminPanel.tabAudit')}</span>
                                 </button>
                             </>
                         )}
                     </div>
                 </div>
-                <button onClick={handleLogout} className={styles.logoutBtn} style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <FaSignOutAlt /> {t('adminPanel.logout')}
-                </button>
             </header>
 
-            <main>
+            <main className={styles.mainContent}>
                 <div style={{ display: activeTab === 'dashboard' ? 'block' : 'none' }}><DashboardTab /></div>
-                <div style={{ display: activeTab === 'map' ? 'block' : 'none', height: '75vh' }}><MapTab /></div>
+                <div style={{ display: activeTab === 'map' ? 'block' : 'none', height: '100%', minHeight: '75vh' }}><MapTab /></div>
                 <div style={{ display: activeTab === 'parser' ? 'block' : 'none' }}><ParserTab /></div>
                 <div style={{ display: activeTab === 'manual' ? 'block' : 'none' }}><ManualTab /></div>
                 <div style={{ display: activeTab === 'feedback' ? 'block' : 'none' }}><FeedbackTab /></div>

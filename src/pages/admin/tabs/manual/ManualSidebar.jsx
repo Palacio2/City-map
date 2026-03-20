@@ -3,22 +3,21 @@ import { api } from '../../../../services/api';
 import EntityModal from './EntityModal';
 import ConfirmModal from './ConfirmModal';
 import CityMapModal from './CityMapModal';
-import { FaEyeSlash, FaPlus, FaTrash, FaMapMarkedAlt } from 'react-icons/fa';
+import { FaEyeSlash, FaPlus, FaTrash, FaMapMarkedAlt, FaSearch } from 'react-icons/fa';
 import styles from './ManualSidebar.module.css';
-import uiStyles from '../../ui/AdminUI.module.css'; // ДОДАНО ЦЕЙ РЯДОК
+import uiStyles from '../../ui/AdminUI.module.css'; 
 import { useTranslation } from 'react-i18next';
 import { useAdmin } from '../../hooks/AdminContext';
 
-// ФУНКЦІЯ ДЛЯ СВІТЛОФОРА
 const getFreshnessColor = (lastUpdated) => {
-    if (!lastUpdated) return '#ef4444'; // Червоний (немає дати)
+    if (!lastUpdated) return '#ef4444'; 
     const now = new Date();
     const updated = new Date(lastUpdated);
     const diffMonths = (now.getTime() - updated.getTime()) / (1000 * 60 * 60 * 24 * 30);
     
-    if (diffMonths < 3) return '#10b981'; // Зелений
-    if (diffMonths < 6) return '#f59e0b'; // Жовтий
-    return '#ef4444'; // Червоний (>6 міс)
+    if (diffMonths < 3) return '#10b981'; 
+    if (diffMonths < 6) return '#f59e0b'; 
+    return '#ef4444'; 
 };
 
 const SidebarList = ({ 
@@ -32,20 +31,21 @@ const SidebarList = ({
             </div>
             {onAdd && (
                 <button onClick={onAdd} className={styles.addGhostBtn}>
-                    <FaPlus /> Додати
+                    <FaPlus /> <span>Додати</span>
                 </button>
             )}
         </div>
         
-        {/* ВИКОРИСТОВУЄМО ГЛОБАЛЬНИЙ КЛАС ДЛЯ ІНПУТУ */}
-        <input 
-            type="text" 
-            placeholder={searchPlaceholder} 
-            className={uiStyles.input} 
-            style={{ marginBottom: '12px' }}
-            value={searchVal} 
-            onChange={e => onSearch(e.target.value)} 
-        />
+        <div className={styles.searchWrapper}>
+            <FaSearch className={styles.searchIcon} />
+            <input 
+                type="text" 
+                placeholder={searchPlaceholder} 
+                className={`${uiStyles.input} ${styles.searchInput}`} 
+                value={searchVal} 
+                onChange={e => onSearch(e.target.value)} 
+            />
+        </div>
         
         <div className={styles.list}>
             {items.map(item => (
@@ -54,34 +54,39 @@ const SidebarList = ({
                     onClick={() => onSelect(item)} 
                     className={`${styles.listItem} ${selectedItem?.id === item.id ? styles.listItemSelected : ''}`}
                 >
-                    <span className={styles.itemText} style={{ color: item.is_available === false ? '#94a3b8' : 'inherit', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className={styles.itemText} style={{ color: item.is_available === false ? 'var(--text-muted)' : 'inherit' }}>
                         {showFreshness && (
                             <div 
+                                className={styles.freshnessIndicator}
                                 style={{ 
-                                    width: '10px', height: '10px', borderRadius: '50%', flexShrink: 0,
                                     backgroundColor: getFreshnessColor(item.last_updated),
-                                    boxShadow: `0 0 4px ${getFreshnessColor(item.last_updated)}`
+                                    boxShadow: `0 0 6px ${getFreshnessColor(item.last_updated)}80`
                                 }} 
                                 title={item.last_updated ? `Останнє оновлення: ${new Date(item.last_updated).toLocaleDateString()}` : 'Ніколи не оновлювалось'}
                             />
                         )}
                         {item.name} 
-                        {showEyeIcon && !item.is_available && <FaEyeSlash style={{marginLeft: 'auto'}} size={12} />}
+                        {showEyeIcon && !item.is_available && <FaEyeSlash className={styles.eyeIcon} />}
                     </span>
                     <div className={styles.actionGroup}>
                         {onMapClick && (
-                            <button className={styles.mapIconBtn} onClick={(e) => { e.stopPropagation(); onMapClick(item); }}>
+                            <button className={styles.mapIconBtn} onClick={(e) => { e.stopPropagation(); onMapClick(item); }} title="Показати на карті">
                                 <FaMapMarkedAlt />
                             </button>
                         )}
                         {onDelete && (
-                            <button className={styles.deleteIconBtn} onClick={(e) => { e.stopPropagation(); onDelete(item); }}>
+                            <button className={styles.deleteIconBtn} onClick={(e) => { e.stopPropagation(); onDelete(item); }} title="Видалити">
                                 <FaTrash />
                             </button>
                         )}
                     </div>
                 </div>
             ))}
+            {items.length === 0 && (
+                <div className={styles.emptyList}>
+                    Немає даних
+                </div>
+            )}
         </div>
     </div>
 );
@@ -223,7 +228,7 @@ export default function ManualSidebar({ selectedCountry, setSelectedCountry, sel
                     searchVal={searchDistrict} onSearch={setSearchDistrict} searchPlaceholder={t('manualSidebar.searchDistrict')}
                     items={filterList(districts, searchDistrict)} selectedItem={selectedDistrict} onSelect={setSelectedDistrict}
                     showEyeIcon={true}
-                    showFreshness={true} // Увімкнули світлофори!
+                    showFreshness={true} 
                 />
             )}
 

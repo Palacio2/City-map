@@ -55,8 +55,23 @@ export default function DashboardTab() {
         fetchDashboardData();
     }, [isSuperAdmin]);
 
-    if (loading) return <div className={styles.loadingState}>{t('dashboardTab.loading')}</div>;
-    if (!stats) return <div className={styles.errorState}>{t('dashboardTab.error')}</div>;
+    if (loading) {
+        return (
+            <div className={styles.loadingState}>
+                <div className={styles.spinner}></div>
+                <div>{t('dashboardTab.loading')}</div>
+            </div>
+        );
+    }
+    
+    if (!stats) {
+        return (
+            <div className={styles.errorState}>
+                <FaExclamationCircle className={styles.errorIcon} />
+                <div>{t('dashboardTab.error')}</div>
+            </div>
+        );
+    }
 
     const probColumns = [
         { header: t('dashboardTab.colCity'), render: (d) => <span className={styles.cityCell}>{d.cityName}</span> },
@@ -85,11 +100,16 @@ export default function DashboardTab() {
         { header: t('dashboardTab.colDistrict'), render: (d) => <span className={styles.districtCell}>{d.name}</span> },
         { 
             header: t('dashboardTab.lastParsed', {defaultValue: 'Last Parsed'}), 
-            render: (d) => d.lastUpdated ? new Date(d.lastUpdated).toLocaleDateString('uk-UA') : t('dashboardTab.never', {defaultValue: 'Never'})
+            render: (d) => d.lastUpdated ? <span className={styles.dateCell}>{new Date(d.lastUpdated).toLocaleDateString('uk-UA')}</span> : <span className={styles.neverCell}>{t('dashboardTab.never', {defaultValue: 'Never'})}</span>
         },
         {
             header: t('dashboardTab.colStatus'),
-            render: () => <span style={{display: 'inline-flex', alignItems: 'center', gap: '6px', color: '#ef4444', fontWeight: 'bold'}}><div style={{width: '10px', height: '10px', borderRadius: '50%', backgroundColor: '#ef4444'}}></div> {t('dashboardTab.needsUpdate', {defaultValue: 'Needs Update'})}</span>
+            render: () => (
+                <span className={styles.outdatedBadge}>
+                    <div className={styles.outdatedDot}></div> 
+                    {t('dashboardTab.needsUpdate', {defaultValue: 'Needs Update'})}
+                </span>
+            )
         }
     ];
 
@@ -98,28 +118,28 @@ export default function DashboardTab() {
             <div className={styles.statsGrid}>
                 <div className={styles.statCard}>
                     <div className={styles.statHeader}>
-                        <div className={`${styles.iconWrapper} ${styles.iconBlue}`}><FaMap size={20} /></div>
+                        <div className={`${styles.iconWrapper} ${styles.iconBlue}`}><FaMap size={22} /></div>
                         <p className={styles.statTitle}>{t('dashboardTab.countries')}</p>
                     </div>
                     <h3 className={styles.statValue}>{stats.totalCountries}</h3>
                 </div>
                 <div className={styles.statCard}>
                     <div className={styles.statHeader}>
-                        <div className={`${styles.iconWrapper} ${styles.iconPurple}`}><FaCity size={20} /></div>
+                        <div className={`${styles.iconWrapper} ${styles.iconPurple}`}><FaCity size={22} /></div>
                         <p className={styles.statTitle}>{t('dashboardTab.cities')}</p>
                     </div>
                     <h3 className={styles.statValue}>{stats.totalCities}</h3>
                 </div>
                 <div className={styles.statCard}>
                     <div className={styles.statHeader}>
-                        <div className={`${styles.iconWrapper} ${styles.iconEmerald}`}><FaMapMarkedAlt size={20} /></div>
+                        <div className={`${styles.iconWrapper} ${styles.iconEmerald}`}><FaMapMarkedAlt size={22} /></div>
                         <p className={styles.statTitle}>{t('dashboardTab.districtsTotal')}</p>
                     </div>
                     <h3 className={styles.statValue}>{stats.totalDistricts}</h3>
                 </div>
                 <div className={`${styles.statCard} ${styles.statCardSuccess}`}>
                     <div className={styles.statHeader}>
-                        <div className={`${styles.iconWrapper} ${styles.iconGreen}`}><FaCheckCircle size={20} /></div>
+                        <div className={`${styles.iconWrapper} ${styles.iconGreen}`}><FaCheckCircle size={22} /></div>
                         <p className={`${styles.statTitle} ${styles.statTitleSuccess}`}>{t('dashboardTab.published')}</p>
                     </div>
                     <h3 className={`${styles.statValue} ${styles.statValueSuccess}`}>{stats.publishedDistricts}</h3>
@@ -127,7 +147,7 @@ export default function DashboardTab() {
             </div>
 
             {isSuperAdmin && chartData.length > 0 && (
-                <div className={styles.chartsRow} style={{ width: '100%', maxWidth: '800px' }}>
+                <div className={styles.chartsRow} style={{ width: '100%', maxWidth: '900px' }}>
                     <MiniStatsChart 
                         title={t('dashboardTab.chartNewUsers')} 
                         data={chartData} 
@@ -135,11 +155,14 @@ export default function DashboardTab() {
                 </div>
             )}
 
-            <div className={styles.chartsRow} style={{ flexWrap: 'nowrap' }}>
+            <div className={styles.chartsRow}>
                 <div className={styles.problemsSection} style={{ flex: 1 }}>
                     <div className={styles.problemsHeader}>
                         <div className={styles.iconWrapperError}><FaExclamationCircle size={20} /></div>
-                        <h3 className={styles.problemsTitle}>{t('dashboardTab.problemsTitle')} <span className={styles.badge}>{stats.problematicDistricts.length}</span></h3>
+                        <h3 className={styles.problemsTitle}>
+                            {t('dashboardTab.problemsTitle')} 
+                            <span className={styles.badge}>{stats.problematicDistricts.length}</span>
+                        </h3>
                     </div>
                     
                     {stats.problematicDistricts.length === 0 ? (
@@ -157,13 +180,16 @@ export default function DashboardTab() {
                 </div>
 
                 <div className={styles.problemsSection} style={{ flex: 1 }}>
-                    <div className={styles.problemsHeader} style={{borderBottomColor: '#fecaca'}}>
-                        <div className={styles.iconWrapperError} style={{background: '#fee2e2', color: '#ef4444'}}><FaClock size={20} /></div>
-                        <h3 className={styles.problemsTitle}>{t('dashboardTab.outdatedTitle')} <span className={styles.badge} style={{background: '#ef4444'}}>{stats.outdatedDistricts?.length || 0}</span></h3>
+                    <div className={styles.problemsHeader} style={{borderBottomColor: 'rgba(239, 68, 68, 0.2)'}}>
+                        <div className={styles.iconWrapperError} style={{background: 'rgba(239, 68, 68, 0.15)', color: 'var(--danger)'}}><FaClock size={20} /></div>
+                        <h3 className={styles.problemsTitle}>
+                            {t('dashboardTab.outdatedTitle')} 
+                            <span className={styles.badge} style={{background: 'var(--danger)'}}>{stats.outdatedDistricts?.length || 0}</span>
+                        </h3>
                     </div>
                     
                     {(!stats.outdatedDistricts || stats.outdatedDistricts.length === 0) ? (
-                        <div className={styles.emptyState} style={{color: '#10b981', background: '#ecfdf5'}}>
+                        <div className={styles.emptyState} style={{color: 'var(--success)', background: 'rgba(16, 185, 129, 0.05)'}}>
                             <div className={styles.emptyIcon}>✨</div>
                             <div>{t('dashboardTab.allFresh')}</div>
                         </div>

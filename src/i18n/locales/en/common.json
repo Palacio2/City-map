@@ -113,5 +113,10 @@
     "km": "km",
     "m": "m",
     "people_sqkm": "people/km²"
+  },
+  "errorBoundary": {
+    "title": "Oops! Something went wrong",
+    "subtitle": "We have been notified about this issue and are working to resolve it. Please try refreshing the page.",
+    "refreshBtn": "Refresh Page"
   }
 }

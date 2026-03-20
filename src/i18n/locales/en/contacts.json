@@ -1,39 +1,39 @@
 {
-  "title": "Зв'яжіться з нами",
-  "subtitle": "Заповніть форму нижче",
+  "title": "Contact Us",
+  "subtitle": "Fill out the form below",
   "form": {
     "name": {
-      "label": "Ім'я",
-      "placeholder": "Ваше ім'я"
+      "label": "Name",
+      "placeholder": "Your name"
     },
     "email": {
       "label": "Email",
       "placeholder": "example@mail.com"
     },
     "message": {
-      "label": "Повідомлення",
-      "placeholder": "Текст повідомлення..."
+      "label": "Message",
+      "placeholder": "Message text..."
     },
-    "consent": "Я погоджуюсь на обробку персональних даних згідно з <0>Політикою конфіденційності</0>"
+    "consent": "I agree to the processing of personal data in accordance with the <0>Privacy Policy</0>"
   },
   "buttons": {
-    "submit": "Відправити",
-    "sending": "Відправка...",
-    "send_again": "Надіслати ще"
+    "submit": "Send",
+    "sending": "Sending...",
+    "send_again": "Send again"
   },
   "success": {
-    "title": "Дякуємо!",
-    "text": "Ми отримали ваше повідомлення."
+    "title": "Thank you!",
+    "text": "We have received your message."
   },
   "errors": {
-    "generic": "Щось пішло не так"
+    "generic": "Something went wrong"
   },
   "info": {
     "email": "youworkday@gmail.com",
     "phone": "+48 698 991 398"
   },
   "seo": {
-  "title": "Контакти | City Maps",
-  "desc": "Зв'яжіться з нашою командою для питань, пропозицій або партнерства."
-}
+    "title": "Contacts | City Maps",
+    "desc": "Get in touch with our team for questions, suggestions, or partnership opportunities."
+  }
 }

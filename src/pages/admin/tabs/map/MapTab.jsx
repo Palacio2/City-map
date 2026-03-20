@@ -17,11 +17,11 @@ const COLORS = ['#3b82f6', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', '#06b6d4'
 
 const createCustomClusterIcon = (cluster) => {
     return L.divIcon({
-        html: `<div style="background-color: var(--primary, #3b82f6); color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-family: sans-serif; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+        html: `<div style="background-color: var(--primary, #3b82f6); color: white; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-family: var(--font-body); font-size: 1rem; border: 3px solid white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4); text-shadow: 0 1px 2px rgba(0,0,0,0.2);">
                 ${cluster.getChildCount()}
               </div>`,
         className: 'custom-marker-cluster',
-        iconSize: L.point(40, 40, true),
+        iconSize: L.point(44, 44, true),
     });
 };
 
@@ -66,9 +66,9 @@ function AdminFastMarkers({ pois, t }) {
             const sourceText = poi.source === 'parser' ? t('mapTab.fromParser') : t('mapTab.manualAdd');
             
             marker.bindTooltip(`
-                <div style="text-align: center;">
-                    <strong style="font-size: 0.95rem; color: #1e293b;">${labelText}</strong><br/>
-                    <span style="font-size: 0.75rem; color: #64748b; font-weight: 600; text-transform: uppercase;">
+                <div style="text-align: center; display: flex; flex-direction: column; gap: 4px;">
+                    <strong style="font-size: 1rem; color: var(--text-main); font-weight: 800;">${labelText}</strong>
+                    <span style="font-size: 0.75rem; color: var(--text-secondary); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; background: var(--bg-hover); padding: 2px 6px; border-radius: var(--radius-sm);">
                         ${sourceText}
                     </span>
                 </div>
@@ -206,69 +206,75 @@ export default function MapTab() {
     }, [mapData, visibleTypes]);
 
     return (
-        <div style={{ display: 'flex', flexDirection: 'column', height: '100%', gap: '20px', padding: '0 4px' }}>
+        // ВАЖЛИВО: height: calc(100vh - 140px) та minHeight: '600px'
+        <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 140px)', minHeight: '600px', gap: '24px', padding: '0' }}>
+             
              <div style={{ 
-                 display: 'flex', gap: '16px', background: 'var(--bg-surface)', padding: '20px', 
+                 display: 'flex', gap: '20px', background: 'var(--bg-surface)', padding: '24px', 
                  borderRadius: 'var(--radius-lg)', border: '1px solid var(--border)', flexWrap: 'wrap', 
-                 alignItems: 'center', boxShadow: 'var(--shadow-sm)' 
+                 alignItems: 'center', boxShadow: 'var(--shadow-sm)', flexShrink: 0 // Не даємо шапці стискатися
              }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginRight: 'auto' }}>
-                    <div style={{ width: '40px', height: '40px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: 'var(--radius-sm)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.2rem', color: 'var(--primary)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginRight: 'auto' }}>
+                    <div style={{ width: '48px', height: '48px', background: 'rgba(59, 130, 246, 0.1)', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.4rem', color: 'var(--primary)' }}>
                         <FaMap />
                     </div>
                     <div>
-                        <h2 style={{ margin: 0, fontSize: '1.1rem', color: 'var(--text-main)' }}>{t('mapTab.title')}</h2>
-                        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{t('mapTab.subtitle')}</span>
+                        <h2 style={{ margin: 0, fontSize: '1.4rem', color: 'var(--text-main)', fontWeight: '800', letterSpacing: '-0.01em' }}>{t('mapTab.title')}</h2>
+                        <span style={{ fontSize: '0.9rem', color: 'var(--text-muted)', fontWeight: '500' }}>{t('mapTab.subtitle')}</span>
                     </div>
                 </div>
 
-                <select 
-                    value={selectedCountry} 
-                    onChange={e => { setSelectedCountry(e.target.value); setSelectedCity(''); }} 
-                    className={uiStyles.input}
-                    style={{ width: 'auto', minWidth: '200px' }}
-                >
-                    <option value="">{t('mapTab.selectCountry')}</option>
-                    {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+                    <select 
+                        value={selectedCountry} 
+                        onChange={e => { setSelectedCountry(e.target.value); setSelectedCity(''); }} 
+                        className={uiStyles.input}
+                        style={{ width: 'auto', minWidth: '220px' }}
+                    >
+                        <option value="">{t('mapTab.selectCountry')}</option>
+                        {countries.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
 
-                <select 
-                    value={selectedCity} 
-                    onChange={e => setSelectedCity(e.target.value)} 
-                    disabled={!selectedCountry || cities.length === 0} 
-                    className={uiStyles.input}
-                    style={{ width: 'auto', minWidth: '200px' }}
-                >
-                    <option value="">{cities.length === 0 && selectedCountry ? t('mapTab.noCitiesAvailable') : t('mapTab.selectCity')}</option>
-                    {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
-                </select>
+                    <select 
+                        value={selectedCity} 
+                        onChange={e => setSelectedCity(e.target.value)} 
+                        disabled={!selectedCountry || cities.length === 0} 
+                        className={uiStyles.input}
+                        style={{ width: 'auto', minWidth: '220px' }}
+                    >
+                        <option value="">{cities.length === 0 && selectedCountry ? t('mapTab.noCitiesAvailable') : t('mapTab.selectCity')}</option>
+                        {cities.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+                    </select>
 
-                <button onClick={handleReset} className={`${uiStyles.btn} ${uiStyles.btnCancel}`}>
-                    <FaSync /> {t('mapTab.reset')}
-                </button>
+                    <button onClick={handleReset} className={`${uiStyles.btn} ${uiStyles.btnCancel}`}>
+                        <FaSync /> {t('mapTab.reset')}
+                    </button>
+                </div>
             </div>
 
-            <div style={{ display: 'flex', flex: 1, gap: '20px', overflow: 'hidden' }}>
+            {/* ВАЖЛИВО: minHeight: 0 не дає дітям розпирати цей контейнер */}
+            <div style={{ display: 'flex', flex: 1, gap: '24px', overflow: 'hidden', minHeight: 0 }}>
                  {mapData.length > 0 && (
-                     <div style={{ width: '300px', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)' }}>
-                        <div style={{ padding: '20px', borderBottom: '1px solid var(--border)' }}>
-                             <h3 style={{ margin: '0 0 16px 0', fontSize: '1rem', color: 'var(--text-main)' }}>{t('mapTab.filtersTitle')}</h3>
-                             <div style={{ display: 'flex', gap: '8px' }}>
-                                 <button onClick={showAll} className={`${uiStyles.btn}`} style={{ flex: 1, background: 'rgba(59, 130, 246, 0.1)', color: 'var(--primary)' }}>{t('mapTab.showAll')}</button>
+                     <div style={{ width: '340px', height: '100%', background: 'var(--bg-surface)', border: '1px solid var(--border)', borderRadius: 'var(--radius-lg)', display: 'flex', flexDirection: 'column', boxShadow: 'var(--shadow-sm)', flexShrink: 0 }}>
+                        <div style={{ padding: '24px', borderBottom: '1px solid var(--border)', background: 'var(--bg-main)', borderTopLeftRadius: 'var(--radius-lg)', borderTopRightRadius: 'var(--radius-lg)', flexShrink: 0 }}>
+                             <h3 style={{ margin: '0 0 16px 0', fontSize: '1.1rem', color: 'var(--text-main)', fontWeight: '800' }}>{t('mapTab.filtersTitle')}</h3>
+                             <div style={{ display: 'flex', gap: '10px' }}>
+                                 <button onClick={showAll} className={`${uiStyles.btn}`} style={{ flex: 1, background: 'rgba(59, 130, 246, 0.1)', color: 'var(--primary)', fontWeight: '700' }}>{t('mapTab.showAll')}</button>
                                  <button onClick={hideAll} className={`${uiStyles.btn} ${uiStyles.btnCancel}`} style={{ flex: 1 }}>{t('mapTab.hideAll')}</button>
                              </div>
                         </div>
-                        <div style={{ padding: '16px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                        {/* Скролл тільки для списку фільтрів */}
+                        <div style={{ padding: '20px', overflowY: 'auto', flex: 1, display: 'flex', flexDirection: 'column', gap: '24px' }}>
                             {METRIC_GROUPS.map(group => {
                                 const countableFields = group.fields.filter(f => f.type === 'number' && f.key.includes('_count'));
                                 if (countableFields.length === 0) return null;
 
                                 return (
                                     <div key={group.id}>
-                                        <div style={{ fontWeight: '700', marginBottom: '10px', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.5px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                                            <span>{group.icon}</span> {group.label}
+                                        <div style={{ fontWeight: '800', marginBottom: '12px', color: 'var(--text-main)', fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'flex', alignItems: 'center', gap: '10px' }}>
+                                            <span style={{ fontSize: '1.2rem' }}>{group.icon}</span> {group.label}
                                         </div>
-                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
                                             {countableFields.map(m => {
                                                 const isVisible = visibleTypes.has(m.key);
                                                 return (
@@ -277,14 +283,14 @@ export default function MapTab() {
                                                         onClick={() => toggleVisibility(m.key)}
                                                         style={{ 
                                                             display: 'flex', justifyContent: 'space-between', alignItems: 'center', 
-                                                            padding: '8px 12px', borderRadius: 'var(--radius-sm)',
-                                                            cursor: 'pointer', background: isVisible ? 'var(--bg-main)' : 'transparent',
-                                                            border: `1px solid ${isVisible ? 'var(--border)' : 'transparent'}`,
+                                                            padding: '10px 16px', borderRadius: 'var(--radius-sm)',
+                                                            cursor: 'pointer', background: isVisible ? 'rgba(59, 130, 246, 0.05)' : 'var(--bg-main)',
+                                                            border: `2px solid ${isVisible ? 'var(--primary)' : 'var(--border)'}`,
                                                             transition: 'var(--transition)', userSelect: 'none'
                                                         }}
                                                     >
-                                                        <span style={{ fontSize: '0.9rem', fontWeight: isVisible ? 600 : 500, color: isVisible ? 'var(--text-main)' : 'var(--text-muted)' }}>{m.label}</span>
-                                                        <span style={{ display: 'flex', alignItems: 'center', fontSize: '1.1rem', color: isVisible ? 'var(--primary)' : 'var(--border)' }}>
+                                                        <span style={{ fontSize: '0.95rem', fontWeight: isVisible ? 700 : 500, color: isVisible ? 'var(--text-main)' : 'var(--text-muted)' }}>{m.label}</span>
+                                                        <span style={{ display: 'flex', alignItems: 'center', fontSize: '1.1rem', color: isVisible ? 'var(--primary)' : 'var(--text-muted)', opacity: isVisible ? 1 : 0.5 }}>
                                                             {isVisible ? <FaEye /> : <FaEyeSlash />}
                                                         </span>
                                                     </div>
@@ -298,22 +304,25 @@ export default function MapTab() {
                      </div>
                  )}
 
-                <div style={{ flex: 1, position: 'relative', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--bg-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)' }}>
+                {/* Карта займає 100% висоти свого батька */}
+                <div style={{ flex: 1, position: 'relative', height: '100%', borderRadius: 'var(--radius-lg)', overflow: 'hidden', border: '1px solid var(--border)', background: 'var(--bg-main)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)' }}>
                     {!selectedCity ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', color: 'var(--text-muted)' }}>
-                            <FaMap style={{ fontSize: '3rem', opacity: 0.5 }} />
-                            <div style={{ fontSize: '1.1rem', fontWeight: 500 }}>{t('mapTab.placeholder')}</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', color: 'var(--text-muted)' }}>
+                            <div style={{ width: '80px', height: '80px', background: 'var(--bg-surface)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-sm)', border: '1px solid var(--border)' }}>
+                                <FaMap style={{ fontSize: '2.5rem', opacity: 0.6 }} />
+                            </div>
+                            <div style={{ fontSize: '1.2rem', fontWeight: 600 }}>{t('mapTab.placeholder')}</div>
                         </div>
                     ) : loading ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', color: 'var(--primary)' }}>
-                            <div style={{ width: '40px', height: '40px', border: '3px solid rgba(59, 130, 246, 0.3)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s linear infinite' }}></div>
-                            <div style={{ fontSize: '1.1rem', fontWeight: 600 }}>{t('mapTab.loading')}</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px', color: 'var(--primary)' }}>
+                            <div style={{ width: '48px', height: '48px', border: '4px solid rgba(59, 130, 246, 0.2)', borderTopColor: 'var(--primary)', borderRadius: '50%', animation: 'spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite' }}></div>
+                            <div style={{ fontSize: '1.2rem', fontWeight: 700 }}>{t('mapTab.loading')}</div>
                             <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
                         </div>
                     ) : mapData.length === 0 ? (
-                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', color: 'var(--warning)' }}>
-                            <div style={{ fontSize: '2rem' }}>⚠️</div>
-                            <div style={{ fontSize: '1.1rem', fontWeight: 500 }}>{t('mapTab.noData')}</div>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px', color: 'var(--warning)', background: 'rgba(234, 179, 8, 0.1)', padding: '32px', borderRadius: 'var(--radius-lg)', border: '1px solid rgba(234, 179, 8, 0.2)' }}>
+                            <div style={{ fontSize: '2.5rem' }}>⚠️</div>
+                            <div style={{ fontSize: '1.2rem', fontWeight: 700 }}>{t('mapTab.noData')}</div>
                         </div>
                     ) : (
                         <MapContainer center={[52.23, 21.01]} zoom={6} style={{ height: '100%', width: '100%' }} zoomControl={false}>
@@ -329,13 +338,13 @@ export default function MapTab() {
                                     data={dist.geojson} 
                                     style={{ 
                                         color: '#ffffff', weight: 2, opacity: 1, 
-                                        fillColor: dist.fillColor, fillOpacity: 0.35 
+                                        fillColor: dist.fillColor, fillOpacity: 0.4 
                                     }}
                                     onEachFeature={(feature, layer) => {
                                         layer.bindTooltip(`
-                                            <div style="text-align:center;">
-                                                <strong style="font-size:1.1rem;color:var(--text-main);">${dist.name}</strong><br/>
-                                                <span style="font-size:0.85rem;color:var(--text-muted);margin-top:4px;display:block;">
+                                            <div style="text-align:center; display: flex; flex-direction: column; gap: 6px;">
+                                                <strong style="font-size:1.15rem; color:var(--text-main); font-weight: 800; letter-spacing: -0.01em;">${dist.name}</strong>
+                                                <span style="font-size:0.85rem; font-weight: 700; color: ${dist.is_available ? 'var(--success)' : 'var(--text-muted)'}; background: ${dist.is_available ? 'rgba(16, 185, 129, 0.1)' : 'var(--bg-main)'}; padding: 4px 8px; border-radius: var(--radius-sm); border: 1px solid ${dist.is_available ? 'rgba(16, 185, 129, 0.2)' : 'var(--border)'};">
                                                     ${dist.is_available ? t('mapTab.published') : t('mapTab.hidden')}
                                                 </span>
                                             </div>
@@ -350,9 +359,31 @@ export default function MapTab() {
                 </div>
             </div>
             <style>{`
-                .modern-tooltip { background: rgba(255,255,255,0.95); backdrop-filter: blur(8px); border: none; box-shadow: var(--shadow-md); border-radius: var(--radius-md); padding: 10px 16px; }
-                .modern-tooltip::before { display: none; }
+                .modern-tooltip { 
+                    background: rgba(255,255,255,0.95); 
+                    backdrop-filter: blur(8px); 
+                    border: 1px solid var(--border); 
+                    box-shadow: var(--shadow-lg); 
+                    border-radius: var(--radius-md); 
+                    padding: 12px 16px; 
+                }
+                .modern-tooltip::before { border-top-color: rgba(255,255,255,0.95); }
                 .leaflet-control-container { display: none; }
+                
+                /* Кастомізація скролбару для списку фільтрів */
+                div[style*="overflow-y: auto"]::-webkit-scrollbar {
+                    width: 6px;
+                }
+                div[style*="overflow-y: auto"]::-webkit-scrollbar-track {
+                    background: transparent;
+                }
+                div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb {
+                    background: var(--border);
+                    border-radius: 10px;
+                }
+                div[style*="overflow-y: auto"]::-webkit-scrollbar-thumb:hover {
+                    background: var(--text-muted);
+                }
             `}</style>
         </div>
     );

@@ -1,18 +1,22 @@
 .mainLayout {
     display: flex;
-    gap: 24px;
-    align-items: flex-start;
-    height: 85vh; 
+    gap: 32px;
+    align-items: stretch;
+    height: calc(100vh - 160px);
+    min-height: 600px;
     width: 100%;
+    position: relative;
 }
 
 .leftPanel {
-    width: 320px;
+    width: 360px;
     flex-shrink: 0;
     height: 100%;
     overflow-y: auto;
     padding-right: 12px;
-    border-right: 1px solid var(--border);
+    scrollbar-width: thin;
+    display: flex;
+    flex-direction: column;
 }
 
 .rightPanel {
@@ -20,21 +24,52 @@
     min-width: 0;
     height: 100%;
     overflow-y: auto;
-    /* Збільшили відступ справа, щоб контент не липнув до краю */
-    padding-right: 24px; 
+    padding-right: 16px;
     padding-bottom: 24px;
+    scrollbar-width: thin;
+    position: relative;
 }
 
-.leftPanel::-webkit-scrollbar, .rightPanel::-webkit-scrollbar {
+.leftPanel::-webkit-scrollbar, 
+.rightPanel::-webkit-scrollbar {
     width: 6px;
 }
-.leftPanel::-webkit-scrollbar-track, .rightPanel::-webkit-scrollbar-track {
+
+.leftPanel::-webkit-scrollbar-track, 
+.rightPanel::-webkit-scrollbar-track {
     background: transparent;
 }
-.leftPanel::-webkit-scrollbar-thumb, .rightPanel::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
+
+.leftPanel::-webkit-scrollbar-thumb, 
+.rightPanel::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: var(--radius-full);
 }
-.leftPanel::-webkit-scrollbar-thumb:hover, .rightPanel::-webkit-scrollbar-thumb:hover {
+
+.leftPanel::-webkit-scrollbar-thumb:hover, 
+.rightPanel::-webkit-scrollbar-thumb:hover {
     background: var(--text-muted);
+}
+
+@media (max-width: 1024px) {
+    .mainLayout {
+        flex-direction: column;
+        height: auto;
+        overflow: visible;
+        gap: 24px;
+    }
+
+    .leftPanel {
+        width: 100%;
+        height: auto;
+        max-height: 50vh;
+        padding-right: 8px;
+        border-right: none;
+    }
+
+    .rightPanel {
+        height: auto;
+        padding-right: 0;
+        overflow: visible;
+    }
 }

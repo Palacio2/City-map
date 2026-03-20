@@ -75,15 +75,14 @@ const MetricsModal = ({ isOpen, onClose, onConfirm, selectedDistricts, country, 
                         <h4 className={styles.metricsTitle}>{t('metricsModal.selectMetrics', {defaultValue: 'Оберіть метрики OSM'})}</h4>
                         <div className={styles.metricsGrid}>
                             {ALL_METRICS.map(m => (
-                                <label key={m.db} className={styles.metricCheckbox}>
-                                    <input 
-                                        type="checkbox" 
-                                        checked={selectedMetrics.includes(m.db)} 
-                                        onChange={() => toggleMetric(m.db)} 
-                                    />
-                                    {m.label || getLabelForKey(m.db)}
-                                </label>
-                            ))}
+    <label key={m.db} className={styles.metricCheckbox}>
+        <input 
+            type="checkbox" 
+            checked={selectedMetrics.includes(m.db)} 
+            onChange={() => toggleMetric(m.db)} 
+        />
+{t(`osmMetrics.${m.db}`, { defaultValue: m.label || getLabelForKey(m.db) })}    </label>
+))}
                         </div>
                     </div>
                 )}

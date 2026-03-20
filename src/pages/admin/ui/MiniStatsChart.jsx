@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import styles from './MiniStatsChart.module.css';
 
 const MiniStatsChart = ({ data, title }) => {
-    // Мемоізація максимального значення для уникнення зайвих обчислень при рендері
     const maxValue = useMemo(() => {
         return Math.max(...data.map(item => item.value), 1);
     }, [data]);

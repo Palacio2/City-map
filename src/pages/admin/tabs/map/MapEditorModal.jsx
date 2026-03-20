@@ -161,9 +161,9 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
     }
 
     const modalTitle = (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <span>🗺️ {t('mapEditor.title')}</span>
-            <span style={{ color: 'var(--primary)' }}>{rowData.district_name}</span>
+            <span style={{ color: 'var(--primary)', fontWeight: '800' }}>{rowData.district_name}</span>
         </div>
     );
 
@@ -185,7 +185,7 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
                 <button onClick={onClose} className={`${uiStyles.btn} ${uiStyles.btnCancel}`}>
                     <FaTimes /> {t('mapEditor.cancel')}
                 </button>
-                <button onClick={handleSave} className={`${uiStyles.btn} ${uiStyles.btnSuccess}`}>
+                <button onClick={handleSave} className={`${uiStyles.btn} ${uiStyles.btnPrimary}`}>
                     <FaSave /> {t('mapEditor.save')}
                 </button>
             </div>
@@ -199,7 +199,7 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
             title={modalTitle} 
             maxWidth="1200px" 
             actions={modalActions}
-            bodyStyle={{ padding: 0, display: 'flex', height: '70vh', overflow: 'hidden' }}
+            bodyStyle={{ padding: 0, display: 'flex', height: '75vh', overflow: 'hidden' }}
             disableEscClose={true}
         >
             <div className={styles.sidebar}>
