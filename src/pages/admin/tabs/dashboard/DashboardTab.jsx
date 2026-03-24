@@ -1,64 +1,58 @@
-import React, { useState, useEffect } from 'react';
-import { api } from '../../../../services/api';
-import { adminUsersAPI } from '@api/adminUsersAPI'; 
+import React, { useMemo } from 'react';
 import { FaMapMarkedAlt, FaCity, FaMap, FaExclamationCircle, FaCheckCircle, FaClock } from 'react-icons/fa';
-import styles from './DashboardTab.module.css';
 import { useTranslation } from 'react-i18next';
 import DataTable from '../../ui/DataTable';
 import MiniStatsChart from '../../ui/MiniStatsChart';
+import { StatCard } from '../../ui/StatCard';
+import { Badge } from '../../ui/Badge';
 import { useAdmin } from '../../hooks/AdminContext';
+import { useDashboard } from './useDashboard';
 
 export default function DashboardTab() {
-    const { t } = useTranslation('admin');
+    const { t } = useTranslation('adminDashboard');
     const { currentAdmin } = useAdmin();
-    const isSuperAdmin = currentAdmin?.role === 'super_admin';
+    const { stats, chartData, loading, isSuperAdmin } = useDashboard(currentAdmin);
 
-    const [stats, setStats] = useState(null);
-    const [chartData, setChartData] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const probColumns = useMemo(() => [
+        { header: t('dashboardTab.colCity'), render: (d) => <span className="text-textMuted font-medium text-[0.95rem]">{d.cityName}</span> },
+        { header: t('dashboardTab.colDistrict'), render: (d) => <span className="font-bold text-textMain text-[0.95rem]">{d.name}</span> },
+        { 
+            header: t('dashboardTab.colStatus'), 
+            render: (d) => d.isAvailable ? <Badge variant="success">{t('dashboardTab.statusPub')}</Badge> : <Badge variant="default">{t('dashboardTab.statusHidden')}</Badge>
+        },
+        { 
+            header: t('dashboardTab.colIssues'), 
+            render: (d) => (
+                <div className="flex gap-2 flex-wrap">
+                    {d.missingPhoto && <Badge variant="danger">{t('dashboardTab.issuePhoto')}</Badge>}
+                    {d.missingGeo && <Badge variant="warning">{t('dashboardTab.issueGeo')}</Badge>}
+                </div>
+            ) 
+        }
+    ], [t]);
 
-    useEffect(() => {
-        const fetchDashboardData = async () => {
-            try {
-                const geoStats = await api.geo.getStats();
-                setStats(geoStats);
-
-                if (isSuperAdmin) {
-                    const usersResponse = await adminUsersAPI.getUsers();
-                    const users = usersResponse.users || [];
-
-                    const last7Days = [...Array(7)].map((_, i) => {
-                        const d = new Date();
-                        d.setDate(d.getDate() - (6 - i));
-                        const localDate = new Date(d.getTime() - (d.getTimezoneOffset() * 60000)); 
-                        return localDate.toISOString().split('T')[0]; 
-                    });
-
-                    const formattedChartData = last7Days.map(dateStr => {
-                        const count = users.filter(u => u.created_at && u.created_at.startsWith(dateStr)).length;
-                        const [, month, day] = dateStr.split('-');
-                        return {
-                            label: `${day}.${month}`,
-                            value: count
-                        };
-                    });
-
-                    setChartData(formattedChartData);
-                }
-            } catch (err) {
-                console.error("Dashboard error:", err);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchDashboardData();
-    }, [isSuperAdmin]);
+    const outdatedColumns = useMemo(() => [
+        { header: t('dashboardTab.colCity'), render: (d) => <span className="text-textMuted font-medium text-[0.95rem]">{d.cityName}</span> },
+        { header: t('dashboardTab.colDistrict'), render: (d) => <span className="font-bold text-textMain text-[0.95rem]">{d.name}</span> },
+        { 
+            header: t('dashboardTab.lastParsed', {defaultValue: 'Last Parsed'}), 
+            render: (d) => d.lastUpdated ? <span className="font-medium text-textMain text-[0.95rem]">{new Date(d.lastUpdated).toLocaleDateString('uk-UA')}</span> : <Badge variant="danger">{t('dashboardTab.never', {defaultValue: 'Never'})}</Badge>
+        },
+        {
+            header: t('dashboardTab.colStatus'),
+            render: () => (
+                <Badge variant="danger">
+                    <div className="w-2 h-2 rounded-full bg-danger"></div> 
+                    {t('dashboardTab.needsUpdate', {defaultValue: 'Needs Update'})}
+                </Badge>
+            )
+        }
+    ], [t]);
 
     if (loading) {
         return (
-            <div className={styles.loadingState}>
-                <div className={styles.spinner}></div>
+            <div className="py-20 px-5 text-[1.1rem] text-primary text-center font-bold flex flex-col items-center gap-5 bg-surface rounded-lg border border-border shadow-sm">
+                <div className="w-10 h-10 border-4 border-blue-500/20 border-t-primary rounded-full animate-spin"></div>
                 <div>{t('dashboardTab.loading')}</div>
             </div>
         );
@@ -66,88 +60,45 @@ export default function DashboardTab() {
     
     if (!stats) {
         return (
-            <div className={styles.errorState}>
-                <FaExclamationCircle className={styles.errorIcon} />
+            <div className="p-16 text-danger text-center font-bold text-[1.1rem] bg-red-500/5 rounded-lg border border-red-500/20 flex flex-col items-center gap-4">
+                <FaExclamationCircle className="text-[2.5rem] opacity-80" />
                 <div>{t('dashboardTab.error')}</div>
             </div>
         );
     }
 
-    const probColumns = [
-        { header: t('dashboardTab.colCity'), render: (d) => <span className={styles.cityCell}>{d.cityName}</span> },
-        { header: t('dashboardTab.colDistrict'), render: (d) => <span className={styles.districtCell}>{d.name}</span> },
-        { 
-            header: t('dashboardTab.colStatus'), 
-            render: (d) => (
-                <span className={`${styles.statusBadge} ${d.isAvailable ? styles.statusPublished : styles.statusHidden}`}>
-                    {d.isAvailable ? t('dashboardTab.statusPub') : t('dashboardTab.statusHidden')}
-                </span>
-            ) 
-        },
-        { 
-            header: t('dashboardTab.colIssues'), 
-            render: (d) => (
-                <div className={styles.issuesContainer}>
-                    {d.missingPhoto && <span className={`${styles.issueBadge} ${styles.issuePhoto}`}>{t('dashboardTab.issuePhoto')}</span>}
-                    {d.missingGeo && <span className={`${styles.issueBadge} ${styles.issueGeo}`}>{t('dashboardTab.issueGeo')}</span>}
-                </div>
-            ) 
-        }
-    ];
-
-    const outdatedColumns = [
-        { header: t('dashboardTab.colCity'), render: (d) => <span className={styles.cityCell}>{d.cityName}</span> },
-        { header: t('dashboardTab.colDistrict'), render: (d) => <span className={styles.districtCell}>{d.name}</span> },
-        { 
-            header: t('dashboardTab.lastParsed', {defaultValue: 'Last Parsed'}), 
-            render: (d) => d.lastUpdated ? <span className={styles.dateCell}>{new Date(d.lastUpdated).toLocaleDateString('uk-UA')}</span> : <span className={styles.neverCell}>{t('dashboardTab.never', {defaultValue: 'Never'})}</span>
-        },
-        {
-            header: t('dashboardTab.colStatus'),
-            render: () => (
-                <span className={styles.outdatedBadge}>
-                    <div className={styles.outdatedDot}></div> 
-                    {t('dashboardTab.needsUpdate', {defaultValue: 'Needs Update'})}
-                </span>
-            )
-        }
-    ];
-
     return (
-        <div className={styles.container}>
-            <div className={styles.statsGrid}>
-                <div className={styles.statCard}>
-                    <div className={styles.statHeader}>
-                        <div className={`${styles.iconWrapper} ${styles.iconBlue}`}><FaMap size={22} /></div>
-                        <p className={styles.statTitle}>{t('dashboardTab.countries')}</p>
-                    </div>
-                    <h3 className={styles.statValue}>{stats.totalCountries}</h3>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statHeader}>
-                        <div className={`${styles.iconWrapper} ${styles.iconPurple}`}><FaCity size={22} /></div>
-                        <p className={styles.statTitle}>{t('dashboardTab.cities')}</p>
-                    </div>
-                    <h3 className={styles.statValue}>{stats.totalCities}</h3>
-                </div>
-                <div className={styles.statCard}>
-                    <div className={styles.statHeader}>
-                        <div className={`${styles.iconWrapper} ${styles.iconEmerald}`}><FaMapMarkedAlt size={22} /></div>
-                        <p className={styles.statTitle}>{t('dashboardTab.districtsTotal')}</p>
-                    </div>
-                    <h3 className={styles.statValue}>{stats.totalDistricts}</h3>
-                </div>
-                <div className={`${styles.statCard} ${styles.statCardSuccess}`}>
-                    <div className={styles.statHeader}>
-                        <div className={`${styles.iconWrapper} ${styles.iconGreen}`}><FaCheckCircle size={22} /></div>
-                        <p className={`${styles.statTitle} ${styles.statTitleSuccess}`}>{t('dashboardTab.published')}</p>
-                    </div>
-                    <h3 className={`${styles.statValue} ${styles.statValueSuccess}`}>{stats.publishedDistricts}</h3>
-                </div>
+        <div className="flex flex-col gap-6 pb-8 animate-[fadeIn_0.4s_cubic-bezier(0.16,1,0.3,1)]">
+            <div className="grid grid-cols-[repeat(auto-fit,minmax(240px,1fr))] gap-6">
+                <StatCard 
+                    title={t('dashboardTab.countries')} 
+                    value={stats.totalCountries} 
+                    icon={FaMap} 
+                    variant="primary" 
+                />
+                <StatCard 
+                    title={t('dashboardTab.cities')} 
+                    value={stats.totalCities} 
+                    icon={FaCity} 
+                    variant="purple" 
+                />
+                <StatCard 
+                    title={t('dashboardTab.districtsTotal')} 
+                    value={stats.totalDistricts} 
+                    icon={FaMapMarkedAlt} 
+                    variant="success" 
+                />
+                <StatCard 
+                    title={t('dashboardTab.published')} 
+                    value={stats.publishedDistricts} 
+                    icon={FaCheckCircle} 
+                    variant="success" 
+                    className="!bg-emerald-500/5"
+                />
             </div>
 
             {isSuperAdmin && chartData.length > 0 && (
-                <div className={styles.chartsRow} style={{ width: '100%', maxWidth: '900px' }}>
+                <div className="w-full">
                     <MiniStatsChart 
                         title={t('dashboardTab.chartNewUsers')} 
                         data={chartData} 
@@ -155,19 +106,19 @@ export default function DashboardTab() {
                 </div>
             )}
 
-            <div className={styles.chartsRow}>
-                <div className={styles.problemsSection} style={{ flex: 1 }}>
-                    <div className={styles.problemsHeader}>
-                        <div className={styles.iconWrapperError}><FaExclamationCircle size={20} /></div>
-                        <h3 className={styles.problemsTitle}>
+            <div className="flex flex-col xl:flex-row gap-6 flex-wrap">
+                <div className="bg-surface rounded-lg border border-border shadow-sm overflow-hidden flex flex-col flex-1">
+                    <div className="px-6 py-5 border-b border-border flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-amber-500/10 text-[#d97706]"><FaExclamationCircle size={16} /></div>
+                        <h3 className="m-0 color-textMain text-[1.1rem] font-bold flex items-center gap-3">
                             {t('dashboardTab.problemsTitle')} 
-                            <span className={styles.badge}>{stats.problematicDistricts.length}</span>
+                            <span className="bg-amber-500/10 text-[#d97706] py-0.5 px-2.5 rounded-full text-[0.85rem] font-bold">{stats.problematicDistricts.length}</span>
                         </h3>
                     </div>
                     
                     {stats.problematicDistricts.length === 0 ? (
-                        <div className={styles.emptyState}>
-                            <div className={styles.emptyIcon}>🎉</div>
+                        <div className="p-16 text-center text-textMuted font-medium text-[1rem] flex flex-col items-center gap-4 flex-1 justify-center">
+                            <div className="w-16 h-16 bg-main rounded-full flex items-center justify-center text-[2rem]">🎉</div>
                             <div>{t('dashboardTab.emptyProblems')}</div>
                         </div>
                     ) : (
@@ -179,18 +130,18 @@ export default function DashboardTab() {
                     )}
                 </div>
 
-                <div className={styles.problemsSection} style={{ flex: 1 }}>
-                    <div className={styles.problemsHeader} style={{borderBottomColor: 'rgba(239, 68, 68, 0.2)'}}>
-                        <div className={styles.iconWrapperError} style={{background: 'rgba(239, 68, 68, 0.15)', color: 'var(--danger)'}}><FaClock size={20} /></div>
-                        <h3 className={styles.problemsTitle}>
+                <div className="bg-surface rounded-lg border border-border shadow-sm overflow-hidden flex flex-col flex-1">
+                    <div className="px-6 py-5 border-b border-border flex items-center gap-3">
+                        <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-red-500/10 text-danger"><FaClock size={16} /></div>
+                        <h3 className="m-0 color-textMain text-[1.1rem] font-bold flex items-center gap-3">
                             {t('dashboardTab.outdatedTitle')} 
-                            <span className={styles.badge} style={{background: 'var(--danger)'}}>{stats.outdatedDistricts?.length || 0}</span>
+                            <span className="bg-red-500/10 text-danger py-0.5 px-2.5 rounded-full text-[0.85rem] font-bold">{stats.outdatedDistricts?.length || 0}</span>
                         </h3>
                     </div>
                     
                     {(!stats.outdatedDistricts || stats.outdatedDistricts.length === 0) ? (
-                        <div className={styles.emptyState} style={{color: 'var(--success)', background: 'rgba(16, 185, 129, 0.05)'}}>
-                            <div className={styles.emptyIcon}>✨</div>
+                        <div className="p-16 text-center text-textMuted font-medium text-[1rem] flex flex-col items-center gap-4 flex-1 justify-center">
+                            <div className="w-16 h-16 bg-main rounded-full flex items-center justify-center text-[2rem]">✨</div>
                             <div>{t('dashboardTab.allFresh')}</div>
                         </div>
                     ) : (

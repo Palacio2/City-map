@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ManualSidebar from './ManualSidebar';
 import ManualEditor from './ManualEditor';
-import styles from './ManualTab.module.css';
 
 export default function ManualTab() {
     const [selectedCountry, setSelectedCountry] = useState(() => {
@@ -33,8 +32,8 @@ export default function ManualTab() {
     }, [selectedCity]);
 
     return (
-        <div className={styles.mainLayout}>
-            <div className={styles.leftPanel}>
+        <div className="flex flex-col lg:flex-row gap-6 items-stretch w-full h-[calc(100vh-140px)] min-h-[600px] overflow-visible lg:overflow-hidden pb-6">
+            <div className="w-full lg:w-[380px] shrink-0 flex flex-col h-auto lg:h-full max-h-[50vh] lg:max-h-none overflow-y-auto pr-2 scrollbar-thin">
                 <ManualSidebar 
                     selectedCountry={selectedCountry}
                     setSelectedCountry={setSelectedCountry}
@@ -45,7 +44,7 @@ export default function ManualTab() {
                 />
             </div>
 
-            <div className={styles.rightPanel}>
+            <div className="flex-1 min-w-0 h-auto lg:h-full overflow-y-auto pr-0 lg:pr-2 pb-6 scrollbar-thin relative">
                 <ManualEditor 
                     selectedCountry={selectedCountry}
                     selectedCity={selectedCity}

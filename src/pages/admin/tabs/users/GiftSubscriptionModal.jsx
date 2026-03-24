@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { FaGift } from 'react-icons/fa';
 import BaseModal from '../../ui/BaseModal';
-import uiStyles from '../../ui/AdminUI.module.css';
+import { Button } from '../../ui/Button';
+import { Input, FormGroup } from '../../ui/Input';
+import { Select } from '../../ui/Select';
 
 const GiftSubscriptionModal = ({ isOpen, onClose, selectedUser, onGrant, t }) => {
     const [planName, setPlanName] = useState('premium');
@@ -22,56 +24,57 @@ const GiftSubscriptionModal = ({ isOpen, onClose, selectedUser, onGrant, t }) =>
     };
 
     const modalTitle = (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <FaGift style={{ color: 'var(--success)' }} /> 
-            <span>{t('usersTab.giftModal.title')}</span>
+        <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/10 text-success border border-emerald-500/20 flex items-center justify-center">
+                <FaGift size={14} /> 
+            </div>
+            <span>{t('giftModal.title')}</span>
         </div>
     );
 
     const modalActions = (
         <>
-            <button className={`${uiStyles.btn} ${uiStyles.btnCancel}`} onClick={onClose} disabled={loading}>
-                {t('usersTab.giftModal.cancel')}
-            </button>
-            <button className={`${uiStyles.btn} ${uiStyles.btnSuccess}`} onClick={handleSubmit} disabled={loading || days < 1}>
-                {loading ? t('usersTab.giftModal.processing') : t('usersTab.giftModal.grantBtn')}
-            </button>
+            <Button variant="cancel" onClick={onClose} disabled={loading} className="!border-transparent !shadow-none">
+                {t('giftModal.cancel')}
+            </Button>
+            <Button variant="success" onClick={handleSubmit} disabled={loading || days < 1} className="!px-6">
+                {loading ? t('giftModal.granting') : <><FaGift /> {t('giftModal.grantBtn')}</>}
+            </Button>
         </>
     );
 
     return (
-        <BaseModal isOpen={isOpen} onClose={onClose} title={modalTitle} maxWidth="420px" actions={modalActions}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                <p className={uiStyles.modalSubtitle}>
-                    {t('usersTab.giftModal.grantAccessTo')} <strong style={{color: 'var(--success)'}}>{selectedUser.email}</strong>. 
-                    {' '}{t('usersTab.giftModal.bypassStripe')}
-                </p>
-                
-                <div className={uiStyles.formGroup}>
-                    <label className={uiStyles.label}>{t('usersTab.giftModal.planLabel')}</label>
-                    <div className={uiStyles.selectWrapper}>
-                        <select value={planName} onChange={e => setPlanName(e.target.value)} className={uiStyles.input}>
-                            <option value="premium">{t('usersTab.giftModal.planPremium')}</option>
-                            <option value="realtor">{t('usersTab.giftModal.planRealtor')}</option>
-                        </select>
-                    </div>
+        <BaseModal isOpen={isOpen} onClose={onClose} title={modalTitle} maxWidth="450px" actions={modalActions}>
+            <div className="flex flex-col gap-5 p-2 sm:p-4">
+                <div className="bg-main p-4 rounded-xl border border-border text-[0.95rem] text-textMain leading-relaxed font-medium">
+                    {t('giftModal.desc')} <strong className="text-success">{selectedUser.email}</strong>. 
+                    {' '}{t('giftModal.bypassStripe')}
                 </div>
+                
+                <FormGroup label={t('giftModal.planLabel')} className="mb-0">
+                    <Select 
+                        value={planName} 
+                        onChange={e => setPlanName(e.target.value)} 
+                    >
+                        <option value="premium">{t('plans.premium')}</option>
+                        <option value="realtor">{t('plans.realtor')}</option>
+                    </Select>
+                </FormGroup>
 
-                <div className={uiStyles.formGroup}>
-                    <label className={uiStyles.label}>{t('usersTab.giftModal.daysLabel')}</label>
-                    <input 
+                <FormGroup label={t('giftModal.daysLabel')} className="mb-0">
+                    <Input 
                         type="number" min="1" max="365" 
                         value={days} 
                         onChange={e => setDays(e.target.value)} 
-                        className={uiStyles.input} 
+                        className="!bg-main focus:!bg-surface !rounded-xl"
                     />
-                    <small style={{color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '4px'}}>
-                        {t('usersTab.giftModal.daysHint')}
+                    <small className="text-textMuted font-medium text-[0.8rem] mt-2 block pl-1">
+                        {t('giftModal.daysHint')}
                     </small>
-                </div>
+                </FormGroup>
             </div>
         </BaseModal>
     );
 };
- 
+
 export default React.memo(GiftSubscriptionModal);

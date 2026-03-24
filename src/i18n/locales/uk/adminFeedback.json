@@ -1,0 +1,38 @@
+{
+  "feedbackTab": {
+    "title": "Відгуки та повідомлення",
+    "loading": "Завантаження повідомлень...",
+    "emptyState": "Повідомлень поки немає. Схоже, користувачі задоволені!",
+    
+    "colDate": "Дата",
+    "colUser": "Користувач / Тип",
+    "colMsg": "Повідомлення",
+    "colStatus": "Статус",
+    "colAction": "Дії",
+
+    "typeCritical": "Критична помилка",
+    "typeData": "Помилка в даних",
+    "typeUi": "Проблема інтерфейсу",
+    "typeSuggestion": "Пропозиція",
+    "typeContact": "Зворотний зв'язок",
+    "typeOther": "Інше",
+
+    "screenshot": "Скріншот",
+    "deleteBtnTitle": "Видалити повідомлення",
+
+    "statusNew": "Нове",
+    "statusInProgress": "В роботі",
+    "statusResolved": "Вирішено",
+
+    "filterAll": "Всі",
+    "filterBugs": "Помилки",
+    "filterSuggestions": "Пропозиції",
+    "filterContacts": "Контакти",
+
+    "deleteTitle": "Видалення відгуку",
+    "confirmDelete": "Ви впевнені, що хочете видалити це повідомлення та пов'язаний з ним скріншот? Цю дію неможливо скасувати."
+  },
+  "common": {
+    "error": "Помилка"
+  }
+}

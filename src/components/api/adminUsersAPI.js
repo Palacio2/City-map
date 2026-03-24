@@ -58,5 +58,21 @@ export const adminUsersAPI = {
             throw new Error(errData.error || 'Finance operation failed');
         }
         return response.json();
+    },
+
+    updateAdminCities: async (userId, cities) => {
+        return await adminUsersAPI.updateUser(userId, 'update_cities', cities);
+    },
+
+    updateRole: async (userId, role) => {
+        return await adminUsersAPI.updateUser(userId, 'update_role', role);
+    },
+
+    deleteUser: async (userId) => {
+        return await adminUsersAPI.updateUser(userId, 'delete_user', null);
+    },
+
+    terminateUserSessions: async (userId) => {
+        return await adminUsersAPI.updateUser(userId, 'terminate_sessions', null);
     }
 };

@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap');
 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
 :root {
   --font-heading: 'Lora', serif;
   --font-body: 'Manrope', sans-serif;

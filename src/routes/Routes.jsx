@@ -4,6 +4,7 @@ import MainLayout from "@layout/MainLayout";
 
 import PrivateRoute from "./PrivateRoute";
 import ProtectedRoute from "./ProtectedRoute";
+import AdminRoute from "./AdminRoute";
 
 const DistrictMap = lazy(() => import("../components/districtMap/DistrictMap"));
 const Contacts = lazy(() => import("@pages/contacts/Contacts"));
@@ -49,7 +50,8 @@ export default function AppRoutes() {
           <Route path="register-success" element={<RegisterSuccess />} />
           <Route path="auth/callback" element={<AuthCallback />} />
 
-          <Route path="parser" element={<PrivateRoute><AdminPanel /></PrivateRoute>} />
+          {/* ВИПРАВЛЕНО: Використовуємо AdminRoute замість PrivateRoute */}
+          <Route path="parser" element={<AdminRoute><AdminPanel /></AdminRoute>} />
           
           <Route 
             path="favorites"
@@ -87,48 +89,13 @@ export default function AppRoutes() {
           </Route>
 
           <Route path="profile">
-            <Route
-              index
-              element={
-                <PrivateRoute>
-                  <Profile />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="billing-history"
-              element={
-                <PrivateRoute>
-                  <BillingHistoryPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="edit"
-              element={
-                <PrivateRoute>
-                  <ProfileEditPage />
-                </PrivateRoute>
-              }
-            />
-            <Route
-              path="password"
-              element={
-                <PrivateRoute>
-                  <PasswordChangePage />
-                </PrivateRoute>
-              }
-            />
+            <Route index element={<PrivateRoute><Profile /></PrivateRoute>} />
+            <Route path="billing-history" element={<PrivateRoute><BillingHistoryPage /></PrivateRoute>} />
+            <Route path="edit" element={<PrivateRoute><ProfileEditPage /></PrivateRoute>} />
+            <Route path="password" element={<PrivateRoute><PasswordChangePage /></PrivateRoute>} />
           </Route>
 
-          <Route
-            path="payment"
-            element={
-              <PrivateRoute>
-                <Payment />
-              </PrivateRoute>
-            }
-          />
+          <Route path="payment" element={<PrivateRoute><Payment /></PrivateRoute>} />
           <Route path="payment-success" element={<PaymentSuccess />} />
 
           <Route path="*" element={<NotFoundPage />} />

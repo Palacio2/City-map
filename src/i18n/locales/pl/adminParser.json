@@ -1,0 +1,64 @@
+{
+  "common": {
+    "warning": "Uwaga",
+    "success": "Sukces",
+    "error": "Błąd"
+  },
+  "districtsManager": {
+    "foundTitle": "Znaleziono w OSM",
+    "foundSubtitle": "Skanowanie przez Overpass API",
+    "scanBtn": "Skanuj OSM",
+    "searchFound": "Szukaj...",
+    "emptyFound": "Kliknij \"Skanuj\", aby znaleźć dzielnice",
+    "addAllBtn": "Dodaj wszystkie przefiltrowane",
+    "dbTitle": "Dzielnice w bazie",
+    "dbSubtitle": "Gotowe do parsowania",
+    "importGeojson": "Importuj GeoJSON",
+    "searchDb": "Szukaj...",
+    "selectAll": "Zaznacz wszystkie",
+    "emptyDb": "Baza jest pusta"
+  },
+  "metricsModal": {
+    "cancel": "Anuluj",
+    "start": "Rozpocznij",
+    "title": "Ustawienia Parsowania",
+    "dataSource": "Źródła danych",
+    "osm": "OpenStreetMap",
+    "waqi": "WAQI (Jakość powietrza)",
+    "otodom": "Otodom (Nieruchomości)",
+    "gus": "GUS (Statystyki)",
+    "selectMetrics": "Wybór metryk OSM",
+    "otodomCheck": "Sprawdzanie linków Otodom"
+  },
+  "osmMetrics": {},
+  "parserConsole": {
+    "title": "Konsola parsera",
+    "clear": "Wyczyść",
+    "download": "Pobierz",
+    "start": "Uruchom",
+    "empty": "Oczekiwanie na start... Logi pojawią się tutaj."
+  },
+  "parserSettings": {
+    "country": "Kraj",
+    "selectCountry": "Wybierz kraj...",
+    "city": "Miasto",
+    "selectCity": "Wybierz miasto...",
+    "region": "Region / Województwo",
+    "selectRegion": "Wybierz region...",
+    "manualRegion": "Wpisz region ręcznie..."
+  },
+  "parserTab": {
+    "confirmReset": "Czy na pewno chcesz zresetować wszystkie ustawienia parsera?",
+    "saveSuccess": "Dane zapisane pomyślnie",
+    "saveError": "Błąd zapisywania danych:",
+    "pageTitle": "Parser Dzielnic",
+    "pageSubtitle": "Zbieranie i analiza danych infrastrukturalnych",
+    "resetAll": "Zresetuj wszystko",
+    "step1": "Krok 1. Wybierz plik PBF",
+    "refresh": "Odśwież",
+    "emptyFolder": "Folder z mapami jest pusty",
+    "step2": "Krok 2. Ustawienia geograficzne",
+    "step3": "Krok 3. Zarządzanie dzielnicami",
+    "step5": "Krok 5. Wyniki parsowania"
+  }
+}

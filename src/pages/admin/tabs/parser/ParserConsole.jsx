@@ -1,112 +1,96 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import styles from './ParserConsole.module.css';
-import uiStyles from '../../ui/AdminUI.module.css';
-import { FiTrash2, FiDownload, FiPlay, FiLoader } from 'react-icons/fi';
+import { Button } from '../../ui/Button';
 import { useTranslation } from 'react-i18next';
+import { FaPlay, FaDownload, FaTrashAlt, FaTerminal } from 'react-icons/fa';
 
 const ParserConsole = ({ logs = [], loading, onClear, onDownload, onStartClick, isStartDisabled, selectedCount }) => {
-    const { t } = useTranslation('admin');
-    const consoleEndRef = useRef(null);
+    const { t } = useTranslation('adminParser');
+    const consoleRef = useRef(null);
 
-    // ОПТИМІЗАЦІЯ: Мемоізація сортування логів
-    const sortedLogs = useMemo(() => {
-        return [...logs].sort((a, b) => {
-            if (!a.time || !b.time) return 0;
-            return a.time.localeCompare(b.time);
-        });
+    const displayLogs = useMemo(() => {
+        return logs.slice(0, 500);
     }, [logs]);
 
     useEffect(() => {
-        if (consoleEndRef.current) {
-            consoleEndRef.current.scrollIntoView({ behavior: 'smooth' });
+        if (consoleRef.current) {
+            consoleRef.current.scrollTop = 0;
         }
-    }, [sortedLogs]);
-
-    const renderLogMessage = (rawMsg) => {
-        if (!rawMsg) return { header: '', message: '' };
-
-        const lastBracketIndex = rawMsg.lastIndexOf(']');
-        
-        if (lastBracketIndex !== -1) {
-            const header = rawMsg.substring(0, lastBracketIndex + 1);
-            const body = rawMsg.substring(lastBracketIndex + 1).trim();
-
-            let translatedBody = body;
-            // Проста перевірка на локалізацію логів, якщо вони йдуть в форматі "logs.something"
-            if (body.startsWith('logs.')) {
-                const [key, ...params] = body.split('|');
-                const paramObj = {};
-                params.forEach(p => {
-                    const [k, v] = p.split(':');
-                    if (k && v) paramObj[k] = v;
-                });
-                translatedBody = t(key, paramObj);
-            }
-
-            return { header, message: translatedBody };
-        }
-        
-        return { header: '', message: rawMsg };
-    };
+    }, [displayLogs]);
 
     return (
-        <div className={styles.consoleSection}>
-            <div className={styles.consoleTopRow}>
-                <div className={styles.headerLeft}>
-                    <div className={styles.stepHeader}>
-                        <FiPlay className={styles.stepIcon} style={{ color: 'var(--primary)' }} />
-                        <h3 className={styles.consoleTitle}>{t('parserConsole.title', {defaultValue: 'Parser Console'})}</h3>
-                    </div>
-                    {loading && (
-                        <div className={styles.liveIndicator}>
-                            <FiLoader className={styles.spinner} />
-                            <span>{t('parserConsole.parsing', {defaultValue: 'Parsing in progress...'})}</span>
-                        </div>
-                    )}
+        <div className="bg-[#0f172a] rounded-xl border border-[#1e293b] shadow-xl overflow-hidden flex flex-col h-[450px]">
+            <div className="p-4 bg-[#1e293b] border-b border-[#334155] flex justify-between items-center shrink-0">
+                <div className="flex items-center gap-3">
+                    <span className="bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 w-8 h-8 rounded-lg flex items-center justify-center font-extrabold text-[1rem]">4</span>
+                    <h3 className="m-0 text-[1.1rem] text-slate-200 font-bold tracking-tight flex items-center gap-2">
+                        <FaTerminal className="opacity-70" /> {t('parserConsole.title', { defaultValue: 'Консоль парсера' })}
+                    </h3>
                 </div>
                 
-                <div className={styles.consoleActions}>
-                    <button onClick={onClear} className={`${uiStyles.btn} ${styles.actionBtn}`} title="Clear Logs">
-                        <FiTrash2 /> {t('parserConsole.clear')}
-                    </button>
-                    <button onClick={onDownload} className={`${uiStyles.btn} ${styles.actionBtn}`} title="Download Logs">
-                        <FiDownload /> {t('parserConsole.download')}
+                <div className="flex items-center gap-3">
+                    <button 
+                        onClick={onClear} 
+                        disabled={logs.length === 0}
+                        className="bg-transparent text-slate-400 hover:text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors border-none cursor-pointer p-2 flex items-center gap-2 font-medium text-[0.85rem]"
+                    >
+                        <FaTrashAlt /> <span className="hidden sm:inline">{t('parserConsole.clear', { defaultValue: 'Очистити' })}</span>
                     </button>
                     <button 
-                        onClick={onStartClick} 
-                        disabled={isStartDisabled || loading} 
-                        className={`${uiStyles.btn} ${uiStyles.btnPrimary} ${styles.startBtn}`}
+                        onClick={onDownload} 
+                        disabled={logs.length === 0}
+                        className="bg-transparent text-slate-400 hover:text-slate-200 disabled:opacity-30 disabled:cursor-not-allowed transition-colors border-none cursor-pointer p-2 flex items-center gap-2 font-medium text-[0.85rem]"
                     >
-                        {loading ? <FiLoader className={styles.spinner}/> : <FiPlay />}
-                        {t('parserConsole.startParsing')} ({selectedCount})
+                        <FaDownload /> <span className="hidden sm:inline">{t('parserConsole.download', { defaultValue: 'Завантажити' })}</span>
                     </button>
+                    
+                    <div className="w-[1px] h-6 bg-[#334155] mx-1"></div>
+
+                    <Button 
+                        variant="success" 
+                        onClick={onStartClick} 
+                        disabled={isStartDisabled}
+                        className="!py-2 !px-5 !bg-emerald-600 hover:!bg-emerald-500 !text-white !border-none"
+                    >
+                        <FaPlay /> {t('parserConsole.start', { defaultValue: 'Запустити' })} {selectedCount > 0 ? `(${selectedCount})` : ''}
+                    </Button>
                 </div>
             </div>
-            
-            <div className={styles.customConsole}>
-                {sortedLogs.length === 0 ? (
-                    <div className={styles.placeholder}>{t('parserConsole.readyPlaceholder')}</div>
-                ) : (
-                    <div className={styles.logContainer}>
-                        {sortedLogs.map((log, index) => {
-                            const { header, message } = renderLogMessage(log.msg);
-                            const isError = log.msg.includes('[ERROR]');
-                            const isSuccess = log.msg.includes('[SUCCESS]');
-                            const isWarning = log.msg.includes('[WARNING]');
 
-                            return (
-                                <div key={index} className={`${styles.logLine} ${
-                                    isError ? styles.logError : 
-                                    isSuccess ? styles.logSuccess : 
-                                    isWarning ? styles.logWarning : ''
-                                }`}>
-                                    <span className={styles.logTime}>[{log.time}]</span>
-                                    <span className={styles.logHeader}>{header}</span>
-                                    <span className={styles.logBody}>{message}</span>
-                                </div>
-                            );
-                        })}
-                        <div ref={consoleEndRef} />
+            <div 
+                ref={consoleRef}
+                className="flex-1 p-5 overflow-y-auto font-mono text-[0.85rem] leading-relaxed scrollbar-thin bg-[#0f172a]"
+            >
+                {loading && (
+                    <div className="flex items-center gap-3 text-emerald-400 mb-4 animate-pulse font-bold">
+                        <div className="w-4 h-4 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin"></div>
+                        Парсинг в процесі...
+                    </div>
+                )}
+                
+                {displayLogs.length === 0 ? (
+                    <div className="text-slate-500 italic h-full flex items-center justify-center opacity-70">
+                        {t('parserConsole.empty', { defaultValue: 'Очікування запуску... Логи з\'являться тут.' })}
+                    </div>
+                ) : (
+                    <div className="flex flex-col gap-1">
+                        {displayLogs.map((log) => (
+                            <div key={log.id} className="flex gap-4 hover:bg-[#1e293b]/50 px-2 py-0.5 rounded transition-colors break-words">
+                                {log.time && <span className="text-slate-500 shrink-0 select-none">[{log.time}]</span>}
+                                <span className={
+                                    log.type === 'error' ? 'text-red-400 font-bold' : 
+                                    log.type === 'warning' ? 'text-amber-400' : 
+                                    log.msg.includes('Успішно') || log.msg.includes('Success') ? 'text-emerald-400 font-semibold' :
+                                    'text-slate-300'
+                                }>
+                                    {log.msg}
+                                </span>
+                            </div>
+                        ))}
+                        {logs.length > 500 && (
+                            <div className="text-slate-500 italic mt-4 text-center">
+                                Показано останні 500 рядків. Завантажте файл, щоб побачити повний лог.
+                            </div>
+                        )}
                     </div>
                 )}
             </div>

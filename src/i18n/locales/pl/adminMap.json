@@ -1,0 +1,36 @@
+{
+  "interactiveMap": {
+    "parserTag": "Parser",
+    "manualTag": "Ręcznie",
+    "dragToDelete": "Przeciągnij, aby przenieść, kliknij, aby usunąć",
+    "clickToDelete": "Kliknij, aby usunąć",
+    "adding": "Dodawanie:",
+    "escCancel": "ESC aby anulować"
+  },
+  "mapEditor": {
+    "title": "Edytor Mapy:",
+    "googleMaps": "Google Maps",
+    "osm": "OSM",
+    "cancel": "Anuluj",
+    "save": "Zapisz",
+    "helpText": "Wybierz kategorię i kliknij na mapę, aby dodać nowy znacznik."
+  },
+  "mapTab": {
+    "title": "Mapa Globalna",
+    "subtitle": "Przegląd infrastruktury miejskiej",
+    "selectCountry": "Wybierz kraj...",
+    "noCitiesAvailable": "Brak dostępnych miast",
+    "selectCity": "Wybierz miasto...",
+    "reset": "Resetuj",
+    "filtersTitle": "Filtry Znaczników",
+    "showAll": "Pokaż wszystkie",
+    "hideAll": "Ukryj wszystkie",
+    "placeholder": "Wybierz kraj i miasto, aby wyświetlić mapę",
+    "loading": "Ładowanie danych mapy...",
+    "noData": "Brak danych geolokalizacyjnych dla tego miasta",
+    "published": "Opublikowano",
+    "hidden": "Ukryto",
+    "fromParser": "Z parsera",
+    "manualAdd": "Dodane ręcznie"
+  }
+}

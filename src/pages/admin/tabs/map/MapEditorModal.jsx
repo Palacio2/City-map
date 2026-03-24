@@ -1,255 +1,211 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import InteractiveMap from './InteractiveMap';
-import { METRIC_GROUPS } from '../../config/metricsConfig';
-import { getLabelForKey } from './mapIcons';
-import { FaEye, FaEyeSlash, FaMapMarkedAlt, FaGlobeEurope, FaTimes, FaSave } from 'react-icons/fa';
-import L from 'leaflet';
-import styles from './MapEditorModal.module.css';
-import uiStyles from '../../ui/AdminUI.module.css';
-import BaseModal from '../../ui/BaseModal';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
+import { MapContainer, TileLayer, GeoJSON, Marker, Tooltip } from 'react-leaflet';
+import * as turf from '@turf/turf';
+import 'leaflet/dist/leaflet.css';
 import { useTranslation } from 'react-i18next';
-import { api } from '../../../../services/api';
-
-const generateId = () => Math.random().toString(36).substr(2, 9);
+import { useDynamicFields } from '../../hooks/useDynamicFields';
+import { FaTimes, FaSave, FaTrash } from 'react-icons/fa';
+import { Button } from '../../ui/Button';
+import { normalizePoiData, MapFitBounds, createEmojiIcon } from '../../utils/mapHelpers';
 
 export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData }) {
-    const { t } = useTranslation('admin');
-    const [activeMetric, setActiveMetric] = useState(null);
-    const [activePois, setActivePois] = useState([]);
-    const [visibleTypes, setVisibleTypes] = useState(new Set());
-    const [mapCenter, setMapCenter] = useState(null);
-    const [districtGeojson, setDistrictGeojson] = useState(null);
+    const { t } = useTranslation('adminManual');
+    const { metricGroups, fieldsConfig } = useDynamicFields();
+    
+    const [activeFilters, setActiveFilters] = useState({});
+    const [localPois, setLocalPois] = useState([]);
+    const [selectedPoiIndex, setSelectedPoiIndex] = useState(null);
+    const [isAddingMode, setIsAddingMode] = useState(false);
+    const [newPoiType, setNewPoiType] = useState('');
+    const mapRef = useRef(null);
+
+    const getFieldByPoiType = (type) => {
+        const cleanType = type.replace('_count', '');
+        return fieldsConfig?.find(f => f.key === cleanType || f.key === `${cleanType}_count`);
+    };
 
     useEffect(() => {
-        const handleKeyDown = (e) => {
-            if (e.key === 'Escape' && activeMetric !== null) {
-                e.stopPropagation();
-                e.stopImmediatePropagation();
-                setActiveMetric(null);
-            }
-        };
         if (isOpen) {
-            window.addEventListener('keydown', handleKeyDown, { capture: true });
-        }
-        return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
-    }, [isOpen, activeMetric]);
-
-    useEffect(() => {
-        if (isOpen && rowData) {
-            const initialPois = rowData.poi_data || rowData.parsed_pois || [];
+            const pois = normalizePoiData(rowData?.poi_data);
+            setLocalPois(pois);
             
-            const poisWithIds = initialPois.map(p => {
-                if (Array.isArray(p)) {
-                    const typeStr = p[2] || 'default';
-                    const normalizedType = typeStr.endsWith('_count') ? typeStr : `${typeStr}_count`;
-                    return { id: generateId(), coord: [p[1], p[0]], type: normalizedType, source: p[3] || 'parser' };
+            const initialFilters = {};
+            pois.forEach(p => {
+                const type = p[2];
+                if (type) {
+                    initialFilters[type] = true;
+                    initialFilters[`${type}_count`] = true;
+                    initialFilters[type.replace('_count', '')] = true;
                 }
-                const typeStr = p.type || 'default';
-                const normalizedType = typeStr.endsWith('_count') ? typeStr : `${typeStr}_count`;
-                return { ...p, id: p.id || generateId(), type: normalizedType, source: p.source || 'parser' };
             });
+
+            if (fieldsConfig) {
+                fieldsConfig.forEach(f => {
+                    if (initialFilters[f.key] === undefined) initialFilters[f.key] = true;
+                });
+            }
             
-            setActivePois(poisWithIds);
-            setActiveMetric(null);
-            setVisibleTypes(new Set(poisWithIds.map(p => p.type)));
-
-            const setFallbackCenter = () => {
-                if (poisWithIds.length > 0) {
-                    let sumLat = 0, sumLng = 0;
-                    poisWithIds.forEach(p => {
-                        sumLat += p.coord[0];
-                        sumLng += p.coord[1];
-                    });
-                    setMapCenter({
-                        lat: sumLat / poisWithIds.length,
-                        lng: sumLng / poisWithIds.length
-                    });
-                } else {
-                    setMapCenter({ lat: 52.23, lng: 21.01 });
-                }
-            };
-
-            const fetchGeoData = async () => {
-                if (rowData.geojson) {
-                    setDistrictGeojson(rowData.geojson);
-                    try {
-                        const center = L.geoJSON(rowData.geojson).getBounds().getCenter();
-                        setMapCenter(center);
-                    } catch {
-                        setFallbackCenter();
-                    }
-                } else if (rowData.district_id) {
-                    try {
-                        const data = await api.geo.getDistrictData(rowData.district_id);
-                        if (data && data.geojson) {
-                            setDistrictGeojson(data.geojson);
-                            const center = L.geoJSON(data.geojson).getBounds().getCenter();
-                            setMapCenter(center);
-                        } else {
-                            setFallbackCenter();
-                        }
-                    } catch {
-                        setFallbackCenter();
-                    }
-                } else {
-                    setFallbackCenter();
-                }
-            };
-
-            fetchGeoData();
+            setActiveFilters(initialFilters);
+            setIsAddingMode(false);
+            setNewPoiType('');
+            setSelectedPoiIndex(null);
         }
-    }, [isOpen, rowData]);
+    }, [isOpen, rowData, fieldsConfig]);
 
-    const dynamicCounts = useMemo(() => {
-        const counts = {};
-        activePois.forEach(poi => { counts[poi.type] = (counts[poi.type] || 0) + 1; });
-        return counts;
-    }, [activePois]);
-
-    const handleAddPoi = (coord) => {
-        if (!activeMetric) return;
-        setActivePois(prev => [...prev, { id: generateId(), coord, type: activeMetric, source: 'manual' }]);
-        setVisibleTypes(prev => new Set(prev).add(activeMetric));
+    const handleMapClick = (e) => {
+        if (!isAddingMode || !newPoiType) return;
+        const { lat, lng } = e.latlng;
+        
+        if (rowData?.geojson) {
+            const pt = turf.point([lng, lat]);
+            const poly = rowData.geojson.type === 'Feature' ? rowData.geojson : turf.feature(rowData.geojson);
+            if (!turf.booleanPointInPolygon(pt, poly)) {
+                alert("Точка знаходиться за межами району!");
+                return;
+            }
+        }
+        
+        const typeToSave = newPoiType.replace('_count', '');
+        setLocalPois(prev => [...prev, [lat, lng, typeToSave, 'manual']]);
+        setActiveFilters(prev => ({...prev, [typeToSave]: true, [`${typeToSave}_count`]: true}));
+        setIsAddingMode(false);
+        setNewPoiType('');
     };
 
-    const handleRemovePoi = (poiId) => {
-        setActivePois(prev => prev.filter(p => p.id !== poiId));
+    const handleDeletePoi = (index) => {
+        setLocalPois(prev => prev.filter((_, i) => i !== index));
+        setSelectedPoiIndex(null);
     };
-
-    const handleUpdatePoi = (poiId, newCoord) => {
-        setActivePois(prev => prev.map(p => p.id === poiId ? { ...p, coord: newCoord } : p));
-    };
-
-    const toggleVisibility = (e, key) => {
-        e.stopPropagation();
-        setVisibleTypes(prev => {
-            const next = new Set(prev);
-            if (next.has(key)) next.delete(key);
-            else next.add(key);
-            return next;
-        });
-    };
-
-    const showAll = () => {
-        const allKeys = METRIC_GROUPS.flatMap(g => g.fields).filter(f => f.type === 'number' && f.key.includes('_count')).map(f => f.key);
-        setVisibleTypes(new Set(allKeys));
-    };
-
-    const hideAll = () => setVisibleTypes(new Set());
 
     const handleSave = () => {
-        const compressedPois = activePois.map(p => [
-            parseFloat(p.coord[1].toFixed(5)), 
-            parseFloat(p.coord[0].toFixed(5)), 
-            p.type.replace('_count', ''),
-            p.source === 'manual' ? 'manual' : 'parser'
-        ]);
-        onSaveMapData(compressedPois, dynamicCounts);
+        const updatedCounts = {};
+        if (fieldsConfig) {
+            fieldsConfig.forEach(f => {
+                const shortKey = f.key.replace('_count', '');
+                const count = localPois.filter(p => p[2] === shortKey || p[2] === f.key).length;
+                updatedCounts[f.key] = count;
+            });
+        }
+        onSaveMapData(localPois, updatedCounts);
         onClose();
     };
 
-    if (!isOpen || !rowData) return null;
-    const countableMetrics = METRIC_GROUPS.flatMap(g => g.fields).filter(f => f.type === 'number' && f.key.includes('_count'));
+    const filteredPois = useMemo(() => {
+        return localPois.map((poi, idx) => ({ ...poi, originalIndex: idx })).filter(poi => {
+            const type = poi[2];
+            return activeFilters[type] !== false;
+        });
+    }, [localPois, activeFilters]);
 
-    let googleUrl = mapCenter ? `https://www.google.com/maps/@$$$$${mapCenter.lat},${mapCenter.lng},16z` : '#';
-    let osmUrl = mapCenter ? `https://www.openstreetmap.org/#map=16/${mapCenter.lat}/${mapCenter.lng}` : '#';
+    if (!isOpen) return null;
 
-    if (activeMetric && mapCenter) {
-        const query = encodeURIComponent(getLabelForKey(activeMetric));
-        googleUrl = `https://www.google.com/maps/search/$$$$${query}/@${mapCenter.lat},${mapCenter.lng},16z`;
-        osmUrl = `https://www.openstreetmap.org/search?query=${query}#map=16/${mapCenter.lat}/${mapCenter.lng}`;
-    }
-
-    const modalTitle = (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span>🗺️ {t('mapEditor.title')}</span>
-            <span style={{ color: 'var(--primary)', fontWeight: '800' }}>{rowData.district_name}</span>
-        </div>
-    );
-
-    const modalActions = (
-        <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-            <div style={{ display: 'flex', gap: '12px' }}>
-                {mapCenter && (
-                    <>
-                        <a href={googleUrl} target="_blank" rel="noreferrer" className={styles.externalBtnGoogle}>
-                            <FaMapMarkedAlt /> {t('mapEditor.googleMaps')}
-                        </a>
-                        <a href={osmUrl} target="_blank" rel="noreferrer" className={styles.externalBtnOsm}>
-                            <FaGlobeEurope /> {t('mapEditor.osm')}
-                        </a>
-                    </>
-                )}
-            </div>
-            <div style={{ display: 'flex', gap: '12px' }}>
-                <button onClick={onClose} className={`${uiStyles.btn} ${uiStyles.btnCancel}`}>
-                    <FaTimes /> {t('mapEditor.cancel')}
-                </button>
-                <button onClick={handleSave} className={`${uiStyles.btn} ${uiStyles.btnPrimary}`}>
-                    <FaSave /> {t('mapEditor.save')}
-                </button>
-            </div>
-        </div>
-    );
+    const poiFields = (fieldsConfig || []).filter(f => f.is_osm || f.data_type === 'number');
 
     return (
-        <BaseModal 
-            isOpen={isOpen} 
-            onClose={onClose} 
-            title={modalTitle} 
-            maxWidth="1200px" 
-            actions={modalActions}
-            bodyStyle={{ padding: 0, display: 'flex', height: '75vh', overflow: 'hidden' }}
-            disableEscClose={true}
-        >
-            <div className={styles.sidebar}>
-                <div className={styles.sidebarHelp}>
-                    <div className={styles.helpText}>{t('mapEditor.helpText')}</div>
-                    <div className={styles.visibilityControls}>
-                        <button onClick={showAll} className={styles.visBtn}>{t('mapTab.showAll')}</button>
-                        <button onClick={hideAll} className={styles.visBtn}>{t('mapTab.hideAll')}</button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[9999] flex items-center justify-center p-4">
+            <div className="bg-surface w-full max-w-7xl h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden border border-border">
+                <div className="flex justify-between items-center p-4 px-6 border-b border-border bg-main">
+                    <h2 className="text-xl font-bold text-textMain m-0">GIS Редактор: {rowData?.name}</h2>
+                    <div className="flex items-center gap-4">
+                        <Button variant="success" onClick={handleSave} className="!py-2"><FaSave /> Зберегти</Button>
+                        <button onClick={onClose} className="p-2 text-textMuted hover:text-danger bg-surface rounded-md border border-border"><FaTimes size={18} /></button>
                     </div>
                 </div>
-                <div className={styles.metricsList}>
-                    {countableMetrics.map(m => {
-                        const count = dynamicCounts[m.key] || 0;
-                        const isActive = activeMetric === m.key;
-                        const isVisible = visibleTypes.has(m.key);
-                        
-                        return (
-                            <div 
-                                key={m.key} 
-                                className={`${styles.metricItem} ${isActive ? styles.metricItemActive : styles.metricItemInactive} ${!isVisible ? styles.metricItemHidden : ''}`}
-                                onClick={() => setActiveMetric(isActive ? null : m.key)}
-                            >
-                                <span className={styles.metricLabel}>{m.label}</span>
-                                <div className={styles.metricControls}>
-                                    <span className={`${styles.metricCount} ${isActive ? styles.countActive : styles.countInactive}`}>
-                                        {count}
-                                    </span>
-                                    <button 
-                                        className={`${styles.eyeBtn} ${isVisible ? styles.eyeBtnVisible : styles.eyeBtnHidden}`}
-                                        onClick={(e) => toggleVisibility(e, m.key)}
-                                    >
-                                        {isVisible ? <FaEye /> : <FaEyeSlash />}
-                                    </button>
-                                </div>
+
+                <div className="flex flex-1 overflow-hidden relative">
+                    <div className="w-[320px] bg-surface border-r border-border flex flex-col h-full z-10 overflow-y-auto">
+                        <div className="p-4 border-b border-border bg-main sticky top-0 z-20">
+                            <h3 className="font-bold text-[0.9rem] mb-2 text-textMain">Додати об'єкт</h3>
+                            <div className="flex flex-col gap-2">
+                                <select value={newPoiType} onChange={e => setNewPoiType(e.target.value)} className="w-full p-2 bg-surface border border-border rounded-md text-[0.85rem]">
+                                    <option value="">Оберіть тип...</option>
+                                    {poiFields.map(f => <option key={f.key} value={f.key}>{f.label}</option>)}
+                                </select>
+                                <Button disabled={!newPoiType} onClick={() => setIsAddingMode(!isAddingMode)} className={`w-full !py-2 ${isAddingMode ? '!bg-danger' : '!bg-primary'}`}>
+                                    {isAddingMode ? 'Скасувати' : 'Вказати на карті'}
+                                </Button>
                             </div>
-                        );
-                    })}
+                        </div>
+
+                        <div className="p-4 flex flex-col gap-4">
+                            <h3 className="font-bold text-[0.9rem] text-textMain">Легенда та фільтри</h3>
+                            {(metricGroups || []).map(group => {
+                                const groupPois = group.fields.map(f => {
+                                    const shortKey = f.key.replace('_count', '');
+                                    const count = localPois.filter(p => p[2] === shortKey || p[2] === f.key).length;
+                                    return { ...f, count };
+                                }).filter(f => f.count > 0);
+
+                                if (groupPois.length === 0) return null;
+
+                                return (
+                                    <div key={group.id} className="flex flex-col gap-1">
+                                        <div className="text-[0.75rem] font-bold text-textMuted uppercase mb-1">{group.title}</div>
+                                        {groupPois.map(field => (
+                                            <button 
+                                                key={field.key} 
+                                                onClick={() => {
+                                                    const val = !activeFilters[field.key];
+                                                    setActiveFilters(prev => ({
+                                                        ...prev, [field.key]: val, [field.key.replace('_count', '')]: val
+                                                    }));
+                                                }}
+                                                className={`flex items-center justify-between p-2 rounded-lg border text-[0.8rem] ${activeFilters[field.key] !== false ? 'bg-primary/5 border-primary/20' : 'bg-main border-transparent opacity-50'}`}
+                                            >
+                                                <span className="flex items-center gap-2">{field.icon} {field.label}</span>
+                                                <span className="font-bold">{field.count}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+
+                    <div className="flex-1 relative z-1">
+                        <MapContainer center={[52.23, 21.01]} zoom={13} className="w-full h-full" ref={mapRef}>
+                            <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
+                            {rowData?.geojson && (
+                                <>
+                                    <GeoJSON data={rowData.geojson} style={{ color: '#3b82f6', weight: 2, fillOpacity: 0.05 }} />
+                                    <MapFitBounds geojson={rowData.geojson} />
+                                </>
+                            )}
+                            
+                            {filteredPois.map((poi) => (
+                                <Marker 
+                                    key={poi.originalIndex} 
+                                    position={[poi[0], poi[1]]} 
+                                    icon={createEmojiIcon(poi[2], poi[3], fieldsConfig, 32)}
+                                    eventHandlers={{ click: () => setSelectedPoiIndex(poi.originalIndex) }}
+                                >
+                                    <Tooltip direction="top" offset={[0, -16]}>
+                                        <div className="font-bold">{getFieldByPoiType(poi[2])?.label || poi[2]}</div>
+                                        <div className="text-[0.7rem] opacity-70">Джерело: {poi[3] === 'manual' ? 'Ручне' : 'Парсер'}</div>
+                                    </Tooltip>
+                                </Marker>
+                            ))}
+
+                            {isAddingMode && <div className="absolute inset-0 z-[400] cursor-crosshair" onClick={(e) => {
+                                const map = mapRef.current;
+                                if(map) handleMapClick({latlng: map.mouseEventToLatLng(e)});
+                            }} />}
+                        </MapContainer>
+
+                        {selectedPoiIndex !== null && (
+                            <div className="absolute top-4 right-4 z-[1000] bg-surface p-4 rounded-lg shadow-xl border border-border min-w-[200px] animate-[fadeIn_0.2s_ease-out]">
+                                <div className="flex justify-between items-center mb-3">
+                                    <span className="font-bold text-textMain">{getFieldByPoiType(localPois[selectedPoiIndex][2])?.label}</span>
+                                    <button onClick={() => setSelectedPoiIndex(null)} className="text-textMuted hover:text-danger transition-colors"><FaTimes/></button>
+                                </div>
+                                <Button variant="danger" onClick={() => handleDeletePoi(selectedPoiIndex)} className="w-full !py-2 text-[0.85rem] flex items-center justify-center gap-2">
+                                    <FaTrash size={12}/> Видалити точку
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
-
-            <div className={styles.mapContainer}>
-                <InteractiveMap 
-                    geojson={districtGeojson}
-                    pois={activePois.filter(p => visibleTypes.has(p.type))}
-                    activeMetric={activeMetric}
-                    onAddPoi={handleAddPoi}
-                    onRemovePoi={handleRemovePoi}
-                    onUpdatePoi={handleUpdatePoi}
-                />
-            </div>
-        </BaseModal>
+        </div>
     );
 }

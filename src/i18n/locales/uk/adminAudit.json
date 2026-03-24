@@ -1,0 +1,29 @@
+{
+  "auditLogsTab": {
+    "title": "Логи аудиту",
+    "subtitle": "Журнал усіх критичних дій адміністраторів у системі",
+    "loading": "Завантаження логів...",
+    "refresh": "Оновити дані",
+    "empty": "Історія дій порожня",
+    "systemUser": "Система",
+    
+    "colTime": "Час",
+    "colAdmin": "Адміністратор",
+    "colAction": "Дія",
+    "colTarget": "Таблиця",
+    "colDetails": "Деталі зміни",
+
+    "assignedItems": "Призначено об'єктів: {{count}}",
+    "planDetails": "План: {{plan}} на {{days}} дн.",
+    "codeDetails": "Промокод: {{code}} (-{{discount}}%)",
+    "complexData": "[Складні дані]",
+
+    "badges": {
+      "create": "СТВОРЕННЯ",
+      "grant": "НАДАННЯ ПРАВ",
+      "delete": "ВИДАЛЕННЯ",
+      "remove": "ВИЛУЧЕННЯ",
+      "update": "ОНОВЛЕННЯ"
+    }
+  }
+}

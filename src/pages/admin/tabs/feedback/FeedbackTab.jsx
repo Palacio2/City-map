@@ -1,106 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@supabaseClient';
+import React, { useMemo } from 'react';
 import { FaBug, FaLightbulb, FaEnvelope, FaImage, FaExternalLinkAlt, FaExclamationTriangle, FaTrash } from 'react-icons/fa';
-import styles from './FeedbackTab.module.css';
 import { useTranslation } from 'react-i18next';
 import DataTable from '../../ui/DataTable';
+import { Badge } from '../../ui/Badge';
+import { Select } from '../../ui/Select';
 import { useAdmin } from '../../hooks/AdminContext';
+import { useFeedback } from './useFeedback';
 
 export default function FeedbackTab() {
-    const { t } = useTranslation('admin');
+    const { t } = useTranslation('adminFeedback');
     const { currentAdmin } = useAdmin();
     const isSuperAdmin = currentAdmin?.role === 'super_admin';
 
-    const [messages, setMessages] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [filter, setFilter] = useState('all');
-
-    useEffect(() => {
-        fetchMessages();
-    }, []);
-
-    const fetchMessages = async () => {
-        setLoading(true);
-        try {
-            const { data, error } = await supabase
-                .from('contacts_messages')
-                .select('*')
-                .order('created_at', { ascending: false });
-
-            if (error) throw error;
-            setMessages(data || []);
-        } catch {
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handleDelete = async (id, screenshotUrl) => {
-        if (!isSuperAdmin) return;
-        if (!window.confirm(t('feedbackTab.confirmDelete'))) return;
-        
-        try {
-            if (screenshotUrl) {
-                const urlParts = screenshotUrl.split('/');
-                const fileName = urlParts[urlParts.length - 1];
-                if (fileName) await supabase.storage.from('feedback_images').remove([fileName]);
-            }
-
-            const { error: dbError } = await supabase.from('contacts_messages').delete().eq('id', id);
-            if (dbError) throw dbError;
-            
-            setMessages(messages.filter(msg => msg.id !== id));
-        } catch (error) {
-            alert(t('feedbackTab.deleteError') + error.message);
-        }
-    };
-
-    const handleStatusChange = async (id, newStatus) => {
-        try {
-            const { error } = await supabase
-                .from('contacts_messages')
-                .update({ status: newStatus })
-                .eq('id', id);
-                
-            if (error) throw error;
-            
-            setMessages(messages.map(msg => msg.id === id ? { ...msg, status: newStatus } : msg));
-        } catch (error) {
-            alert(t('feedbackTab.statusError') + error.message);
-        }
-    };
+    const { loading, filter, setFilter, filteredMessages, handleDelete, handleStatusChange } = useFeedback(isSuperAdmin);
 
     const getTypeConfig = (type) => {
         switch (type) {
-            case 'critical': return { icon: <FaExclamationTriangle />, label: t('feedbackTab.typeCritical'), class: styles.typeCritical };
-            case 'data_error': return { icon: <FaBug />, label: t('feedbackTab.typeData'), class: styles.typeData };
-            case 'ui_bug': return { icon: <FaBug />, label: t('feedbackTab.typeUi'), class: styles.typeUi };
-            case 'suggestion': return { icon: <FaLightbulb />, label: t('feedbackTab.typeSuggestion'), class: styles.typeSuggestion };
-            case 'contact': return { icon: <FaEnvelope />, label: t('feedbackTab.typeContact'), class: styles.typeContact };
-            default: return { icon: <FaEnvelope />, label: type || t('feedbackTab.typeOther'), class: styles.typeContact };
+            case 'critical': return { icon: FaExclamationTriangle, label: t('feedbackTab.typeCritical'), variant: 'danger' };
+            case 'data_error': return { icon: FaBug, label: t('feedbackTab.typeData'), variant: 'warning' };
+            case 'ui_bug': return { icon: FaBug, label: t('feedbackTab.typeUi'), variant: 'purple' };
+            case 'suggestion': return { icon: FaLightbulb, label: t('feedbackTab.typeSuggestion'), variant: 'success' };
+            case 'contact': return { icon: FaEnvelope, label: t('feedbackTab.typeContact'), variant: 'default' };
+            default: return { icon: FaEnvelope, label: type || t('feedbackTab.typeOther'), variant: 'default' };
         }
     };
 
-    const filteredMessages = messages.filter(msg => {
-        if (filter === 'all') return true;
-        if (filter === 'contact') return msg.type === 'contact';
-        if (filter === 'bug') return ['critical', 'data_error', 'ui_bug'].includes(msg.type);
-        if (filter === 'suggestion') return msg.type === 'suggestion';
-        return true;
-    });
-
-    const columns = [
+    const columns = useMemo(() => [
         {
             header: t('feedbackTab.colDate'),
             render: (msg) => (
-                <>
-                    <div className={styles.dateMain}>
+                <div className="flex flex-col gap-1">
+                    <span className="font-semibold text-[0.9rem] text-textMain whitespace-nowrap">
                         {new Date(msg.created_at).toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric' })}
-                    </div>
-                    <div className={styles.timeSub}>
+                    </span>
+                    <span className="text-[0.8rem] text-textMuted font-medium">
                         {new Date(msg.created_at).toLocaleTimeString('uk-UA', { hour: '2-digit', minute: '2-digit' })}
-                    </div>
-                </>
+                    </span>
+                </div>
             )
         },
         {
@@ -108,103 +44,119 @@ export default function FeedbackTab() {
             render: (msg) => {
                 const typeConfig = getTypeConfig(msg.type);
                 return (
-                    <>
-                        <div className={styles.email} title={msg.email}>{msg.email}</div>
-                        {msg.name && <div className={styles.name}>{msg.name}</div>}
-                        <div className={`${styles.typeBadge} ${typeConfig.class}`}>
-                            {typeConfig.icon} {typeConfig.label}
+                    <div className="flex flex-col items-start gap-2">
+                        <div>
+                            <span className="font-bold text-textMain text-[0.95rem] block">{msg.email}</span>
+                            {msg.name && <span className="text-[0.85rem] text-textMuted block font-medium">{msg.name}</span>}
                         </div>
-                    </>
+                        <Badge variant={typeConfig.variant} icon={typeConfig.icon}>
+                            {typeConfig.label}
+                        </Badge>
+                    </div>
                 );
             }
         },
         {
             header: t('feedbackTab.colMsg'),
             render: (msg) => (
-                <>
-                    <div className={styles.messageContent}>{msg.message}</div>
-                    <div className={styles.metaTags}>
+                <div className="max-w-[500px]">
+                    <div className="text-textMain text-[0.9rem] leading-relaxed whitespace-pre-wrap mb-3 p-3 bg-main rounded-md border border-border">{msg.message}</div>
+                    <div className="flex gap-2 flex-wrap">
                         {msg.screenshot_url && (
-                            <a href={msg.screenshot_url} target="_blank" rel="noopener noreferrer" className={styles.metaTagLink}>
+                            <a href={msg.screenshot_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 py-1 px-2.5 bg-blue-500/5 text-primary rounded-md text-[0.8rem] font-bold no-underline transition-all hover:bg-blue-500/10">
                                 <FaImage /> {t('feedbackTab.screenshot')}
                             </a>
                         )}
                         {msg.page_url && (
-                            <a href={msg.page_url} target="_blank" rel="noopener noreferrer" className={styles.metaTagLink} title={msg.page_url}>
+                            <a href={msg.page_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 py-1 px-2.5 bg-blue-500/5 text-primary rounded-md text-[0.8rem] font-bold no-underline transition-all hover:bg-blue-500/10" title={msg.page_url}>
                                 <FaExternalLinkAlt /> URL
                             </a>
                         )}
                         {msg.screen_size && (
-                            <span className={styles.metaTagInfo} title={msg.browser_info}>
+                            <span className="inline-flex items-center gap-1.5 py-1 px-2.5 bg-main text-textMuted rounded-md text-[0.8rem] font-medium" title={msg.browser_info}>
                                 🖥️ {msg.screen_size}
                             </span>
                         )}
                     </div>
-                </>
+                </div>
             )
         },
         {
             header: t('feedbackTab.colStatus'),
-            render: (msg) => (
-                <select 
-                    className={`${styles.statusSelect} ${styles[`status_${msg.status || 'new'}`]}`}
-                    value={msg.status || 'new'}
-                    onChange={(e) => handleStatusChange(msg.id, e.target.value)}
-                >
-                    <option value="new">{t('feedbackTab.statusNew')}</option>
-                    <option value="in_progress">{t('feedbackTab.statusInProgress')}</option>
-                    <option value="resolved">{t('feedbackTab.statusResolved')}</option>
-                </select>
-            )
+            render: (msg) => {
+                let statusClass = "";
+                if (msg.status === 'in_progress') statusClass = "!bg-amber-500/5 !text-[#d97706] !border-amber-500/20 focus:!border-amber-500";
+                if (msg.status === 'resolved') statusClass = "!bg-emerald-500/5 !text-[#059669] !border-emerald-500/20 focus:!border-emerald-500";
+
+                return (
+                    <Select 
+                        className={`!w-full !py-2 !px-3 !text-[0.85rem] !font-semibold ${statusClass}`}
+                        value={msg.status || 'new'}
+                        onChange={(e) => handleStatusChange(msg.id, e.target.value)}
+                    >
+                        <option value="new">{t('feedbackTab.statusNew')}</option>
+                        <option value="in_progress">{t('feedbackTab.statusInProgress')}</option>
+                        <option value="resolved">{t('feedbackTab.statusResolved')}</option>
+                    </Select>
+                )
+            }
         },
         {
             header: t('feedbackTab.colAction'),
             render: (msg) => isSuperAdmin ? (
-                <div className={styles.actionCell}>
+                <div className="flex justify-end">
                     <button 
-                        className={styles.deleteBtn}
+                        className="bg-transparent text-textMuted p-2 rounded-md cursor-pointer transition-all inline-flex items-center justify-center text-[1rem] hover:bg-red-500/10 hover:text-danger"
                         onClick={() => handleDelete(msg.id, msg.screenshot_url)}
                         title={t('feedbackTab.deleteBtnTitle')}
                     >
                         <FaTrash />
                     </button>
                 </div>
-            ) : <span style={{color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 600}}>No access</span>
+            ) : null
         }
-    ];
+    ], [t, handleStatusChange, handleDelete, isSuperAdmin]);
+
+    const getFilterClass = (filterName) => `py-1.5 px-4 rounded-md font-semibold text-[0.85rem] transition-all cursor-pointer ${filter === filterName ? 'bg-surface text-textMain shadow-sm border border-border/50' : 'bg-transparent text-textMuted border border-transparent hover:text-textMain'}`;
 
     if (loading) {
         return (
-            <div className={styles.loadingState}>
-                <div className={styles.spinner}></div>
+            <div className="py-20 px-5 text-[1.1rem] text-primary text-center font-bold flex flex-col items-center gap-5 bg-surface rounded-lg border border-border shadow-sm">
+                <div className="w-10 h-10 border-4 border-blue-500/20 border-t-primary rounded-full animate-spin"></div>
                 <div>{t('feedbackTab.loading')}</div>
             </div>
         );
     }
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <h2 className={styles.title}>{t('feedbackTab.title')} <span className={styles.badge}>{filteredMessages.length}</span></h2>
-                <div className={styles.filters}>
-                    <button className={`${styles.filterBtn} ${filter === 'all' ? styles.active : ''}`} onClick={() => setFilter('all')}>{t('feedbackTab.filterAll')}</button>
-                    <button className={`${styles.filterBtn} ${filter === 'bug' ? styles.active : ''}`} onClick={() => setFilter('bug')}>{t('feedbackTab.filterBugs')}</button>
-                    <button className={`${styles.filterBtn} ${filter === 'suggestion' ? styles.active : ''}`} onClick={() => setFilter('suggestion')}>{t('feedbackTab.filterSuggestions')}</button>
-                    <button className={`${styles.filterBtn} ${filter === 'contact' ? styles.active : ''}`} onClick={() => setFilter('contact')}>{t('feedbackTab.filterContacts')}</button>
+        <div className="flex flex-col gap-6 pb-8 animate-[fadeIn_0.4s_cubic-bezier(0.16,1,0.3,1)]">
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center bg-surface p-5 px-6 rounded-lg border border-border shadow-sm gap-4">
+                <h2 className="m-0 text-[1.25rem] text-textMain flex items-center gap-3 font-bold tracking-tight">
+                    {t('feedbackTab.title')} 
+                    <span className="bg-main text-textMuted py-0.5 px-2.5 rounded-full text-[0.85rem] font-bold border border-border">{filteredMessages.length}</span>
+                </h2>
+                
+                <div className="flex bg-main p-1 rounded-lg border border-border/50 w-full md:w-auto overflow-x-auto scrollbar-thin">
+                    <button className={getFilterClass('all')} onClick={() => setFilter('all')}>{t('feedbackTab.filterAll')}</button>
+                    <button className={getFilterClass('bug')} onClick={() => setFilter('bug')}>{t('feedbackTab.filterBugs')}</button>
+                    <button className={getFilterClass('suggestion')} onClick={() => setFilter('suggestion')}>{t('feedbackTab.filterSuggestions')}</button>
+                    <button className={getFilterClass('contact')} onClick={() => setFilter('contact')}>{t('feedbackTab.filterContacts')}</button>
                 </div>
             </div>
 
-            <DataTable 
-                columns={columns}
-                data={filteredMessages}
-                emptyMessage={
-                    <div className={styles.emptyState}>
-                        <div className={styles.emptyIcon}>🎉</div>
-                        <div>{t('feedbackTab.emptyState')}</div>
-                    </div>
-                }
-                rowClassName={(msg) => msg.status === 'resolved' ? styles.rowResolved : ''}
-            />
+            <div className="bg-surface rounded-lg border border-border shadow-sm overflow-hidden">
+                <DataTable 
+                    columns={columns}
+                    data={filteredMessages}
+                    emptyMessage={
+                        <div className="py-16 px-10 text-center text-textMuted font-medium text-[1rem] flex flex-col items-center gap-4">
+                            <div className="text-[2.5rem] bg-main w-16 h-16 flex items-center justify-center rounded-full">🎉</div>
+                            <div>{t('feedbackTab.emptyState')}</div>
+                        </div>
+                    }
+                    rowClassName={(msg) => msg.status === 'resolved' ? 'opacity-60 transition-all bg-main hover:opacity-100' : ''}
+                />
+            </div>
         </div>
     );
 }

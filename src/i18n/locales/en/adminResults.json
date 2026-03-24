@@ -1,0 +1,25 @@
+{
+  "common": {
+    "error": "Error",
+    "success": "Success"
+  },
+  "resultsTable": {
+    "search": "Search districts...",
+    "total": "Total",
+    "saving": "Saving...",
+    "saveAll": "Save All",
+    "noResults": "No results found for your query",
+    "uploadSuccess": "Photo saved successfully!",
+    "uploadError": "Upload error",
+    "photoLabel": "District Photo",
+    "uploading": "Uploading...",
+    "uploadBtn": "Upload",
+    "saveRow": "Save District",
+    "warnNoPop": "No population data, but infrastructure exists",
+    "warnHighPrice": "Suspiciously high property price",
+    "warnHighRent": "Suspiciously high rent price",
+    "warnLowSalary": "Suspiciously low salary",
+    "yes": "Yes",
+    "no": "No"
+  }
+}

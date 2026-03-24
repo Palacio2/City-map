@@ -1,0 +1,17 @@
+{
+  "title": "Audit Logs",
+  "subtitle": "History of system administrator actions",
+  "loading": "Loading logs...",
+  "refresh": "Refresh",
+  "empty": "Logs are empty",
+  "systemUser": "System",
+  "assignedItems": "Assigned items: {{count}}",
+  "planDetails": "Plan: {{plan}}, Days: {{days}}",
+  "codeDetails": "Code: {{code}}, Discount: {{discount}}%",
+  "complexData": "Complex Data",
+  "colTime": "Time",
+  "colAdmin": "Admin",
+  "colAction": "Action",
+  "colTarget": "Object",
+  "colDetails": "Details"
+}

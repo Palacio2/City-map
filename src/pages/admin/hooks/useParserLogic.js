@@ -1,11 +1,17 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '../../../supabaseClient';
 import { api } from '../../../services/api';
+import { useTranslation } from 'react-i18next';
+import { useModals } from '../ui/ModalContext';
 
 export const useParserLogic = () => {
+    const { t } = useTranslation('adminParser');
+    const { showConfirm, showAlert } = useModals();
+    const queryClient = useQueryClient();
+
     const [loading, setLoading] = useState(false);
     const [logs, setLogs] = useState([]);
-    const [availableFiles, setAvailableFiles] = useState([]);
-    const [countries, setCountries] = useState([]);
     const [cities, setCities] = useState([]);
     const [dbDistricts, setDbDistricts] = useState([]);
     const [foundDistrictsOSM, setFoundDistrictsOSM] = useState([]);
@@ -13,115 +19,82 @@ export const useParserLogic = () => {
     const [showResults, setShowResults] = useState(false);
 
     const prevLogContentRef = useRef("");
-    const pollingInterval = useRef(null);
 
-    const fetchCurrentLogs = useCallback(async () => {
-        try {
-            const text = await api.parser.getCurrentLog();
+    const { data: countries = [] } = useQuery({ 
+        queryKey: ['countries'], 
+        queryFn: async () => {
+            const { data, error } = await supabase.functions.invoke('admin-geo-list', { body: { action: 'get_countries' } });
+            if (error) throw error;
+            return data.data || [];
+        } 
+    });
+
+    const { data: availableFiles = [], refetch: loadAvailableFiles } = useQuery({ 
+        queryKey: ['pbfFiles'], 
+        queryFn: () => api.parser.getPbfFiles() 
+    });
+
+    useQuery({
+        queryKey: ['parserStatusPoll'],
+        queryFn: async () => {
+            const text = await api.parser.getCurrentLog().catch(() => "");
             if (text && text !== prevLogContentRef.current) {
                 prevLogContentRef.current = text;
                 const parsedLogs = text.split('\n').filter(Boolean).map((line, i) => {
                     const match = line.match(/^\[(.*?)\] (.*)/);
-                    return match 
-                        ? { id: i, time: match[1], msg: match[2], type: 'info' }
-                        : { id: i, time: '', msg: line, type: 'info' };
+                    return match ? { id: i, time: match[1], msg: match[2], type: 'info' } : { id: i, time: '', msg: line, type: 'info' };
                 });
                 setLogs(parsedLogs.reverse());
             }
-        } catch {
-        }
-    }, []);
 
-    const fetchPendingResults = useCallback(async () => {
-        try {
-            const data = await api.parser.getPendingResults();
-            if (data && Array.isArray(data) && data.length > 0) {
-                setParsedData(data);
-                setShowResults(true);
-            } else {
-                setShowResults(false);
-            }
-        } catch (e) {
-            console.error("Помилка завантаження результатів:", e);
-        }
-    }, []);
-
-    const checkInitialStatus = useCallback(async () => {
-        try {
-            const { isParsing } = await api.parser.getStatus();
-            if (isParsing) {
-                setLoading(true);
-            } else {
-                fetchPendingResults();
-            }
-        } catch {
-        }
-        await fetchCurrentLogs();
-    }, [fetchPendingResults, fetchCurrentLogs]);
-
-    const stopPolling = useCallback(() => {
-        if (pollingInterval.current) {
-            clearInterval(pollingInterval.current);
-            pollingInterval.current = null;
-        }
-    }, []);
-
-    const startPolling = useCallback(() => {
-        if (pollingInterval.current) return;
-        
-        pollingInterval.current = setInterval(async () => {
-            await fetchCurrentLogs();
-            
-            try {
-                const status = await api.parser.getStatus();
-                if (!status.isParsing) {
-                    stopPolling();
-                    setLoading(false);
-                    setTimeout(() => {
-                        fetchPendingResults();
-                    }, 1000);
+            const status = await api.parser.getStatus();
+            if (!status.isParsing && loading) {
+                setLoading(false);
+                const results = await api.parser.getPendingResults();
+                if (results && results.length > 0) {
+                    setParsedData(results);
+                    setShowResults(true);
                 }
-            } catch (e) {
-                console.error("Помилка перевірки статусу:", e);
+            } else if (status.isParsing && !loading) {
+                setLoading(true);
             }
-        }, 2000);
-    }, [fetchCurrentLogs, stopPolling, fetchPendingResults]);
-
-    const loadCountries = useCallback(async () => {
-        try { setCountries(await api.geo.getCountries() || []); } catch {}
-    }, []);
-
-    const loadAvailableFiles = useCallback(async () => {
-        try { setAvailableFiles(await api.parser.getPbfFiles() || []); } catch {}
-    }, []);
+            return status;
+        },
+        refetchInterval: loading ? 2000 : false
+    });
 
     useEffect(() => {
-        loadCountries();
-        loadAvailableFiles();
-        checkInitialStatus();
-        return stopPolling;
-    }, [loadCountries, loadAvailableFiles, checkInitialStatus, stopPolling]);
-
-    useEffect(() => {
-        if (loading) {
-            startPolling();
-        } else {
-            stopPolling();
-        }
-        return () => stopPolling();
-    }, [loading, startPolling, stopPolling]);
+        const init = async () => {
+            const status = await api.parser.getStatus();
+            if (status.isParsing) setLoading(true);
+            else {
+                const results = await api.parser.getPendingResults();
+                if (results && results.length > 0) {
+                    setParsedData(results);
+                    setShowResults(true);
+                }
+            }
+        };
+        init();
+    }, []);
 
     const loadCities = async (countryId) => {
         if (!countryId) return setCities([]);
-        try { setCities(await api.geo.getCities(countryId) || []); } catch {}
+        try { 
+            const { data, error } = await supabase.functions.invoke('admin-geo-list', { body: { action: 'get_cities', countryId } });
+            if (error) throw error;
+            setCities(data.data || []);
+        } 
+        catch (e) { showAlert(t('common.error'), "Failed to load cities", 'error'); }
     };
 
     const fetchDbDistricts = async (cityId) => {
         if (!cityId) return;
         try {
-            const data = await api.geo.getDistricts(cityId);
-            setDbDistricts(data ? data.filter(d => d.is_available) : []);
-        } catch {}
+            const { data, error } = await supabase.functions.invoke('admin-geo-list', { body: { action: 'get_districts', cityId } });
+            if (error) throw error;
+            setDbDistricts(data.data ? data.data.filter(d => d.is_available) : []);
+        } catch (e) { console.error(e); }
     };
 
     const scanOSM = async (cityName) => {
@@ -129,30 +102,38 @@ export const useParserLogic = () => {
         try {
             const res = await api.parser.findDistrictsOSM(cityName);
             setFoundDistrictsOSM(res.districts || []);
-        } catch {
+        } catch (e) {
+            showAlert(t('common.error'), "Failed to scan OSM", 'error');
         } finally { setLoading(false); }
     };
 
     const createDistrictsInDb = async (districtObjects, cityId) => {
         setLoading(true);
         try {
-            const addedNames = [];
-            for (const d of districtObjects) {
-                const name = typeof d === 'string' ? d : d.name;
-                await api.geo.createDistrict(name, cityId, null);
-                addedNames.push(name);
-            }
+            const names = districtObjects.map(d => typeof d === 'string' ? d : d.name);
+            const { error } = await supabase.functions.invoke('admin-geo-manage', { 
+                body: { action: 'create_districts', payload: { cityId, names } } 
+            });
+            if (error) throw error;
+
             await fetchDbDistricts(cityId);
-            
-            setFoundDistrictsOSM(prev => prev.filter(d => !addedNames.includes(d.name)));
-            
-        } catch {
+            setFoundDistrictsOSM(prev => prev.filter(d => !names.includes(d.name)));
+        } catch (e) {
+            showAlert(t('common.error'), "Failed to create", 'error');
         } finally { setLoading(false); }
     };
 
     const deleteDbDistrict = async (id, cityId) => {
-        if (!window.confirm("Обережно! Район буде видалено з БД назавжди.")) return;
-        try { await api.geo.deleteDistrict(id); await fetchDbDistricts(cityId); } catch {} 
+        showConfirm(t('parserLogic.deleteWarningTitle'), t('parserLogic.deleteWarningMessage'), async () => {
+            try { 
+                const { error } = await supabase.functions.invoke('admin-geo-manage', { 
+                    body: { action: 'delete_district', payload: { districtId: id } } 
+                });
+                if (error) throw error;
+                await fetchDbDistricts(cityId); 
+            } 
+            catch (e) { showAlert(t('common.error'), e.message, 'error'); } 
+        });
     };
 
     const runOfflineOsmParser = async (config) => {
@@ -162,7 +143,10 @@ export const useParserLogic = () => {
         try {
             await api.parser.deletePendingResults();
             await api.parser.runOfflineParser(config);
-        } catch { setLoading(false); } 
+        } catch (e) { 
+            setLoading(false); 
+            showAlert(t('common.error'), "Failed to start", 'error');
+        } 
     };
 
     const importBoundariesGeoJSON = async (file, cityId) => {
@@ -171,70 +155,51 @@ export const useParserLogic = () => {
         try {
             const text = await file.text();
             const geoJsonData = JSON.parse(text);
-            if (!geoJsonData.features) throw new Error('Неправильний формат GeoJSON');
+            
+            const features = geoJsonData.features
+                .filter(f => f.properties?.name)
+                .map(f => ({ name: f.properties.name, geojson: f }));
 
-            let currentDistricts = await api.geo.getDistricts(cityId) || [];
-            let successCount = 0;
-            let currentLogs = [];
+            const { data, error } = await supabase.functions.invoke('admin-geo-manage', { 
+                body: { action: 'import_geojson', payload: { cityId, features } } 
+            });
 
-            const addLog = (msg) => {
-                currentLogs.unshift({ id: Date.now() + Math.random(), time: new Date().toLocaleTimeString('uk-UA', { hour12: false }), msg, type: 'info' });
-                setLogs([...currentLogs]);
-            };
+            if (error || data?.error) throw new Error(error?.message || data?.error);
 
-            for (const feature of geoJsonData.features) {
-                const osmName = feature.properties?.name;
-                if (!osmName) continue;
-                if (osmName.toLowerCase().includes('parafia')) { addLog(`⏭️ Пропущено (парафія): ${osmName}`); continue; }
-
-                let dbDistrict = currentDistricts.find(d => d.name.trim().toLowerCase() === osmName.trim().toLowerCase());
-
-                if (!dbDistrict) {
-                    addLog(`✨ Створюю новий район: ${osmName}`);
-                    dbDistrict = await api.geo.createDistrict(osmName, cityId);
-                    if (dbDistrict) currentDistricts.push(dbDistrict);
-                }
-
-                if (dbDistrict) {
-                    try {
-                        await api.geo.saveParsedResults([{ district_id: dbDistrict.id, district_name: dbDistrict.name, geojson: feature }]);
-                        successCount++;
-                        addLog(`✅ Збережено межі для: ${osmName}`);
-                    } catch (err) { addLog(`❌ Помилка збереження ${osmName}: ${err.message}`); }
-                }
-            }
-            addLog(`🎉 Імпорт завершено. Успішно опрацьовано: ${successCount} районів.`);
+            setLogs([{ id: Date.now(), time: new Date().toLocaleTimeString('uk-UA', { hour12: false }), msg: t('parserLogic.importComplete', { count: data.count }), type: 'info' }]);
+            
             await fetchDbDistricts(cityId);
         } catch (e) {
-            setLogs([{ id: Date.now(), time: new Date().toLocaleTimeString('uk-UA', { hour12: false }), msg: `❌ ПОМИЛКА: ${e.message}`, type: 'error' }]);
+            setLogs([{ id: Date.now(), msg: e.message, type: 'error' }]);
         } finally { setLoading(false); }
     };
 
     const removeParsedItem = useCallback((districtId) => {
         setParsedData(prev => {
             const newData = prev.filter(item => item.district_id !== districtId);
-            api.parser.updatePending(newData).catch(()=>{});
+            api.parser.updatePending(newData).catch(console.error);
             if (newData.length === 0) setShowResults(false);
             return newData;
         });
     }, []);
 
     const clearAllData = async () => {
-        if (!window.confirm("Скинути всі результати парсингу?")) return;
-        setParsedData([]); setShowResults(false); clearLogs();
-        try { await api.parser.deletePendingResults(); } catch {}
+        showConfirm(t('parserLogic.resetConfirmTitle'), t('parserLogic.resetConfirmMessage'), async () => {
+            setParsedData([]); setShowResults(false); clearLogs();
+            await api.parser.deletePendingResults().catch(console.error);
+        });
     };
 
     const clearResultsSilent = async () => {
         setParsedData([]); setShowResults(false);
-        try { await api.parser.deletePendingResults(); } catch {}
+        await api.parser.deletePendingResults().catch(console.error);
     };
 
     const clearLogs = () => { setLogs([]); prevLogContentRef.current = ""; };
 
     const downloadLogs = async () => {
         try {
-            const text = await api.parser.getCurrentLog(); 
+            const text = await api.parser.getCurrentLog();
             const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -244,7 +209,7 @@ export const useParserLogic = () => {
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
-        } catch { alert("Не вдалося завантажити логи."); }
+        } catch { showAlert(t('common.error'), 'Error', 'error'); }
     };
 
     return {

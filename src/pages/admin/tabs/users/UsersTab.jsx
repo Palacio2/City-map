@@ -1,343 +1,193 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { adminUsersAPI } from '@api/adminUsersAPI';
-import { supabase } from '@supabaseClient';
-import styles from './UsersTab.module.css';
-import { FaUserShield, FaCrown, FaHome, FaSearch, FaUserAltSlash, FaUserCheck, FaMapMarkerAlt, FaGift, FaTag } from 'react-icons/fa';
+import { FaUserShield, FaCrown, FaUserAltSlash, FaUserCheck, FaMapMarkerAlt, FaGift, FaTag, FaTrash } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import DataTable from '../../ui/DataTable';
-import uiStyles from '../../ui/AdminUI.module.css';
+import { Button } from '../../ui/Button';
+import { Badge } from '../../ui/Badge';
+import { SearchInput } from '../../ui/SearchInput';
 import { useAdmin } from '../../hooks/AdminContext';
+import { useUsersManager } from './useUsersManager';
 
 import CityAssignmentModal from './CityAssignmentModal';
 import GiftSubscriptionModal from './GiftSubscriptionModal';
 import PromoCodesModal from './PromoCodesModal';
 
 export default function UsersTab() {
-    const { t } = useTranslation('admin');
+    const { t } = useTranslation('adminUsers');    
     const { currentAdmin } = useAdmin();
+    const logic = useUsersManager(currentAdmin, t);
 
-    const [users, setUsers] = useState([]);
-    const [availableCities, setAvailableCities] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [processingId, setProcessingId] = useState(null);
-    
-    // Стан для пошуку та фільтрації (вкладок)
-    const [searchTerm, setSearchTerm] = useState('');
-    const [filterTab, setFilterTab] = useState('all'); // 'all', 'admins', 'premium'
-    
-    const [sortConfig, setSortConfig] = useState({ key: 'created_at', direction: 'desc' });
-    
-    const [cityModalOpen, setCityModalOpen] = useState(false);
-    const [giftModalOpen, setGiftModalOpen] = useState(false);
-    const [promoModalOpen, setPromoModalOpen] = useState(false);
-    
-    const [selectedAdmin, setSelectedAdmin] = useState(null);
-    const [selectedUserForGift, setSelectedUserForGift] = useState(null);
-    const [adminCities, setAdminCities] = useState([]);
-
-    useEffect(() => {
-        fetchUsers();
-        fetchCities();
-    }, []);
-
-    const fetchCities = async () => {
-        try {
-            const { data, error } = await supabase.from('cities').select('id, name').order('name');
-            if (error) throw error;
-            if (data && Array.isArray(data)) setAvailableCities(data);
-        } catch (err) {
-            console.error("Failed to fetch cities:", err.message);
-        }
+    const getRoleBadge = (role) => {
+        if (role === 'super_admin') return <Badge variant="purple" icon={FaCrown}>Super Admin</Badge>;
+        if (role === 'admin') return <Badge variant="primary" icon={FaUserShield}>Admin</Badge>;
+        return <Badge variant="default">User</Badge>;
     };
 
-    const fetchUsers = async () => {
-        try {
-            setLoading(true);
-            setError(null);
-            const data = await adminUsersAPI.getUsers();
-            setUsers(data.users || []);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
-        }
+    const getPlanBadge = (plan) => {
+        if (plan === 'realtor') return <Badge variant="success">Realtor</Badge>;
+        if (plan === 'premium') return <Badge variant="primary">Premium</Badge>;
+        return <Badge variant="default" className="opacity-70">Basic</Badge>;
     };
 
-    const handleToggleRole = async (userId, currentRole) => {
-        if (currentRole === 'super_admin') {
-            alert(t('usersTab.cannotDemoteSuper'));
-            return;
-        }
-        if (userId === currentAdmin?.id) {
-            alert(t('usersTab.cannotDemoteSelf'));
-            return;
-        }
+    const columns = useMemo(() => [
+        { header: t('usersTab.colId'), accessor: 'id', render: (row) => <span className="font-mono text-[0.85rem] text-textMuted bg-surface px-2 py-1 rounded-md border border-border">{row.id.substring(0, 8)}...</span> },
+        { header: t('usersTab.colEmail'), accessor: 'email', render: (row) => <span className="font-bold text-textMain">{row.email}</span> },
+        { header: t('usersTab.colPlan'), accessor: 'plan', render: (row) => (
+            <div className="flex flex-col gap-1.5 items-start">
+                {getPlanBadge(row.plan)}
+                {getRoleBadge(row.role)}
+            </div>
+        )},
+        { header: t('usersTab.colCities'), accessor: 'cities', render: (row) => (
+            <div className="flex flex-col gap-1.5 items-start">
+                {row.role !== 'user' ? (
+                    row.role === 'super_admin' ? (
+                        <span className="text-[0.8rem] font-bold text-primary bg-blue-500/10 px-2 py-1 rounded-md">Всі міста</span>
+                    ) : (
+                        <button onClick={() => logic.openCityModal(row)} className="text-[0.8rem] font-bold text-primary bg-blue-500/10 border border-blue-500/20 px-2 py-1 rounded-md cursor-pointer hover:bg-blue-500/20 transition-all flex items-center gap-1.5">
+                            <FaMapMarkerAlt /> {row.cities?.length > 0 ? t('usersTab.citiesCount', { count: row.cities.length }) : t('usersTab.assignCitiesBtn')}
+                        </button>
+                    )
+                ) : <span className="text-textMuted text-[0.85rem]">-</span>}
+            </div>
+        )},
+        { header: t('usersTab.colRodo'), accessor: 'rodo_accepted', render: (row) => row.rodo_accepted ? t('usersTab.yes') : t('usersTab.no') },
+        { header: t('usersTab.colSearches'), accessor: 'searches_count', render: (row) => <span className="font-bold text-textMain">{row.searches_count}</span> },
+        { header: t('usersTab.colReg'), accessor: 'created_at', render: (row) => <span className="text-textMuted text-[0.9rem] font-medium">{new Date(row.created_at).toLocaleDateString('uk-UA')}</span> },
+        { header: t('usersTab.colActions'), accessor: 'actions', render: (row) => {
+            const isSuper = row.role === 'super_admin';
+            const isSelf = currentAdmin?.id === row.id;
 
-        if (!window.confirm(t('usersTab.confirmRole'))) return;
-        try {
-            setProcessingId(userId);
-            const newRole = currentRole === 'admin' ? 'user' : 'admin';
-            await adminUsersAPI.updateUser(userId, 'update_role', newRole);
-            setUsers(prev => prev.map(u => u.id === userId ? { ...u, role: newRole, assigned_cities: [] } : u));
-        } catch (err) {
-            alert(err.message);
-        } finally {
-            setProcessingId(null);
-        }
-    };
-
-    const handleToggleRodo = async (userId, currentRodo) => {
-        try {
-            setProcessingId(userId);
-            const newRodo = !currentRodo;
-            await adminUsersAPI.updateUser(userId, 'update_rodo', newRodo);
-            setUsers(prev => prev.map(u => u.id === userId ? { ...u, rodo_accepted: newRodo } : u));
-        } catch (err) {
-            alert(err.message);
-            fetchUsers();
-        } finally {
-            setProcessingId(null);
-        }
-    };
-
-    const openCityModal = (user) => {
-        setSelectedAdmin(user);
-        setAdminCities(user.assigned_cities || []);
-        setCityModalOpen(true);
-    };
-
-    const toggleCitySelection = (cityId) => {
-        setAdminCities(prev => prev.includes(cityId) ? prev.filter(id => id !== cityId) : [...prev, cityId]);
-    };
-
-    const saveCityAssignments = async () => {
-        try {
-            setProcessingId(selectedAdmin.id);
-            await adminUsersAPI.updateUser(selectedAdmin.id, 'update_cities', adminCities);
-            setUsers(prev => prev.map(u => u.id === selectedAdmin.id ? { ...u, assigned_cities: adminCities } : u));
-            setCityModalOpen(false);
-            setSelectedAdmin(null);
-        } catch (err) {
-            alert(err.message);
-        } finally {
-            setProcessingId(null);
-        }
-    };
-
-    const handleGrantSubscription = async (userId, planName, days) => {
-        try {
-            await adminUsersAPI.manageFinance('grant_subscription', { targetUserId: userId, planName, days });
-            setGiftModalOpen(false);
-            fetchUsers(); 
-        } catch (err) {
-            alert('Failed to grant: ' + err.message);
-        }
-    };
-
-    const getRoleBadge = (plan, role) => {
-        if (role === 'super_admin') return <span className={styles.badgeSuperAdmin}><FaCrown /> Super Admin</span>;
-        if (role === 'admin') return <span className={styles.badgeAdmin}><FaUserShield /> Admin</span>;
-        if (plan === 'realtor') return <span className={styles.badgeRealtor}><FaHome /> Realtor</span>;
-        if (plan === 'premium') return <span className={styles.badgePremium}><FaCrown /> Premium</span>;
-        return <span className={styles.badgeBasic}>Basic</span>;
-    };
-
-    const handleSort = (key) => {
-        let direction = 'asc';
-        if (sortConfig.key === key && sortConfig.direction === 'asc') {
-            direction = 'desc';
-        }
-        setSortConfig({ key, direction });
-    };
-
-    const renderSortableHeader = (label, key) => (
-        <div onClick={() => handleSort(key)} className={styles.sortableHeader}>
-            {label}
-            <span className={`${styles.sortIcon} ${sortConfig.key === key ? styles.sortIconActive : styles.sortIconInactive}`}>
-                {sortConfig.key === key ? (sortConfig.direction === 'asc' ? '▲' : '▼') : '↕'}
-            </span>
-        </div>
-    );
-
-    const processedUsers = useMemo(() => {
-        let result = users.filter(user => {
-            const term = searchTerm.toLowerCase();
-            const matchesSearch = user.email?.toLowerCase().includes(term) || user.id.toLowerCase().includes(term);
-            
-            if (!matchesSearch) return false;
-            
-            // Застосовуємо фільтри вкладок
-            if (filterTab === 'admins') return user.role === 'admin' || user.role === 'super_admin';
-            if (filterTab === 'premium') return user.plan === 'premium' || user.plan === 'realtor';
-            return true;
-        });
-
-        result.sort((a, b) => {
-            let aValue = a[sortConfig.key];
-            let bValue = b[sortConfig.key];
-
-            if (sortConfig.key === 'role') {
-                const weights = { super_admin: 3, admin: 2, user: 1 };
-                aValue = weights[a.role] || 0;
-                bValue = weights[b.role] || 0;
-            }
-
-            if (sortConfig.key === 'plan') {
-                const weights = { realtor: 3, premium: 2, basic: 1, free: 1 };
-                aValue = weights[a.plan] || 0;
-                bValue = weights[b.plan] || 0;
-            }
-
-            if (aValue < bValue) return sortConfig.direction === 'asc' ? -1 : 1;
-            if (aValue > bValue) return sortConfig.direction === 'asc' ? 1 : -1;
-            return 0;
-        });
-
-        return result;
-    }, [users, searchTerm, sortConfig, filterTab]);
-
-    const columns = [
-        { header: t('usersTab.colId'), render: (user) => <span title={user.id} className={styles.idCell}>{user.id.substring(0, 8)}...</span> },
-        { header: renderSortableHeader(t('usersTab.colEmail'), 'email'), accessor: 'email' },
-        { header: renderSortableHeader(t('usersTab.colPlan'), 'role'), render: (user) => getRoleBadge(user.plan, user.role) },
-        { 
-            header: t('usersTab.colCities'),
-            render: (user) => {
-                if (user.role !== 'admin' && user.role !== 'super_admin') return <span className={styles.placeholder}>-</span>;
-                const count = user.assigned_cities?.length || 0;
-                return (
-                    <button onClick={() => openCityModal(user)} className={styles.cityManageBtn} disabled={processingId === user.id}>
-                        <FaMapMarkerAlt /> {count > 0 ? t('usersTab.citiesCount', { count }) : t('usersTab.assignCitiesBtn')}
+            return (
+                <div className="flex gap-2 justify-end">
+                    <button onClick={() => logic.openGiftModal(row)} className="bg-orange-500/10 text-orange-600 border border-orange-500/20 w-8 h-8 flex items-center justify-center rounded-md cursor-pointer transition-all hover:bg-orange-500/20 shadow-sm" title="Gift Subscription">
+                        <FaGift size={14} />
                     </button>
-                );
-            }
-        },
-        { 
-            header: t('usersTab.colRodo'), 
-            render: (user) => (
-                <button onClick={() => handleToggleRodo(user.id, user.rodo_accepted)} className={styles.rodoBtn} disabled={processingId === user.id}>
-                    {user.rodo_accepted ? <span className={styles.statusYes}>{t('usersTab.yes')}</span> : <span className={styles.statusNo}>{t('usersTab.no')}</span>}
-                </button>
-            ) 
-        },
-        { 
-            header: renderSortableHeader(t('usersTab.colSearches'), 'search_count'), 
-            render: (user) => <span className={styles.searchCount}><FaSearch style={{fontSize: '0.8rem', opacity: 0.7}}/> {user.search_count}</span> 
-        },
-        { 
-            header: renderSortableHeader(t('usersTab.colReg'), 'created_at'), 
-            render: (user) => <span className={styles.dateCell}>{new Date(user.created_at).toLocaleDateString('uk-UA')}</span> 
-        },
-        {
-            header: t('usersTab.colActions'),
-            render: (user) => {
-                const isSelf = currentAdmin?.id === user.id;
-                const isTargetSuperAdmin = user.role === 'super_admin';
-                const canToggleRole = !isSelf && !isTargetSuperAdmin;
 
-                let roleTooltip = t('usersTab.makeAdmin');
-                if (isSelf) roleTooltip = t('usersTab.cannotEditSelf');
-                else if (isTargetSuperAdmin) roleTooltip = t('usersTab.cannotEditSuper');
-                else if (user.role === 'admin') roleTooltip = t('usersTab.revokeAdmin');
-
-                return (
-                    <div className={styles.actionButtons}>
+                    {row.role === 'admin' ? (
                         <button 
-                            onClick={() => { setSelectedUserForGift(user); setGiftModalOpen(true); }}
-                            className={`${uiStyles.btn} ${styles.actionBtn} ${styles.btnGift}`}
+                            onClick={() => logic.handleRoleChange(row.id, 'user')} 
+                            disabled={isSelf || isSuper}
+                            className={`w-8 h-8 flex items-center justify-center rounded-md border shadow-sm transition-all ${isSelf || isSuper ? 'bg-surface text-textMuted border-border cursor-not-allowed opacity-50' : 'bg-red-500/10 text-danger border-red-500/20 cursor-pointer hover:bg-danger hover:text-white'}`}
+                            title={isSuper ? t('usersTab.cannotEditSuper') : isSelf ? t('usersTab.cannotEditSelf') : t('usersTab.revokeAdmin')}
                         >
-                            <FaGift />
+                            <FaUserAltSlash size={14} />
                         </button>
+                    ) : (
                         <button 
-                            onClick={() => handleToggleRole(user.id, user.role)}
-                            className={`${uiStyles.btn} ${styles.actionBtn} ${(user.role === 'admin' || user.role === 'super_admin') ? styles.btnRevoke : styles.btnGrant}`}
-                            disabled={processingId === user.id || !canToggleRole}
-                            title={roleTooltip}
+                            onClick={() => logic.handleRoleChange(row.id, 'admin')} 
+                            disabled={isSuper}
+                            className={`w-8 h-8 flex items-center justify-center rounded-md border shadow-sm transition-all ${isSuper ? 'bg-surface text-textMuted border-border cursor-not-allowed opacity-50' : 'bg-emerald-500/10 text-success border-emerald-500/20 cursor-pointer hover:bg-success hover:text-white'}`}
+                            title={isSuper ? t('usersTab.cannotEditSuper') : t('usersTab.makeAdmin')}
                         >
-                            {(user.role === 'admin' || user.role === 'super_admin') ? <FaUserAltSlash /> : <FaUserCheck />}
+                            <FaUserCheck size={14} />
                         </button>
-                    </div>
-                );
-            }
-        }
-    ];
+                    )}
+                    
+                    <button 
+                        onClick={() => logic.handleTerminateSessions(row.id)} 
+                        className="bg-surface border border-border text-textMuted w-8 h-8 flex items-center justify-center rounded-md cursor-pointer transition-all hover:bg-main hover:text-textMain shadow-sm"
+                        title={t('usersTab.terminateSessions', { defaultValue: 'Завершити сесії' })}
+                    >
+                        🔌
+                    </button>
+                    <button 
+                        onClick={() => logic.handleDeleteUser(row.id, row.email)} 
+                        disabled={isSelf || isSuper}
+                        className={`w-8 h-8 flex items-center justify-center rounded-md border shadow-sm transition-all ${isSelf || isSuper ? 'bg-surface text-textMuted border-border cursor-not-allowed opacity-50' : 'bg-surface border-border text-textMuted cursor-pointer hover:bg-red-500/10 hover:text-danger hover:border-red-500/20'}`}
+                        title={t('usersTab.deleteUser', { defaultValue: 'Видалити' })}
+                    >
+                        🗑️
+                    </button>
+                </div>
+            );
+        }}
+    ], [t, currentAdmin?.id, logic.processingId]);
 
     return (
-        <div className={styles.container}>
-            <div className={styles.header}>
-                <div className={styles.headerTitleGroup}>
-                    <h2 className={styles.title}>{t('usersTab.title')} <span className={styles.badge}>{processedUsers.length}</span></h2>
-                    
-                    {/* ТАБИ ФІЛЬТРАЦІЇ */}
-                    <div className={styles.tabsWrapper}>
-                        <button className={`${styles.filterTab} ${filterTab === 'all' ? styles.activeTab : ''}`} onClick={() => setFilterTab('all')}>
-                            {t('usersTab.filterAll')}
-                        </button>
-                        <button className={`${styles.filterTab} ${filterTab === 'admins' ? styles.activeTab : ''}`} onClick={() => setFilterTab('admins')}>
-                            {t('usersTab.filterAdmins')}
-                        </button>
-                        <button className={`${styles.filterTab} ${filterTab === 'premium' ? styles.activeTab : ''}`} onClick={() => setFilterTab('premium')}>
-                            {t('usersTab.filterPremium')}
-                        </button>
+        <div className="flex flex-col gap-6 pb-8 animate-[fadeIn_0.4s_cubic-bezier(0.16,1,0.3,1)]">
+            <div className="bg-surface p-6 rounded-xl border border-border shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <div>
+                    <h2 className="m-0 text-[1.4rem] text-textMain font-extrabold tracking-tight mb-1">{t('usersTab.title')}</h2>
+                    <span className="text-[0.95rem] text-textMuted font-medium">{t('usersTab.subtitle', {defaultValue: 'Керування доступом та ролями'})}</span>
+                </div>
+                <div className="flex gap-3">
+                    <Button variant="primary" onClick={() => logic.setPromoModalOpen(true)} className="!shadow-sm">
+                        <FaTag className="mr-2" /> {t('usersTab.btnPromoCodes')}
+                    </Button>
+                </div>
+            </div>
+
+            <div className="bg-surface rounded-xl border border-border shadow-sm overflow-hidden flex flex-col">
+                <div className="p-5 border-b border-border bg-main/50 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div className="flex gap-2 bg-surface p-1 rounded-lg border border-border w-full md:w-auto">
+                        {['all', 'super_admin', 'admin', 'user', 'premium'].map(tab => (
+                            <button
+                                key={tab}
+                                onClick={() => logic.setFilterTab(tab)}
+                                className={`flex-1 md:flex-none px-4 py-2 rounded-md text-[0.85rem] font-bold transition-all ${logic.filterTab === tab ? 'bg-primary text-white shadow-sm' : 'text-textMuted hover:text-textMain hover:bg-main'}`}
+                            >
+                                {tab === 'all' && t('usersTab.filterAll')}
+                                {tab === 'super_admin' && 'Super'}
+                                {tab === 'admin' && t('usersTab.filterAdmins')}
+                                {tab === 'user' && 'Users'}
+                                {tab === 'premium' && t('usersTab.filterPremium')}
+                            </button>
+                        ))}
+                    </div>
+
+                    <div className="flex items-center gap-3 w-full md:w-auto">
+                        <SearchInput 
+                            value={logic.searchTerm} 
+                            onChange={(e) => logic.setSearchTerm(e.target.value)} 
+                            placeholder={t('usersTab.searchPlaceholder')} 
+                            className="w-full md:w-[250px]"
+                        />
+                        <Button variant="cancel" onClick={logic.fetchUsers} disabled={logic.loading} className="!px-3 !shadow-none" title={t('usersTab.refresh')}>
+                            🔄
+                        </Button>
                     </div>
                 </div>
 
-                <div className={styles.headerControls}>
-                    <div className={styles.searchWrapper}>
-                        <FaSearch className={styles.searchIcon} />
-                        <input
-                            type="text"
-                            placeholder={t('usersTab.searchPlaceholder')}
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className={styles.searchInput}
-                        />
+                {logic.loading ? (
+                    <div className="py-20 flex flex-col items-center justify-center gap-4 text-primary bg-surface">
+                        <div className="w-10 h-10 border-4 border-blue-500/20 border-t-primary rounded-full animate-spin"></div>
+                        <span className="font-bold text-[1.1rem]">{t('usersTab.loading')}</span>
                     </div>
-                    <button onClick={() => setPromoModalOpen(true)} className={`${uiStyles.btn} ${uiStyles.btnPurple}`}>
-                        <FaTag /> <span className={styles.hideOnMobile}>{t('usersTab.btnPromoCodes')}</span>
-                    </button>
-                </div>
-            </div>
-            
-            <div className={styles.tableContainer}>
-                {loading ? (
-                    <div className={styles.loaderWrapper}>
-                        <div className={styles.spinner}></div>
-                        <span>{t('usersTab.loading')}</span>
-                    </div>
-                ) : error ? (
-                    <div className={styles.errorWrapper}>
-                        <span className={styles.errorIcon}>⚠️</span>
-                        <div>
-                            <strong>{t('usersTab.error')}</strong>
-                            <p>{error}</p>
+                ) : logic.error ? (
+                    <div className="py-16 px-6 text-center bg-surface">
+                        <div className="inline-flex flex-col items-center gap-3 p-6 bg-red-500/5 rounded-xl border border-red-500/20">
+                            <span className="text-[2rem]">❌</span>
+                            <h3 className="text-danger m-0 text-[1.1rem] font-bold">{t('usersTab.error')}</h3>
+                            <p className="text-textMain m-0 font-medium">{logic.error}</p>
                         </div>
                     </div>
                 ) : (
                     <DataTable 
                         columns={columns} 
-                        data={processedUsers} 
+                        data={logic.processedUsers} 
                         emptyMessage={t('usersTab.empty')}
-                        rowClassName={(row) => processingId === row.id ? styles.processingRow : ''}
+                        rowClassName={(row) => logic.processingId === row.id ? 'opacity-50 pointer-events-none bg-main transition-all' : 'transition-colors'}
                     />
                 )}
             </div>
 
             <CityAssignmentModal 
-                isOpen={cityModalOpen} onClose={() => setCityModalOpen(false)}
-                selectedAdmin={selectedAdmin} availableCities={availableCities}
-                adminCities={adminCities} toggleCitySelection={toggleCitySelection}
-                saveCityAssignments={saveCityAssignments} processingId={processingId} t={t}
+                isOpen={logic.cityModalOpen} onClose={() => logic.setCityModalOpen(false)}
+                selectedAdmin={logic.selectedAdmin} availableCities={logic.availableCities}
+                adminCities={logic.adminCities} toggleCitySelection={logic.toggleCitySelection}
+                setAdminCities={logic.setAdminCities}
+                saveCityAssignments={logic.saveCityAssignments} processingId={logic.processingId} t={t}
             />
 
             <GiftSubscriptionModal 
-                isOpen={giftModalOpen} onClose={() => setGiftModalOpen(false)}
-                selectedUser={selectedUserForGift} onGrant={handleGrantSubscription} t={t}
+                isOpen={logic.giftModalOpen} onClose={() => logic.setGiftModalOpen(false)}
+                selectedUser={logic.selectedUserForGift} onGrant={logic.handleGrantSubscription} t={t}
             />
 
             <PromoCodesModal 
-                isOpen={promoModalOpen} onClose={() => setPromoModalOpen(false)}
+                isOpen={logic.promoModalOpen} onClose={() => logic.setPromoModalOpen(false)}
                 adminUsersAPI={adminUsersAPI} t={t}
             />
         </div>

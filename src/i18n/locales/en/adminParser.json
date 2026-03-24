@@ -1,0 +1,64 @@
+{
+  "common": {
+    "warning": "Warning",
+    "success": "Success",
+    "error": "Error"
+  },
+  "districtsManager": {
+    "foundTitle": "Found in OSM",
+    "foundSubtitle": "Scanned via Overpass API",
+    "scanBtn": "Scan OSM",
+    "searchFound": "Search...",
+    "emptyFound": "Click \"Scan\" to find districts",
+    "addAllBtn": "Add all filtered",
+    "dbTitle": "Districts in DB",
+    "dbSubtitle": "Ready for parsing",
+    "importGeojson": "Import GeoJSON",
+    "searchDb": "Search...",
+    "selectAll": "Select All",
+    "emptyDb": "Database is empty"
+  },
+  "metricsModal": {
+    "cancel": "Cancel",
+    "start": "Start",
+    "title": "Parsing Settings",
+    "dataSource": "Data Sources",
+    "osm": "OpenStreetMap",
+    "waqi": "WAQI (Air Quality)",
+    "otodom": "Otodom (Real Estate)",
+    "gus": "GUS (Statistics)",
+    "selectMetrics": "Select OSM Metrics",
+    "otodomCheck": "Otodom Links Check"
+  },
+  "osmMetrics": {},
+  "parserConsole": {
+    "title": "Parser Console",
+    "clear": "Clear",
+    "download": "Download",
+    "start": "Start",
+    "empty": "Waiting for start... Logs will appear here."
+  },
+  "parserSettings": {
+    "country": "Country",
+    "selectCountry": "Select country...",
+    "city": "City",
+    "selectCity": "Select city...",
+    "region": "Region / Voivodeship",
+    "selectRegion": "Select region...",
+    "manualRegion": "Enter region manually..."
+  },
+  "parserTab": {
+    "confirmReset": "Are you sure you want to reset all parser settings?",
+    "saveSuccess": "Data saved successfully",
+    "saveError": "Error saving data:",
+    "pageTitle": "Districts Parser",
+    "pageSubtitle": "Collection and analysis of infrastructure data",
+    "resetAll": "Reset All",
+    "step1": "Step 1. Select PBF file",
+    "refresh": "Refresh",
+    "emptyFolder": "Maps folder is empty",
+    "step2": "Step 2. Geographical settings",
+    "step3": "Step 3. Manage districts",
+    "step5": "Step 5. Parsing results"
+  }
+}

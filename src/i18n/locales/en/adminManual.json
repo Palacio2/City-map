@@ -1,0 +1,68 @@
+{
+  "common": {
+    "error": "Error",
+    "success": "Success",
+    "info": "Info"
+  },
+  "cityMapModal": {
+    "title": "City Map:",
+    "loading": "Loading map...",
+    "noData": "No map data found for this city",
+    "published": "Published",
+    "hidden": "Hidden"
+  },
+  "confirmModal": {
+    "cancelBtn": "Cancel",
+    "deleteBtn": "Delete",
+    "processing": "Processing..."
+  },
+  "entityModal": {
+    "cancelBtn": "Cancel",
+    "createBtn": "Create",
+    "processing": "Processing...",
+    "nameLabel": "Name"
+  },
+  "manualEditor": {
+    "inactiveTitle": "Select a District",
+    "inactiveDesc": "Select a district from the list on the left to view and edit its data.",
+    "publiclyAvailable": "Publicly Available",
+    "collecting": "Collecting data...",
+    "updateParserBtn": "Update via Parser",
+    "cancelBtn": "Cancel",
+    "saving": "Saving...",
+    "saveBtn": "Save",
+    "badgeGeo": "Geo Data",
+    "badgePhoto": "Photo",
+    "photoTitle": "District Photo",
+    "changePhoto": "Change Photo",
+    "uploadPrompt": "Click or drag a photo here",
+    "mapPoisTitle": "Points of Interest (POI)",
+    "openGisBtn": "Open GIS Editor",
+    "totalPoints": "Total points:",
+    "gisHint": "Use the GIS editor to add, remove, and modify infrastructure points on the district map.",
+    "inputPlaceholder": "Enter value...",
+    "draftTitle": "Restore Draft",
+    "draftRestoreMsg": "You have unsaved changes for this district. Do you want to restore them?",
+    "photoError": "Error uploading photo",
+    "saveSuccess": "Data saved successfully!",
+    "saveError": "Error saving data",
+    "noOtodomSupport": "Real estate parser is not supported for the selected country",
+    "noGusSupport": "Statistics are only available for selected countries",
+    "parseSuccess": "Parsing completed successfully",
+    "parseError": "Error during parsing"
+  },
+  "manualSidebar": {
+    "newCountry": "New Country",
+    "newCity": "New City",
+    "newDistrict": "New District",
+    "enterName": "Enter name...",
+    "countries": "Countries",
+    "searchCountry": "Search country...",
+    "cities": "Cities",
+    "searchCity": "Search city...",
+    "districts": "Districts",
+    "searchDistrict": "Search district...",
+    "confirmDeleteTitle": "Confirm Deletion",
+    "confirmDeleteMsg": "Are you sure you want to delete {{name}}? This action cannot be undone."
+  }
+}

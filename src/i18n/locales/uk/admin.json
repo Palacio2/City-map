@@ -63,7 +63,8 @@
     "selectAll": "Всі",
     "deselectAll": "Зняти",
     "emptyDb": "Немає районів у базі",
-    "deleteFromDb": "Видалити з БД"
+    "deleteFromDb": "Видалити з БД",
+    "addAll": "Додати всі"
   },
 "metricsModal": {
     "title": "⚙️ Налаштування Парсера",
@@ -74,6 +75,9 @@
     "gus": "📈 GUS (Зарплата)",
     "otodom": "🏠 Otodom (Ціни)",
     "osmMetrics": "Метрики OSM:",
+    "churches_count": "Церкви",
+    "air_quality": "Якість повітря",
+    "sports_facilities_count": "Спорт. бази",
     "otodomCheck": "Перевірка посилань Otodom:",
     "cancel": "Скасувати",
     "start": "🚀 Запустити парсер"
@@ -116,6 +120,7 @@
     "typeData": "Дані",
     "typeUi": "UI/Вигляд",
     "typeSuggestion": "Пропозиція",
+    "deleteTitle": "Видалення",
     "typeContact": "Контакти",
     "typeOther": "Інше",
     "loading": "⏳ Завантаження повідомлень...",
@@ -162,6 +167,7 @@
   },
   "aiLogsTab": {
     "confirmToggle": "Ви впевнені, що хочете змінити статус AI Assistant?",
+    "confirmTitle": "Зміна стану AI",
     "saveError": "Помилка збереження налаштувань",
     "loading": "Завантаження даних ШІ...",
     "globalStatus": "Глобальний статус AI Assistant",
@@ -184,6 +190,9 @@
   },
   "usersTab": {
   "title": "Управління користувачами",
+  "subtitle": "Керування доступом та ролями",
+  "terminateSessions": "Завершити сесії",
+  "deleteUser": "Видалити користувача",
   "searchPlaceholder": "Пошук за Email або ID...",
   "refresh": "Оновити",
   "loading": "Завантаження користувачів...",
@@ -255,7 +264,7 @@
   }
   },
   "adminPanel": {
-    "title": "🛠 City Maps Admin v4.0",
+    "title": "🛠 City Maps Admin v5.0",
     "tabDashboard": "Дашборд",
     "tabUsers": "Користувачі",
     "tabAi": "ШІ Аналітика",
@@ -305,7 +314,8 @@
   "entityModal": {
     "cancelBtn": "Скасувати",
     "createBtn": "Створити",
-    "processing": "⏳..."
+    "processing": "⏳...",
+    "nameLabel": "Назва" 
   },
   "manualEditor": {
     "inactiveTitle": "Редактор не активний",
@@ -453,5 +463,14 @@
     "libraries_count": "Бібліотеки",
     "churches_count": "Церкви",
     "air_quality": "Якість повітря"
+  },
+  "common": {
+    "error": "Помилка",
+    "success": "Успіх",
+    "warning": "Увага",
+    "info": "Інформація"
+  },
+  "modals": {
+    "okBtn": "OK"
   }
 }

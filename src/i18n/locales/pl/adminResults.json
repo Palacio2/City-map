@@ -1,0 +1,25 @@
+{
+  "common": {
+    "error": "Błąd",
+    "success": "Sukces"
+  },
+  "resultsTable": {
+    "search": "Szukaj dzielnic...",
+    "total": "Razem",
+    "saving": "Zapisywanie...",
+    "saveAll": "Zapisz wszystko",
+    "noResults": "Brak wyników dla twojego zapytania",
+    "uploadSuccess": "Zdjęcie zapisane pomyślnie!",
+    "uploadError": "Błąd przesyłania",
+    "photoLabel": "Zdjęcie dzielnicy",
+    "uploading": "Przesyłanie...",
+    "uploadBtn": "Prześlij",
+    "saveRow": "Zapisz dzielnicę",
+    "warnNoPop": "Brak danych o populacji, ale istnieje infrastruktura",
+    "warnHighPrice": "Podejrzanie wysoka cena nieruchomości",
+    "warnHighRent": "Podejrzanie wysoki czynsz",
+    "warnLowSalary": "Podejrzanie niska pensja",
+    "yes": "Tak",
+    "no": "Nie"
+  }
+}

@@ -1,0 +1,88 @@
+{
+  "common": {
+    "error": "Error",
+    "success": "Success"
+  },
+  "plans": {
+    "premium": "Premium",
+    "realtor": "Realtor"
+  },
+  "cityModal": {
+    "title": "City Assignment",
+    "cancel": "Cancel",
+    "saving": "Saving...",
+    "save": "Save",
+    "desc": "Select the cities this admin will manage",
+    "empty": "No cities available"
+  },
+  "giftModal": {
+    "title": "Gift Subscription",
+    "cancel": "Cancel",
+    "granting": "Granting...",
+    "grantBtn": "Grant",
+    "desc": "You are granting a free subscription to",
+    "bypassStripe": "This action bypasses the payment gateway.",
+    "planLabel": "Subscription Plan",
+    "daysLabel": "Number of Days",
+    "daysHint": "Specify duration in days (e.g., 30)"
+  },
+  "promoModal": {
+    "title": "Promo Codes",
+    "colCode": "Code",
+    "colDiscount": "Discount",
+    "colDuration": "Duration",
+    "colUses": "Used",
+    "codeLabel": "Coupon Code",
+    "offLabel": "Discount (%)",
+    "durationLabel": "Duration Type",
+    "once": "Once",
+    "repeating": "Repeating",
+    "forever": "Forever",
+    "adding": "Adding...",
+    "addBtn": "Add Code",
+    "activeTitle": "Active Promo Codes",
+    "loading": "Loading promo codes...",
+    "empty": "No promo codes yet"
+  },
+  "usersTab": {
+    "title": "Users",
+    "subtitle": "Access and roles management",
+    "btnPromoCodes": "Promo Codes",
+    "filterAll": "All",
+    "filterAdmins": "Admins",
+    "filterPremium": "Premium",
+    "searchPlaceholder": "Search by email or ID...",
+    "refresh": "Refresh",
+    "loading": "Loading users...",
+    "error": "Loading error",
+    "empty": "No users found",
+    "colId": "ID",
+    "colEmail": "Email",
+    "colPlan": "Plan / Role",
+    "colCities": "Cities",
+    "citiesCount": "{{count}} cities",
+    "assignCitiesBtn": "Assign cities",
+    "colRodo": "GDPR",
+    "yes": "Yes",
+    "no": "No",
+    "colSearches": "Searches",
+    "colReg": "Registered",
+    "colActions": "Actions",
+    "cannotEditSuper": "Cannot edit Super Admin",
+    "cannotEditSelf": "Cannot edit yourself",
+    "revokeAdmin": "Revoke admin rights",
+    "makeAdmin": "Make admin",
+    "terminateSessions": "Terminate sessions",
+    "deleteUser": "Delete user"
+  },
+  "confirm": {
+    "roleTitle": "Change Role",
+    "roleDesc": "Are you sure you want to change this user's role?",
+    "deleteTitle": "Delete User",
+    "deleteDesc": "Are you sure you want to delete {{email}}? This cannot be undone.",
+    "terminateTitle": "Terminate Sessions",
+    "terminateDesc": "Are you sure you want to force terminate all active sessions for this user?",
+    "terminateSuccess": "Sessions terminated successfully",
+    "grantSuccess": "Subscription granted successfully"
+  }
+}

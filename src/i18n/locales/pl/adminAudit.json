@@ -1,0 +1,17 @@
+{
+  "title": "Dziennik Audytu",
+  "subtitle": "Historia działań administratorów systemu",
+  "loading": "Ładowanie logów...",
+  "refresh": "Odśwież",
+  "empty": "Dziennik jest pusty",
+  "systemUser": "System",
+  "assignedItems": "Przypisano elementy: {{count}}",
+  "planDetails": "Plan: {{plan}}, Dni: {{days}}",
+  "codeDetails": "Kod: {{code}}, Zniżka: {{discount}}%",
+  "complexData": "Złożone dane",
+  "colTime": "Czas",
+  "colAdmin": "Admin",
+  "colAction": "Akcja",
+  "colTarget": "Obiekt",
+  "colDetails": "Szczegóły"
+}

@@ -1,150 +1,111 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '@supabaseClient';
-import styles from './AiLogsTab.module.css';
-import { FaRobot, FaPowerOff, FaHistory, FaTools } from 'react-icons/fa';
+import React, { useMemo } from 'react';
+import { FaRobot, FaPowerOff, FaHistory, FaTools, FaUser } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import DataTable from '../../ui/DataTable';
-import uiStyles from '../../ui/AdminUI.module.css';
+import { Button } from '../../ui/Button';
+import { Badge } from '../../ui/Badge';
 import { useAdmin } from '../../hooks/AdminContext'; 
+import { useAiLogs } from './useAiLogs';
 
 export default function AiLogsTab() {
-    const { t } = useTranslation('admin');
+    const { t } = useTranslation('adminAi');
     const { currentAdmin } = useAdmin();
     const isSuperAdmin = currentAdmin?.role === 'super_admin';
 
-    const [aiEnabled, setAiEnabled] = useState(true);
-    const [logs, setLogs] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [saving, setSaving] = useState(false);
+    const { aiEnabled, logs, loading, saving, toggleAi, fetchData } = useAiLogs(isSuperAdmin);
 
-    useEffect(() => {
-        fetchData();
-    }, []);
-
-    const fetchData = async () => {
-        setLoading(true);
-        try {
-            const { data: dbLogs } = await supabase
-                .from('ai_system_logs')
-                .select('*')
-                .order('created_at', { ascending: false })
-                .limit(50);
-                
-            if (dbLogs) {
-                setLogs(dbLogs);
-                const lastSystemLog = dbLogs.find(l => l.log_type === 'system');
-                if (lastSystemLog) {
-                    setAiEnabled(lastSystemLog.system_action === 'enabled_ai');
-                }
-            }
-        } catch {
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const toggleAi = async () => {
-        if (!isSuperAdmin) return; 
-        if (!window.confirm(t('aiLogsTab.confirmToggle'))) return;
-        
-        setSaving(true);
-        try {
-            const { data: { user } } = await supabase.auth.getUser();
-            const newAction = aiEnabled ? 'disabled_ai' : 'enabled_ai';
-            
-            const { error } = await supabase.from('ai_system_logs').insert({
-                user_id: user.id,
-                user_email: user.email,
-                log_type: 'system',
-                system_action: newAction
-            });
-
-            if (error) throw error;
-            setAiEnabled(!aiEnabled);
-            fetchData();
-        } catch {
-            alert(t('aiLogsTab.saveError'));
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    const columns = [
-        { header: t('aiLogsTab.colTime'), render: (log) => <span className={styles.timeCell}>{new Date(log.created_at).toLocaleString('uk-UA')}</span> },
+    const columns = useMemo(() => [
+        { 
+            header: t('aiLogsTab.colTime'), 
+            render: (log) => <span className="whitespace-nowrap text-textMuted text-[0.85rem] font-medium">{new Date(log.created_at).toLocaleString('uk-UA')}</span> 
+        },
         { 
             header: t('aiLogsTab.colType'), 
             render: (log) => log.log_type === 'system' 
-                ? <span className={styles.badgeSystem}><FaTools/> {t('aiLogsTab.typeSystem')}</span> 
-                : <span className={styles.badgeChat}>{t('aiLogsTab.typeChat')}</span>
+                ? <Badge variant="danger" icon={FaTools}>{t('aiLogsTab.typeSystem')}</Badge> 
+                : <Badge variant="success" icon={FaRobot}>{t('aiLogsTab.typeChat')}</Badge>
         },
-        { header: t('aiLogsTab.colUser'), render: (log) => <span className={styles.userCell}>{log.user_email || t('aiLogsTab.unknownUser')}</span> },
+        { 
+            header: t('aiLogsTab.colUser'), 
+            render: (log) => (
+                <div className="flex items-center gap-2 text-textMain font-semibold text-[0.9rem]">
+                    <div className="w-6 h-6 rounded-full bg-main border border-border flex items-center justify-center"><FaUser className="text-textMuted text-[0.7rem]" /></div>
+                    <span>{log.user_email || t('aiLogsTab.unknownUser')}</span>
+                </div>
+            )
+        },
         { 
             header: t('aiLogsTab.colDetails'), 
             render: (log) => log.log_type === 'system' ? (
-                <strong className={log.system_action === 'enabled_ai' ? styles.textSuccess : styles.textDanger}>
+                <Badge variant={log.system_action === 'enabled_ai' ? "success" : "danger"}>
                     {log.system_action === 'enabled_ai' ? t('aiLogsTab.aiEnabled') : t('aiLogsTab.aiDisabled')}
-                </strong>
+                </Badge>
             ) : (
-                <div className={styles.detailsCell}>
-                    <div className={styles.promptText}><strong style={{color: 'var(--primary)'}}>Q:</strong> {log.prompt}</div>
-                    <div className={styles.responseText}><strong style={{color: 'var(--success)'}}>A:</strong> {log.response?.substring(0, 100)}...</div>
+                <div className="max-w-[500px] flex flex-col gap-3 py-1">
+                    <div className="bg-main px-3 py-2 rounded-lg rounded-tl-sm text-textMain text-[0.85rem] font-medium leading-relaxed w-fit max-w-[90%] relative">
+                        {log.prompt}
+                    </div>
+                    <div className="bg-surface border border-border px-3 py-2 rounded-lg rounded-bl-sm text-textMuted text-[0.85rem] leading-relaxed w-fit max-w-[90%] shadow-sm self-start">
+                        {log.response?.substring(0, 100)}...
+                    </div>
                 </div>
             ) 
         }
-    ];
+    ], [t]);
 
     if (loading && logs.length === 0) {
         return (
-            <div className={styles.loadingState}>
-                <div className={styles.spinner}></div>
+            <div className="py-20 px-5 text-[1.1rem] text-primary text-center font-bold flex flex-col items-center gap-5 bg-surface rounded-lg border border-border shadow-sm">
+                <div className="w-10 h-10 border-4 border-blue-500/20 border-t-primary rounded-full animate-spin"></div>
                 <div>{t('aiLogsTab.loading')}</div>
             </div>
         );
     }
 
     return (
-        <div className={styles.container}>
-            <div className={styles.settingsCard}>
-                <div className={styles.settingsInfo}>
-                    <div className={styles.iconWrapper}>
-                        <FaRobot className={styles.robotIcon} />
+        <div className="flex flex-col gap-6 pb-8 animate-[fadeIn_0.4s_cubic-bezier(0.16,1,0.3,1)]">
+            <div className="bg-surface p-6 rounded-lg flex justify-between items-center shadow-sm border border-border flex-wrap gap-5">
+                <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-blue-500/5 rounded-xl flex items-center justify-center border border-blue-500/10">
+                        <FaRobot className="text-[1.5rem] text-primary" />
                     </div>
                     <div>
-                        <h3 className={styles.cardTitle}>{t('aiLogsTab.globalStatus')}</h3>
-                        <p className={styles.cardDesc}>{t('aiLogsTab.globalDesc')}</p>
+                        <h3 className="m-0 text-textMain text-[1.2rem] font-bold tracking-tight">{t('aiLogsTab.globalStatus')}</h3>
+                        <p className="m-0 mt-1 text-textMuted text-[0.85rem] font-medium">{t('aiLogsTab.globalDesc')}</p>
                     </div>
                 </div>
                 {isSuperAdmin && (
-                    <button 
+                    <Button 
+                        variant={aiEnabled ? 'danger' : 'primary'}
                         onClick={toggleAi} 
                         disabled={saving}
-                        className={`${uiStyles.btn} ${aiEnabled ? uiStyles.btnDanger : uiStyles.btnPrimary} ${styles.toggleBtn}`}
+                        className="w-full md:w-auto"
                     >
                         <FaPowerOff />
                         {saving ? t('aiLogsTab.processing') : (aiEnabled ? t('aiLogsTab.turnOff') : t('aiLogsTab.turnOn'))}
-                    </button>
+                    </Button>
                 )}
             </div>
 
-            <div className={styles.historySection}>
-                <div className={styles.historyHeader}>
-                    <div className={styles.historyTitleWrapper}>
-                        <div className={styles.iconWrapperSmall}>
+            <div className="bg-surface rounded-lg shadow-sm border border-border overflow-hidden flex flex-col">
+                <div className="flex items-center justify-between p-5 px-6 bg-main border-b border-border">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-surface border border-border text-textMuted rounded-md flex items-center justify-center text-[1rem] shadow-sm">
                             <FaHistory />
                         </div>
-                        <h3 className={styles.historyTitle}>{t('aiLogsTab.historyTitle')}</h3>
+                        <h3 className="m-0 text-textMain text-[1.1rem] font-bold">{t('aiLogsTab.historyTitle')}</h3>
                     </div>
-                    <button onClick={fetchData} className={`${uiStyles.btn} ${uiStyles.btnCancel}`}>
+                    <Button variant="cancel" onClick={fetchData} className="!py-2 !px-4 !text-[0.85rem]">
                         {t('aiLogsTab.refresh')}
-                    </button>
+                    </Button>
                 </div>
 
-                <div className={styles.tableWrapper}>
+                <div className="flex-1">
                     <DataTable 
                         columns={columns} 
                         data={logs} 
                         emptyMessage={t('aiLogsTab.emptyHistory')}
-                        rowClassName={(log) => log.log_type === 'system' ? styles.systemRow : ''}
+                        rowClassName={(log) => log.log_type === 'system' ? 'bg-red-500/5' : ''}
                     />
                 </div>
             </div>

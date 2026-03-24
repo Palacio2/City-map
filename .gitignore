@@ -113,7 +113,7 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-server/
+# server/
 # yarn v2
 .yarn/cache
 .yarn/unplugged
@@ -128,8 +128,10 @@ server/
 dist/
 dist-ssr/
 
-server/data/*.pbf
-server/data/*.osm
+
+server
+
+server/data
 # Ігноруємо логі та тимчасові результати
 server/data/logs/
 server/pending-results.json
