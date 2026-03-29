@@ -1,31 +1,27 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import styles from './DistrictMap.module.css';
 import CountrySelect from '@cityCountrySelect/CountrySelect';
 import CitySelect from '@cityCountrySelect/CitySelect';
 import FiltersPanel from '@filtersPanel/FiltersPanel';
 import DistrictsMap from './DistrictsMap';
 import DistrictDetailsModal from './DistrictDetailsModal';  
-import Loader from '@components/loader/Loader';
-import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import { filterDistrictsByCriteria } from '@filtersPanel/filterLogic';
-import { transformDistrictsForDisplay } from '@utils/dataTransformers';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
 import { useSubscription } from '@subscription/SubscriptionContext';
-import SeoMeta from '@components/seo/SeoMeta'; // ДОДАНО: Імпорт нашого SEO компонента
+import { useDistrictsQuery } from '@hooks/useDistrictsQuery';
 
 const FREE_ALLOWED_CATEGORIES = Object.values(DISTRICT_CATEGORIES)
   .filter(cat => !cat.isPremium)
   .map(cat => cat.key);
 
 const ErrorDisplay = ({ error, onRetry }) => {
-  const { t } = useTranslation('districts');
+  const { t } = useTranslation('db');
   return (
-    <div className={styles.error}>
-      <p>{error}</p>
-      <button onClick={onRetry} className={styles.retryButton}>
-        {t('retry')}
+    <div className="flex-1 min-h-[300px] md:min-h-[50dvh] bg-surface rounded-xl border border-borderClient flex flex-col items-center justify-center shadow-glass animate-fadeIn p-4 text-center">
+      <p className="text-danger font-medium mb-6">{error.message || error}</p>
+      <button onClick={onRetry} className="py-3 px-8 bg-textMain text-surface border-none rounded-lg font-heading text-[0.85rem] font-bold uppercase tracking-widest cursor-pointer transition-all shadow-sm hover:bg-accent hover:text-white hover:-translate-y-0.5 hover:shadow-hover active:translate-y-0">
+        {t('common.actions.retry', { defaultValue: 'Спробувати ще раз' })}
       </button>
     </div>
   );
@@ -33,42 +29,19 @@ const ErrorDisplay = ({ error, onRetry }) => {
 
 export default function DistrictMap() {
   const { country, city } = useParams();
-  const { t } = useTranslation('districts');
+  const { t } = useTranslation('db');
   const { isFree } = useSubscription(); 
   
-  const [allDistricts, setAllDistricts] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [selectedFilters, setSelectedFilters] = useState({});
-  
   const [selectedDistrict, setSelectedDistrict] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const { data: allDistricts = [], isLoading, error, refetch } = useDistrictsQuery(country, city);
+
   const allowedCategories = useMemo(() => {
     return isFree ? FREE_ALLOWED_CATEGORIES : null;
   }, [isFree]);
-
-  const loadData = useCallback(async () => {
-    if (!country || !city) return;
-
-    setIsLoading(true);
-    setError(null);
-
-    try {
-      const data = await fetchDistrictsWithFilters(country, city);
-      const transformed = transformDistrictsForDisplay(data);
-      setAllDistricts(transformed);
-    } catch {
-      setError(t('load_failed'));
-    } finally {
-      setIsLoading(false);
-    }
-  }, [country, city, t]);
-
-  useEffect(() => {
-    loadData();
-  }, [loadData]);
 
   const allFilteredDistricts = useMemo(() => {
     return filterDistrictsByCriteria(allDistricts, selectedFilters);
@@ -104,41 +77,13 @@ export default function DistrictMap() {
         setSelectedCategory(null);
     }, 300);
   }, []);
-  
-  const handleToggleFavorite = useCallback((districtId, isFavorite) => {
-    const updateDistrictInList = (list) => 
-      list.map(d => d.id === districtId ? { ...d, isFavorite } : d);
 
-    setAllDistricts(prev => updateDistrictInList(prev));
-  }, []);
-
-  // ДОДАНО: SEO для сторінок без обраного міста
-  if (!country) return (
-    <>
-      <SeoMeta title="Оберіть країну | City Maps" description="Оберіть країну для перегляду карти районів." />
-      <CountrySelect />
-    </>
-  );
-  if (!city) return (
-    <>
-      <SeoMeta title={`Міста: ${country} | City Maps`} description={`Оберіть місто в ${country} для перегляду статистики районів.`} />
-      <CitySelect country={country} />
-    </>
-  );
-
-  const pageTitle = city 
-    ? `Інфраструктура та ціни: ${city} | City Maps` 
-    : 'Карта районів | City Maps';
-    
-  const pageDesc = city 
-    ? `Детальна статистика, ціни на нерухомість, якість повітря та інфраструктура для міста ${city}. Порівняйте райони.`
-    : 'Оберіть місто для перегляду аналітики та статистики районів.';
+  if (!country) return <CountrySelect />;
+  if (!city) return <CitySelect country={country} />;
 
   return (
-    <div className={styles.container}>
-      <SeoMeta title={pageTitle} description={pageDesc} />
-
-      <div className={styles.contentWrapper}>
+    <div className="flex flex-col w-full box-border overflow-x-hidden">
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full max-w-[1440px] mx-auto px-4 md:px-6 xl:px-8 box-border relative items-start">
         <FiltersPanel 
           onFiltersChange={handleFiltersChange}
           selectedFilters={selectedFilters}
@@ -146,11 +91,12 @@ export default function DistrictMap() {
         />
         
         {isLoading ? (
-          <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '50dvh' }}>
-             <Loader size="large" text={t('loading')} />
+          <div className="flex-1 flex flex-col items-center justify-center min-h-[300px] md:min-h-[50dvh] bg-surface rounded-xl border border-borderClient shadow-glass animate-fadeIn">
+            <div className="w-12 h-12 rounded-full border-[3px] border-accent/15 border-t-accent animate-spin mb-6"></div>
+            <p className="text-textSecondary font-heading tracking-widest text-[0.95rem] m-0 font-medium uppercase">{t('common.loading', { defaultValue: 'Завантаження...' })}</p>
           </div>
         ) : error ? (
-          <ErrorDisplay error={error} onRetry={loadData} />
+          <ErrorDisplay error={error} onRetry={refetch} />
         ) : (
             <DistrictsMap 
                 key={listKey}
@@ -167,7 +113,6 @@ export default function DistrictMap() {
         selectedCategory={selectedCategory} 
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        onToggleFavorite={handleToggleFavorite}
       />
     </div>
   );

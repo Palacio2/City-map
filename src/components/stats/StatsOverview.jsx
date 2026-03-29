@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaChevronDown, FaChartBar, FaMapMarkerAlt, FaHistory, FaBookmark, FaCalculator } from 'react-icons/fa';
 import { useSubscription } from '@subscription/SubscriptionContext';
-import styles from './StatsPage.module.css';
 import StatsCards from './components/StatsCards/StatsCards';
 import WeeklyChart from './components/WeeklyChart/WeeklyChart';
 import PopularDistricts from './components/PopularDistricts/PopularDistricts';
@@ -15,25 +14,27 @@ const STORAGE_KEY = 'stats_page_sections_state';
 
 const CollapsibleSection = React.memo(({ id, title, icon: Icon, children, isOpen, onToggle }) => {
   return (
-    <div className={`${styles.sectionWrapper} ${isOpen ? styles.open : ''}`}>
+    <div className={`w-full bg-surface rounded-2xl shadow-sm border overflow-hidden transition-all duration-300 ${isOpen ? 'shadow-md border-accent' : 'border-borderClient'}`}>
       <button 
-        className={styles.sectionHeader} 
+        className="w-full flex items-center justify-between p-5 md:p-6 bg-surface border-none cursor-pointer transition-colors hover:bg-hover text-left" 
         onClick={() => onToggle(id)}
         aria-expanded={isOpen}
       >
-        <div className={styles.headerTitle}>
-          {Icon && <Icon className={styles.headerIcon} />}
+        <div className={`flex items-center gap-3 md:gap-4 text-base md:text-[1.1rem] font-semibold font-heading uppercase tracking-wide transition-colors ${isOpen ? 'text-accent' : 'text-textMain'}`}>
+          {Icon && <Icon className={`text-xl transition-transform duration-300 ${isOpen ? 'text-accent scale-110' : 'text-accent'}`} />}
           <span>{title}</span>
         </div>
-        <FaChevronDown className={`${styles.chevron} ${isOpen ? styles.rotate : ''}`} />
+        <FaChevronDown className={`text-textSecondary text-sm transition-all duration-400 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] ${isOpen ? 'rotate-180 text-accent' : ''}`} />
       </button>
       
       <div 
-        className={`${styles.sectionContent} ${isOpen ? styles.contentVisible : ''}`}
+        className={`grid transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'grid-rows-[1fr] opacity-100 visible border-t border-borderClient' : 'grid-rows-[0fr] opacity-0 invisible border-t-transparent'}`}
         aria-hidden={!isOpen}
       >
-        <div className={styles.innerContent}>
+        <div className="overflow-hidden">
+          <div className={`transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'translate-y-0 p-4 md:p-8' : '-translate-y-2 p-0'}`}>
             {children}
+          </div>
         </div>
       </div>
     </div>
@@ -41,7 +42,7 @@ const CollapsibleSection = React.memo(({ id, title, icon: Icon, children, isOpen
 });
 
 export default function StatsOverview({ stats, weeklyActivity, trackedDistricts }) {
-  const { t } = useTranslation(['stats', 'common']);
+  const { t } = useTranslation('db');
   const navigate = useNavigate();
   const { isRealtor } = useSubscription();
 
@@ -80,8 +81,8 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
   }, [isRealtor, navigate]);
 
   return (
-    <div className={styles.content}>
-      <div className={styles.cardsSection}>
+    <div className="max-w-[1200px] mx-auto w-full flex flex-col gap-6 md:gap-8 animate-fadeIn">
+      <div className="w-full">
         <StatsCards 
           stats={stats} 
           onSearchesClick={handleNavigateToSearches}
@@ -94,7 +95,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
       {isRealtor && (
         <CollapsibleSection 
           id="investment_calculator"
-          title={t('stats:calculator.title')}
+          title={t('stats.calculator.title')}
           icon={FaCalculator}
           isOpen={!!openSections['investment_calculator']}
           onToggle={toggleSection}
@@ -106,7 +107,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
       {isRealtor && (
         <CollapsibleSection 
           id="saved_districts"
-          title={t('stats:stats_page.saved_districts')} 
+          title={t('stats.stats_page.saved_districts')} 
           icon={FaBookmark}
           isOpen={!!openSections['saved_districts']}
           onToggle={toggleSection}
@@ -117,7 +118,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
 
       <CollapsibleSection 
         id="weekly_activity"
-        title={t('stats:stats_page.weekly_activity')} 
+        title={t('stats.stats_page.weekly_activity')} 
         icon={FaChartBar}
         isOpen={!!openSections['weekly_activity']}
         onToggle={toggleSection}
@@ -128,7 +129,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
       {isRealtor && (
         <CollapsibleSection 
           id="popular_districts"
-          title={t('stats:stats_page.popular_districts')} 
+          title={t('stats.stats_page.popular_districts')} 
           icon={FaMapMarkerAlt}
           isOpen={!!openSections['popular_districts']}
           onToggle={toggleSection}
@@ -139,7 +140,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
 
       <CollapsibleSection 
         id="last_activity"
-        title={t('stats:stats_page.last_activity')} 
+        title={t('stats.stats_page.last_activity')} 
         icon={FaHistory}
         isOpen={!!openSections['last_activity']}
         onToggle={toggleSection}

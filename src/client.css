@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  .client-layout {
+    font-family: var(--font-body);
+    /* Використовуємо твої змінні. Вони самі змінять колір при зміні теми! */
+    background-color: var(--bg-body);
+    color: var(--text-main);
+    min-height: 100vh;
+    position: relative;
+    z-index: 1;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.4s ease, color 0.4s ease;
+  }
+}
+
+@layer components {
+  /* 1. ПРЕМІУМ КАРТКА (Чиста, з дорогою тінню) */
+  .ui-glass-panel {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.08); /* Дуже м'яка тінь */
+    transition: all 0.3s ease;
+  }
+
+  /* Тінь для темної теми, щоб картка не зливалася з фоном */
+  [data-theme='dark'] .ui-glass-panel {
+    box-shadow: 0 10px 40px -10px rgba(0,0,0,0.4);
+    border-color: rgba(255, 255, 255, 0.08);
+  }
+
+  /* 2. Строга типографіка */
+  .ui-heading-1 {
+    font-family: var(--font-heading);
+    @apply text-4xl sm:text-5xl font-extrabold tracking-tight mb-4;
+    color: var(--text-main);
+  }
+  
+  .ui-heading-2 {
+    font-family: var(--font-heading);
+    @apply text-2xl font-bold tracking-tight mb-3;
+    color: var(--text-main);
+  }
+
+  .ui-watermark {
+    font-family: var(--font-heading);
+    @apply text-8xl sm:text-9xl font-black tracking-tighter mb-4 select-none;
+    color: var(--text-main);
+    opacity: 0.06; /* Дуже ніжний водяний знак */
+  }
+
+  .ui-text-muted {
+    @apply text-lg leading-relaxed font-medium;
+    color: var(--text-secondary);
+  }
+
+  .ui-text-body {
+    @apply text-base leading-relaxed;
+    color: var(--text-secondary);
+  }
+
+  /* 3. Кнопки */
+  .ui-button-primary {
+    @apply inline-flex items-center justify-center gap-2 px-8 py-4 
+           font-semibold tracking-wide rounded-xl transition-all duration-300;
+    background-color: var(--text-main);
+    color: var(--bg-surface);
+  }
+  
+  .ui-button-primary:hover:not(:disabled) {
+    background-color: var(--accent-color);
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(197, 164, 126, 0.3);
+  }
+
+  .ui-button-primary:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  /* 4. Посилання */
+  .ui-link {
+    @apply font-semibold transition-colors pb-0.5 relative;
+    color: var(--text-main);
+    border-bottom: 1px solid var(--text-secondary);
+  }
+  
+  .ui-link:hover {
+    color: var(--accent-color);
+    border-bottom-color: var(--accent-color);
+  }
+
+  /* 5. Поля вводу (для контактів) */
+  .ui-input {
+    @apply w-full px-5 py-4 transition-all rounded-xl;
+    background-color: var(--bg-body); /* Трохи контрастує з карткою */
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+  }
+  
+  .ui-input:focus {
+    outline: none;
+    border-color: var(--accent-color);
+    background-color: var(--bg-surface);
+    box-shadow: 0 0 0 4px rgba(197, 164, 126, 0.15);
+  }
+}

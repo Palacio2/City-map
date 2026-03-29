@@ -2,19 +2,18 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
-import { FaCheckCircle, FaArrowLeft, FaShieldAlt, FaTag } from 'react-icons/fa';
+import { FaCheckCircle, FaArrowLeft, FaShieldAlt, FaTag, FaGem } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next'; 
 import { subscriptionPlans } from '@subscription/subscriptionPlans';
 import { processPayment } from '@api/paymentApi';
 import Loader from '@components/loader/Loader';
-import styles from './Payment.module.css';
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 
 const CheckoutForm = ({ formattedPrice, mode }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { t } = useTranslation('payment'); 
+  const { t } = useTranslation('db'); 
   const [message, setMessage] = useState(null);
   const [isProcessing, setIsProcessing] = useState(false);
 
@@ -46,27 +45,43 @@ const CheckoutForm = ({ formattedPrice, mode }) => {
         window.location.href = returnUrl;
 
     } catch (err) {
-        setMessage(err.message || t('errors.payment_failed'));
+        setMessage(err.message || t('payment.errors.payment_failed'));
         setIsProcessing(false);
     }
   };
 
   const getButtonText = () => {
-      if (isProcessing) return t('processing');
-      if (mode === 'setup') return t('activate_btn');
-      return t('pay_btn', { amount: formattedPrice });
+      if (isProcessing) return t('payment.processing');
+      if (mode === 'setup') return t('payment.activate_btn');
+      return t('payment.pay_btn', { amount: formattedPrice });
   };
 
   return (
-    <form onSubmit={handleSubmit} className={styles.form}>
-      <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
-      {message && <div className={styles.serverError}>{message}</div>}
+    <form onSubmit={handleSubmit} className="flex flex-col flex-1 h-full">
+      <div className="flex-1">
+        <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
+      </div>
+
+      {message && (
+        <div className="mt-6 text-danger bg-danger/10 p-4 rounded-xl border border-danger/20 text-sm text-center font-medium">
+          {message}
+        </div>
+      )}
       
-      <button disabled={isProcessing || !stripe || !elements} className={styles.payBtn}>
-        {getButtonText()}
-      </button>
-      
-      <div className={styles.security}><FaShieldAlt /> {t('security')}</div>
+      <div className="mt-8">
+        <button 
+          disabled={isProcessing || !stripe || !elements} 
+          className="w-full py-4 px-6 bg-gradient-to-br from-accent to-accent-hover text-white rounded-xl font-heading text-base font-bold tracking-widest uppercase cursor-pointer transition-all shadow-md hover:not(:disabled):-translate-y-0.5 hover:not(:disabled):shadow-lg hover:not(:disabled):brightness-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+        >
+          {isProcessing && <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />}
+          {getButtonText()}
+        </button>
+        
+        <div className="mt-6 text-center text-xs text-textSecondary flex items-center justify-center gap-2 font-medium tracking-wide">
+          <FaShieldAlt className="text-success text-sm" /> 
+          {t('payment.security')}
+        </div>
+      </div>
     </form>
   );
 };
@@ -74,13 +89,14 @@ const CheckoutForm = ({ formattedPrice, mode }) => {
 export default function Payment() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const { t } = useTranslation(['payment', 'subscription']);
+  const { t } = useTranslation('db');
 
   const [clientSecret, setClientSecret] = useState("");
   const [promoCode, setPromoCode] = useState("");
   const [finalAmount, setFinalAmount] = useState(null);
   const [paymentMode, setPaymentMode] = useState('payment');
   const [error, setError] = useState(null);
+  const [promoSuccess, setPromoSuccess] = useState(false);
 
   const planKey = state?.planKey;
   const planConfig = subscriptionPlans[planKey];
@@ -94,12 +110,14 @@ export default function Payment() {
     try {
       setClientSecret("");
       setError(null);
+      setPromoSuccess(false);
       const data = await processPayment({ planKey, promoCode: code });
       
       if (data && data.clientSecret) {
           setClientSecret(data.clientSecret);
           setFinalAmount(data.amount);
           setPaymentMode(data.mode);
+          if (code) setPromoSuccess(true);
       } else {
           throw new Error("No client secret returned");
       }
@@ -107,7 +125,7 @@ export default function Payment() {
       if (err.message?.includes('Unauthorized')) {
           navigate('/auth');
       } else {
-          setError(err.message || t('errors.payment_create'));
+          setError(err.message || t('payment.errors.payment_create'));
           if (code) setPromoCode(""); 
       }
     }
@@ -122,63 +140,109 @@ export default function Payment() {
     clientSecret,
     appearance: { 
         theme: 'night', 
-        variables: { colorPrimary: '#c5a47e', colorBackground: '#1a1a1a', colorText: '#ffffff', fontFamily: 'Manrope, sans-serif' } 
+        variables: { 
+          colorPrimary: '#c5a47e', 
+          colorBackground: '#111318', 
+          colorText: '#ffffff', 
+          fontFamily: 'Manrope, sans-serif',
+          borderRadius: '12px',
+          colorDanger: '#ef4444',
+          spacingUnit: '4px'
+        },
+        rules: {
+          '.Input': {
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            boxShadow: 'none',
+          },
+          '.Input:focus': {
+            border: '1px solid #c5a47e',
+          }
+        }
     },
   }), [clientSecret]);
 
   if (!planConfig) return null;
 
-  const displayPrice = finalAmount !== null ? formatEuro(finalAmount) : t('loading');
+  const displayPrice = finalAmount !== null ? formatEuro(finalAmount) : t('payment.loading');
 
   return (
-    <div className={styles.container}>
-      <div className={styles.wrapper}>
-        <button onClick={() => navigate(-1)} className={styles.backLink}>
-            <FaArrowLeft /> {t('payment:back')}
-        </button>
-        <h1 className={styles.title}>{t('payment:title', { plan: planConfig.name })}</h1>
+    <div className="min-h-[100dvh] pt-32 pb-12 px-4 md:px-8 bg-body flex justify-center items-start animate-fadeIn">
+      <div className="w-full max-w-[1100px] flex flex-col items-center">
+        
+        <div className="w-full mb-8 relative flex items-center justify-center">
+          <button 
+            onClick={() => navigate(-1)} 
+            className="absolute left-0 bg-surface/50 hover:bg-surface border border-borderClient p-3 rounded-full text-textSecondary cursor-pointer flex items-center justify-center transition-all hover:text-accent hover:-translate-x-1 hover:shadow-sm"
+            title={t('payment.back')}
+          >
+              <FaArrowLeft />
+          </button>
+          <h1 className="font-heading text-3xl md:text-4xl text-textMain font-bold tracking-wide text-center">
+            {t('payment.title', { plan: planConfig.name })}
+          </h1>
+        </div>
 
-        <div className={styles.grid}>
-          <div className={styles.infoCard}>
-            <div className={styles.headerRow}><FaCheckCircle className={styles.featureIcon} /> {t('payment:tariff_label')}</div>
-            <div className={styles.priceTag}>{displayPrice}</div>
-            
-            <div className={styles.promoSection}>
-                <label className={styles.promoLabel}><FaTag /> {t('payment:promo_label')}</label>
-                <div className={styles.promoInputGroup}>
-                    <input 
-                        type="text" 
-                        value={promoCode} 
-                        onChange={(e) => setPromoCode(e.target.value)} 
-                        placeholder={t('payment:promo_placeholder')}
-                        className={styles.promoInput}
-                    />
-                    <button onClick={() => fetchPaymentIntent(promoCode)} disabled={!promoCode} className={styles.promoButton}>
-                        {t('payment:promo_apply')}
-                    </button>
-                </div>
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_1.3fr] gap-6 md:gap-8 w-full items-stretch">
+          
+          <div className="ui-glass-panel p-6 md:p-8 flex flex-col h-full border-accent/20">
+            <div className="flex items-center gap-4 border-b border-borderClient pb-6 mb-6">
+              <div className="w-12 h-12 rounded-full bg-accent/10 border border-accent/20 flex items-center justify-center text-accent text-xl shrink-0">
+                <FaGem />
+              </div>
+              <div>
+                <span className="text-xs text-textSecondary uppercase tracking-widest font-semibold block mb-1">{t('payment.tariff_label')}</span>
+                <span className="font-heading text-xl font-bold text-textMain">{planConfig.name}</span>
+              </div>
             </div>
 
-            <div className={styles.featuresList}>
+            <div className="bg-surface/50 border border-borderClient p-6 rounded-2xl text-center mb-8">
+              <div className="font-heading text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-accent to-accent-hover tracking-tight drop-shadow-sm">
+                {displayPrice}
+              </div>
+            </div>
+            
+            <div className="mb-8">
+              <label className="text-xs font-bold flex items-center gap-2 mb-3 text-textSecondary uppercase tracking-widest"><FaTag className="text-accent" /> {t('payment.promo_label')}</label>
+              <div className="flex gap-2 relative">
+                  <input 
+                      type="text" 
+                      value={promoCode} 
+                      onChange={(e) => setPromoCode(e.target.value)} 
+                      placeholder={t('payment.promo_placeholder')}
+                      className="flex-1 p-3.5 rounded-xl border border-borderClient bg-surface text-textMain font-medium text-sm transition-all focus:border-accent focus:ring-1 focus:ring-accent outline-none uppercase"
+                  />
+                  <button 
+                    onClick={() => fetchPaymentIntent(promoCode)} 
+                    disabled={!promoCode} 
+                    className="px-6 rounded-xl bg-surface border border-borderClient text-textMain font-heading font-bold text-xs uppercase tracking-widest transition-all hover:not(:disabled):border-accent hover:not(:disabled):text-accent hover:not(:disabled):bg-accent/5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                      {t('payment.promo_apply')}
+                  </button>
+              </div>
+              {promoSuccess && <div className="text-success text-xs font-medium mt-3 flex items-center gap-1.5"><FaCheckCircle /> {t('payment.promo_success')}</div>}
+            </div>
+
+            <div className="flex flex-col gap-3.5 mt-auto border-t border-borderClient pt-6">
               {planConfig.features.map((f, i) => (
-                <div key={i} className={styles.feature}>
-                    <FaCheckCircle size={14} className={styles.featureIcon}/> 
-                    {t(`subscription:subscription.features.${f}`)}
+                <div key={i} className="flex gap-3 text-sm text-textSecondary items-start leading-relaxed">
+                    <FaCheckCircle className="text-success min-w-[16px] mt-0.5"/> 
+                    <span>{t(`subscription.features.${f}`)}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          <div className={styles.paymentCard}>
-            {error && <div className={styles.serverError}>{error}</div>}
+          <div className="ui-glass-panel p-6 md:p-8 flex flex-col min-h-[500px]">
+            {error && <div className="text-danger bg-danger/10 p-4 rounded-xl border border-danger/20 text-sm text-center mb-6 font-medium">{error}</div>}
             {clientSecret ? (
               <Elements key={clientSecret} options={options} stripe={stripePromise}>
                 <CheckoutForm formattedPrice={displayPrice} mode={paymentMode} />
               </Elements>
             ) : (
-              !error && <div className={styles.loadingState}><Loader size="medium" /></div>
+              !error && <div className="flex-1 flex flex-col items-center justify-center min-h-[300px] text-accent"><Loader size="medium" /></div>
             )}
           </div>
+
         </div>
       </div>
     </div>

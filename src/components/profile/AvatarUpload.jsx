@@ -2,12 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaCamera, FaSpinner } from 'react-icons/fa';
 import { storageApi } from '@api/storageApi';
-import styles from './AvatarUpload.module.css';
 
 const avatarCache = {};
 
 export default function AvatarUpload({ uid, url: filePath, onUpload }) {
-  const { t } = useTranslation('profile');
+  const { t } = useTranslation('db');
   const [signedUrl, setSignedUrl] = useState(avatarCache[filePath] || null);
   const [uploading, setUploading] = useState(false);
 
@@ -27,7 +26,7 @@ export default function AvatarUpload({ uid, url: filePath, onUpload }) {
       avatarCache[path] = url;
       setSignedUrl(url);
     } catch {
-      console.error(t('edit_page.errors.avatar_load_error'));
+      console.error(t('profile.edit_page.errors.avatar_load_error'));
     }
   };
 
@@ -36,7 +35,7 @@ export default function AvatarUpload({ uid, url: filePath, onUpload }) {
       setUploading(true);
 
       if (!event.target.files || event.target.files.length === 0) {
-        throw new Error(t('edit_page.errors.select_image'));
+        throw new Error(t('profile.edit_page.errors.select_image'));
       }
 
       const file = event.target.files[0];
@@ -60,21 +59,21 @@ export default function AvatarUpload({ uid, url: filePath, onUpload }) {
   };
 
   return (
-    <div className={styles.avatarContainer}>
+    <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden border-2 border-borderClient bg-surface shrink-0 group">
       {signedUrl ? (
-        <img src={signedUrl} alt="Avatar" className={styles.avatarImage} />
+        <img src={signedUrl} alt="Avatar" className="w-full h-full object-cover" />
       ) : (
-        <div className={styles.avatarPlaceholder}>
-          {uploading ? <FaSpinner className={styles.spinner} /> : <FaCamera />}
+        <div className="w-full h-full flex items-center justify-center bg-body text-textSecondary text-2xl">
+          {uploading ? <FaSpinner className="animate-spin" /> : <FaCamera />}
         </div>
       )}
       
-      <div className={styles.uploadOverlay}>
-        <label className={styles.uploadLabel} htmlFor="single">
+      <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 transition-opacity duration-200 cursor-pointer group-hover:opacity-100">
+        <label className="text-white text-xl cursor-pointer w-full h-full flex items-center justify-center" htmlFor="single">
           {uploading ? '...' : <FaCamera />}
         </label>
         <input
-          style={{ visibility: 'hidden', position: 'absolute' }}
+          className="invisible absolute"
           type="file"
           id="single"
           accept="image/*"

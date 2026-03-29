@@ -2,7 +2,8 @@ const PASSWORD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_])[a-zA-Z\d\W_]{
 const MIN_PASSWORD_LENGTH = 8;
 const CYRILLIC_REGEX = /[\u0400-\u04FF]/;
 
-const getAuthKey = (key) => key;
+// ЗМІНЕНО: тепер автоматично додає префікс 'auth.' до всіх помилок
+const getAuthKey = (key) => `auth.${key}`;
 
 export const sanitizeEmail = (value) => {
   return value.replace(/[^a-zA-Z0-9@._\-+]/g, '');

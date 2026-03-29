@@ -1,12 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import SelectForm, { StatusView } from '@ui/selectForm/SelectForm';
+import SelectForm, { StatusView } from './SelectForm';
 import Loader from '@components/loader/Loader';
 import { fetchCitiesByCountry, createSelectOptions } from '@api/cityCountrySelect';
 
 export default function CitySelect({ country: propCountry }) {
-  const { t } = useTranslation('select');
+  const { t } = useTranslation('db');
   const { country: paramCountry } = useParams();
   const navigate = useNavigate();
 
@@ -21,7 +21,7 @@ export default function CitySelect({ country: propCountry }) {
   const [loading, setLoading] = useState(!!decodedCountry);
   const [fetchError, setFetchError] = useState(null);
 
-  const validationError = !decodedCountry && !propCountry ? t('country_missing') : null;
+  const validationError = !decodedCountry && !propCountry ? t('select.country_missing') : null;
   const displayError = fetchError || validationError;
 
   useEffect(() => {
@@ -47,13 +47,13 @@ export default function CitySelect({ country: propCountry }) {
 
   const handleBack = () => navigate(-1);
 
-  if (loading) return <Loader fullScreen text={t('loading')} />;
+  if (loading) return <Loader fullScreen text={t('select.loading')} />;
 
   if (displayError) {
     return (
       <StatusView 
-        title={t('error')} 
-        error={displayError || t('country_not_found')} 
+        title={t('select.error')} 
+        error={displayError || t('select.country_not_found')} 
         onBack={handleBack} 
         showRetry={!!fetchError}
         onRetry={() => window.location.reload()}
@@ -65,21 +65,21 @@ export default function CitySelect({ country: propCountry }) {
 
   return (
     <SelectForm
-      title={t('city_title', { country: decodedCountry })}
+      title={t('select.city_title', { country: decodedCountry })}
       options={createSelectOptions(cities)}
       selectedValue={selected}
       onValueChange={setSelected}
       onSubmit={(e) => {
         e.preventDefault();
         if (selected) {
-             navigate(`/map/${encodeURIComponent(decodedCountry)}/${encodeURIComponent(selected)}`);
+          navigate(`/map/${encodeURIComponent(decodedCountry)}/${encodeURIComponent(selected)}`);
         }
       }}
       onBack={handleBack}
       showBackButton
-      submitText={t('go_to_map')}
+      submitText={t('select.go_to_map')}
       disabled={!hasCities}
-      disabledMessage={!hasCities ? t('cities_not_found') : t('unavailable')}
+      disabledMessage={!hasCities ? t('select.cities_not_found') : t('select.unavailable')}
       isSearchable
     />
   );

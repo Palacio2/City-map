@@ -2,7 +2,7 @@ import React from 'react';
 import { createRoot } from 'react-dom/client';
 import * as Sentry from "@sentry/react";
 import App from './App';
-import { ThemeProvider } from './components/header/ThemeContext';
+import { ThemeProvider } from './components/layout/ThemeContext';
 import { useTranslation } from 'react-i18next';
 import { FaExclamationTriangle, FaSyncAlt } from 'react-icons/fa';
 import './index.css';
@@ -21,7 +21,7 @@ Sentry.init({
 });
 
 const GlobalErrorFallback = () => {
-  const { t } = useTranslation();
+  const { t } = useTranslation('db');
 
   return (
     <div style={{

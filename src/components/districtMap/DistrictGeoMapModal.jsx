@@ -9,7 +9,6 @@ import 'leaflet.markercluster';
 import { geoApi } from '@api/geoApi';
 import { FiX, FiFilter, FiCheck } from 'react-icons/fi';
 import Loader from '@components/loader/Loader';
-import styles from './DistrictGeoMapModal.module.css';
 import { useSubscription } from '@subscription/SubscriptionContext';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
 
@@ -41,21 +40,21 @@ const getCachedIcon = (type) => {
     if (!ICON_CACHE[safeType]) {
         const emoji = getEmojiForType(safeType);
         const htmlString = `
-            <div style="font-size: 16px; background: #ffffff; border: 2px solid #cbd5e1; border-radius: 50%; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">
+            <div class="flex items-center justify-center w-8 h-8 bg-white border-2 border-slate-300 rounded-full shadow-[0_2px_4px_rgba(0,0,0,0.2)] text-[16px]">
                 ${emoji}
             </div>
         `;
-        ICON_CACHE[safeType] = L.divIcon({ html: htmlString, className: 'custom-poi-icon', iconSize: [32, 32], iconAnchor: [16, 16], tooltipAnchor: [0, -16] });
+        ICON_CACHE[safeType] = L.divIcon({ html: htmlString, className: 'custom-poi-icon bg-transparent border-none', iconSize: [32, 32], iconAnchor: [16, 16], tooltipAnchor: [0, -16] });
     }
     return ICON_CACHE[safeType];
 };
 
 const createCustomClusterIcon = (cluster) => {
   return L.divIcon({
-    html: `<div style="background-color: #c5a47e; color: white; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-family: sans-serif; border: 2px solid white; box-shadow: 0 4px 6px rgba(0,0,0,0.3);">
+    html: `<div class="bg-accent text-white rounded-full w-10 h-10 flex items-center justify-center font-bold font-sans border-2 border-white shadow-[0_4px_6px_rgba(0,0,0,0.3)]">
             ${cluster.getChildCount()}
           </div>`,
-    className: 'custom-marker-cluster',
+    className: 'custom-marker-cluster bg-transparent border-none',
     iconSize: L.point(40, 40, true),
   });
 };
@@ -102,7 +101,8 @@ const FastMapMarkers = ({ pois, t }) => {
             const marker = L.marker(poi.coord, { icon: getCachedIcon(poi.type) });
             const rawName = (poi.type || 'default').replace('_count', '');
             const labelText = t(`poi_types.${rawName}`, { defaultValue: rawName.replace(/_/g, ' ') });
-            marker.bindTooltip(`<strong>${labelText}</strong>`, { direction: 'top', className: styles.customTooltip });
+            // Added tailwind classes to tooltip via className
+            marker.bindTooltip(`<strong>${labelText}</strong>`, { direction: 'top', className: 'font-body font-semibold capitalize border-none shadow-md rounded-md px-3 py-1.5 bg-surface text-textMain' });
             return marker;
         });
 
@@ -218,33 +218,44 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
     if (!isOpen) return null;
 
     return (
-        <div className={styles.overlay} onClick={onClose}>
-            <div className={styles.modal} onClick={e => e.stopPropagation()}>
-                <div className={styles.header}>
-                    <h3>{districtName} - {t('title')}</h3>
-                    <button className={styles.closeBtn} onClick={onClose}><FiX size={24} /></button>
+        <div className="fixed inset-0 bg-[#0f1014d9] backdrop-blur-[8px] z-[var(--z-modal-overlay)] flex items-center justify-center md:p-6 animate-fadeIn" onClick={onClose}>
+            <div className="bg-surface w-full max-w-[1400px] h-[100dvh] md:h-[90vh] md:rounded-[var(--radius-md)] flex flex-col overflow-hidden shadow-modal animate-slideUp" onClick={e => e.stopPropagation()}>
+                
+                {/* Header */}
+                <div className="flex justify-between items-center py-5 px-6 bg-body border-b border-borderClient shrink-0">
+                    <h3 className="m-0 font-heading text-xl md:text-2xl text-textMain font-bold tracking-wide">{districtName} - {t('title', { defaultValue: 'Карта інфраструктури' })}</h3>
+                    <button className="bg-black/5 hover:bg-danger/10 border-none text-textSecondary hover:text-danger w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-all hover:scale-105" onClick={onClose}>
+                        <FiX size={24} />
+                    </button>
                 </div>
                 
-                <div className={styles.mapBody}>
+                {/* Map Body */}
+                <div className="flex-1 flex flex-row relative overflow-hidden bg-body">
                     {loading ? (
-                        <div className={styles.loaderWrapper}><Loader /></div>
+                        <div className="w-full h-full flex items-center justify-center bg-surface font-heading text-textSecondary text-xl"><Loader /></div>
                     ) : (!geoData?.geojson && availableTypes.length === 0) ? (
-                        <div className={styles.noData}>{t('no_data')}</div>
+                        <div className="w-full h-full flex items-center justify-center bg-surface font-heading text-textSecondary text-xl">{t('no_data', { defaultValue: 'Дані відсутні' })}</div>
                     ) : (
                         <>
+                            {/* Sidebar Filters */}
                             {availableTypes.length > 0 && (
-                                <div className={`${styles.sidebar} ${isMobileFilterOpen ? styles.sidebarOpen : ''}`}>
-                                    <div className={styles.sidebarHeader}>
-                                        <h4>{t('filters_title')}</h4>
-                                        <button className={styles.mobileCloseFilter} onClick={() => setIsMobileFilterOpen(false)}><FiX size={20} /></button>
-                                    </div>
-                                    <div className={styles.sidebarControls}>
-                                        <button onClick={toggleAll} className={styles.toggleAllBtn}>
-                                            {activeFilters.length === availableTypes.length ? t('clear_all') : t('select_all')}
+                                <div className={`absolute top-0 left-0 w-full h-full md:relative md:w-[320px] bg-surface border-r border-borderClient flex flex-col shrink-0 z-[var(--z-modal)] md:z-[var(--z-sidebar)] transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isMobileFilterOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
+                                    
+                                    <div className="p-5 border-b border-borderClient flex justify-between items-center bg-surface">
+                                        <h4 className="m-0 font-heading text-textMain text-[1.1rem] font-bold">{t('filters_title', { defaultValue: 'Фільтри' })}</h4>
+                                        <button className="md:hidden bg-transparent border-none text-textSecondary cursor-pointer p-1" onClick={() => setIsMobileFilterOpen(false)}>
+                                            <FiX size={24} />
                                         </button>
-                                        <span className={styles.counter}>{activeFilters.length} / {availableTypes.length}</span>
                                     </div>
-                                    <div className={styles.filterList}>
+                                    
+                                    <div className="py-4 px-5 flex justify-between items-center bg-body border-b border-borderClient">
+                                        <button onClick={toggleAll} className="bg-transparent border-none text-accent font-body font-semibold text-[0.9rem] cursor-pointer p-0 transition-opacity hover:opacity-80">
+                                            {activeFilters.length === availableTypes.length ? t('clear_all', { defaultValue: 'Очистити все' }) : t('select_all', { defaultValue: 'Обрати все' })}
+                                        </button>
+                                        <span className="text-[0.85rem] text-textSecondary font-bold bg-borderClient/30 px-2 py-0.5 rounded-full">{activeFilters.length} / {availableTypes.length}</span>
+                                    </div>
+                                    
+                                    <div className="flex-1 overflow-y-auto p-4 flex flex-col gap-2 custom-scrollbar">
                                         {availableTypes.map(type => {
                                             const isActive = activeFilters.includes(type);
                                             const count = geoData.poi_data.filter(p => p.type === type).length;
@@ -252,11 +263,13 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
                                             const translatedName = t(`poi_types.${rawName}`, { defaultValue: rawName.replace(/_/g, ' ') });
 
                                             return (
-                                                <div key={type} className={`${styles.filterItem} ${isActive ? styles.activeItem : ''}`} onClick={() => toggleFilter(type)}>
-                                                    <div className={`${styles.checkbox} ${isActive ? styles.checkboxActive : ''}`}>{isActive && <FiCheck size={14} />}</div>
-                                                    <span className={styles.filterIcon}>{getEmojiForType(type)}</span>
-                                                    <span className={styles.filterName}>{translatedName}</span>
-                                                    <span className={styles.filterCount}>{count}</span>
+                                                <div key={type} className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors border border-transparent hover:bg-hover ${isActive ? 'bg-hover border-borderClient shadow-sm' : 'bg-transparent'}`} onClick={() => toggleFilter(type)}>
+                                                    <div className={`w-5 h-5 rounded-md border-2 mr-3 flex items-center justify-center transition-colors ${isActive ? 'bg-accent border-accent text-white' : 'bg-transparent border-borderClient text-transparent'}`}>
+                                                        {isActive && <FiCheck size={14} />}
+                                                    </div>
+                                                    <span className="text-xl mr-3 leading-none">{getEmojiForType(type)}</span>
+                                                    <span className="font-body text-[0.95rem] text-textMain font-medium capitalize flex-1">{translatedName}</span>
+                                                    <span className="text-[0.85rem] text-textSecondary font-bold bg-borderClient/30 px-2 py-0.5 rounded-full">{count}</span>
                                                 </div>
                                             );
                                         })}
@@ -264,14 +277,15 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
                                 </div>
                             )}
 
-                            <div className={styles.mapContainerWrapper}>
+                            {/* Map Container */}
+                            <div className="flex-1 relative h-full">
                                 {availableTypes.length > 0 && (
-                                    <button className={styles.mobileOpenFilterBtn} onClick={() => setIsMobileFilterOpen(true)}>
-                                        <FiFilter size={20} /><span>{t('filters')}</span>
+                                    <button className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-fixed)] bg-surface text-textMain border border-borderClient py-3 px-6 rounded-full font-heading font-bold text-[0.95rem] flex items-center justify-center gap-2.5 shadow-hover cursor-pointer" onClick={() => setIsMobileFilterOpen(true)}>
+                                        <FiFilter size={20} /><span>{t('filters', { defaultValue: 'Фільтри' })}</span>
                                     </button>
                                 )}
                                 
-                                <MapContainer center={[52, 19]} zoom={6} className={styles.leafletMap} zoomControl={true} maxZoom={18}>
+                                <MapContainer center={[52, 19]} zoom={6} className="w-full h-full z-[var(--z-base)]" zoomControl={true} maxZoom={18}>
                                     <TileLayer url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" attribution='&copy; Carto' />
                                     <MapUpdater geoData={geoData} />
                                     {geoData.geojson && <GeoJSON data={geoData.geojson} style={GEOJSON_STYLE} />}
@@ -282,6 +296,12 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
                     )}
                 </div>
             </div>
+            <style>{`
+              .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+              .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+              .custom-scrollbar::-webkit-scrollbar-thumb { background: var(--border-accent); border-radius: 10px; }
+              .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: var(--accent-color); }
+            `}</style>
         </div>
     );
 }

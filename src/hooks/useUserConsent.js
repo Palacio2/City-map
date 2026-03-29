@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import { supabase } from '@supabaseClient';
 import { userConsentApi } from '@api/userConsentApi';
-import { useAuth } from '@ui/authForm/AuthContext';
+import { useAuth } from '@/components/auth/AuthContext';
 
 const SAFE_ROUTES = ['/terms', '/about', '/faq', '/contacts', '/payment-success', '/login'];
 

@@ -1,10 +1,10 @@
 import React, { Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '@ui/authForm/AuthContext';
+import { useAuth } from '@/components/auth/AuthContext';
 
-import Header from '@header/Header';
-import Footer from '@footer/Footer';
+import Header from './Header';
+import Footer from './Footer';
 import RodoModal from '@modals/RodoModal';
 import CookieBanner from '@modals/CookieBanner';
 import Loader from '@components/loader/Loader';

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Navigate, useLocation } from 'react-router-dom';
-import { useAuth } from '@ui/authForm/AuthContext';
+import { useAuth } from '@/components/auth/AuthContext';
 import { userConsentApi } from '@api/userConsentApi';
 
 const PrivateRoute = ({ children }) => {

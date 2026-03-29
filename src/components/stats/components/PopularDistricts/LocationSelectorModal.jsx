@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { FaTimes, FaMapMarkerAlt, FaGlobe, FaCity, FaMap } from 'react-icons/fa';
-import styles from './LocationSelectorModal.module.css';
 import { fetchCountries, fetchCitiesByCountry } from '@api/cityCountrySelect'; 
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import Loader from '@components/loader/Loader';
@@ -15,7 +14,7 @@ export default function LocationSelectorModal({
   maxSelection = null,
   currentCount = 0 
 }) {
-  const { t } = useTranslation('stats');
+  const { t } = useTranslation('db');
   
   const [countries, setCountries] = useState([]);
   const [cities, setCities] = useState([]);
@@ -41,7 +40,7 @@ export default function LocationSelectorModal({
       })
       .catch(() => {
         if (isMounted) {
-          setError(t('error_load')); 
+          setError(t('stats.error_load')); 
           setLoading(p => ({ ...p, countries: false }));
         }
       });
@@ -138,57 +137,65 @@ export default function LocationSelectorModal({
   const isFormValid = includeDistrict ? selectedDistricts.length > 0 : (selectedCountry && selectedCity);
 
   const modalContent = (
-    <div className={styles.modalOverlay} onClick={onClose}>
-      <div className={styles.modalContent} onClick={e => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}><FaTimes /></button>
+    <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-[9999] backdrop-blur-sm p-4 animate-fadeIn" onClick={onClose}>
+      <div className="bg-body rounded-2xl w-full max-w-[500px] max-h-[90vh] flex flex-col relative shadow-[0_10px_30px_rgba(0,0,0,0.5)] border border-borderClient animate-popIn overflow-hidden" onClick={e => e.stopPropagation()}>
+        <button className="absolute top-4 right-4 bg-transparent border-none w-9 h-9 rounded-full flex items-center justify-center cursor-pointer text-textSecondary transition-colors z-10 hover:bg-danger/10 hover:text-danger" onClick={onClose}><FaTimes /></button>
         
-        <div className={styles.modalHeader}>
-          <div className={styles.iconCircle}><FaMapMarkerAlt /></div>
-          <h3>{includeDistrict ? t('add_districts_title') : t('select_location')}</h3>
-          <p className={styles.modalSubtitle}>
-            {includeDistrict ? t('select_multiple_districts_subtitle') : t('select_city_subtitle')}
+        <div className="pt-8 px-6 pb-5 text-center border-b border-borderClient bg-surface shrink-0">
+          <div className="w-[60px] h-[60px] bg-hover border border-borderClient rounded-2xl flex items-center justify-center mx-auto mb-4 text-accent text-[26px] shadow-sm">
+            <FaMapMarkerAlt />
+          </div>
+          <h3 className="text-[1.5rem] font-heading font-bold text-textMain m-0 mb-2">{includeDistrict ? t('stats.add_districts_title') : t('stats.select_location')}</h3>
+          <p className="text-textSecondary m-0 text-[0.95rem] leading-relaxed">
+            {includeDistrict ? t('stats.select_multiple_districts_subtitle') : t('stats.select_city_subtitle')}
           </p>
         </div>
 
-        {error ? <div className={styles.errorMsg}>{error}</div> : (
-          <form onSubmit={handleSubmit} className={styles.form}>
-            <div className={styles.inputGroup}>
-              <label><FaGlobe className={styles.inputIcon}/> {t('country')}</label>
-              <div className={styles.selectWrapper}>
-                <select value={selectedCountry} onChange={handleCountryChange} disabled={loading.countries} className={styles.selectInput} required={!includeDistrict}>
-                  <option value="">{loading.countries ? t('loading') : t('select_country_placeholder')}</option>
+        {error ? <div className="p-6 text-center text-danger font-medium">{error}</div> : (
+          <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 flex flex-col gap-5 custom-scrollbar">
+            <div className="flex flex-col gap-2">
+              <label className="text-[0.85rem] font-bold uppercase tracking-widest text-textSecondary flex items-center gap-2">
+                <FaGlobe className="text-accent"/> {t('stats.country')}
+              </label>
+              <div className="relative w-full">
+                <select value={selectedCountry} onChange={handleCountryChange} disabled={loading.countries} className="w-full py-3 pl-4 pr-11 bg-surface border border-borderClient rounded-lg text-base text-textMain appearance-none cursor-pointer transition-all hover:not(:disabled):border-accent focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-hover" required={!includeDistrict}>
+                  <option value="">{loading.countries ? t('stats.loading') : t('stats.select_country_placeholder')}</option>
                   {countries.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
-                <span className={styles.selectArrow}>▼</span>
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-textSecondary pointer-events-none text-xs">▼</span>
               </div>
             </div>
             
-            <div className={styles.inputGroup}>
-              <label><FaCity className={styles.inputIcon}/> {t('city')}</label>
-              <div className={styles.selectWrapper}>
-                <select value={selectedCity} onChange={handleCityChange} disabled={!selectedCountry || loading.cities} className={styles.selectInput} required={!includeDistrict}>
-                  <option value="">{!selectedCountry ? t('select_country_first') : loading.cities ? t('loading') : t('select_city_placeholder')}</option>
+            <div className="flex flex-col gap-2">
+              <label className="text-[0.85rem] font-bold uppercase tracking-widest text-textSecondary flex items-center gap-2">
+                <FaCity className="text-accent"/> {t('stats.city')}
+              </label>
+              <div className="relative w-full">
+                <select value={selectedCity} onChange={handleCityChange} disabled={!selectedCountry || loading.cities} className="w-full py-3 pl-4 pr-11 bg-surface border border-borderClient rounded-lg text-base text-textMain appearance-none cursor-pointer transition-all hover:not(:disabled):border-accent focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-hover" required={!includeDistrict}>
+                  <option value="">{!selectedCountry ? t('stats.select_country_first') : loading.cities ? t('stats.loading') : t('stats.select_city_placeholder')}</option>
                   {cities.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
-                <span className={styles.selectArrow}>▼</span>
+                <span className="absolute right-4 top-1/2 -translate-y-1/2 text-textSecondary pointer-events-none text-xs">▼</span>
               </div>
             </div>
             
             {includeDistrict && (
                 <>
-                    <div className={styles.inputGroup}>
-                      <label><FaMap className={styles.inputIcon}/> {t('districts_label')}</label>
+                    <div className="flex flex-col gap-2">
+                      <label className="text-[0.85rem] font-bold uppercase tracking-widest text-textSecondary flex items-center gap-2">
+                        <FaMap className="text-accent"/> {t('stats.districts_label')}
+                      </label>
                       
                       {!selectedCity ? (
-                          <div className={styles.emptyMessage}>{t('select_city_first')}</div>
+                          <div className="text-center py-6 text-textSecondary text-[0.95rem] bg-hover rounded-lg border border-dashed border-borderClient">{t('stats.select_city_first')}</div>
                       ) : loading.districts ? (
-                          <div className={styles.emptyMessage}><Loader size="small" /></div>
+                          <div className="text-center py-6 text-textSecondary text-[0.95rem] bg-hover rounded-lg border border-dashed border-borderClient flex justify-center"><Loader size="small" /></div>
                       ) : availableDistricts.length === 0 ? (
-                          <div className={styles.emptyMessage}>{t('all_districts_added')}</div>
+                          <div className="text-center py-6 text-textSecondary text-[0.95rem] bg-hover rounded-lg border border-dashed border-borderClient">{t('stats.all_districts_added')}</div>
                       ) : (
-                          <div className={styles.districtsGrid}>
+                          <div className="flex flex-wrap gap-2 max-h-[200px] overflow-y-auto p-1 custom-scrollbar">
                             {availableDistricts.map((d) => (
-                              <div key={d.id || d.name || d} className={styles.districtChip} onClick={() => addDistrict(d)}>
+                              <div key={d.id || d.name || d} className="px-3.5 py-2 rounded-full border border-borderClient bg-surface text-textMain text-[0.9rem] cursor-pointer transition-all select-none hover:border-accent hover:text-accent hover:bg-hover hover:-translate-y-[1px]" onClick={() => addDistrict(d)}>
                                   {d.name || d}
                               </div>
                             ))}
@@ -197,13 +204,13 @@ export default function LocationSelectorModal({
                     </div>
 
                     {selectedDistricts.length > 0 && (
-                        <div className={styles.selectedSummary}>
-                            <h4>{t('stats_page.selected_districts')} ({selectedDistricts.length})</h4>
-                            <div className={styles.summaryChips}>
+                        <div className="border-t border-dashed border-borderClient pt-4 mt-2">
+                            <h4 className="text-[0.8rem] uppercase text-textSecondary m-0 mb-3 font-bold">{t('stats.stats_page.selected_districts')} ({selectedDistricts.length})</h4>
+                            <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto custom-scrollbar">
                                 {selectedDistricts.map((d) => (
-                                    <div key={d.id || `${d.country}-${d.city}-${d.name}`} className={styles.summaryChip}>
-                                        <span>{d.name} <small>({d.city})</small></span>
-                                        <button type="button" onClick={() => removeSelectedDistrict(d)}>
+                                    <div key={d.id || `${d.country}-${d.city}-${d.name}`} className="flex items-center gap-2 bg-accent/10 text-accent py-1.5 px-3 rounded-md text-[0.85rem] font-semibold border border-accent/30">
+                                        <span>{d.name} <small className="text-textSecondary font-normal">({d.city})</small></span>
+                                        <button type="button" className="bg-transparent border-none text-accent cursor-pointer p-1 flex items-center rounded transition-colors hover:bg-danger hover:text-white" onClick={() => removeSelectedDistrict(d)}>
                                             <FaTimes />
                                         </button>
                                     </div>
@@ -214,10 +221,10 @@ export default function LocationSelectorModal({
                 </>
             )}
 
-            <button type="submit" className={styles.submitButton} disabled={!isFormValid || loading.cities || loading.districts}>
+            <button type="submit" className="mt-auto w-full bg-textMain text-surface border-none py-3.5 rounded-lg font-heading font-semibold uppercase tracking-widest text-[0.95rem] cursor-pointer transition-all hover:not(:disabled):-translate-y-0.5 hover:not(:disabled):bg-accent hover:not(:disabled):shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isFormValid || loading.cities || loading.districts}>
               {includeDistrict 
-                ? `${t('add_selected_button')} (+${selectedDistricts.length})` 
-                : t('show_popular')}
+                ? `${t('stats.add_selected_button')} (+${selectedDistricts.length})` 
+                : t('stats.show_popular')}
             </button>
           </form>
         )}

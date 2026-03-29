@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { FaMapMarkerAlt } from 'react-icons/fa';
 import { DISTRICT_CATEGORIES } from '@config/districtFields'; 
 import { getValue, formatPrice, formatNumber, formatBoolean, formatLevel, renderRating } from '@utils/formatters.jsx';
-import styles from './ComparisonTable.module.css';
 
 export default function ComparisonTable({ districts }) {
-  const { t } = useTranslation(['comparison', 'common']);
+  const { t } = useTranslation(['db', 'common']);
 
   const rows = useMemo(() => {
     if (!districts?.length) return [];
@@ -27,8 +26,8 @@ export default function ComparisonTable({ districts }) {
         let formatter;
         switch (field.type) {
           case 'price': formatter = (v, d) => formatPrice(v, d.country); break;
-          case 'rating_10': formatter = (v) => v ? <span className={styles.rating}>{renderRating(v)}</span> : '-'; break;
-          case 'boolean': formatter = (v) => formatBoolean(v, t, true, styles); break;
+          case 'rating_10': formatter = (v) => v ? <span className="font-bold text-accent">{renderRating(v)}</span> : '-'; break;
+          case 'boolean': formatter = (v) => formatBoolean(v, t, true, { booleanTrue: 'text-success font-bold', booleanFalse: 'text-textSecondary opacity-50' }); break;
           case 'crimeLevel': formatter = (v) => formatNumber(v) + '/10'; break;
           case 'text': formatter = (v) => formatLevel(v, t); break;
           case 'number': default: formatter = (v) => formatNumber(v); break;
@@ -57,16 +56,16 @@ export default function ComparisonTable({ districts }) {
   if (!districts?.length) return null;
 
   return (
-    <div className={styles.tableWrapper}>
-      <table className={styles.table}>
+    <div className="bg-surface rounded-xl shadow-card border border-borderClient overflow-x-auto relative mb-6 md:rounded-lg md:border-x-0">
+      <table className="w-full border-separate border-spacing-0 min-w-[600px]">
         <thead>
           <tr>
-            <th className={`${styles.th} ${styles.firstCol}`}></th>
+            <th className="sticky left-0 z-10 bg-surface border-r border-b border-borderClient text-left min-w-[140px] max-w-[140px] md:min-w-[200px] md:max-w-[250px] shadow-[2px_0_5px_rgba(0,0,0,0.05)] p-3 md:p-4 align-middle"></th>
             {districts.map((d) => (
-              <th key={d.id || d.name} className={styles.th}>
-                <div className={styles.districtHeader}>
-                  <span className={styles.dName}>{d.name}</span>
-                  <span className={styles.dCity}><FaMapMarkerAlt /> {d.city}</span>
+              <th key={d.id || d.name} className="p-3 md:p-4 border-b border-borderClient text-center align-middle bg-surface">
+                <div className="flex flex-col gap-1 items-center min-w-[140px]">
+                  <span className="font-heading font-bold text-[0.95rem] md:text-[1.1rem] text-textMain whitespace-normal">{d.name}</span>
+                  <span className="text-[0.8rem] text-textSecondary flex items-center gap-1"><FaMapMarkerAlt /> {d.city}</span>
                 </div>
               </th>
             ))}
@@ -80,23 +79,23 @@ export default function ComparisonTable({ districts }) {
 
             if (row.type === 'header') {
               return (
-                <tr key={rowKey} className={styles.sectionHeader}>
-                  <td className={`${styles.td} ${styles.firstCol}`}>{row.title}</td>
+                <tr key={rowKey} className="group">
+                  <td className="sticky left-0 z-10 bg-body border-r border-b border-borderClient text-left min-w-[140px] max-w-[140px] md:min-w-[200px] md:max-w-[250px] shadow-[2px_0_5px_rgba(0,0,0,0.05)] text-accent font-heading font-bold uppercase tracking-widest px-4 py-3 text-[0.85rem]">{row.title}</td>
                   {districts.map((d, dIdx) => (
-                    <td key={`spacer-${dIdx}`} className={styles.headerSpacer}></td>
+                    <td key={`spacer-${dIdx}`} className="bg-body border-b border-borderClient"></td>
                   ))}
                 </tr>
               );
             }
 
             return (
-              <tr key={rowKey} className={styles.dataRow}>
-                <td className={`${styles.td} ${styles.firstCol} ${styles.metricName}`}>{row.label}</td>
+              <tr key={rowKey} className="group hover:bg-hover transition-colors">
+                <td className="sticky left-0 z-10 bg-surface border-r border-b border-borderClient text-left min-w-[140px] max-w-[140px] md:min-w-[200px] md:max-w-[250px] shadow-[2px_0_5px_rgba(0,0,0,0.05)] font-semibold text-textSecondary text-[0.9rem] p-3 md:p-4 align-middle group-hover:bg-hover transition-colors">{row.label}</td>
                 {districts.map((d, dIdx) => {
                   const rawVal = getValue(d, row.key);
                   const displayVal = row.format ? row.format(rawVal, d) : (rawVal ?? '-');
                   return (
-                    <td key={`cell-${dIdx}`} className={styles.td}>
+                    <td key={`cell-${dIdx}`} className="p-3 md:p-4 border-b border-borderClient text-center align-middle text-[0.85rem] md:text-base">
                       {displayVal}
                     </td>
                   );

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from './styles/cards.module.css';
 import StatCard from './StatCard';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
 import { 
@@ -11,26 +10,33 @@ import {
   getCrimeLevelClass 
 } from '@utils/formatters';
 
+// Створюємо імітацію styles.module.css для сумісності з утилітами форматування
+const mockStyles = {
+  highRating: 'text-success font-bold',
+  mediumRating: 'text-warning font-bold',
+  lowRating: 'text-danger font-bold',
+  booleanTrue: 'text-success font-bold',
+  booleanFalse: 'text-textSecondary opacity-50'
+};
+
 export default function StatsGrid({ filterData, currencyInfo, isFree, isRealtor, selectedCategory }) {
   const { t } = useTranslation(['districts', 'common']);
 
-const formatValue = (value, type, fieldKey) => {
+  const formatValue = (value, type, fieldKey) => {
     if (value === null || value === undefined) return t('districts:na');
 
     if (type === 'price') return formatPrice(value, currencyInfo);
-    if (type === 'boolean') return formatBoolean(value, t, true, styles);
+    if (type === 'boolean') return formatBoolean(value, t, true, mockStyles);
     
     if (type === 'crimeLevel') {
       const labelKey = getCrimeLevelText(value);
-      const className = getCrimeLevelClass(value, styles);
+      const className = getCrimeLevelClass(value, mockStyles);
       return <span className={className}>{t(labelKey)}</span>;
     }
 
-    // ДОДАЄМО ПЕРЕВІРКУ ДЛЯ ЯКОСТІ ПОВІТРЯ (AQI)
     if (fieldKey === 'airQuality') {
       const numValue = parseFloat(value);
       if (!isNaN(numValue)) {
-        // Конвертуємо числові показники AQI у текст
         let aqiEnum = 'medium';
         if (numValue <= 50) aqiEnum = 'good';
         else if (numValue > 100) aqiEnum = 'bad';
@@ -70,7 +76,7 @@ const formatValue = (value, type, fieldKey) => {
   }, [selectedCategory]);
 
   return (
-    <div className={styles.statsGridContainer}>
+    <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 md:gap-6 w-full box-border">
       {categoriesToRender.map((category) => {
         if (isFree && category.isPremium) return null;
         const categoryData = filterData[category.key];
@@ -90,9 +96,9 @@ const formatValue = (value, type, fieldKey) => {
               if (val === null || val === undefined) return null;
 
               return (
-                <div key={field.key} className={styles.statRow}>
-                  <span className={styles.statLabel}>{t(`common:fields.${field.key}`)}</span>
-                  <strong className={styles.statValue}>
+                <div key={field.key} className="flex justify-between py-2.5 border-b border-dashed border-borderClient text-[0.9rem] items-center last:border-b-0">
+                  <span className="text-textSecondary">{t(`common:fields.${field.key}`)}</span>
+                  <strong className="text-textMain font-semibold text-right">
                     {formatValue(val, field.type, field.key)}
                   </strong>
                 </div>

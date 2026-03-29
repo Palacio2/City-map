@@ -6,7 +6,6 @@ import { fetchTrackedDistrictsWithStats, removeTrackedDistrict, addTrackedDistri
 import { formatPrice } from '@utils/formatters.jsx';
 import LocationSelectorModal from '../PopularDistricts/LocationSelectorModal';
 import ConfirmationModal from './ConfirmationModal';
-import styles from './TrackedDistricts.module.css';
 
 const ITEMS_PER_PAGE = 3;
 const STORAGE_KEY_PAGE = 'tracked_districts_page';
@@ -18,7 +17,7 @@ const formatDate = (dateString, defaultText) => {
 };
 
 export default function TrackedDistricts() {
-  const { t } = useTranslation(['stats', 'common']);
+  const { t } = useTranslation('db');
   const navigate = useNavigate();
   
   const [trackedItems, setTrackedItems] = useState(() => {
@@ -51,28 +50,20 @@ export default function TrackedDistricts() {
     sessionStorage.setItem(STORAGE_KEY_DATA, JSON.stringify(newData));
   }, []);
 
-  // ВИПРАВЛЕНО: Функція огорнута в useCallback, щоб бути стабільною залежністю для useEffect
   const loadTrackedData = useCallback(async () => {
-    if (trackedItems.length === 0) {
-        setLoading(true);
-    }
-    
+    if (trackedItems.length === 0) setLoading(true);
     try {
       const data = await fetchTrackedDistrictsWithStats();
       updateLocalData(data);
-      
       const maxPage = Math.ceil(data.length / ITEMS_PER_PAGE) - 1;
-      if (currentPage > maxPage && maxPage >= 0) {
-        setCurrentPage(maxPage);
-      }
+      if (currentPage > maxPage && maxPage >= 0) setCurrentPage(maxPage);
     } catch (err) { 
-      console.error("Failed to load tracked data:", err); // ВИПРАВЛЕНО: Додано логування замість порожнього блоку
+      console.error(err);
     } finally { 
-        setLoading(false); 
+      setLoading(false); 
     }
   }, [trackedItems.length, updateLocalData, currentPage]);
 
-  // ВИПРАВЛЕНО: Тепер loadTrackedData додано в залежності
   useEffect(() => { 
     loadTrackedData(); 
   }, [loadTrackedData]);
@@ -99,11 +90,10 @@ export default function TrackedDistricts() {
       await removeTrackedDistrict(districtToDelete);
       const newItems = trackedItems.filter(item => item.id !== districtToDelete);
       updateLocalData(newItems);
-      
       const maxPage = Math.ceil(newItems.length / ITEMS_PER_PAGE) - 1;
       if (currentPage > maxPage && maxPage >= 0) setCurrentPage(maxPage);
     } catch {
-      alert(t('stats:error_delete'));
+      alert(t('stats.error_delete'));
     } finally {
       setDeleteModalOpen(false);
       setDistrictToDelete(null);
@@ -112,24 +102,17 @@ export default function TrackedDistricts() {
 
   const handleAddSubmit = async (districtsArray) => {
     if (!districtsArray || districtsArray.length === 0) return;
-    
     setIsAdding(true);
     try {
         const promises = districtsArray.map(d => 
-            addTrackedDistrict({ 
-                country: d.country, 
-                city: d.city, 
-                district: d.name, 
-                districtId: d.id 
-            })
+            addTrackedDistrict({ country: d.country, city: d.city, district: d.name, districtId: d.id })
         );
-
         await Promise.all(promises);
         await loadTrackedData(); 
         setIsModalOpen(false);
     } catch (error) {
-        console.error("Add multiple districts error:", error);
-        alert(t('stats:error_add_multiple_districts'));
+        console.error(error);
+        alert(t('stats.error_add_multiple_districts'));
     } finally {
         setIsAdding(false);
     }
@@ -139,88 +122,88 @@ export default function TrackedDistricts() {
   const startIndex = currentPage * ITEMS_PER_PAGE;
   const visibleItems = trackedItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  if (loading && trackedItems.length === 0) return <div className={styles.loader}>{t('stats:loading')}...</div>;
+  if (loading && trackedItems.length === 0) {
+    return <div className="text-center p-12 text-textSecondary bg-body rounded-xl border border-dashed border-borderClient font-heading">{t('stats.loading')}</div>;
+  }
 
   return (
-    <div className={styles.section}>
-      <div className={styles.header}>
-        <div className={styles.titleWrapper}>
-          <div className={styles.iconWrapper}>
-            <FaBookmark className={styles.icon} />
+    <div className="w-full">
+      <div className="flex justify-between items-center mb-6 pb-4 border-b border-borderClient flex-wrap gap-4">
+        
+        {/* ВИПРАВЛЕНО КОНФЛІКТ: block md:flex замість hidden md:flex */}
+        <div className="md:flex items-center gap-3 hidden">
+          <div className="w-10 h-10 flex items-center justify-center rounded-full bg-warning/10 text-warning text-lg shrink-0">
+            <FaBookmark />
           </div>
-          <h2 className={styles.title}>{t('stats:stats_page.saved_districts_prices')}</h2>
+          <h2 className="text-xl font-heading font-bold text-textMain m-0 tracking-wide">{t('stats.stats_page.saved_districts_prices')}</h2>
         </div>
-        <div className={styles.actions}>
+        
+        <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto">
           {trackedItems.length > ITEMS_PER_PAGE && (
-            <div className={styles.controls}>
-              <button 
-                className={styles.navBtn} 
-                onClick={() => setCurrentPage(p => p - 1)} 
-                disabled={currentPage === 0}
-              >
+            <div className="flex items-center gap-2 bg-body p-1 rounded-lg border border-borderClient">
+              <button className="bg-surface border border-borderClient w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-all text-textSecondary text-xs hover:not(:disabled):bg-hover hover:not(:disabled):text-textMain hover:not(:disabled):border-accent disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-transparent" onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 0}>
                 <FaChevronLeft />
               </button>
-              <span className={styles.pageIndicator}>{currentPage + 1} / {totalPages}</span>
-              <button 
-                className={styles.navBtn} 
-                onClick={() => setCurrentPage(p => p + 1)} 
-                disabled={currentPage >= totalPages - 1}
-              >
+              <span className="text-sm text-textSecondary font-semibold min-w-[40px] text-center tabular-nums">{currentPage + 1} / {totalPages}</span>
+              <button className="bg-surface border border-borderClient w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-all text-textSecondary text-xs hover:not(:disabled):bg-hover hover:not(:disabled):text-textMain hover:not(:disabled):border-accent disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-transparent" onClick={() => setCurrentPage(p => p + 1)} disabled={currentPage >= totalPages - 1}>
                 <FaChevronRight />
               </button>
             </div>
           )}
-          <button className={styles.addBtn} onClick={() => setIsModalOpen(true)} disabled={isAdding}>
-            <FaPlus /> {isAdding ? '...' : t('stats:add_button')}
+          <button className="flex items-center gap-2 bg-body text-accent border border-borderClient px-4 py-2 rounded-lg font-semibold text-sm cursor-pointer transition-all font-heading uppercase tracking-widest hover:not(:disabled):bg-hover hover:not(:disabled):border-accent hover:not(:disabled):-translate-y-[1px]" onClick={() => setIsModalOpen(true)} disabled={isAdding}>
+            <FaPlus /> {isAdding ? '...' : t('stats.add_button')}
           </button>
         </div>
       </div>
 
       {trackedItems.length === 0 ? (
-        <div className={styles.empty}>
-          <p>{t('stats:empty_tracked_list')}</p>
+        <div className="text-center p-12 text-textSecondary bg-body rounded-xl border border-dashed border-borderClient font-heading">
+          <p>{t('stats.empty_tracked_list')}</p>
         </div>
       ) : (
-        <div className={styles.grid}>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
             {visibleItems.map((item) => (
-              <div key={item.id} className={styles.card} onClick={() => handleNavigate(item)}>
-                <div className={styles.cardHeader}>
-                  <div className={styles.headerInfo}>
-                    <h3 className={styles.name}>{item.district}</h3>
-                    <span className={styles.location}>{item.city}, {item.country}</span>
+              <div key={item.id} className="border border-borderClient bg-body rounded-xl p-5 cursor-pointer transition-all flex flex-col relative hover:-translate-y-1 hover:border-accent hover:shadow-hover group" onClick={() => handleNavigate(item)}>
+                
+                <div className="mb-4 border-b border-dashed border-borderClient pb-4 flex justify-between items-start">
+                  <div className="flex flex-col gap-1">
+                    <h3 className="text-lg font-bold text-textMain font-heading m-0">{item.district}</h3>
+                    <span className="text-sm text-textSecondary">{item.city}, {item.country}</span>
                   </div>
-                  <button className={styles.deleteBtn} onClick={(e) => handleDeleteClick(e, item.id)}>
+                  <button className="bg-transparent border border-transparent cursor-pointer p-2 rounded-lg flex items-center justify-center transition-all text-textSecondary hover:bg-danger/10 hover:text-danger" onClick={(e) => handleDeleteClick(e, item.id)}>
                       <FaTrash />
                   </button>
                 </div>
                 
-                <div className={styles.prices}>
-                  <div className={styles.priceRow}>
-                    <div className={styles.priceLabel}>
-                      <FaKey className={styles.rentIcon} /> 
-                      <span>{t('common:fields.average_rent_price')}</span>
+                <div className="flex flex-col gap-3 mb-4">
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-sm text-textSecondary font-medium uppercase tracking-wide">
+                      <FaKey className="text-accent text-sm" /> 
+                      <span>{t('common.fields.average_rent_price')}</span>
                     </div>
-                    <span className={styles.priceValue}>
+                    <span className="font-bold text-textMain text-base font-heading">
                         {formatPrice(item.rental_price || item.avg_price_rent, item.country)}
                     </span>
                   </div>
-                  <div className={styles.priceRow}>
-                    <div className={styles.priceLabel}>
-                      <FaHome className={styles.saleIcon} /> 
-                      <span>{t('common:fields.propertyPricePerSqm')}</span>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center gap-2 text-sm text-textSecondary font-medium uppercase tracking-wide">
+                      <FaHome className="text-success text-sm" /> 
+                      <span>{t('common.fields.propertyPricePerSqm')}</span>
                     </div>
-                    <span className={styles.priceValue}>
+                    <span className="font-bold text-textMain text-base font-heading">
                         {formatPrice(item.sale_price || item.avg_price_sqm, item.country)}
                     </span>
                   </div>
                 </div>
                 
-                <div className={styles.cardFooter}>
-                    <div className={styles.updatedAt}>
-                      <FaClock className={styles.clockIcon} />
-                      <span>{t('stats:updated_label')} {formatDate(item.updated_at || item.created_at, t('stats:date_unknown'))}</span>
+                <div className="mt-auto flex justify-between items-center pt-3 border-t border-borderClient">
+                    <div className="flex items-center gap-1.5 text-xs text-textSecondary">
+                      <FaClock className="text-textSecondary text-xs" />
+                      <span>{t('stats.updated_label')} {formatDate(item.updated_at || item.created_at, t('stats.date_unknown'))}</span>
                     </div>
-                    <div className={styles.detailsLink}><FaArrowRight /></div>
+                    <div className="text-accent flex items-center justify-center w-7 h-7 rounded-full bg-accent/10 transition-all text-xs group-hover:bg-accent group-hover:text-white group-hover:translate-x-1">
+                      <FaArrowRight />
+                    </div>
                 </div>
               </div>
             ))}
@@ -240,8 +223,8 @@ export default function TrackedDistricts() {
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        title={t('stats:delete_modal_title')}
-        message={t('stats:confirm_delete_district')}
+        title={t('stats.delete_modal_title')}
+        message={t('stats.confirm_delete_district')}
       />
     </div>
   );

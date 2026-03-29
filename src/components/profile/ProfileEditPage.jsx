@@ -7,10 +7,9 @@ import 'react-phone-number-input/style.css';
 import enLabels from 'react-phone-number-input/locale/en.json';
 import { profileAPI } from '@api/edit-profileApi';
 import { validateProfileForm } from '@utils/profileValidation';
-import styles from './ProfileEditPages.module.css';
 
 export default function ProfileEditPage() {
-  const { t } = useTranslation('profile');
+  const { t } = useTranslation('db');
   const navigate = useNavigate();
 
   const [state, setState] = useState({
@@ -39,7 +38,7 @@ export default function ProfileEditPage() {
     } catch {
       setStatusMessage({ 
         type: 'error', 
-        text: t('edit_page.errors.load_failed') 
+        text: t('profile.edit_page.errors.load_failed') 
       });
     }
   }, [t]);
@@ -51,23 +50,23 @@ export default function ProfileEditPage() {
   const mapErrorToMessage = (error) => {
     const msg = (error?.message || '').toLowerCase();
 
-    if (msg.includes('invalid refresh token') || msg.includes('jwt')) return t('errors.auth_error');
-    if (msg.includes('networkerror') || msg.includes('failed to fetch')) return t('errors.network_error');
-    if (msg.includes('user not found')) return t('errors.user_not_found');
+    if (msg.includes('invalid refresh token') || msg.includes('jwt')) return t('profile.errors.auth_error');
+    if (msg.includes('networkerror') || msg.includes('failed to fetch')) return t('profile.errors.network_error');
+    if (msg.includes('user not found')) return t('profile.errors.user_not_found');
     
     if (msg.includes('already registered') || msg.includes('already been registered') || msg.includes('unique constraint')) {
-        return t('errors.email_taken');
+        return t('profile.errors.email_taken');
     }
     
     if (msg.includes('rate limit') || msg.includes('security purposes') || msg.includes('try again after')) {
-        return t('errors.too_many_requests');
+        return t('profile.errors.too_many_requests');
     }
     
     if (msg.includes('is invalid') || (msg.includes('email') && msg.includes('invalid'))) {
-        return t('errors.email_invalid_format');
+        return t('profile.errors.email_invalid_format');
     }
 
-    return error.message || t('errors.unknown_error');
+    return error.message || t('profile.errors.unknown_error');
   };
 
   const handleInputChange = useCallback((e) => {
@@ -90,7 +89,7 @@ export default function ProfileEditPage() {
     }
 
     if (state.phone && !isValidPhoneNumber(state.phone)) {
-        setStatusMessage({ type: 'error', text: t('edit_page.errors.phone_invalid') });
+        setStatusMessage({ type: 'error', text: t('profile.edit_page.errors.phone_invalid') });
         return;
     }
 
@@ -109,11 +108,11 @@ export default function ProfileEditPage() {
         
         setStatusMessage({ 
             type: 'success', 
-            text: t('edit_page.email_update_sent') 
+            text: t('profile.edit_page.email_update_sent') 
         });
         updateState('originalEmail', state.email.trim());
       } else {
-        setStatusMessage({ type: 'success', text: t('edit_page.success') });
+        setStatusMessage({ type: 'success', text: t('profile.edit_page.success') });
         setTimeout(() => navigate('/profile'), 1500);
       }
     } catch (error) {
@@ -127,44 +126,50 @@ export default function ProfileEditPage() {
   };
 
   return (
-    <div className={styles.container}>
-      <div className={styles.header}>
-        <Link to="/profile" className={styles.backButton}>
-          <FaArrowLeft /> {t('actions.back_to_profile')}
+    <div className="min-h-[100dvh] bg-body text-textMain py-8 px-4 md:px-8 font-body animate-fadeIn">
+      <div className="max-w-[1200px] mx-auto mb-10 flex flex-col gap-4">
+        <Link to="/profile" className="inline-flex items-center gap-2 text-textSecondary font-heading font-semibold text-[0.85rem] tracking-widest uppercase transition-all w-fit hover:text-accent hover:-translate-x-1 decoration-none">
+          <FaArrowLeft /> {t('profile.actions.back_to_profile')}
         </Link>
-        <div className={styles.titleSection}>
-          <h1 className={styles.title}>{t('edit_page.title')}</h1>
-          <p className={styles.subtitle}>{t('edit_page.subtitle')}</p>
+        <div className="mt-2">
+          <h1 className="font-heading text-3xl md:text-[2.5rem] font-bold text-accent mb-2 inline-block">
+            {t('profile.edit_page.title')}
+          </h1>
+          <p className="text-textSecondary text-base max-w-[600px] leading-relaxed">
+            {t('profile.edit_page.subtitle')}
+          </p>
         </div>
       </div>
       
-      <div className={styles.content}>
-        <div className={styles.section}>
-          <form onSubmit={handleSubmit} className={styles.form} noValidate>
-            <div className={styles.formHeader}>
-              <h2 className={styles.formTitle}>{t('edit_page.main_info')}</h2>
-              <p className={styles.formSubtitle}>{t('edit_page.enter_data')}</p>
+      <div className="max-w-[700px] mx-auto w-full">
+        <div className="ui-glass-panel p-6 md:p-10 shadow-card">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-6 md:gap-8" noValidate>
+            <div className="text-center border-b border-borderClient pb-6 mb-2">
+              <h2 className="font-heading text-textMain text-2xl font-bold mb-2">{t('profile.edit_page.main_info')}</h2>
+              <p className="text-textSecondary text-[0.9rem] m-0">{t('profile.edit_page.enter_data')}</p>
             </div>
             
             {statusMessage.text && (
               <div 
-                className={`${styles.messageContainer} ${
-                  statusMessage.type === 'success' ? styles.successMessage : styles.errorMessage
+                className={`flex items-center gap-3 p-4 rounded-lg font-medium text-[0.9rem] animate-slideDown ${
+                  statusMessage.type === 'success' 
+                  ? 'bg-success/10 text-success border border-success/20' 
+                  : 'bg-danger/10 text-danger border border-danger/20'
                 }`}
                 role="alert"
               >
                 {statusMessage.type === 'success' ? 
-                  <FaCheckCircle className={styles.statusIcon} /> : 
-                  <FaExclamationTriangle className={styles.statusIcon} />
+                  <FaCheckCircle className="shrink-0 text-lg" /> : 
+                  <FaExclamationTriangle className="shrink-0 text-lg" />
                 }
                 <span>{statusMessage.text}</span>
               </div>
             )}
             
-            <div className={styles.formGroup}>
-              <label htmlFor="name" className={styles.formLabel}>
-                <FaUser className={styles.labelIcon} />
-                {t('labels.full_name')} *
+            <div className="flex flex-col gap-2">
+              <label htmlFor="name" className="flex items-center gap-2 font-semibold text-textMain text-[0.9rem] font-heading uppercase tracking-[0.03em]">
+                <FaUser className="text-accent text-[0.9rem]" />
+                {t('profile.labels.full_name')} *
               </label>
               <input
                 id="name"
@@ -172,18 +177,18 @@ export default function ProfileEditPage() {
                 name="name"
                 value={state.name}
                 onChange={handleInputChange}
-                className={styles.formInput}
-                placeholder={t('edit_page.placeholders.name')}
+                className="w-full p-4 bg-body border border-borderClient rounded-lg text-textMain font-body text-base transition-all focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-hover"
+                placeholder={t('profile.edit_page.placeholders.name')}
                 required
                 disabled={state.isSaving}
                 maxLength={30}
               />
             </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="email" className={styles.formLabel}>
-                <FaEnvelope className={styles.labelIcon} />
-                {t('labels.email')} *
+            <div className="flex flex-col gap-2">
+              <label htmlFor="email" className="flex items-center gap-2 font-semibold text-textMain text-[0.9rem] font-heading uppercase tracking-[0.03em]">
+                <FaEnvelope className="text-accent text-[0.9rem]" />
+                {t('profile.labels.email')} *
               </label>
               <input
                 id="email"
@@ -191,55 +196,61 @@ export default function ProfileEditPage() {
                 name="email"
                 value={state.email}
                 onChange={handleInputChange}
-                className={styles.formInput}
-                placeholder={t('edit_page.placeholders.email')}
+                className="w-full p-4 bg-body border border-borderClient rounded-lg text-textMain font-body text-base transition-all focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-hover"
+                placeholder={t('profile.edit_page.placeholders.email')}
                 required
                 disabled={state.isSaving}
                 maxLength={60} 
               />
               
               {state.email !== state.originalEmail && (
-                <div className={styles.emailWarning} role="note">
-                  <FaExclamationTriangle className={styles.warningIcon} />
-                  <span className={styles.warningText}>
-                    {t('edit_page.email_warning')}
+                <div className="bg-warning/10 border border-warning/20 rounded-lg p-3 flex items-center gap-2.5 mt-2 text-[0.85rem] text-warning" role="note">
+                  <FaExclamationTriangle className="shrink-0" />
+                  <span>
+                    {t('profile.edit_page.email_warning')}
                   </span>
                 </div>
               )}
             </div>
 
-            <div className={styles.formGroup}>
-              <label htmlFor="phone" className={styles.formLabel}>
-                <FaPhone className={styles.labelIcon} />
-                {t('labels.phone')}
+            <div className="flex flex-col gap-2">
+              <label htmlFor="phone" className="flex items-center gap-2 font-semibold text-textMain text-[0.9rem] font-heading uppercase tracking-[0.03em]">
+                <FaPhone className="text-accent text-[0.9rem]" />
+                {t('profile.labels.phone')}
               </label>
               
-              <PhoneInput
-                international
-                defaultCountry="PL"
-                value={state.phone}
-                onChange={handlePhoneChange}
-                disabled={state.isSaving}
-                className={styles.phoneInputWrapper}
-                labels={enLabels}
-                limitMaxLength={true}
-              />
+              {/* Додано стилі для <select> та <option> всередині .PhoneInputCountry */}
+              <div className="flex items-center w-full px-4 bg-body border border-borderClient rounded-lg transition-all focus-within:border-accent focus-within:ring-2 focus-within:ring-accent/20 
+              [&_.PhoneInputInput]:flex-1 [&_.PhoneInputInput]:border-none [&_.PhoneInputInput]:bg-transparent [&_.PhoneInputInput]:py-4 [&_.PhoneInputInput]:text-textMain [&_.PhoneInputInput]:font-body [&_.PhoneInputInput]:text-base [&_.PhoneInputInput]:outline-none 
+              [&_.PhoneInputCountrySelect]:bg-body [&_.PhoneInputCountrySelect]:text-textMain [&_.PhoneInputCountrySelect_option]:bg-body [&_.PhoneInputCountrySelect_option]:text-textMain 
+              [&_.PhoneInputCountry]:mr-3 [&_.PhoneInputCountry]:pr-3 [&_.PhoneInputCountry]:border-r [&_.PhoneInputCountry]:border-borderClient 
+              aria-disabled:opacity-60 aria-disabled:cursor-not-allowed aria-disabled:bg-hover" aria-disabled={state.isSaving}>
+                <PhoneInput
+                  international
+                  defaultCountry="PL"
+                  value={state.phone}
+                  onChange={handlePhoneChange}
+                  disabled={state.isSaving}
+                  labels={enLabels}
+                  limitMaxLength={true}
+                />
+              </div>
 
             </div>
 
-            <div className={styles.buttonsContainer}>
+            <div className="flex flex-col md:flex-row gap-4 mt-4">
               <button 
                 type="submit" 
-                className={styles.primaryButton}
+                className="flex-[2] flex items-center justify-center gap-2.5 p-4 bg-gradient-to-br from-accent to-accent-hover text-white border-none rounded-lg font-heading text-[0.9rem] font-bold uppercase tracking-widest cursor-pointer transition-all shadow-sm hover:not(:disabled):-translate-y-0.5 hover:not(:disabled):shadow-md hover:not(:disabled):brightness-110 disabled:opacity-50 disabled:cursor-not-allowed"
                 disabled={state.isSaving}
               >
-                <FaSave className={styles.buttonIcon} />
-                {state.isSaving ? t('actions.saving') : t('actions.save')}
+                <FaSave className="text-lg" />
+                {state.isSaving ? t('profile.actions.saving') : t('profile.actions.save')}
               </button>
               
-              <Link to="/profile" className={styles.secondaryButton}>
-                <FaTimes className={styles.buttonIcon} />
-                {t('actions.cancel')}
+              <Link to="/profile" className="flex-[1] flex items-center justify-center gap-2.5 p-4 bg-transparent text-textMain border border-borderClient rounded-lg font-heading text-[0.9rem] font-bold uppercase tracking-widest cursor-pointer transition-all decoration-none hover:bg-hover hover:border-textSecondary">
+                <FaTimes className="text-lg" />
+                {t('profile.actions.cancel')}
               </Link>
             </div>
           </form>

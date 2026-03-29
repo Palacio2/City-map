@@ -2,20 +2,19 @@ import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@supabaseClient';
-import AuthForm from '@ui/authForm/AuthForm';
+import AuthForm from '@/components/auth/AuthForm';
 import useAuthRedirect from '@hooks/useAuthRedirect'; 
 import { useSocialLogin } from '@hooks/useSocialLogin';
 import { validateLoginForm, sanitizePassword } from './validation';
-import styles from '@ui/authForm/AuthForm.module.css';
 
 const LoadingScreen = () => (
-  <div className={styles.container}>
-    <div className={styles.spinner} style={{ borderTopColor: 'var(--accent-color)', width: '40px', height: '40px' }}></div>
+  <div className="flex justify-center items-center min-h-[100dvh] bg-body p-5">
+    <div className="w-10 h-10 border-[3px] border-accent/30 border-t-accent rounded-full animate-spin"></div>
   </div>
 );
 
 export default function Login() {
-  const { t } = useTranslation('auth');
+  const { t } = useTranslation('db'); // Змінено на 'db'
   const navigate = useNavigate();
   const isAutoLoginAttempted = useAuthRedirect();
   
@@ -88,7 +87,7 @@ export default function Login() {
       navigate('/', { replace: true });
       
     } catch (error) {
-      setErrors({ submit: t('errors.login_failed') });
+      setErrors({ submit: t('auth.errors.login_failed') });
     } finally {
       setIsLoading(false);
     }

@@ -1,16 +1,26 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import styles from './DistrictPdfTemplate.module.css';
 import { DISTRICT_CATEGORIES } from '@config/districtFields';
 import { formatNumber, formatPrice, getCrimeLevelText } from '@utils/formatters';
 
-const StatRow = ({ label, value, highlight = false, className = '' }) => (
-  <div className={`${styles.statRow} ${highlight ? styles.highlight : ''} ${className}`}>
-    <span className={styles.statLabel}>{label}</span>
-    <span className={styles.statValue}>{value}</span>
+// Стандартний рядок статистики
+const StatRow = ({ label, value, highlight = false }) => (
+  <div style={{ 
+    display: 'flex', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    fontSize: '11px', 
+    lineHeight: '1.4', 
+    paddingBottom: '5px', 
+    borderBottom: '1px dotted #e5e7eb', 
+    marginBottom: '5px' 
+  }}>
+    <span style={{ color: '#666666', fontWeight: 500 }}>{label}</span>
+    <span style={{ fontWeight: 700, textAlign: 'right', color: highlight ? '#c5a47e' : '#000000' }}>{value}</span>
   </div>
 );
 
+// Кольори для рейтингу
 const getRatingBg = (rating) => {
   if (!rating) return '#000000';
   if (rating >= 8) return '#22c55e';
@@ -18,22 +28,44 @@ const getRatingBg = (rating) => {
   return '#ef4444';
 };
 
+// Секція категорії (наприклад, Освіта, Медицина)
 const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
   if (!data) return null;
 
   return (
-    <div className={styles.categorySection}>
-      <div className={styles.categoryHeader}>
-        <span className={styles.categoryIcon}>{categoryConfig.icon}</span>
-        <h3 className={styles.categoryTitle}>{t(`common:categories.${categoryConfig.key}`)}</h3>
-        <span 
-          className={styles.categoryRating}
-          style={{ backgroundColor: getRatingBg(data.rating || data.qualityRating) }}
-        >
-            {(data.rating || data.qualityRating || 0).toFixed(1)}
+    <div style={{ 
+      backgroundColor: '#ffffff', 
+      border: '1px solid #e5e7eb', 
+      width: '100%', 
+      marginBottom: '20px', 
+      pageBreakInside: 'avoid' 
+    }}>
+      <div style={{ 
+        backgroundColor: '#f1f5f9', 
+        padding: '8px 12px', 
+        display: 'flex', 
+        alignItems: 'center', 
+        gap: '10px', 
+        borderBottom: '1px solid #e5e7eb' 
+      }}>
+        <span style={{ fontSize: '14px', color: '#000000' }}>{categoryConfig.icon}</span>
+        <h3 style={{ fontSize: '11px', fontWeight: 700, color: '#000000', margin: 0, flexGrow: 1, textTransform: 'uppercase' }}>
+          {t(`common:categories.${categoryConfig.key}`)}
+        </h3>
+        <span style={{ 
+          color: '#ffffff', 
+          fontSize: '11px', 
+          fontWeight: 700, 
+          padding: '2px 6px', 
+          minWidth: '20px', 
+          textAlign: 'center', 
+          borderRadius: '4px', 
+          backgroundColor: getRatingBg(data.rating || data.qualityRating) 
+        }}>
+          {(data.rating || data.qualityRating || 0).toFixed(1)}
         </span>
       </div>
-      <div className={styles.categoryContent}>
+      <div style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column' }}>
         {categoryConfig.fields.map(field => {
            if (field.isRealtorOnly && !isRealtor) return null;
            const val = data[field.key];
@@ -53,7 +85,7 @@ const Section = ({ categoryConfig, data, t, formatValue, isRealtor }) => {
 };
 
 export default function DistrictPdfTemplate({ district, currencyInfo, isRealtor, photoOverride }) {
-  const { t } = useTranslation(['districts', 'common']);
+  const { t } = useTranslation(['db', 'common']);
 
   const formatValue = (value, type, fieldKey) => {
     if (value === null || value === undefined) return '-';
@@ -110,95 +142,83 @@ export default function DistrictPdfTemplate({ district, currencyInfo, isRealtor,
   const rightColumn = categories.slice(midPoint);
 
   return (
-    <div className={styles.pdfContainer}>
-      <div className={styles.header}>
-        <div className={styles.headerInfo}>
-           <h1 className={styles.districtName}>{name}</h1>
-           <p className={styles.reportDate}>
-             {t('districts:pdf.report_date')}: {new Date().toLocaleDateString('uk-UA')}
+    <div 
+      style={{ 
+        width: '794px', 
+        minHeight: '1122px', 
+        padding: '40px', 
+        backgroundColor: '#ffffff', 
+        color: '#000000', 
+        boxSizing: 'border-box', 
+        position: 'relative', 
+        fontFamily: 'sans-serif'
+      }}
+    >
+      {/* HEADER */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', paddingBottom: '20px', borderBottom: '2px solid #c5a47e', marginBottom: '30px' }}>
+        <div style={{ maxWidth: '70%' }}>
+           <h1 style={{ fontSize: '32px', fontWeight: 700, margin: 0, lineHeight: 1.2, textTransform: 'uppercase' }}>{name}</h1>
+           <p style={{ fontSize: '12px', color: '#666666', marginTop: '8px', marginBottom: 0, fontWeight: 500 }}>
+             {t('districts.pdf.report_date', { defaultValue: 'Дата звіту' })}: {new Date().toLocaleDateString('uk-UA')}
            </p>
         </div>
-        <div className={styles.logo}>
-           <span>GeoAnalyzer</span>
+        <div style={{ fontSize: '20px', fontWeight: 700, padding: '8px 16px', border: '2px solid #000000', textTransform: 'uppercase', letterSpacing: '2px' }}>
+           GeoAnalyzer
         </div>
       </div>
 
-      <div className={styles.heroSection}>
-        <div className={styles.mainPhoto}>
+      {/* HERO SECTION */}
+      <div style={{ display: 'flex', gap: '24px', height: '240px', marginBottom: '35px' }}>
+        <div style={{ flex: 1.3, border: '1px solid #e5e7eb', backgroundColor: '#f1f5f9', position: 'relative', overflow: 'hidden' }}>
           {photoOverride || photo_url ? (
             <img 
               src={photoOverride || photo_url} 
               alt={name} 
-              className={styles.mainPhotoImage}
+              style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
               crossOrigin="anonymous" 
             />
           ) : (
-            <div style={{ width: '100%', height: '100%', background: '#f3f4f6' }} />
+            <div style={{ width: '100%', height: '100%', backgroundColor: '#f3f4f6' }} />
           )}
         </div>
         
         {filterData?.general && isRealtor && (
-          <div className={styles.quickStatsCard}>
-             <h3 className={styles.quickStatsTitle}>{t('districts:pdf.general_info')}</h3>
-             <div className={styles.quickStatsList}>
-                <StatRow 
-                  label={t('common:fields.population')} 
-                  value={formatNumber(filterData.general.population)} 
-                  highlight 
-                />
-                <StatRow 
-                  label={t('common:fields.averageSalary')} 
-                  value={formatPrice(filterData.general.averageSalary, safeCurrencyInfo)} 
-                  highlight 
-                />
-                <StatRow 
-                  label={t('common:fields.unemploymentRate')} 
-                  value={filterData.general.unemploymentRate ? `${filterData.general.unemploymentRate}%` : '-'} 
-                />
-                <StatRow 
-                  label={t('common:fields.propertyPricePerSqm')} 
-                  value={formatPrice(filterData.general.propertyPrice, safeCurrencyInfo)} 
-                />
-                <StatRow 
-                  label={t('common:fields.average_rent_price')} 
-                  value={formatPrice(filterData.general.average_rent_price, safeCurrencyInfo)} 
-                />
+          <div style={{ flex: 1, backgroundColor: '#f8f9fa', padding: '20px', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column' }}>
+             <h3 style={{ fontSize: '14px', textTransform: 'uppercase', color: '#c5a47e', fontWeight: 700, margin: '0 0 15px 0', paddingBottom: '8px', borderBottom: '1px solid #e5e7eb' }}>
+               {t('districts.pdf.general_info', { defaultValue: 'Загальна інформація' })}
+             </h3>
+             <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
+                <StatRow label={t('common:fields.population')} value={formatNumber(filterData.general.population)} highlight />
+                <StatRow label={t('common:fields.averageSalary')} value={formatPrice(filterData.general.averageSalary, safeCurrencyInfo)} highlight />
+                <StatRow label={t('common:fields.unemploymentRate')} value={filterData.general.unemploymentRate ? `${filterData.general.unemploymentRate}%` : '-'} />
+                <StatRow label={t('common:fields.propertyPricePerSqm')} value={formatPrice(filterData.general.propertyPrice, safeCurrencyInfo)} />
+                <StatRow label={t('common:fields.average_rent_price')} value={formatPrice(filterData.general.average_rent_price, safeCurrencyInfo)} />
              </div>
           </div>
         )}
       </div>
 
-      <div className={styles.divider} />
+      <div style={{ height: '1px', backgroundColor: '#e5e7eb', margin: '0 0 30px 0', width: '100%' }} />
 
-      <div className={styles.masonryGrid}>
-         <div className={styles.column}>
+      {/* MASONRY GRID */}
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '25px' }}>
+         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             {leftColumn.map(cat => (
-                <Section 
-                    key={cat.key} 
-                    categoryConfig={cat} 
-                    data={filterData?.[cat.key]} 
-                    t={t}
-                    formatValue={formatValue}
-                    isRealtor={isRealtor}
-                />
+                <Section key={cat.key} categoryConfig={cat} data={filterData?.[cat.key]} t={t} formatValue={formatValue} isRealtor={isRealtor} />
             ))}
          </div>
-         <div className={styles.column}>
+         <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
             {rightColumn.map(cat => (
-                <Section 
-                    key={cat.key} 
-                    categoryConfig={cat} 
-                    data={filterData?.[cat.key]} 
-                    t={t}
-                    formatValue={formatValue}
-                    isRealtor={isRealtor}
-                />
+                <Section key={cat.key} categoryConfig={cat} data={filterData?.[cat.key]} t={t} formatValue={formatValue} isRealtor={isRealtor} />
             ))}
          </div>
       </div>
 
-      <div className={styles.footer}>
-        <p>{t('districts:pdf.generated_auto')} <strong>GeoAnalyzer</strong></p>
+      {/* FOOTER */}
+      <div style={{ marginTop: 'auto', paddingTop: '15px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '9px', color: '#666666', display: 'flex', justifyContent: 'space-between' }}>
+        <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '1px' }}>
+          {t('districts.pdf.generated_auto', { defaultValue: 'Згенеровано автоматично системою' })} <strong style={{ color: '#000000', marginLeft: '4px' }}>GeoAnalyzer</strong>
+        </p>
       </div>
     </div>
   );

@@ -40,9 +40,10 @@ export const loadDynamicTranslations = async () => {
     
     data.forEach(item => {
       // Додаємо кожне значення в неймспейс 'dynamic' (або 'fields')
-      if (item.uk) i18n.addResource('uk', 'fields', item.translation_key, item.uk);
-      if (item.pl) i18n.addResource('pl', 'fields', item.translation_key, item.pl);
-      if (item.en) i18n.addResource('en', 'fields', item.translation_key, item.en);
+      // Замість 'fields' використовуємо 'db'
+if (item.uk) i18n.addResource('uk', 'db', item.translation_key, item.uk);
+if (item.pl) i18n.addResource('pl', 'db', item.translation_key, item.pl);
+if (item.en) i18n.addResource('en', 'db', item.translation_key, item.en);
     });
 
     console.log('✅ Динамічні переклади завантажено');
@@ -52,6 +53,6 @@ export const loadDynamicTranslations = async () => {
 };
 
 // Запускаємо завантаження
-loadDynamicTranslations();
+export const dbTranslationsPromise = loadDynamicTranslations();
 
 export default i18n;
