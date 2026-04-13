@@ -1,52 +1,42 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { api } from '../services/api'; // Твій файл з axios/fetch запитами
-
-const modules = import.meta.glob('./locales/**/*.json', { eager: true });
-const resources = {};
-
-Object.keys(modules).forEach((path) => {
-  const parts = path.split('/'); 
-  const lang = parts[2]; 
-  const ns = parts[3].replace('.json', ''); 
-
-  if (!resources[lang]) resources[lang] = {};
-  resources[lang][ns] = modules[path].default || modules[path];
-});
+import { api } from '../services/api';
 
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    resources,
+    resources: {},
     fallbackLng: 'en',
     supportedLngs: ['uk', 'en', 'pl'],
     detection: {
       order: ['localStorage', 'cookie', 'navigator'],
       caches: ['localStorage', 'cookie'],
     },
-    ns: Object.keys(resources.uk || {}), 
-    defaultNS: 'common',
+    // Оскільки ми не знаємо неймспейсів заздалегідь, 
+    // використовуємо 'db' як основний за замовчуванням
+    defaultNS: 'db',
+    fallbackNS: 'db',
     debug: false,
     interpolation: { escapeValue: false },
     react: { useSuspense: false }
   });
 
-// --- ФУНКЦІЯ ПІДТЯГУВАННЯ ПЕРЕКЛАДІВ З БД ---
+/**
+ * ФУНКЦІЯ ЗАВАНТАЖЕННЯ ПЕРЕКЛАДІВ ТІЛЬКИ З БД
+ */
 export const loadDynamicTranslations = async () => {
   try {
-    const data = await api.translations.getAll(); // Твій новий ендпоінт
+    const data = await api.translations.getAll(); 
     
     data.forEach(item => {
-      // Додаємо кожне значення в неймспейс 'dynamic' (або 'fields')
-      // Замість 'fields' використовуємо 'db'
-if (item.uk) i18n.addResource('uk', 'db', item.translation_key, item.uk);
-if (item.pl) i18n.addResource('pl', 'db', item.translation_key, item.pl);
-if (item.en) i18n.addResource('en', 'db', item.translation_key, item.en);
+      if (item.uk) i18n.addResourceBundle('uk', 'db', { [item.translation_key]: item.uk }, true, true);
+      if (item.pl) i18n.addResourceBundle('pl', 'db', { [item.translation_key]: item.pl }, true, true);
+      if (item.en) i18n.addResourceBundle('en', 'db', { [item.translation_key]: item.en }, true, true);
     });
 
-    console.log('✅ Динамічні переклади завантажено');
+    console.log('✅ Переклади з БД завантажено успішно');
   } catch (e) {
     console.error('❌ Помилка завантаження перекладів з БД', e);
   }

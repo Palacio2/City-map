@@ -12,7 +12,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
   const [isTyping, setIsTyping] = useState(false);
   const [chatContext, setChatContext] = useState(null);
   
-  // Стани для ідеальної анімації
+  // Стани для анімації
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   
@@ -31,7 +31,6 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
         console.error(err);
       }
       
-      // Даємо браузеру відмалювати елемент за межами екрану, а потім запускаємо анімацію
       raf1 = requestAnimationFrame(() => {
         raf2 = requestAnimationFrame(() => {
           setIsAnimating(true);
@@ -40,7 +39,6 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
       
     } else if (shouldRender) {
       setIsAnimating(false);
-      // Чекаємо завершення CSS-транзиції (300ms) перед видаленням з DOM
       timeoutId = setTimeout(() => {
         setShouldRender(false);
       }, 300);
@@ -142,13 +140,14 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
 
   const sidebarContent = (
     <div className="fixed inset-0 z-[9998] flex justify-end">
-      {/* Темний Оверлей з анімацією прозорості */}
+      
+      {/* Темний Оверлей */}
       <div 
         className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ease-out ${isAnimating ? 'opacity-100' : 'opacity-0'}`} 
         onClick={onClose} 
       />
       
-      {/* Сама панель з анімацією виїзду */}
+      {/* Панель */}
       <div className={`relative w-full max-w-[480px] h-[100dvh] bg-surface flex flex-col shadow-2xl border-l border-borderClient transition-transform duration-300 ease-out ${isAnimating ? 'translate-x-0' : 'translate-x-full'}`}>
         
         {/* Хедер чату */}
@@ -159,7 +158,6 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
             </div>
             <div>
               <h3 className="font-heading font-bold text-textMain text-[1.1rem] leading-tight">{t('assistant.sidebar.title')}</h3>
-              {/* Статус онлайн видалено */}
             </div>
           </div>
           <div className="flex gap-2">
@@ -188,8 +186,8 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
                 {chatContext?.city ? (
                   <p className="text-sm text-textSecondary leading-relaxed">
                     {t('assistant.sidebar.welcome_city')} <strong className="text-textMain">{chatContext.city}</strong>. 
-                    {chatContext.safetyImportance === 'critical' && t('assistant.sidebar.welcome_safety')}
-                    {chatContext.ecologyImportance === 'high' && t('assistant.sidebar.welcome_ecology')}
+                    {chatContext.safetyImportance === 'critical' && ` ${t('assistant.sidebar.welcome_safety')}`}
+                    {chatContext.ecologyImportance === 'high' && ` ${t('assistant.sidebar.welcome_ecology')}`}
                   </p>
                 ) : (
                   <div className="text-warning text-sm font-medium flex items-center justify-center gap-2 mt-4 bg-warning/10 p-3 rounded-lg border border-warning/20">

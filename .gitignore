@@ -144,5 +144,5 @@ server/pending-results.json
 .vercel/
 
 src/pages/admin/
-src/services/api.js
+src/services/
 extracted_keys.json

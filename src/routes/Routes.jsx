@@ -6,7 +6,7 @@ import PrivateRoute from "./PrivateRoute";
 import ProtectedRoute from "./ProtectedRoute";
 import AdminRoute from "./AdminRoute";
 
-const DistrictMap = lazy(() => import("../components/districtMap/DistrictMap"));
+const DistrictMap = lazy(() => import('../components/districtMap/DistrictMap'));
 const Contacts = lazy(() => import("@/pages/Contacts"));
 const Subscription = lazy(() => import("@pages/subscription/Subscription"));
 const Login = lazy(() => import("@auth/Login"));

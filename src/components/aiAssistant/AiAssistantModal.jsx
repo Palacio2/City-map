@@ -94,7 +94,10 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
     e.preventDefault();
     localStorage.setItem(AI_PREFS_KEY, JSON.stringify(formData));
     setIsSaved(true);
-    setTimeout(() => { onClose(); if(onSuccess) onSuccess(); }, 1500);
+    setTimeout(() => { 
+      onClose(); 
+      if(onSuccess) onSuccess(); 
+    }, 1500);
   };
 
   const ChipBtn = ({ active, onClick, label }) => (
@@ -239,7 +242,7 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }) {
   const modalContent = (
     <div className={`fixed inset-0 z-[9999] flex items-center justify-center p-4 overflow-hidden transition-opacity duration-300 ease-out ${isAnimating ? 'opacity-100 bg-black/60 backdrop-blur-sm' : 'opacity-0 bg-transparent backdrop-blur-none'}`}>
       
-      {/* Клікабельний задній фон для закриття (опціонально) */}
+      {/* Оверлей для закриття */}
       <div className="absolute inset-0" onClick={onClose} />
 
       <div className={`ui-glass-panel w-full max-w-[650px] flex flex-col max-h-[95dvh] shadow-2xl relative overflow-hidden transition-all duration-300 ease-out origin-bottom-right ${isAnimating ? 'scale-100 opacity-100 translate-y-0' : 'scale-95 opacity-0 translate-y-4'}`} onClick={e => e.stopPropagation()}>
