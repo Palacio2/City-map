@@ -77,7 +77,6 @@ export default function PasswordChangePage() {
 
     return (
         <div className="min-h-[100dvh] bg-body text-textMain py-8 px-4 md:px-8 font-body animate-fadeIn">
-            {/* Хедер і навігація залишені без змін для збереження верстки */}
             <div className="max-w-[1200px] mx-auto mb-10 flex flex-col gap-4">
                 <Link to="/profile" className="inline-flex items-center gap-2 text-textSecondary font-heading font-semibold text-[0.85rem] tracking-widest uppercase transition-all w-fit hover:text-accent hover:-translate-x-1 decoration-none">
                     <FaArrowLeft /> <span>{t('profile.actions.back_to_profile')}</span>

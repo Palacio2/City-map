@@ -10,7 +10,7 @@ import SeoMeta from '@components/seo/SeoMeta';
 export default function FaqPage() {
   const { t } = useTranslation('db');
   const [activeCategory, setActiveCategory] = useState('general');
-  const [openIndex, setOpenIndex] = useState(null);
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -36,7 +36,7 @@ export default function FaqPage() {
     return Array.isArray(rawQuestions) ? rawQuestions : [];
   }, [rawQuestions]);
 
-  const toggleQuestion = (index) => {
+  const toggleQuestion = (index: number) => {
     setOpenIndex(openIndex === index ? null : index);
   };
 
@@ -95,7 +95,7 @@ export default function FaqPage() {
 
           <div className="lg:w-3/4 flex flex-col gap-5 animate-slideUp" style={{ animationDelay: '0.2s' }}>
             {questions.length > 0 ? (
-              questions.map((item, index) => {
+              questions.map((item: any, index: number) => {
                 const isOpen = openIndex === index;
                 return (
                   <div 
@@ -118,7 +118,7 @@ export default function FaqPage() {
                       className={`grid transition-[grid-template-rows,opacity] duration-300 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}
                     >
                       <div className="overflow-hidden">
-                        <div className="pb-6 px-6 sm:pb-8 sm:px-8 pt-0 text-lg leading-relaxed text-textSecondary border-t border-borderClient/50 mt-2 mx-6 sm:mx-8 pt-6">
+                        <div className="pb-6 px-6 sm:pb-8 sm:px-8 text-lg leading-relaxed text-textSecondary border-t border-borderClient/50 mt-2 mx-6 sm:mx-8 pt-6">
                           {item.a}
                         </div>
                       </div>

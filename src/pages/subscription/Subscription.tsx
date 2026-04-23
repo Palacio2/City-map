@@ -34,14 +34,14 @@ export default function Subscription() {
 
   return (
     <div className="min-h-[100vh] bg-body text-textMain py-[var(--spacing-xl)] px-[var(--spacing-md)] font-body">
-      <SeoMeta title={t('seo.subscription.title')} description={t('seo.subscription.desc')} />
+      <SeoMeta title={t('subscription.seo.title')} description={t('subscription.seo.desc')} />
 
       <div className="text-center mb-[var(--spacing-xl)] max-w-[800px] mx-auto">
         <h1 className="font-heading text-[2.5rem] text-accent mb-[var(--spacing-sm)] inline-block font-bold">
-          {t('subscription.title')}
+          {t('subscription.page_title')}
         </h1>
         <p className="text-textSecondary text-[1.1rem] leading-[1.6]">
-          {t('subscription.subtitle')}
+          {t('subscription.page_subtitle')}
         </p>
       </div>
 
@@ -76,13 +76,13 @@ export default function Subscription() {
               {t(`subscription.plans.${selectedPlan}.name`)}
             </h2>
             <div className="font-body text-[1.5rem] font-bold text-accent">
-                {isThisPlanActive ? t('subscription.buttons.active') : t(`subscription.plans.${selectedPlan}.price`)}
+                {isThisPlanActive ? t('subscription.actions.active') : t(`subscription.plans.${selectedPlan}.price`)}
             </div>
           </div>
           
           <div className="mb-[2rem]">
             <h3 className="font-heading text-textMain mb-[1rem] text-[1.1rem] text-center font-semibold uppercase tracking-[0.05em]">
-              {t('subscription.included_title')}
+              {t('subscription.labels.included')}
             </h3>
             <div className="flex flex-col gap-[0.8rem]">
                 {currentPlanConfig.features.map((featureKey) => (
@@ -97,7 +97,7 @@ export default function Subscription() {
           {(currentPlanConfig.disabledFeatures?.length ?? 0) > 0 && (
             <div className="opacity-60 pt-[1.5rem] border-t border-dashed border-borderClient mb-[2rem]">
               <h3 className="font-heading text-textMain mb-[1rem] text-[1.1rem] text-center font-semibold uppercase tracking-[0.05em]">
-                {t('subscription.disabled_title')}
+                {t('subscription.labels.disabled')}
               </h3>
               <div className="flex flex-col gap-[0.8rem]">
                   {currentPlanConfig.disabledFeatures.map((featureKey) => (
@@ -116,17 +116,17 @@ export default function Subscription() {
             disabled={hasActivePaidSubscription || (selectedPlan === 'free' && !isThisPlanActive)}
           >
             {isThisPlanActive 
-                ? t('subscription.buttons.active')
+                ? t('subscription.actions.active')
                 : hasActivePaidSubscription 
-                    ? t('subscription.buttons.has_active_sub') 
+                    ? t('subscription.actions.has_active_sub') 
                     : selectedPlan === 'free' 
-                        ? t('subscription.buttons.stay_free') 
-                        : t('subscription.buttons.choose', { plan: t(`subscription.plans.${selectedPlan}.name`) })}
+                        ? t('subscription.actions.stay_free') 
+                        : t('subscription.actions.choose', { plan: t(`subscription.plans.${selectedPlan}.name`) })}
           </button>
           
           {hasActivePaidSubscription && !isThisPlanActive && (
               <p className="mt-[1.5rem] text-warning text-[0.9rem] flex items-center justify-center gap-[8px] p-[0.8rem] bg-[rgba(234,179,8,0.1)] rounded-[var(--radius-sm)]">
-                 <FaLock /> {t('subscription.wait_expire')}
+                 <FaLock /> {t('subscription.status.wait_expire')}
               </p>
           )}
         </div>

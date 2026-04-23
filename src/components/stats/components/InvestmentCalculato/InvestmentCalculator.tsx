@@ -13,7 +13,7 @@ export default function InvestmentCalculator() {
     { name: 'interestRate', label: t('stats.calculator.interest_rate'), suffix: '(%)', step: '0.1' },
     { name: 'loanTerm', label: t('stats.calculator.loan_term'), suffix: `(${t('stats.calculator.years')})` },
     { name: 'rentalIncome', label: t('stats.calculator.rental_income'), suffix: `(${currency.symbol}/mo)` },
-    { name: 'expenses', label: t('stats.calculator.expenses'), suffix: `(${currency.symbol}/mo)`, placeholder: 'Taxes, HOA...' }
+    { name: 'expenses', label: t('stats.calculator.expenses'), suffix: `(${currency.symbol}/mo)`, placeholder: t('stats.calculator.placeholders.expenses') }
   ];
 
   return (

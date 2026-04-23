@@ -13,7 +13,6 @@ const TrashIcon = () => (
   </svg>
 );
 
-// ВИНЕСЕНО: Статичний масив конфігів більше не створюється при кожному рендері
 const STATS_CONFIG = [
   ["education", "🏫"], ["transport", "🚍"], ["safety", "🛡️"],
   ["social", "🌳"], ["medicine", "🏥"], ["commerce", "🛒"], ["utilities", "⚡"]
@@ -53,7 +52,7 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onCategoryClick, o
             e.stopPropagation(); 
             if (district.id !== undefined) onRemove(district.id); 
           }}
-          title={t("favorites.remove_tooltip")}
+          title={t("favorites.actions.remove")}
         >
           <TrashIcon />
         </button>
@@ -65,10 +64,10 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onCategoryClick, o
       <div className="relative z-20 p-4 flex flex-col gap-4 grow">
         <div className="flex justify-between items-center pb-3 border-b border-dashed border-borderClient">
           <span className="text-xs uppercase tracking-[0.5px] text-textSecondary font-semibold">
-            {t("favorites.price_label")}
+            {t("favorites.labels.price")}
           </span>
           <span className="text-[1.2rem] font-extrabold text-accent font-heading">
-            {filterData?.general?.propertyPrice ? formatPrice(filterData.general.propertyPrice, currencyInfo) : "-"}
+            {filterData?.general?.propertyPrice ? formatPrice(filterData.general.propertyPrice, currencyInfo) : t("favorites.status.na")}
           </span>
         </div>
 
@@ -78,7 +77,7 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onCategoryClick, o
               <button 
                 key={key} 
                 className="bg-hover rounded-[10px] p-2 flex flex-col items-center justify-center border border-borderClient text-textMain transition-all duration-200 cursor-pointer outline-none font-body hover:-translate-y-[2px] hover:border-accent hover:bg-accent hover:text-white hover:shadow-[0_4px_10px_rgba(197,164,126,0.2)] focus-visible:ring focus-visible:ring-accent focus-visible:outline-none" 
-                title={t(`common.categories.${key}`)}
+                title={t(`favorites.categories.${key}`)}
                 onClick={(e) => {
                   e.stopPropagation();
                   onCategoryClick(district, key);
@@ -86,7 +85,7 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onCategoryClick, o
               >
                 <span className="text-base mb-1 drop-shadow-sm">{icon}</span>
                 <span className="font-bold text-[0.85rem]">
-                  {((filterData as any)?.[key]?.rating ?? (filterData as any)?.[key]?.qualityRating)?.toFixed(1) || "-"}
+                  {((filterData as any)?.[key]?.rating ?? (filterData as any)?.[key]?.qualityRating)?.toFixed(1) || t("favorites.status.na")}
                 </span>
               </button>
             ))}
@@ -126,7 +125,6 @@ export default function FavoritesPage() {
     return favorites.slice(start, start + itemsPerPage);
   }, [favorites, currentPage, itemsPerPage]);
 
-  // ОПТИМІЗАЦІЯ: Мемоїзуємо функції, щоб React.memo для карток дійсно працював
   const handleCardClick = useCallback((d: TransformedDistrict) => {
     setSelectedDistrict(d);
     setSelectedCategory(null);
@@ -157,13 +155,13 @@ export default function FavoritesPage() {
     return (
       <div className="text-center px-4 flex flex-col items-center justify-center min-h-[80vh] w-full">
         <div className="text-6xl mb-4 opacity-80">⭐</div>
-        <h2 className="text-textMain font-heading mb-2 text-2xl font-bold">{t("favorites.empty.title")}</h2>
-        <p className="text-textSecondary mb-6">{t("favorites.empty.description")}</p>
+        <h2 className="text-textMain font-heading mb-2 text-2xl font-bold">{t("favorites.status.empty_title")}</h2>
+        <p className="text-textSecondary mb-6">{t("favorites.status.empty_desc")}</p>
         <button 
           className="px-9 py-3.5 rounded-xl border-none bg-accent text-white font-semibold font-heading uppercase tracking-[1px] cursor-pointer transition-all duration-250 hover:-translate-y-0.5 hover:shadow-[0_8px_16px_rgba(197,164,126,0.25)] hover:brightness-105" 
           onClick={() => navigate("/")}
         >
-          {t("favorites.buttons.go_to_map")}
+          {t("favorites.actions.go_to_map")}
         </button>
       </div>
     );
@@ -171,9 +169,9 @@ export default function FavoritesPage() {
 
   return (
     <>
-      <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 py-8 min-h-[80vh]">
+      <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-8 py-8 min-h-[80vh]">
         <h1 className="text-center mb-10 text-[clamp(1.8rem,3vw,2.5rem)] font-bold text-textMain font-heading">
-          {t("favorites.title")}
+          {t("favorites.page_title")}
         </h1>
         <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {paginatedFavorites.map((district) => (

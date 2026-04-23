@@ -10,7 +10,7 @@ export default function NotFoundPage() {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 sm:p-6 lg:p-8 relative overflow-hidden">
       <SeoMeta 
-        title={t('404.seo.title')} 
+        title={t('notFound.seo.title')} 
         noIndex={true} 
       />
 
@@ -30,11 +30,11 @@ export default function NotFoundPage() {
         </div>
 
         <h1 className="ui-heading-1 mb-4 text-transparent bg-clip-text bg-gradient-to-br from-textMain to-textSecondary">
-          {t('404.title')}
+          {t('notFound.title')}
         </h1>
         
         <p className="ui-text-muted mb-10 max-w-sm mx-auto">
-          {t('404.desc')}
+          {t('notFound.desc')}
         </p>
         
         <Link 
@@ -43,7 +43,7 @@ export default function NotFoundPage() {
         >
           <span className="absolute inset-0 w-full h-full bg-white/20 -translate-x-full skew-x-12 group-hover:animate-[shimmer_1.5s_infinite]" />
           <FaHome className="text-xl group-hover:-translate-y-0.5 transition-transform" />
-          <span>{t('404.button')}</span>
+          <span>{t('notFound.button')}</span>
         </Link>
       </div>
     </div>

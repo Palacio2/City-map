@@ -2,7 +2,7 @@ import { supabase } from '@supabaseClient';
 import { useTranslation } from 'react-i18next';
 
 export const useSocialLogin = (setIsLoading, setErrors) => {
-  const { t } = useTranslation('auth');
+  const { t } = useTranslation('db'); // Змінено на 'db'
 
   const socialLogin = async (provider) => {
     try {
@@ -19,7 +19,7 @@ export const useSocialLogin = (setIsLoading, setErrors) => {
       
       if (error) throw error;
     } catch {
-      setErrors({ submit: t('errors.generic') });
+      setErrors({ submit: t('auth.errors.generic') }); // Оновлений ключ
     } finally {
       setIsLoading(false);
     }

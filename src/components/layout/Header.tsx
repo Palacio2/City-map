@@ -18,7 +18,6 @@ const Header = () => {
   const { t, i18n } = useTranslation('db');
   const { isPremium, isRealtor } = useSubscription();
   
-  // Додано as any, щоб TS не сварився на відсутність типів
   const { theme, toggleTheme } = useTheme() as any; 
   const { isAuthenticated, isLoading, signOut } = useAuth() as any; 
   
@@ -102,17 +101,16 @@ const Header = () => {
             <button 
               className="lg:hidden text-2xl text-[var(--text-main)] p-2 z-[1060] hover:text-[var(--accent-color)] transition-colors bg-transparent border-none cursor-pointer"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Toggle menu"
+              aria-label={t('header.toggle_menu')}
             >
               {isMenuOpen ? <FaTimes /> : <FaBars />}
             </button>
 
-            {/* ВИПРАВЛЕНО: Використовуємо button замість div з role="presentation" */}
             <button 
               type="button"
               className={`fixed inset-0 w-full h-full border-none appearance-none cursor-default bg-black/60 backdrop-blur-sm z-[1040] lg:hidden transition-opacity duration-300 ${isMenuOpen ? 'opacity-100 visible' : 'opacity-0 invisible'}`}
               onClick={() => setIsMenuOpen(false)}
-              aria-label="Close menu"
+              aria-label={t('header.close_menu')}
               tabIndex={-1}
             />
 

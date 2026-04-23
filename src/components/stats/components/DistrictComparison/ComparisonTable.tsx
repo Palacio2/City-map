@@ -29,7 +29,8 @@ interface RowDef {
 }
 
 const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[] => {
-  const catName = t(`categories.${catKey}`);
+  // Використовуємо common.categories для уніфікації назв інфраструктури
+  const catName = t(`common.categories.${catKey}`);
   const catHeader: RowDef = {
     type: 'header',
     title: catName,
@@ -37,19 +38,19 @@ const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[
   };
 
   const ratingRow: RowDef = {
-    label: t('comparison.rating', { defaultValue: 'Рейтинг' }),
+    label: t('stats.comparison.rating'),
     key: `filterData.${catKey}.rating`,
     format: (val) => <FormattedRating value={val} />
   };
 
   const fieldRows: RowDef[] = categoryConfig.fields.map((f: any) => ({
-    label: t(`fields.${f.key}`),
+    label: t(`common.fields.${f.key}`),
     key: `filterData.${catKey}.fields.${f.key}.value`,
     format: (val: any) => {
       if (val === null || val === undefined) return '-';
       if (f.type === 'boolean') {
           if (typeof val === 'number') return formatNumber(val);
-          return val ? t('enums.yes') : t('enums.no');
+          return val ? t('common.status.yes') : t('common.status.no');
       }
       if (f.type === 'price') return formatPrice(val);
       if (f.type === 'number' || f.type === 'numeric') return formatNumber(val);
@@ -60,7 +61,6 @@ const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[
   return [catHeader, ratingRow, ...fieldRows];
 };
 
-// ВИПРАВЛЕННЯ: Додано readonly для пропсів (SonarLint: S6759)
 interface ComparisonTableProps {
   readonly districts: TransformedDistrict[];
   readonly config: DynamicDistrictConfig | null;
@@ -72,20 +72,19 @@ export default function ComparisonTable({ districts, config }: ComparisonTablePr
   const rows = useMemo(() => {
     if (!districts.length) return [];
     
-    // ВИПРАВЛЕННЯ: Додано "as string | number | null" для типізації (TS: 2345)
     const baseRows: RowDef[] = [
       {
-        label: t('fields.propertyPricePerSqm', { defaultValue: 'Ціна м²' }),
+        label: t('common.fields.propertyPricePerSqm'),
         key: 'filterData.general.propertyPrice',
         format: (val) => formatPrice(val as string | number | null)
       },
       {
-        label: t('fields.average_rent_price', { defaultValue: 'Оренда' }),
+        label: t('common.fields.average_rent_price'),
         key: 'filterData.general.average_rent_price',
         format: (val) => formatPrice(val as string | number | null)
       },
       {
-        label: t('fields.population', { defaultValue: 'Населення' }),
+        label: t('common.fields.population'),
         key: 'filterData.general.population',
         format: (val) => formatNumber(val as string | number | null)
       },
@@ -136,8 +135,6 @@ export default function ComparisonTable({ districts, config }: ComparisonTablePr
                 </td>
                 {districts.map((d, dIdx) => {
                   const rawVal = row.key ? getValue(d, row.key) : null;
-                  
-                  // ВИПРАВЛЕННЯ: Прибрано "useless assignment" (SonarLint: S1854)
                   const displayVal = row.format ? row.format(rawVal, d) : safeStringify(rawVal);
                   
                   return (

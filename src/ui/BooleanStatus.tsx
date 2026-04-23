@@ -16,7 +16,7 @@ export const BooleanStatus: React.FC<BooleanStatusProps> = ({ value, useIcons = 
     return <FaMinus className="text-textSecondary opacity-50" />;
   }
 
-  if (value === true) return <span className="text-success font-bold">{t('admin_parser.table.yes')}</span>;
-  if (value === false) return <span className="text-textSecondary opacity-50">{t('admin_parser.table.no')}</span>;
-  return <span>-</span>;
+  if (value === true) return <span className="text-success font-bold">{t('common.status.yes')}</span>;
+  if (value === false) return <span className="text-textSecondary opacity-50">{t('common.status.no')}</span>;
+  return <span>{t('common.status.na')}</span>;
 };

@@ -35,23 +35,23 @@ interface RowDef {
 }
 
 const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[] => {
-  const catName = t(`categories.${catKey}`);
+  const catName = t(`common.categories.${catKey}`);
   const catHeader: RowDef = { type: 'header', title: catName, key: `header-${catKey}` };
 
   const ratingRow: RowDef = {
-    label: t('comparison.rating', { defaultValue: 'Рейтинг' }),
+    label: t('stats.comparison.rating'),
     key: `filterData.${catKey}.rating`,
     format: (val) => val ? Number(val).toFixed(1) : '-'
   };
 
   const fieldRows: RowDef[] = categoryConfig.fields.map((f: any) => ({
-    label: t(`fields.${f.key}`),
+    label: t(`common.fields.${f.key}`),
     key: `filterData.${catKey}.fields.${f.key}.value`,
     format: (val: any) => {
       if (val === null || val === undefined) return '-';
       if (f.type === 'boolean') {
           if (typeof val === 'number') return formatNumber(val);
-          return val ? t('enums.yes') : t('enums.no');
+          return val ? t('common.status.yes') : t('common.status.no');
       }
       if (f.type === 'price') return formatPrice(val);
       if (f.type === 'number' || f.type === 'numeric') return formatNumber(val);
@@ -62,7 +62,6 @@ const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[
   return [catHeader, ratingRow, ...fieldRows];
 };
 
-// ВИПРАВЛЕННЯ: Додано readonly для пропсів (SonarLint: S6759)
 interface PdfReportTemplateProps {
   readonly districts: TransformedDistrict[];
   readonly customData: ExportCustomData | null;
@@ -75,11 +74,10 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
   const rows = useMemo(() => {
     if (!districts.length) return [];
     
-    // ВИПРАВЛЕННЯ: Додано "as string | number | null" для типізації (TS: 2345)
     const baseRows: RowDef[] = [
-      { label: t('fields.propertyPricePerSqm', { defaultValue: 'Ціна м²' }), key: 'filterData.general.propertyPrice', format: (val) => formatPrice(val as string | number | null) },
-      { label: t('fields.average_rent_price', { defaultValue: 'Оренда' }), key: 'filterData.general.average_rent_price', format: (val) => formatPrice(val as string | number | null) },
-      { label: t('fields.population', { defaultValue: 'Населення' }), key: 'filterData.general.population', format: (val) => formatNumber(val as string | number | null) },
+      { label: t('common.fields.propertyPricePerSqm'), key: 'filterData.general.propertyPrice', format: (val) => formatPrice(val as string | number | null) },
+      { label: t('common.fields.average_rent_price'), key: 'filterData.general.average_rent_price', format: (val) => formatPrice(val as string | number | null) },
+      { label: t('common.fields.population'), key: 'filterData.general.population', format: (val) => formatNumber(val as string | number | null) },
     ];
 
     if (!config) return baseRows;
@@ -92,7 +90,6 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
 
   const { agencyName, phone, website, comments, logo } = customData || {};
 
-  // ВИПРАВЛЕННЯ: Прибрано "nested ternary" для рендеру логотипу/назви (SonarLint: S3358)
   let agencyHeaderContent = null;
   if (logo) {
     agencyHeaderContent = <img src={logo as string} alt="Agency Logo" className="max-h-[50px] max-w-[150px] object-contain" />;
@@ -107,21 +104,18 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
       <div className="flex justify-between items-start border-b-2 border-[#cbd5e0] pb-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[#1a202c] m-0 uppercase tracking-wide">
-            {t('comparison.report_title', { defaultValue: 'Аналітичний звіт порівняння районів' })}
+            {t('stats.export.report_title')}
           </h1>
           <p className="text-xs text-[#718096] mt-2 mb-0 font-medium">
-            {t('pdf.report_date')}: {new Date().toLocaleDateString('uk-UA')}
+            {t('stats.labels.report_date')}: {new Date().toLocaleDateString('uk-UA')}
           </p>
         </div>
-        
-        {/* Використовуємо очищену змінну */}
         {agencyHeaderContent}
-        
       </div>
 
       {comments && (
          <div className="bg-[#f7fafc] p-4 rounded border border-[#e2e8f0] mb-6 text-[11px] text-[#4a5568]">
-           <strong className="block mb-1 text-[#2d3748]">{t('comparison.agent_comments', { defaultValue: 'Коментар спеціаліста' })}:</strong>
+           <strong className="block mb-1 text-[#2d3748]">{t('stats.export.agent_comments')}:</strong>
            {comments}
          </div>
       )}
@@ -162,8 +156,6 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
                   {districts.map((d) => {
                     const rawVal = row.key ? getValue(d, row.key) : null;
                     const isWinner = rawVal !== null && bestVal !== null && rawVal === bestVal && typeof rawVal === 'number';
-                    
-                    // ВИПРАВЛЕННЯ: Прибрано "useless assignment" (SonarLint: S1854)
                     const displayVal = row.format ? row.format(rawVal, d) : safeStringify(rawVal);
 
                     return (
@@ -186,10 +178,9 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
           {phone && <span className="flex items-center gap-1"><FaPhone /> {phone}</span>}
         </div>
         <div className="uppercase tracking-widest">
-          {t('pdf.generated_auto')} <strong>GeoAnalyzer</strong>
+          {t('stats.labels.generated_auto')} <strong>GeoAnalyzer</strong>
         </div>
       </div>
-
     </div>
   );
 }

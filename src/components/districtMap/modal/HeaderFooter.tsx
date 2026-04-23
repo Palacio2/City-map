@@ -69,10 +69,11 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({
       : null;
   }, [updatedAt, district, i18n.language]);
 
+  // ОНОВЛЕНО ТУТ: Використовуємо правильні ключі з бази даних
   const quickStatsConfig: Array<{ key: keyof GeneralStats; label: string; formatter: (val: any) => any }> = useMemo(() => [
-    { key: 'population', label: 'details.population', formatter: formatNumber },
-    { key: 'averageSalary', label: 'details.salary', formatter: (val) => formatPrice?.(val, currencyInfo) ?? val },
-    { key: 'unemploymentRate', label: 'details.unemployment', formatter: (val) => `${val}%` },
+    { key: 'population', label: 'common.fields.population', formatter: formatNumber },
+    { key: 'averageSalary', label: 'average_salary', formatter: (val) => formatPrice?.(val, currencyInfo) ?? val },
+    { key: 'unemploymentRate', label: 'unemployment_rate', formatter: (val) => `${val}%` },
     { key: 'propertyPrice', label: 'common.fields.propertyPricePerSqm', formatter: (val) => formatPrice?.(val, currencyInfo) ?? val },
     { key: 'average_rent_price', label: 'common.fields.average_rent_price', formatter: (val) => formatPrice?.(val, currencyInfo) ?? val }
   ], [formatNumber, formatPrice, currencyInfo]);
@@ -93,27 +94,24 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({
          {photo_url && (
            <div className="absolute inset-0 z-0">
               <img src={photo_url} alt={name} className="w-full h-full object-cover animate-slowZoom" />
-              {/* Легший градієнт зверху для кнопок, темніший знизу для тексту */}
               <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/10 via-30% to-black/95 to-100%" />
            </div>
          )}
         
         <div className="relative z-10 flex-1 p-4 pt-4 md:p-8 md:pt-[max(2rem,env(safe-area-inset-top))] flex flex-col text-white justify-between">
           
-          {/* Верхній блок: Дата (тільки ПК) та Кнопки */}
           <div className="flex justify-between items-start w-full">
-            {/* Дата на ПК висить зліва */}
             <div className="hidden md:inline-flex items-center gap-2 bg-black/50 backdrop-blur-md px-3.5 py-1.5 rounded-full font-body text-[0.75rem] font-medium text-white/90 border border-white/20 shadow-sm">
               <span className="w-1.5 h-1.5 bg-success rounded-full shadow-[0_0_8px_var(--success-color)]"></span>
-              {t('stats.updated_label')}: {formattedDate}
+              {t('district.status.updated_label')}: {formattedDate}
             </div>
-            <div className="md:hidden"></div> {/* Пустий блок для Flexbox */}
+            <div className="md:hidden"></div>
 
             <div className="flex gap-2 flex-nowrap">
               <button
                 className="bg-black/30 backdrop-blur-[var(--glass-blur)] border border-white/20 w-8 h-8 md:w-[44px] md:h-[44px] rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 ease-out shrink-0 p-0 shadow-sm hover:bg-black/50 hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-md [&>svg]:w-4 [&>svg]:h-4 md:[&>svg]:w-5 md:[&>svg]:h-5 [&>svg]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                 onClick={onOpenMap}
-                title={t('actions.view_map')}
+                title={t('district.actions.view_map')}
               >
                 <FiMap />
               </button>
@@ -124,7 +122,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({
                     className="bg-black/30 backdrop-blur-[var(--glass-blur)] border border-white/20 w-8 h-8 md:w-[44px] md:h-[44px] rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 ease-out shrink-0 p-0 shadow-sm hover:bg-black/50 hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-md [&>svg]:w-4 [&>svg]:h-4 md:[&>svg]:w-5 md:[&>svg]:h-5 [&>svg]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                     onClick={onDownloadPdf}
                     disabled={isDownloading}
-                    title={t('actions.download_pdf')}
+                    title={t('district.actions.download_pdf')}
                   >
                     {isDownloading ? <AiOutlineLoading3Quarters className="animate-spin text-[16px] md:text-xl" /> : <FiDownload />}
                   </button>
@@ -134,7 +132,6 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({
                     onToggle={handleHeartClick}
                   />
 
-                  {/* Кнопка Коментарів */}
                   <CommentButton 
                     onClick={() => console.log('Comments clicked')}
                     count={0} 
@@ -145,17 +142,15 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({
             </div>
           </div>
 
-          {/* Нижній блок: Заголовок, Дата (моб) та Quick Stats */}
           <div className="flex flex-col gap-2 md:gap-4 mt-auto">
             <div>
               <h1 className="font-heading text-[1.75rem] md:text-[3rem] font-semibold m-0 leading-[1.1] tracking-tight text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.5)]">
                 {name}
               </h1>
-              {/* Дата на мобільному телефоні під заголовком */}
               {formattedDate && (
                 <div className="md:hidden mt-1.5 inline-flex items-center gap-1.5 bg-black/40 px-2 py-0.5 rounded-full font-body text-[0.65rem] text-white/80 border border-white/10">
                   <span className="w-1.5 h-1.5 bg-success rounded-full"></span>
-                  {t('stats.updated_label')} {formattedDate}
+                  {t('district.status.updated_label')} {formattedDate}
                 </div>
               )}
             </div>
@@ -190,13 +185,6 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({
       <style>{`
         @keyframes slowZoom { from { transform: scale(1); } to { transform: scale(1.15); } }
         .animate-slowZoom { animation: slowZoom 45s infinite alternate ease-in-out; }
-        @keyframes swipeHint {
-          0% { transform: translateX(0); }
-          20% { transform: translateX(-15px); }
-          40% { transform: translateX(0); }
-          100% { transform: translateX(0); }
-        }
-        .animate-swipeHint { animation: swipeHint 1.2s ease-out 0.5s; }
       `}</style>
     </>
   );
@@ -211,7 +199,7 @@ export const ModalFooter: React.FC<ModalFooterProps> = ({ onClose }) => {
   return (
     <div className="p-4 md:p-6 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-[var(--border-color)] bg-[var(--bg-surface)] flex justify-end rounded-b-3xl md:rounded-b-[var(--radius-lg)]">
       <Button variant="outlineDanger" onClick={onClose} className="w-full md:w-auto px-8 transition-all duration-300">
-        {t('actions.close')}
+        {t('district.actions.close')}
       </Button>
     </div>
   );

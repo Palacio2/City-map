@@ -15,7 +15,7 @@ import { useUserConsent } from '@hooks/useUserConsent';
 import { useTimeTracker } from '@hooks/useTimeTracker';
 
 export default function MainLayout() {
-  const { t } = useTranslation('rodo');
+  const { t } = useTranslation('db');
   const { session } = useAuth();
   const { pathname } = useLocation();
 
@@ -37,7 +37,7 @@ export default function MainLayout() {
     try {
       await handleAcceptRodo();
     } catch {
-      alert(t('errors.save_failed'));
+      alert(t('layout.errors.save_failed'));
     }
   };
 
@@ -47,7 +47,7 @@ export default function MainLayout() {
       
       <main className="flex-1 w-full flex flex-col relative px-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pt-6 md:pt-8 pb-8 md:pb-10">
         <div className="w-full max-w-[1440px] mx-auto px-4 lg:px-8 flex-1 flex flex-col justify-start">
-          <Suspense fallback={<Loader fullScreen={true} text={t('loading')} />}>
+          <Suspense fallback={<Loader fullScreen={true} text={t('layout.loading')} />}>
             <Outlet />
           </Suspense>
         </div>

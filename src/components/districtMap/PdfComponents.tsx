@@ -101,7 +101,8 @@ export const Section: React.FC<SectionProps> = ({ categoryConfig, data, t, forma
       <div style={pdfStyles.sectionHeader}>
         <span style={pdfStyles.sectionIcon}>{data.icon || categoryConfig.icon}</span>
         <h3 style={pdfStyles.sectionTitle}>
-          {t(`categories.${categoryConfig.key}`)}
+          {/* ОНОВЛЕНО: динамічний ключ з бази */}
+          {t(`groups.${categoryConfig.key}`, { defaultValue: categoryConfig.key })}
         </h3>
         <span style={pdfStyles.sectionRating(getRatingBg(data.rating))}>
           {(data.rating || 0).toFixed(1)}
@@ -114,7 +115,8 @@ export const Section: React.FC<SectionProps> = ({ categoryConfig, data, t, forma
            return (
              <StatRow 
                 key={fieldData.key}
-                label={t(`fields.${fieldData.key}`)}
+                /* ОНОВЛЕНО: динамічний ключ з бази */
+                label={t(`common.fields.${fieldData.key}`, { defaultValue: t(fieldData.key) })}
                 value={formatValue(fieldData.value, fieldData.type, fieldData.key)}
              />
            );

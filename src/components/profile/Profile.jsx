@@ -52,34 +52,34 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
 
     let status = { 
       icon: <FaCheckCircle />, 
-      text: t('billing.status_map.active'), 
+      text: t('profile.billing.status_active'), 
       class: 'bg-success/15 text-success' 
     };
 
     if (isExpired) {
       status = { 
         icon: <FaTimesCircle />, 
-        text: t('billing.status_map.incomplete_expired'), 
+        text: t('profile.billing.status_expired'), 
         class: 'bg-danger/15 text-danger' 
       };
     } else if (isFree) {
       status = { 
         icon: <FaTimesCircle />, 
-        text: t('billing.plans.free.name'), 
+        text: t('profile.billing.plan_free'), 
         class: 'bg-danger/15 text-danger' 
       };
     } else if (isScheduledForCancel) {
       status = { 
         icon: <FaExclamationTriangle />, 
-        text: `${t('billing.status_map.active')} (${t('billing.ending_soon')} ${formattedExpires})`, 
+        text: `${t('profile.billing.status_active')} (${t('profile.billing.ending_soon')} ${formattedExpires})`, 
         class: 'bg-success/15 text-success' 
       };
     }
 
     return {
       status,
-      name: t(`billing.plans.${planKey}.name`),
-      price: t(`billing.plans.${planKey}.price`),
+      name: t(`profile.billing.plan_name_${planKey}`),
+      price: t(`profile.billing.plan_price_${planKey}`),
       expires: formattedExpires
     };
   }, [subscription, t, i18n.language]);
@@ -91,7 +91,7 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
       <div className="flex items-center justify-between mb-4 pb-2 border-b border-borderClient">
         <div className="flex items-center gap-2">
           <FaCrown className="text-[1.1rem] text-accent" />
-          <h2 className="font-heading text-[1.1rem] text-textMain m-0 font-bold">{t('billing.current_sub')}</h2>
+          <h2 className="font-heading text-[1.1rem] text-textMain m-0 font-bold">{t('profile.billing.section_title')}</h2>
         </div>
         {subscription.plan !== 'free' && (
            <span className={`text-[0.75rem] px-3 py-1 rounded-full font-semibold uppercase tracking-widest ${statusInfo.status.class}`}>
@@ -106,8 +106,8 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
             <FaExclamationTriangle className="shrink-0" />
             <span>
               {subscription.isExpired 
-                ? t('billing.status_map.incomplete_expired') + ': ' + statusInfo.expires
-                : t('billing.ending_soon') + ': ' + statusInfo.expires}
+                ? t('profile.billing.status_expired') + ': ' + statusInfo.expires
+                : t('profile.billing.ending_soon') + ': ' + statusInfo.expires}
             </span>
           </div>
         )}
@@ -116,7 +116,7 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
             <div>
                 <h3 className="font-heading text-xl text-textMain m-0 font-bold">{statusInfo.name}</h3>
                 {!subscription.isExpired && subscription.plan !== 'free' && (
-                    <p className="text-[0.8rem] text-textSecondary mt-1 m-0">{t('billing.next_payment')}: {statusInfo.expires}</p>
+                    <p className="text-[0.8rem] text-textSecondary mt-1 m-0">{t('profile.billing.next_payment')}: {statusInfo.expires}</p>
                 )}
             </div>
             {!subscription.isExpired && subscription.plan !== 'free' && (
@@ -124,14 +124,13 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
             )}
         </div>
 
-        {/* ВИПРАВЛЕНО: Шлях до перекладів функцій тепер відповідає базі даних */}
         <div className={`overflow-hidden transition-all duration-300 ease-out md:max-h-none md:mb-6 ${isExpanded ? 'max-h-[500px] mb-4' : 'max-h-0'}`}>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-3 pt-4 border-t border-borderClient">
                 {features.map((featureKey) => (
                     <div key={featureKey} className="text-[0.9rem] text-textSecondary flex items-start gap-2 font-medium">
                         <FaCheckCircle className="text-success text-[0.8rem] mt-1 shrink-0" /> 
-                        {/* Тут звертаємось до ключа subscription.features.назва */}
-                        <span>{t(`subscription.features.${featureKey}`)}</span>
+                        {/* ОНОВЛЕНО: Використовуємо правильний ключ subscription.features.* */}
+                        <span>{t(`subscription.features.${featureKey}`, { defaultValue: t(`profile.subscription.feature_${featureKey}`) })}</span>
                     </div>
                 ))}
             </div>
@@ -153,8 +152,8 @@ const SubscriptionSection = React.memo(({ subscription, features, isPremium }) =
           }`}>
             <FaSync className={isPremium || subscription.isExpired ? '' : 'animate-spin'} style={{ animationDuration: '3s' }} /> 
             {(isPremium || subscription.isExpired) 
-              ? t('billing.update_plan') 
-              : t('billing.plans.premium.name')}
+              ? t('profile.billing.update_plan') 
+              : t('profile.billing.plan_name_premium')}
           </Link>
         </div>
       </div>
@@ -183,7 +182,6 @@ export default function Profile() {
 
   const features = useMemo(() => {
     if (subscription && typeof getFeatureKeys === 'function') {
-      // Отримуємо список ключів (roi_calculator, white_label_pdf і т.д.)
       return getFeatureKeys();
     }
     return [];
@@ -194,7 +192,7 @@ export default function Profile() {
       
       <div className="text-center mb-6">
         <h1 className="font-heading text-[1.75rem] md:text-[2.25rem] text-textMain m-0 font-bold tracking-tight">
-          {t('header.profile')}
+          {t('profile.title')}
         </h1>
       </div>
 

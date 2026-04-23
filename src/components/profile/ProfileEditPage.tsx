@@ -17,7 +17,6 @@ export default function ProfileEditPage() {
   const [state, setState] = useState({ name: '', email: '', phone: '', originalEmail: '' });
   const [statusMessage, setStatusMessage] = useState({ type: '', text: '' });
 
-  // Використовуємо React Query для отримання даних
   const { data: profile } = useQuery({
     queryKey: ['userProfile'],
     queryFn: profileAPI.getProfile,
@@ -45,7 +44,7 @@ export default function ProfileEditPage() {
     },
     onSuccess: (result) => {
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });
-      queryClient.invalidateQueries({ queryKey: ['authUser'] }); // Оновлюємо глобальний стейт юзера
+      queryClient.invalidateQueries({ queryKey: ['authUser'] }); 
       
       if (result === 'email_updated') {
         setStatusMessage({ type: 'success', text: t('profile.edit_page.email_update_sent') });
@@ -96,7 +95,6 @@ export default function ProfileEditPage() {
 
   return (
     <div className="min-h-[100dvh] bg-body text-textMain py-8 px-4 md:px-8 font-body animate-fadeIn">
-      {/* Хедер залишається тим самим */}
       <div className="max-w-[1200px] mx-auto mb-10 flex flex-col gap-4">
         <Link to="/profile" className="inline-flex items-center gap-2 text-textSecondary font-heading font-semibold text-[0.85rem] tracking-widest uppercase transition-all w-fit hover:text-accent hover:-translate-x-1 decoration-none">
           <FaArrowLeft /> {t('profile.actions.back_to_profile')}

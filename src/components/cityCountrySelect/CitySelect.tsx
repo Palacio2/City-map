@@ -24,18 +24,17 @@ export default function CitySelect({ country: propCountry }: { country?: string 
     enabled: !!decodedCountry
   });
 
-  // Залізобетонна типізація: витягуємо повідомлення лише якщо це Error
   const queryErrorMessage = error instanceof Error ? error.message : undefined;
-  const displayError: string | undefined = queryErrorMessage || (!decodedCountry && !propCountry ? t('select.country_missing') : undefined);
+  const displayError: string | undefined = queryErrorMessage || (!decodedCountry && !propCountry ? t('country.missing_error') : undefined);
 
-  if (isLoading) return <Loader fullScreen text={t('select.loading')} />;
-  if (displayError) return <StatusView title={t('select.error')} error={displayError} onBack={() => navigate(-1)} showRetry={!!error} />;
+  if (isLoading) return <Loader fullScreen text={t('city.loading')} />;
+  if (displayError) return <StatusView title={t('city.error')} error={displayError} onBack={() => navigate(-1)} showRetry={!!error} />;
 
   const hasCities = cities.length > 0;
 
   return (
     <SelectForm
-      title={t('select.city_title', { country: decodedCountry })}
+      title={t('city.title', { country: decodedCountry })}
       options={createSelectOptions(cities)}
       selectedValue={selected}
       onValueChange={setSelected}
@@ -45,9 +44,9 @@ export default function CitySelect({ country: propCountry }: { country?: string 
       }}
       onBack={() => navigate(-1)}
       showBackButton
-      submitText={t('select.go_to_map')}
+      submitText={t('city.submit')}
       disabled={!hasCities}
-      disabledMessage={hasCities ? t('select.unavailable') : t('select.cities_not_found')}
+      disabledMessage={hasCities ? t('city.unavailable') : t('city.not_found')}
       isSearchable
     />
   );

@@ -51,11 +51,7 @@ export default function DistrictComparisonPage() {
       try {
         const ids = selectedDistricts.map(d => d.id);
         const rawData = await fetchDistrictsByIds(ids);
-        
-        // Трансформуємо з урахуванням конфігу та підписки
         const transformed = transformDistrictsForDisplay(rawData, config, { isFree, isRealtor });
-        
-        // Зберігаємо порядок
         const sorted = selectedDistricts.map(sd => transformed.find(td => td.id === sd.id)).filter(Boolean) as TransformedDistrict[];
         setDisplayDistricts(sorted);
       } catch (error) {
@@ -85,28 +81,28 @@ export default function DistrictComparisonPage() {
     <div className="flex flex-col w-full max-w-[1440px] mx-auto px-4 md:px-6 xl:px-8 py-6 md:py-8 box-border min-h-[calc(100vh-var(--header-height))] animate-fadeIn">
       <div className="mb-6 flex items-center justify-between">
          <Link to="/profile/stats/" className="flex items-center gap-2 text-textSecondary hover:text-accent transition-colors font-semibold text-[0.95rem] no-underline">
-            <FaArrowLeft /> {t('common:actions.back')}
+            <FaArrowLeft /> {t('stats.actions.back')}
          </Link>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
-          <h1 className="m-0 font-heading text-2xl md:text-3xl font-bold text-textMain">{t('comparison.title', { defaultValue: 'Порівняння районів' })}</h1>
+          <h1 className="m-0 font-heading text-2xl md:text-3xl font-bold text-textMain">{t('stats.comparison.title')}</h1>
           <p className="m-0 mt-2 text-[0.95rem] text-textSecondary">
-            {t('comparison.subtitle', { defaultValue: 'Оберіть до 4 районів для детального порівняння' })}
+            {t('stats.comparison.subtitle')}
           </p>
         </div>
         
         <div className="flex gap-3">
           <button className="ui-button-outline !py-2.5 flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
-            {t('comparison.change_districts', { defaultValue: 'Змінити райони' })}
+            {t('stats.comparison.change_districts')}
           </button>
           <button 
             className="ui-button-primary !py-2.5 flex items-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed" 
             onClick={() => setIsExportModalOpen(true)} 
             disabled={isDownloading || isLoadingData || displayDistricts.length === 0}
           >
-            {isDownloading ? <Loader size="small" /> : <><FaFilePdf /> {t('comparison.export_pdf', { defaultValue: 'Експорт PDF' })}</>}
+            {isDownloading ? <Loader size="small" /> : <><FaFilePdf /> {t('stats.comparison.export_pdf')}</>}
           </button>
         </div>
       </div>
@@ -114,10 +110,10 @@ export default function DistrictComparisonPage() {
       {selectedDistricts.length === 0 ? (
         <div className="flex flex-col items-center justify-center p-16 bg-surface rounded-xl border border-borderClient border-dashed text-textSecondary text-center">
           <div className="text-5xl mb-4 opacity-50 grayscale">⚖️</div>
-          <h3 className="m-0 font-heading text-xl font-bold text-textMain">{t('comparison.empty_title', { defaultValue: 'Не вибрано райони' })}</h3>
-          <p className="mt-2 mb-6 text-[0.95rem] max-w-[400px]">{t('comparison.empty_text', { defaultValue: 'Додайте райони для порівняння їх інфраструктури та характеристик' })}</p>
+          <h3 className="m-0 font-heading text-xl font-bold text-textMain">{t('stats.comparison.empty_title')}</h3>
+          <p className="mt-2 mb-6 text-[0.95rem] max-w-[400px]">{t('stats.comparison.empty_text')}</p>
           <button className="ui-button-primary" onClick={() => setIsModalOpen(true)}>
-            {t('comparison.add_first', { defaultValue: 'Додати район' })}
+            {t('stats.comparison.add_first')}
           </button>
         </div>
       ) : isLoadingData || !config ? (

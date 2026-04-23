@@ -76,7 +76,7 @@ const DistrictCard: React.FC<DistrictCardProps> = React.memo(({ district, onClic
               e.stopPropagation();
               onClick(district, stat.key);
             }}
-            title={t(`categories.${stat.key}`)}
+            title={t(`district.categories.${stat.key}`)}
           >
             {stat.icon} {Number(stat.rating).toFixed(1)}
           </button>
@@ -137,11 +137,11 @@ export default function DistrictsMap({
         <div className="flex justify-center flex-wrap gap-2">
           {districts.length > 0 && (
             <span className="bg-hover py-1 px-3 rounded-full text-[0.8rem] md:text-[0.85rem] text-textSecondary border border-borderClient font-medium">
-              {t('stats_shown', { shown: shownCount, total: realTotal })}
+              {t('district.status.stats_shown', { shown: shownCount, total: realTotal })}
               
               {isFree && realTotal > shownCount && (
                   <span className="ml-1.5 opacity-70 text-[0.9em]">
-                    ({t('premium.hidden_districts_title', { count: realTotal - shownCount })})
+                    ({t('district.premium.hidden_title', { count: realTotal - shownCount })})
                   </span>
               )}
             </span>
@@ -153,8 +153,8 @@ export default function DistrictsMap({
         <div className="flex-1 flex items-center justify-center h-full">
           <div className="text-center text-textSecondary p-8 flex flex-col items-center gap-3">
             <div className="text-[3rem] opacity-50 grayscale">{hasActiveFilters ? '🔍' : '🏙️'}</div>
-            <h3 className="m-0 font-heading text-xl font-bold text-textMain">{hasActiveFilters ? t('not_found_title') : t('no_data_title')}</h3>
-            <p className="m-0 text-[0.95rem] max-w-[300px]">{hasActiveFilters ? t('not_found_text') : t('no_data_text')}</p>
+            <h3 className="m-0 font-heading text-xl font-bold text-textMain">{hasActiveFilters ? t('district.status.not_found_title') : t('district.status.no_data_title')}</h3>
+            <p className="m-0 text-[0.95rem] max-w-[300px]">{hasActiveFilters ? t('district.status.not_found_text') : t('district.status.no_data_text')}</p>
           </div>
         </div>
       ) : (

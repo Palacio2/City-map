@@ -13,12 +13,11 @@ interface AvatarUploadProps {
 export default function AvatarUpload({ uid, url: filePath, onUpload }: AvatarUploadProps) {
   const { t } = useTranslation('db');
 
-  // React Query автоматично кешує URL аватарки замість ручного об'єкта
   const { data: signedUrl, isLoading: isLoadingUrl } = useQuery({
     queryKey: ['avatar', filePath],
     queryFn: () => filePath ? storageApi.getSignedUrl('avatars', filePath) : null,
     enabled: !!filePath,
-    staleTime: 1000 * 60 * 60, // Кешуємо на 1 годину
+    staleTime: 1000 * 60 * 60, 
   });
 
   const uploadMutation = useMutation({
@@ -50,7 +49,7 @@ export default function AvatarUpload({ uid, url: filePath, onUpload }: AvatarUpl
   return (
     <div className="relative w-[70px] h-[70px] rounded-full overflow-hidden border-2 border-borderClient bg-surface shrink-0 group">
       {signedUrl && !isProcessing ? (
-        <img src={signedUrl} alt="Avatar" className="w-full h-full object-cover" />
+        <img src={signedUrl} alt={t('profile.labels.avatar')} className="w-full h-full object-cover" />
       ) : (
         <div className="w-full h-full flex items-center justify-center bg-body text-textSecondary text-2xl">
           {isProcessing ? <FaSpinner className="animate-spin" /> : <FaCamera />}

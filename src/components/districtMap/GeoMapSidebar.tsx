@@ -33,14 +33,14 @@ export const GeoMapSidebar: React.FC<GeoMapSidebarProps> = ({
   return (
     <div className={`absolute top-0 left-0 w-full h-full md:relative md:w-[320px] bg-surface border-r border-borderClient flex flex-col shrink-0 z-[var(--z-modal)] md:z-[var(--z-sidebar)] transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isMobileFilterOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
       <div className="p-5 border-b border-borderClient flex justify-between items-center bg-surface">
-        <h4 className="m-0 font-heading text-textMain text-[1.1rem] font-bold">{t('filters_title')}</h4>
-        <button className="md:hidden bg-transparent border-none text-textSecondary cursor-pointer" onClick={() => setIsMobileFilterOpen(false)} aria-label={t('actions.close')}>
+        <h4 className="m-0 font-heading text-textMain text-[1.1rem] font-bold">{t('district.map.filters_title')}</h4>
+        <button className="md:hidden bg-transparent border-none text-textSecondary cursor-pointer" onClick={() => setIsMobileFilterOpen(false)} aria-label={t('district.actions.close')}>
           <FiX size={24} />
         </button>
       </div>
       <div className="py-4 px-5 flex justify-between items-center bg-body border-b border-borderClient">
         <button onClick={toggleAll} className="bg-transparent border-none text-accent font-body font-semibold text-[0.9rem] cursor-pointer p-0 transition-opacity hover:opacity-80">
-          {allSelected ? t('clear_all') : t('select_all')}
+          {allSelected ? t('district.actions.clear_all') : t('district.actions.select_all')}
         </button>
         <span className="text-[0.85rem] text-textSecondary font-bold bg-borderClient/30 px-2 py-0.5 rounded-full">{activeFilters.length} / {availableTypes.length}</span>
       </div>
@@ -49,7 +49,9 @@ export const GeoMapSidebar: React.FC<GeoMapSidebarProps> = ({
           const isActive = activeFilters.includes(type);
           const count = (geoData?.poi_data || []).filter(p => p.type === type).length;
           const rawName = type.replaceAll('_count', '');
-          const translatedName = t(`poi_types.${rawName}`);
+          
+          // ОНОВЛЕНО ТУТ: Використовуємо common.fields з фолбеком на чистий ключ
+          const translatedName = t(`common.fields.${rawName}`, { defaultValue: t(rawName) });
           
           return (
             <button 

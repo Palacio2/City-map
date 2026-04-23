@@ -19,8 +19,8 @@ export const CloseButton: React.FC<CloseButtonProps> = ({ onClose, className = '
     <button
       className={`${baseButtonClasses} ${defaultSizeClasses} ${className}`}
       onClick={onClose}
-      aria-label={t('actions.close')}
-      title={t('actions.close')}
+      aria-label={t('district.actions.close')}
+      title={t('district.actions.close')}
     >
       <FiX />
     </button>
@@ -41,7 +41,7 @@ export const FavoriteButton: React.FC<FavoriteButtonProps> = ({
   className = '' 
 }) => {
   const { t } = useTranslation('db');
-  const label = isFavorite ? t('actions.remove_favorite') : t('actions.add_favorite');
+  const label = isFavorite ? t('district.actions.remove_favorite') : t('district.actions.add_favorite');
 
   const getIcon = () => {
     if (isLoading) return <AiOutlineLoading3Quarters className="animate-spin" />;
@@ -75,8 +75,8 @@ export const CommentButton: React.FC<CommentButtonProps> = ({ onClick, count, cl
     <button
       className={`${baseButtonClasses} ${defaultSizeClasses} ${className}`}
       onClick={onClick}
-      aria-label={t('actions.comments')}
-      title={t('actions.comments')}
+      aria-label={t('district.actions.comments')}
+      title={t('district.actions.comments')}
     >
       <FiMessageCircle />
       {count !== undefined && count > 0 && (

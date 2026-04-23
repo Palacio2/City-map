@@ -55,7 +55,7 @@ export default function TermsOfService() {
         <div className="ui-watermark absolute top-6 right-10 z-0">§</div>
 
         <div className="relative border-l-2 border-borderClient ml-2 sm:ml-4 space-y-14 pb-4 z-10">
-          {sections.map((section, index) => (
+          {sections.map((section: any, index: number) => (
             <section key={index} className="relative pl-8 sm:pl-12 group">
               <span className="absolute -left-[11px] top-1.5 w-5 h-5 rounded-full bg-surface border-4 border-accent group-hover:scale-125 transition-transform duration-300 shadow-sm" />
 
@@ -64,7 +64,7 @@ export default function TermsOfService() {
               </h2>
 
               <div className="space-y-5 mt-4">
-                {section.content.map((paragraph, pIndex) => (
+                {section.content.map((paragraph: string, pIndex: number) => (
                   <p key={pIndex} className="ui-text-body text-justify">
                     {paragraph}
                   </p>

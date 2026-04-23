@@ -1,15 +1,13 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaSearch, FaMap, FaChartLine, FaClock } from 'react-icons/fa';
-// ВИПРАВЛЕНО: Додано правильний шлях імпорту (два рівня вгору)
 import { DashboardStats } from '../../hooks/useStatsData';
 
-// ОНОВЛЕНО: Використовуємо безпечні ключі page_stats
 const formatDuration = (seconds: number | undefined, t: any) => {
-  if (!seconds) return `0 ${t('page_stats.hours')} 0 ${t('page_stats.minutes')}`;
+  if (!seconds) return `0 ${t('stats.labels.hours')} 0 ${t('stats.labels.minutes')}`;
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
-  return `${hours} ${t('page_stats.hours')} ${minutes} ${t('page_stats.minutes')}`;
+  return `${hours} ${t('stats.labels.hours')} ${minutes} ${t('stats.labels.minutes')}`;
 };
 
 interface StatsCardsProps {
@@ -27,7 +25,7 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
     { 
       icon: FaSearch, 
       colorClass: 'bg-[#4299e1]/10 text-[#4299e1] border-[#4299e1]/20', 
-      label: t('page_stats.searches'), 
+      label: t('stats.cards.searches'), 
       value: stats?.viewed_districts_count || stats?.viewedDistricts || 0,
       onClick: onSearchesClick,
       hidden: false
@@ -35,7 +33,7 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
     { 
       icon: FaMap, 
       colorClass: 'bg-success/10 text-success border-success/20', 
-      label: t('page_stats.saved_districts'), 
+      label: t('stats.cards.saved'), 
       value: stats?.savedDistricts || 0,
       onClick: onSavedClick,
       hidden: false
@@ -43,7 +41,7 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
     { 
       icon: FaChartLine, 
       colorClass: 'bg-[#9f7aea]/10 text-[#9f7aea] border-[#9f7aea]/20', 
-      label: t('page_stats.comparisons'), // ОНОВЛЕНО
+      label: t('stats.cards.comparisons'),
       value: stats?.comparisons || 0,
       onClick: onCompareClick,
       hidden: !showCompare
@@ -51,7 +49,7 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
     { 
       icon: FaClock, 
       colorClass: 'bg-warning/10 text-warning border-warning/20', 
-      label: t('page_stats.time_spent'), 
+      label: t('stats.cards.time'), 
       value: formatDuration(stats?.total_time_seconds || stats?.totalTime || 0, t),
       onClick: undefined,
       hidden: false

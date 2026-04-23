@@ -13,7 +13,6 @@ export interface ConfirmationModalProps {
 
 export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, message }: ConfirmationModalProps) {
   const { t } = useTranslation('db');
-
   if (!isOpen) return null;
 
   const modalContent = (
@@ -28,13 +27,12 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, m
           <button className="flex-1 p-3 rounded-lg border border-borderClient bg-body text-textMain font-heading font-semibold cursor-pointer transition-all text-[0.95rem] hover:bg-hover hover:border-textSecondary" onClick={onClose}>
             {t('stats.actions.cancel')}
           </button>
-          <button className="flex-1 p-3 rounded-lg border-none bg-danger text-white font-heading font-semibold cursor-pointer transition-all text-[0.95rem] shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:brightness-110 hover:-translate-y-0.5 hover:shadow-[0_6px_16px_rgba(239,68,68,0.4)] active:translate-y-0" onClick={onConfirm}>
+          <button className="flex-1 p-3 rounded-lg border-none bg-danger text-white font-heading font-semibold cursor-pointer transition-all text-[0.95rem] shadow-[0_4px_12px_rgba(239,68,68,0.3)] hover:brightness-110 hover:-translate-y-0.5 active:translate-y-0" onClick={onConfirm}>
             {t('stats.actions.delete')}
           </button>
         </div>
       </div>
     </div>
   );
-
   return ReactDOM.createPortal(modalContent, document.body);
 }

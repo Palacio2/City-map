@@ -41,7 +41,6 @@ export const getForgotPasswordSchema = (t: (k: string) => string) => z.object({
   email: baseAuthSchema(t).email 
 });
 
-// ДОДАНО: Схема для зміни пароля в профілі
 export const getChangePasswordSchema = (t: (k: string) => string) => z.object({
   newPassword: z.string()
     .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/, t('auth.errors.password_weak')),
@@ -51,13 +50,11 @@ export const getChangePasswordSchema = (t: (k: string) => string) => z.object({
   path: ["confirmPassword"] 
 });
 
-// ДОДАНО: Функція валідації для сторінки зміни пароля
 export const validateChangePasswordForm = (data: { newPassword?: string; confirmPassword?: string }, t: (k: string) => string): string | null => {
   const schema = getChangePasswordSchema(t);
   const result = schema.safeParse(data);
   
   if (!result.success) {
-    // Замінили .errors на .issues
     return result.error.issues[0].message;
   }
   return null;

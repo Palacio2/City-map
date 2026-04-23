@@ -21,13 +21,13 @@ export default function CountrySelect() {
 
   const queryErrorMessage = error instanceof Error ? error.message : undefined;
 
-  if (isLoading) return <Loader fullScreen text={t('select.loading')} />;
-  if (queryErrorMessage) return <StatusView error={queryErrorMessage} onBack={() => navigate(-1)} showRetry />;
+  if (isLoading) return <Loader fullScreen text={t('country.loading')} />;
+  if (queryErrorMessage) return <StatusView title={t('country.error')} error={queryErrorMessage} onBack={() => navigate(-1)} showRetry />;
 
   return (
     <SelectForm
-      title={t('select.country_title')}
-      subtitle={t('select.country_subtitle')}
+      title={t('country.title')}
+      subtitle={t('country.subtitle')}
       options={createSelectOptions(countries)}
       selectedValue={selected}
       onValueChange={setSelected}

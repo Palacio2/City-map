@@ -56,7 +56,7 @@ export default function Register() {
             {isLoading ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block"></span> : t('auth.register.submit')}
           </button>
         </form>
-        <div className="flex items-center my-6 text-textSecondary text-[0.85rem] before:flex-1 before:h-px before:bg-borderClient after:flex-1 after:h-px after:bg-borderClient"><span className="px-4">{t('auth.login.or')}</span></div>
+        <div className="flex items-center my-6 text-textSecondary text-[0.85rem] before:flex-1 before:h-px before:bg-borderClient after:flex-1 after:h-px after:bg-borderClient"><span className="px-4">{t('auth.common.or')}</span></div>
         <button onClick={() => socialLogin('google')} disabled={isLoading} className="w-full py-[0.85rem] border border-borderClient rounded-md font-semibold flex items-center justify-center gap-3 hover:border-accent">
           <FaGoogle className="text-accent text-[1.1rem]" /> {t('auth.register.social', { provider: 'Google' })}
         </button>

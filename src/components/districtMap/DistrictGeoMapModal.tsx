@@ -120,7 +120,10 @@ const FastMapMarkers: React.FC<{ pois: PoiData[], t: any, config: DynamicDistric
     const leafletMarkers = pois.map(poi => {
       const marker = L.marker(poi.coord, { icon: getCachedIcon(poi.type, config) });
       const rawName = (poi.type || 'default').replaceAll('_count', '');
-      const labelText = t(`poi_types.${rawName}`, { defaultValue: rawName.replaceAll('_', ' ') });
+      
+      // ОНОВЛЕНО ТУТ: Використовуємо common.fields або чистий ключ
+      const labelText = t(`common.fields.${rawName}`, { defaultValue: t(rawName) });
+      
       marker.bindTooltip(`<strong>${labelText}</strong>`, { 
         direction: 'top', 
         className: 'font-body font-semibold capitalize border-none shadow-md rounded-md px-3 py-1.5 bg-surface text-textMain' 
@@ -281,7 +284,7 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
   } else if (availableTypes.length === 0 && !geoData?.geojson) {
     mapContent = (
       <div className="w-full h-full flex items-center justify-center bg-surface font-heading text-textSecondary text-xl">
-        {t('no_data', { defaultValue: 'Дані відсутні' })}
+        {t('district.status.no_data')}
       </div>
     );
   } else {
@@ -302,7 +305,7 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
         <div className="flex-1 relative h-full">
           {availableTypes.length > 0 && (
             <button className="md:hidden absolute bottom-6 left-1/2 -translate-x-1/2 z-[var(--z-fixed)] bg-surface text-textMain border border-borderClient py-3 px-6 rounded-full font-heading font-bold text-[0.95rem] flex items-center justify-center gap-2.5 shadow-hover cursor-pointer" onClick={() => setIsMobileFilterOpen(true)}>
-              <FiFilter size={20} /><span>{t('filters', { defaultValue: 'Фільтри' })}</span>
+              <FiFilter size={20} /><span>{t('district.map.filters')}</span>
             </button>
           )}
           <MapContainer center={[52, 19]} zoom={6} className="w-full h-full z-[var(--z-base)]" zoomControl={true} maxZoom={18}>
@@ -322,7 +325,7 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
         type="button"
         className="absolute inset-0 w-full h-full bg-transparent border-none appearance-none cursor-default z-0"
         onClick={onClose}
-        aria-label={t('actions.close', { defaultValue: 'Закрити' })}
+        aria-label={t('district.actions.close')}
         tabIndex={-1}
       />
       <dialog 
@@ -338,7 +341,7 @@ export default function DistrictGeoMapModal({ isOpen, onClose, districtId, distr
           <button 
             className="bg-black/5 hover:bg-danger/10 border-none text-textSecondary hover:text-danger w-10 h-10 rounded-full flex items-center justify-center cursor-pointer transition-all hover:scale-105" 
             onClick={onClose}
-            aria-label="Close modal"
+            aria-label={t('district.actions.close')}
           >
             <FiX size={24} />
           </button>

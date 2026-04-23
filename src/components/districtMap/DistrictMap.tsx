@@ -24,7 +24,7 @@ const ErrorDisplay: React.FC<ErrorDisplayProps> = ({ error, onRetry }) => {
     <div className="flex-1 min-h-[300px] md:min-h-[50dvh] bg-surface rounded-xl border border-borderClient flex flex-col items-center justify-center shadow-glass animate-fadeIn p-4 text-center">
       <p className="text-danger font-medium mb-6">{error?.message || String(error)}</p>
       <Button variant="primary" onClick={onRetry} className="w-auto px-8">
-        {t('actions.retry')}
+        {t('district.actions.retry')}
       </Button>
     </div>
   );
@@ -93,7 +93,7 @@ export default function DistrictMap() {
     mapContent = (
       <div className="flex-1 flex flex-col items-center justify-center min-h-[300px] md:min-h-[50dvh] bg-surface rounded-xl border border-borderClient shadow-glass animate-fadeIn">
         <div className="w-12 h-12 rounded-full border-[3px] border-accent/15 border-t-accent animate-spin mb-6"></div>
-        <p className="text-textSecondary font-heading tracking-widest text-[0.95rem] m-0 font-medium uppercase">{t('loading')}</p>
+        <p className="text-textSecondary font-heading tracking-widest text-[0.95rem] m-0 font-medium uppercase">{t('district.status.loading')}</p>
       </div>
     );
   } else if (error) {

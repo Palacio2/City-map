@@ -6,7 +6,7 @@ import { AuthProvider } from './components/auth/AuthContext';
 import { SubscriptionProvider } from './pages/subscription/SubscriptionContext';
 import { FavoritesProvider } from './pages/favorites/FavoritesContext';
 import { HelmetProvider } from 'react-helmet-async';
-import { dbTranslationsPromise } from './i18n/i18n'; // Шлях має бути правильним 
+import { dbTranslationsPromise } from './i18n/i18n'; 
 import './client.css';
 
 const queryClient = new QueryClient({
@@ -31,6 +31,7 @@ const App: React.FC = () => {
   useEffect(() => {
     let isMounted = true;
     
+    // Чекаємо, поки i18n стягне дані з БД
     dbTranslationsPromise.then(() => {
       if (isMounted) {
         setTranslationsLoaded(true);
@@ -42,6 +43,7 @@ const App: React.FC = () => {
     };
   }, []);
 
+  // Блокуємо рендер додатку, поки немає перекладів
   if (!translationsLoaded) {
     return <PageLoader />;
   }

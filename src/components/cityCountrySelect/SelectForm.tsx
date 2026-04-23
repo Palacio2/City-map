@@ -7,7 +7,7 @@ const normalize = (text: string) => text.toLowerCase().normalize("NFD").replace(
 export interface StatusViewProps {
   title?: string;
   subtitle?: string;
-  error?: string; // Тільки string (прибрали null)
+  error?: string;
   onBack?: () => void;
   showRetry?: boolean;
   onRetry?: () => void;
@@ -48,7 +48,7 @@ const DropdownSelect = memo(({ options, value, onChange, disabled }: SelectCompo
   return (
     <div className="relative w-full">
       <select className={`ui-input appearance-none pr-12 cursor-pointer font-medium ${disabled ? 'opacity-50 pointer-events-none bg-borderClient/50' : ''}`} value={value} onChange={(e) => onChange(e.target.value)} disabled={disabled}>
-        <option value="">{t('select.select_placeholder')}</option>
+        <option value="">{t('select.placeholder')}</option>
         {options.filter(o => !o.disabled).map(opt => <option key={opt.value} value={opt.value} className="bg-surface text-textMain">{opt.label}</option>)}
       </select>
       <span className="absolute right-4 top-1/2 -translate-y-1/2 text-textSecondary pointer-events-none text-xs">▼</span>
@@ -86,7 +86,7 @@ const ComboboxSelect = memo(({ options, value, onChange, disabled }: SelectCompo
     <div className="relative w-full" ref={wrapperRef}>
       <input
         className={`ui-input pr-12 font-medium ${disabled ? 'opacity-50 pointer-events-none bg-borderClient/50' : ''}`}
-        placeholder={t('select.type_placeholder')}
+        placeholder={t('select.search_placeholder')}
         value={isOpen ? search : selectedLabel}
         onChange={(e) => { setSearch(e.target.value); if (!isOpen) setIsOpen(true); if (value) onChange(''); }}
         onFocus={() => { setSearch(''); setIsOpen(true); }}

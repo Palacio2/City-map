@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo, ReactNode } from "react";
+import { createContext, useContext, useState, useEffect, useCallback, useRef, useMemo, ReactNode } from "react";
 import { favoritesApi } from "@api/favoritesApi";
 import { supabase } from "@supabaseClient";
 import { transformDistrictsForDisplay, TransformedDistrict } from "@utils/dataTransformers";
+import { useFiltersConfig } from "@hooks/useFiltersConfig";
+import { useSubscription } from "@subscription/SubscriptionContext";
 
 export interface FavoritesContextType {
   favorites: TransformedDistrict[];
@@ -18,11 +20,18 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
   const [loading, setLoading] = useState(true);
   const isLoaded = useRef(false);
 
+  // Отримуємо конфігурацію та стан підписки для правильної трансформації даних
+  const { config } = useFiltersConfig();
+  const { isFree, isRealtor } = useSubscription();
+
   const loadFavorites = useCallback(async () => {
-    if (isLoaded.current) return;
+    // Чекаємо, поки завантажиться конфігурація фільтрів, інакше трансформація поверне порожній масив
+    if (isLoaded.current || !config) return;
+    
     try {
       const data = await favoritesApi.getFavorites();
-      const transformed = transformDistrictsForDisplay(data || []);
+      // Передаємо всі 3 необхідні аргументи
+      const transformed = transformDistrictsForDisplay(data || [], config, { isFree, isRealtor });
       setFavorites(transformed as TransformedDistrict[]);
       isLoaded.current = true;
     } catch {
@@ -30,20 +39,28 @@ export const FavoritesProvider = ({ children }: { children: ReactNode }) => {
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [config, isFree, isRealtor]);
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+    const { data: { subscription: authSubscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === "SIGNED_OUT") {
         setFavorites([]);
         isLoaded.current = false;
+        setLoading(false);
       }
       if (event === "SIGNED_IN" || event === "INITIAL_SESSION") {
         loadFavorites();
       }
     });
-    return () => subscription.unsubscribe();
+    return () => authSubscription.unsubscribe();
   }, [loadFavorites]);
+
+  // Додатковий ефект: якщо конфігурація завантажилася пізніше, оновлюємо дані
+  useEffect(() => {
+    if (config && !isLoaded.current) {
+      loadFavorites();
+    }
+  }, [config, loadFavorites]);
 
   const toggleFavorite = useCallback(async (district: Partial<TransformedDistrict> & { id: string | number }) => {
     let wasFavorite = false;

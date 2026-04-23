@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { supabase } from '@supabaseClient';
@@ -25,7 +25,7 @@ export default function AuthCallback() {
       <div className="flex flex-col items-center gap-5">
         <div className="w-12 h-12 border-[4px] border-accent/20 border-t-accent rounded-full animate-spin"></div>
         <p className="text-textMain font-heading font-semibold text-lg tracking-wider animate-pulse m-0">
-          {t('auth.login.loading')}
+          {t('auth.callback.loading')}
         </p>
       </div>
     </div>

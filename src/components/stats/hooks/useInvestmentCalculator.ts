@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export interface CalculatorValues {
   propertyPrice: number;
@@ -34,17 +35,19 @@ const INITIAL_STATE: CalculatorValues = {
   expenses: 0
 };
 
-export const CURRENCIES: Currency[] = [
-  { code: 'USD', symbol: '$', label: 'USD ($)' },
-  { code: 'EUR', symbol: '€', label: 'EUR (€)' },
-  { code: 'PLN', symbol: 'zł', label: 'PLN (zł)' },
-  { code: 'UAH', symbol: '₴', label: 'UAH (₴)' },
-  { code: 'GBP', symbol: '£', label: 'GBP (£)' }
-];
-
 export function useInvestmentCalculator() {
+  const { t } = useTranslation('db');
+
+  const currencies: Currency[] = [
+    { code: 'USD', symbol: '$', label: t('stats.calculator.currencies.usd') },
+    { code: 'EUR', symbol: '€', label: t('stats.calculator.currencies.eur') },
+    { code: 'PLN', symbol: 'zł', label: t('stats.calculator.currencies.pln') },
+    { code: 'UAH', symbol: '₴', label: t('stats.calculator.currencies.uah') },
+    { code: 'GBP', symbol: '£', label: t('stats.calculator.currencies.gbp') }
+  ];
+
   const [values, setValues] = useState<CalculatorValues>(INITIAL_STATE);
-  const [currency, setCurrency] = useState<Currency>(CURRENCIES[0]); 
+  const [currency, setCurrency] = useState<Currency>(currencies[0]); 
   
   const [results, setResults] = useState<CalculatorResults>({
     monthlyPayment: 0,
@@ -66,9 +69,9 @@ export function useInvestmentCalculator() {
 
   const handleCurrencyChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
     const selectedCode = e.target.value;
-    const selected = CURRENCIES.find(c => c.code === selectedCode) || CURRENCIES[0];
+    const selected = currencies.find(c => c.code === selectedCode) || currencies[0];
     setCurrency(selected);
-  }, []);
+  }, [currencies]);
 
   const handleReset = useCallback(() => {
     setValues(INITIAL_STATE);
@@ -122,6 +125,6 @@ export function useInvestmentCalculator() {
     handleChange,
     handleCurrencyChange,
     handleReset,
-    currencies: CURRENCIES
+    currencies
   };
 }

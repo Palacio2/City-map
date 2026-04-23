@@ -59,7 +59,7 @@ const FiltersPanel = memo(({
       <div className="w-full p-5 flex justify-between items-center bg-transparent border-b border-[var(--border-color)]/30 shrink-0 z-10">
         <div className="flex items-center gap-3">
           <FaFilter className="text-[var(--accent-color)]" />
-          <h2 className="m-0 text-lg uppercase tracking-widest font-bold font-heading">{t('filters.panel.title')}</h2>
+          <h2 className="m-0 text-lg uppercase tracking-widest font-bold font-heading">{t('filter.panel.title')}</h2>
         </div>
         <button 
           type="button"
@@ -102,13 +102,13 @@ const FiltersPanel = memo(({
 
         {isFree && (
           <div className="mt-4 p-5 rounded-2xl bg-[var(--bg-body)] border border-dashed border-[var(--border-accent)] text-center shrink-0">
-            <h4 className="text-sm font-bold mb-2 uppercase tracking-tighter font-heading">{t('filters.panel.banner_title')}</h4>
-            <p className="text-xs text-[var(--text-secondary)] mb-4 font-body">{t('filters.panel.banner_text')}</p>
+            <h4 className="text-sm font-bold mb-2 uppercase tracking-tighter font-heading">{t('filter.panel.banner_title')}</h4>
+            <p className="text-xs text-[var(--text-secondary)] mb-4 font-body">{t('filter.panel.banner_text')}</p>
             <button 
               className="ui-button-primary !py-2.5 !px-4 !text-[0.7rem] w-full"
               onClick={() => navigate('/subscription')}
             >
-              {t('filters.panel.view_tariffs')}
+              {t('filter.panel.view_tariffs')}
             </button>
           </div>
         )}
@@ -123,7 +123,7 @@ const FiltersPanel = memo(({
           className="w-full py-3 text-[0.75rem] font-bold uppercase tracking-widest text-[var(--danger-color)] hover:bg-[var(--danger-color)]/5 rounded-xl transition-colors font-body cursor-pointer"
           onClick={handleClearFilters}
         >
-          {t('filters.panel.clear')}
+          {t('filter.panel.clear')}
         </button>
       </div>
     </aside>

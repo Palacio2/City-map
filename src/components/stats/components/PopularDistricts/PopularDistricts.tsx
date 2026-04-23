@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react'; // Виправлено: видалено React
 import { useTranslation } from 'react-i18next';
 import { FaMapMarkerAlt, FaHome, FaClock } from 'react-icons/fa';
 import LocationSelectorModal from './LocationSelectorModal';
 import DistrictDetailsModal from '@components/districtMap/DistrictDetailsModal'; 
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import { transformDistrictsForDisplay, TransformedDistrict } from '@utils/dataTransformers';
-import { formatPrice } from '@utils/formatters';
+import { formatPrice, getCurrencyInfo } from '@utils/formatters'; // Виправлено: додано getCurrencyInfo
 import { useFiltersConfig } from '@hooks/useFiltersConfig';
 import { useSubscription } from '@subscription/SubscriptionContext';
 
@@ -69,10 +69,10 @@ export default function PopularDistricts() {
     <div className="mb-12">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
         <h2 className="m-0 font-heading text-2xl font-bold text-textMain">
-          {t('stats.popular_districts', { defaultValue: 'Популярні райони' })}
+          {t('stats.popular_districts.title')}
         </h2>
         <button className="ui-button-outline !py-2 !px-4 text-[0.85rem]" onClick={() => setIsModalOpen(true)}>
-          {selectedLocation ? `${selectedLocation.city}, ${selectedLocation.country}` : t('stats.select_location', { defaultValue: 'Обрати місто' })}
+          {selectedLocation ? `${selectedLocation.city}, ${selectedLocation.country}` : t('stats.actions.select_city')}
         </button>
       </div>
       
@@ -98,21 +98,22 @@ export default function PopularDistricts() {
                   
                   <div className="flex flex-col gap-3">
                       <div className="flex justify-between items-center bg-body p-3 rounded-lg border border-borderClient">
-                          <div className="text-[0.75rem] uppercase tracking-widest text-textSecondary font-semibold flex gap-1.5 items-center"><FaHome className="text-textMain" /> <span>{t('fields.propertyPricePerSqm', { defaultValue: 'Ціна м²' })}</span></div>
+                          <div className="text-[0.75rem] uppercase tracking-widest text-textSecondary font-semibold flex gap-1.5 items-center"><FaHome className="text-textMain" /> <span>{t('common.fields.propertyPricePerSqm')}</span></div>
                           <div className="text-base font-bold font-heading text-textMain">
-                              {formatPrice(salePrice, selectedLocation?.country)}
+                              {/* Виправлено: передаємо результат getCurrencyInfo */}
+                              {formatPrice(salePrice, getCurrencyInfo(selectedLocation?.country))}
                           </div>
                       </div>
                   </div>
                   <div className="mt-auto pt-2 flex items-center justify-between text-[0.75rem] text-textSecondary">
-                      <span className="flex items-center gap-1.5"><FaClock /> {t('stats.updated_label', { defaultValue: 'Оновлено:' })} {formatDate(district.updated_at)}</span>
+                      <span className="flex items-center gap-1.5"><FaClock /> {t('stats.labels.updated')} {formatDate(district.updated_at)}</span>
                   </div>
                 </div>
               );
             })}
           </div>
         ) : (
-          <div className="text-center p-10 bg-body rounded-lg text-textSecondary border-2 border-dashed border-borderClient">{t('stats.no_popular_data', { defaultValue: 'Дані відсутні' })}</div>
+          <div className="text-center p-10 bg-body rounded-lg text-textSecondary border-2 border-dashed border-borderClient">{t('stats.popular_districts.empty')}</div>
         )}
       </div>
       

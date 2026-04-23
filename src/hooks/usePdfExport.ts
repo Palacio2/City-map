@@ -1,8 +1,10 @@
 import { useState, useCallback } from 'react';
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useTranslation } from 'react-i18next';
 
-export const usePdfExport = (fileNamePrefix: string = 'zvit') => {
+export const usePdfExport = (fileNamePrefix?: string) => {
+  const { t } = useTranslation('db');
   const [isDownloading, setIsDownloading] = useState<boolean>(false);
 
   const downloadPdf = useCallback(async (elementId: string) => {
@@ -42,13 +44,14 @@ export const usePdfExport = (fileNamePrefix: string = 'zvit') => {
         heightLeft -= pageHeight;
       }
       
-      pdf.save(`${fileNamePrefix}_${new Date().toISOString().slice(0, 10)}.pdf`);
+      const prefix = fileNamePrefix || t('district.pdf.default_filename');
+      pdf.save(`${prefix}_${new Date().toISOString().slice(0, 10)}.pdf`);
     } catch (error) {
-      console.error('Помилка експорту:', error);
+      console.error(t('district.errors.pdf_export'), error);
     } finally {
       setIsDownloading(false);
     }
-  }, [fileNamePrefix]);
+  }, [fileNamePrefix, t]);
 
   return { isDownloading, downloadPdf };
 };

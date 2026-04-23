@@ -29,7 +29,7 @@ export default function BillingTable({ history, expandedItems, onToggleRow, date
     <div className="flex flex-col sm:gap-0 gap-4 p-4 sm:p-0">
       {history.map((item) => {
         const planKey = item.plan_name === 'pro' ? 'premium' : (item.plan_name || 'free');
-        const planName = t(`billing.plans.${planKey}.name`, { defaultValue: planKey });
+        const planName = t(`billing.plans.${planKey}.name`);
         
         const isScheduledForCancel = item.cancel_at && new Date(item.cancel_at) > new Date();
         const dateStr = dateFormatter.format(new Date(item.created_at));
@@ -54,7 +54,7 @@ export default function BillingTable({ history, expandedItems, onToggleRow, date
 
         const statusText = isScheduledForCancel 
           ? t('billing.ending_soon') 
-          : t(`billing.status_map.${statusLower}`, { defaultValue: safeStatus.replace(/_/g, ' ') });
+          : t(`billing.status_map.${statusLower}`);
         
         const isExpanded = !!expandedItems[item.id];
 

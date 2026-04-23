@@ -24,7 +24,7 @@ export default function DistrictPdfTemplate({ district, currencyInfo, isRealtor,
     
     if (type === 'boolean') {
       if (typeof value === 'number') return formatNumber(value);
-      return value ? t('enums.yes') : t('enums.no');
+      return value ? t('district.enums.yes') : t('district.enums.no');
     }
     
     if (type === 'crimeLevel') return t(getCrimeLevelText(Number(value)));
@@ -57,7 +57,7 @@ export default function DistrictPdfTemplate({ district, currencyInfo, isRealtor,
         <div style={{ maxWidth: '70%' }}>
            <h1 style={{ fontSize: '32px', fontWeight: 700, margin: 0, lineHeight: 1.2, textTransform: 'uppercase' }}>{name}</h1>
            <p style={{ fontSize: '12px', color: '#666666', marginTop: '8px', marginBottom: 0, fontWeight: 500 }}>
-             {t('pdf.report_date')}: {new Date().toLocaleDateString('uk-UA')}
+             {t('district.pdf.report_date')}: {new Date().toLocaleDateString()}
            </p>
         </div>
         <div style={{ fontSize: '20px', fontWeight: 700, padding: '8px 16px', border: '2px solid #000000', textTransform: 'uppercase', letterSpacing: '2px' }}>
@@ -77,14 +77,15 @@ export default function DistrictPdfTemplate({ district, currencyInfo, isRealtor,
         {Object.keys(general).length > 0 && isRealtor && (
           <div style={{ flex: 1, backgroundColor: '#f8f9fa', padding: '20px', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'column' }}>
              <h3 style={{ fontSize: '14px', textTransform: 'uppercase', color: '#c5a47e', fontWeight: 700, margin: '0 0 15px 0', paddingBottom: '8px', borderBottom: '1px solid #e5e7eb' }}>
-               {t('pdf.general_info')}
+               {t('district.pdf.general_info')}
              </h3>
              <div style={{ display: 'flex', flexDirection: 'column', flexGrow: 1 }}>
-                <StatRow label={t('fields.population')} value={formatNumber(pop)} highlight />
-                <StatRow label={t('fields.averageSalary')} value={formatPrice(avgSal, safeCurrencyInfo)} highlight />
-                <StatRow label={t('fields.unemploymentRate')} value={unemp === null ? '-' : `${unemp}%`} />
-                <StatRow label={t('fields.propertyPricePerSqm')} value={formatPrice(propPrice, safeCurrencyInfo)} />
-                <StatRow label={t('fields.average_rent_price')} value={formatPrice(rentPrice, safeCurrencyInfo)} />
+                {/* ОНОВЛЕНІ КЛЮЧІ ТУТ */}
+                <StatRow label={t('common.fields.population', { defaultValue: t('population') })} value={formatNumber(pop)} highlight />
+                <StatRow label={t('average_salary')} value={formatPrice(avgSal, safeCurrencyInfo)} highlight />
+                <StatRow label={t('unemployment_rate')} value={unemp === null ? '-' : `${unemp}%`} />
+                <StatRow label={t('common.fields.propertyPricePerSqm', { defaultValue: t('propertyPricePerSqm') })} value={formatPrice(propPrice, safeCurrencyInfo)} />
+                <StatRow label={t('common.fields.average_rent_price', { defaultValue: t('average_rent_price') })} value={formatPrice(rentPrice, safeCurrencyInfo)} />
              </div>
           </div>
         )}
@@ -107,7 +108,7 @@ export default function DistrictPdfTemplate({ district, currencyInfo, isRealtor,
 
       <div style={{ marginTop: 'auto', paddingTop: '15px', borderTop: '1px solid #e5e7eb', textAlign: 'center', fontSize: '9px', color: '#666666', display: 'flex', justifyContent: 'space-between' }}>
         <p style={{ margin: 0, textTransform: 'uppercase', letterSpacing: '1px' }}>
-          {t('pdf.generated_auto')} <strong style={{ color: '#000000', marginLeft: '4px' }}>GeoAnalyzer</strong>
+          {t('district.pdf.generated_auto')} <strong style={{ color: '#000000', marginLeft: '4px' }}>GeoAnalyzer</strong>
         </p>
       </div>
     </div>

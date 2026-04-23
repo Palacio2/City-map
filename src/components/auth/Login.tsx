@@ -58,14 +58,14 @@ export default function Login() {
               <input type="checkbox" className="w-[18px] h-[18px] border border-borderClient rounded checked:bg-accent checked:border-accent" {...register('rememberMe')} />
               <span className="group-hover:text-textMain">{t('auth.login.remember_me')}</span>
             </label>
-            <Link to="/forgot-password" className="text-accent font-semibold py-2 hover:underline">{t('auth.login.forgot_pass')}</Link>
+            <Link to="/forgot-password" className="text-accent font-semibold py-2 hover:underline">{t('auth.login.forgot_password')}</Link>
           </div>
           {globalError && <div className="text-danger text-center font-medium text-[0.9rem]">{globalError}</div>}
           <button type="submit" disabled={isLoading} className="w-full p-4 bg-textMain text-surface rounded-md font-semibold tracking-widest uppercase hover:bg-accent disabled:opacity-70">
             {isLoading ? <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin inline-block"></span> : t('auth.login.submit')}
           </button>
         </form>
-        <div className="flex items-center my-6 text-textSecondary text-[0.85rem] before:flex-1 before:h-px before:bg-borderClient after:flex-1 after:h-px after:bg-borderClient"><span className="px-4">{t('auth.login.or')}</span></div>
+        <div className="flex items-center my-6 text-textSecondary text-[0.85rem] before:flex-1 before:h-px before:bg-borderClient after:flex-1 after:h-px after:bg-borderClient"><span className="px-4">{t('auth.common.or')}</span></div>
         <button onClick={() => socialLogin('google')} disabled={isLoading} className="w-full py-[0.85rem] border border-borderClient rounded-md font-semibold flex items-center justify-center gap-3 hover:border-accent">
           <FaGoogle className="text-accent text-[1.1rem]" /> {t('auth.login.social', { provider: 'Google' })}
         </button>

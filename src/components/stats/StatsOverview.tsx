@@ -113,7 +113,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
       {isRealtor && (
         <CollapsibleSection 
           id="investment_calculator"
-          title={t('stats.calculator.title')}
+          title={t('stats.sections.investment_calculator')}
           icon={FaCalculator}
           isOpen={!!openSections['investment_calculator']}
           onToggle={toggleSection}
@@ -125,7 +125,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
       {isRealtor && (
         <CollapsibleSection 
           id="saved_districts"
-          title={t('stats.stats_page.saved_districts')} 
+          title={t('stats.sections.saved_districts')} 
           icon={FaBookmark}
           isOpen={!!openSections['saved_districts']}
           onToggle={toggleSection}
@@ -136,7 +136,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
 
       <CollapsibleSection 
         id="weekly_activity"
-        title={t('stats.stats_page.weekly_activity')} 
+        title={t('stats.sections.weekly_activity')} 
         icon={FaChartBar}
         isOpen={!!openSections['weekly_activity']}
         onToggle={toggleSection}
@@ -147,7 +147,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
       {isRealtor && (
         <CollapsibleSection 
           id="popular_districts"
-          title={t('stats.stats_page.popular_districts')} 
+          title={t('stats.sections.popular_districts')} 
           icon={FaMapMarkerAlt}
           isOpen={!!openSections['popular_districts']}
           onToggle={toggleSection}
@@ -158,7 +158,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
 
       <CollapsibleSection 
         id="last_activity"
-        title={t('stats.stats_page.last_activity')} 
+        title={t('stats.sections.last_activity')} 
         icon={FaHistory}
         isOpen={!!openSections['last_activity']}
         onToggle={toggleSection}

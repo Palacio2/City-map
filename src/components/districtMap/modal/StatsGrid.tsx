@@ -34,7 +34,7 @@ export const StatsGrid: React.FC<StatsGridProps> = ({
   const { t } = useTranslation('db');
 
   const formatValue = (value: any, type: string, fieldKey: string) => {
-    if (value === null || value === undefined) return t('favorites.na');
+    if (value === null || value === undefined) return t('district.status.na');
     if (fieldKey === 'airQuality' || fieldKey === 'air_quality') return formatAirQuality(value, t);
     if (type === 'price') return formatPrice(value, currencyInfo);
     
@@ -68,17 +68,26 @@ export const StatsGrid: React.FC<StatsGridProps> = ({
     <>
       <div className="grid grid-cols-1 md:grid-cols-[repeat(auto-fill,minmax(280px,1fr))] gap-4 md:gap-6 w-full box-border">
         {categoriesToRender.map((category, index) => {
-          const ratingVal = category.rating ? category.rating.toFixed(1) : t('favorites.na');
+          const ratingVal = category.rating ? category.rating.toFixed(1) : t('district.status.na');
 
           return (
             <div key={category.key} className="opacity-0 animate-fade-in-soft" style={{ animationDelay: `${index * 60}ms` }}>
-              <StatCard title={t(`categories.${category.key}`)} icon={category.icon} ratingValue={ratingVal} ratingVariant={getRatingVariant(category.rating)}>
+              {/* Оновлено виклик для заголовка категорії */}
+              <StatCard 
+                title={t(`groups.${category.key}`, { defaultValue: category.key })} 
+                icon={category.icon} 
+                ratingValue={ratingVal} 
+                ratingVariant={getRatingVariant(category.rating)}
+              >
                 {Object.values(category.fields).map((fieldData: TransformedFieldData) => {
                   if (fieldData.value === null || fieldData.value === undefined) return null;
 
                   return (
                     <div key={fieldData.key} className="flex justify-between py-2.5 border-b border-dashed border-borderClient text-[0.9rem] items-center last:border-b-0">
-                      <span className="text-textSecondary">{t(`fields.${fieldData.key}`)}</span>
+                      {/* Оновлено виклик для назви поля */}
+                      <span className="text-textSecondary">
+                        {t(`common.fields.${fieldData.key}`, { defaultValue: t(fieldData.key) })}
+                      </span>
                       <strong className="text-textMain font-semibold text-right">
                         {formatValue(fieldData.value, fieldData.type, fieldData.key)}
                       </strong>

@@ -1,7 +1,7 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { api } from '../services/api.js';
+import { api } from '../services/api'; // Перевірте, чи правильний шлях до вашого api
 
 i18n
   .use(LanguageDetector)
@@ -14,8 +14,7 @@ i18n
       order: ['localStorage', 'cookie', 'navigator'],
       caches: ['localStorage', 'cookie'],
     },
-    // Оскільки ми не знаємо неймспейсів заздалегідь, 
-    // використовуємо 'db' як основний за замовчуванням
+    // Використовуємо 'db' як основний за замовчуванням
     defaultNS: 'db',
     fallbackNS: 'db',
     debug: false,
@@ -30,19 +29,38 @@ export const loadDynamicTranslations = async () => {
   try {
     const data = await api.translations.getAll(); 
     
+    if (!data || !Array.isArray(data)) {
+        throw new Error("Дані перекладів не є масивом");
+    }
+
+    // Створюємо порожні об'єкти для кожної мови
+    const bundles = { uk: {}, pl: {}, en: {} };
+
+    // Наповнюємо їх
     data.forEach(item => {
-      if (item.uk) i18n.addResourceBundle('uk', 'db', { [item.translation_key]: item.uk }, true, true);
-      if (item.pl) i18n.addResourceBundle('pl', 'db', { [item.translation_key]: item.pl }, true, true);
-      if (item.en) i18n.addResourceBundle('en', 'db', { [item.translation_key]: item.en }, true, true);
+      const key = item.translation_key;
+      if (item.uk) bundles.uk[key] = item.uk;
+      if (item.pl) bundles.pl[key] = item.pl;
+      if (item.en) bundles.en[key] = item.en;
     });
 
-    console.log('✅ Переклади з БД завантажено успішно');
+    // Додаємо весь пакунок одразу в неймспейси 'db' та 'translation'
+    Object.keys(bundles).forEach(lang => {
+      if (Object.keys(bundles[lang]).length > 0) {
+        i18n.addResourceBundle(lang, 'db', bundles[lang], true, true);
+        i18n.addResourceBundle(lang, 'translation', bundles[lang], true, true);
+      }
+    });
+
+    console.log(`✅ Усі переклади імпортовано. Кількість: ${data.length}`);
+    return true; 
   } catch (e) {
-    console.error('❌ Помилка завантаження перекладів з БД', e);
+    console.error('❌ Помилка завантаження перекладів', e);
+    return false;
   }
 };
 
-// Запускаємо завантаження
+// Запускаємо завантаження і експортуємо Promise
 export const dbTranslationsPromise = loadDynamicTranslations();
 
 export default i18n;

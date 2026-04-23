@@ -50,7 +50,7 @@ const CheckoutForm = ({ formattedPrice, mode }: CheckoutFormProps) => {
         window.location.href = returnUrl;
 
     } catch (err: any) {
-        setMessage(err.message || t('payment.errors.payment_failed'));
+        setMessage(err.message || t('payment.errors.failed'));
         setIsProcessing(false);
     }
   };
@@ -84,7 +84,7 @@ const CheckoutForm = ({ formattedPrice, mode }: CheckoutFormProps) => {
         
         <div className="mt-6 text-center text-xs text-textSecondary flex items-center justify-center gap-2 font-medium tracking-wide">
           <FaShieldAlt className="text-success text-sm" /> 
-          {t('payment.security')}
+          {t('payment.security_note')}
         </div>
       </div>
     </form>
@@ -130,7 +130,7 @@ export default function Payment() {
       if (err.message?.includes('Unauthorized')) {
           navigate('/auth');
       } else {
-          setError(err.message || t('payment.errors.payment_create'));
+          setError(err.message || t('payment.errors.create_failed'));
           if (code) setPromoCode(""); 
       }
     }
@@ -168,7 +168,7 @@ export default function Payment() {
 
   if (!planConfig) return null;
 
-  const displayPrice = finalAmount !== null ? formatEuro(finalAmount) : t('payment.loading');
+  const displayPrice = finalAmount !== null ? formatEuro(finalAmount) : t('payment.status.loading');
 
   return (
     <div className="min-h-[100dvh] pt-32 pb-12 px-4 md:px-8 bg-body flex justify-center items-start animate-fadeIn">
@@ -178,12 +178,12 @@ export default function Payment() {
           <button 
             onClick={() => navigate(-1)} 
             className="absolute left-0 bg-surface/50 hover:bg-surface border border-borderClient p-3 rounded-full text-textSecondary cursor-pointer flex items-center justify-center transition-all hover:text-accent hover:-translate-x-1 hover:shadow-sm"
-            title={t('payment.back')}
+            title={t('payment.actions.back')}
           >
               <FaArrowLeft />
           </button>
           <h1 className="font-heading text-3xl md:text-4xl text-textMain font-bold tracking-wide text-center">
-            {t('payment.title', { plan: planConfig.name })}
+            {t('payment.page_title', { plan: planConfig.name })}
           </h1>
         </div>
 
@@ -195,7 +195,7 @@ export default function Payment() {
                 <FaGem />
               </div>
               <div>
-                <span className="text-xs text-textSecondary uppercase tracking-widest font-semibold block mb-1">{t('payment.tariff_label')}</span>
+                <span className="text-xs text-textSecondary uppercase tracking-widest font-semibold block mb-1">{t('payment.labels.tariff')}</span>
                 <span className="font-heading text-xl font-bold text-textMain">{planConfig.name}</span>
               </div>
             </div>
@@ -207,13 +207,13 @@ export default function Payment() {
             </div>
             
             <div className="mb-8">
-              <label className="text-xs font-bold flex items-center gap-2 mb-3 text-textSecondary uppercase tracking-widest"><FaTag className="text-accent" /> {t('payment.promo_label')}</label>
+              <label className="text-xs font-bold flex items-center gap-2 mb-3 text-textSecondary uppercase tracking-widest"><FaTag className="text-accent" /> {t('payment.labels.promo')}</label>
               <div className="flex gap-2 relative">
                   <input 
                       type="text" 
                       value={promoCode} 
                       onChange={(e) => setPromoCode(e.target.value)} 
-                      placeholder={t('payment.promo_placeholder')}
+                      placeholder={t('payment.placeholders.promo')}
                       className="flex-1 p-3.5 rounded-xl border border-borderClient bg-surface text-textMain font-medium text-sm transition-all focus:border-accent focus:ring-1 focus:ring-accent outline-none uppercase"
                   />
                   <button 
@@ -221,10 +221,10 @@ export default function Payment() {
                     disabled={!promoCode} 
                     className="px-6 rounded-xl bg-surface border border-borderClient text-textMain font-heading font-bold text-xs uppercase tracking-widest transition-all hover:not(:disabled):border-accent hover:not(:disabled):text-accent hover:not(:disabled):bg-accent/5 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                      {t('payment.promo_apply')}
+                      {t('payment.actions.apply_promo')}
                   </button>
               </div>
-              {promoSuccess && <div className="text-success text-xs font-medium mt-3 flex items-center gap-1.5"><FaCheckCircle /> {t('payment.promo_success')}</div>}
+              {promoSuccess && <div className="text-success text-xs font-medium mt-3 flex items-center gap-1.5"><FaCheckCircle /> {t('payment.status.promo_ok')}</div>}
             </div>
 
             <div className="flex flex-col gap-3.5 mt-auto border-t border-borderClient pt-6">

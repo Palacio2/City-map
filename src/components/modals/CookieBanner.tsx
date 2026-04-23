@@ -31,9 +31,9 @@ export default function CookieBanner() {
             <FaCookieBite className="text-accent text-xl" />
           </div>
           <div className="text-[0.95rem] text-textMain leading-relaxed font-medium">
-            {t('rodo.cookies.text')}{' '}
+            {t('cookie.text')}{' '}
             <Link to="/terms" className="text-accent underline decoration-accent/40 hover:text-accent-hover transition-colors whitespace-nowrap">
-              {t('rodo.cookies.link')}
+              {t('cookie.link')}
             </Link>
           </div>
         </div>
@@ -43,12 +43,12 @@ export default function CookieBanner() {
             className="flex-1 md:flex-none bg-textMain text-surface font-heading font-bold text-sm md:text-xs uppercase tracking-widest px-8 py-3.5 md:py-3 rounded-xl md:rounded-full hover:bg-accent hover:text-white transition-all md:hover:-translate-y-0.5 shadow-sm"
             onClick={accept}
           >
-            {t('rodo.cookies.accept')}
+            {t('cookie.accept')}
           </button>
           <button 
             className="p-2 text-textSecondary hover:text-textMain hover:rotate-90 transition-all flex items-center justify-center"
             onClick={() => setVisible(false)}
-            aria-label="Close"
+            aria-label={t('cookie.close')}
           >
             <FaTimes className="text-xl" />
           </button>

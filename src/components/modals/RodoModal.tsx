@@ -23,7 +23,7 @@ export default function RodoModal({ onAccept, onDecline }: RodoModalProps) {
     try {
       await onAccept();
     } catch {
-      // Помилка обробляється в батьківському компоненті
+      // Error handled by parent
     } finally {
       setIsProcessing(false);
     }
@@ -38,11 +38,11 @@ export default function RodoModal({ onAccept, onDecline }: RodoModalProps) {
         </div>
         
         <h2 className="font-heading font-bold text-2xl md:text-3xl text-textMain mb-3 md:mb-4 leading-tight">
-          {t('rodo.welcome')}
+          {t('rodo.title')}
         </h2>
         
         <p className="text-textSecondary leading-relaxed mb-6 text-sm md:text-[0.95rem]">
-          {t('rodo.description_prefix')}{' '}
+          {t('rodo.desc')}{' '}
           <Link to="/terms" className="text-accent underline decoration-accent/40 hover:text-accent-hover transition-all">
             {t('rodo.terms_link')}
           </Link>.
@@ -51,21 +51,21 @@ export default function RodoModal({ onAccept, onDecline }: RodoModalProps) {
         <div className="bg-surface/50 border border-borderClient p-4 md:p-6 rounded-2xl text-left mb-6 md:mb-8 space-y-3">
           <p className="font-bold text-textMain text-sm uppercase tracking-wide flex items-center gap-2">
             <span className="w-1.5 h-1.5 bg-accent rounded-full" />
-            {t('rodo.we_store_title')}
+            {t('rodo.storage_title')}
           </p>
           <ul className="space-y-2.5 text-textSecondary text-sm md:text-[0.9rem] pl-4 border-l border-accent/20">
             <li className="flex items-start md:items-center gap-2">
-              <FaCheck className="text-accent text-xs mt-1 md:mt-0 shrink-0" /> {t('rodo.store_history')}
+              <FaCheck className="text-accent text-xs mt-1 md:mt-0 shrink-0" /> {t('rodo.storage_history')}
             </li>
             <li className="flex items-start md:items-center gap-2">
-              <FaCheck className="text-accent text-xs mt-1 md:mt-0 shrink-0" /> {t('rodo.store_favorites')}
+              <FaCheck className="text-accent text-xs mt-1 md:mt-0 shrink-0" /> {t('rodo.storage_favorites')}
             </li>
             <li className="flex items-start md:items-center gap-2">
-              <FaCheck className="text-accent text-xs mt-1 md:mt-0 shrink-0" /> {t('rodo.store_stats')}
+              <FaCheck className="text-accent text-xs mt-1 md:mt-0 shrink-0" /> {t('rodo.storage_stats')}
             </li>
           </ul>
           <p className="text-[11px] md:text-xs text-textSecondary opacity-80 border-t border-borderClient border-dashed pt-3 mt-3">
-            {t('rodo.analytics_note')}
+            {t('rodo.analytics_notice')}
           </p>
         </div>
 
@@ -81,7 +81,7 @@ export default function RodoModal({ onAccept, onDecline }: RodoModalProps) {
                 {t('rodo.processing')}
               </span>
             ) : (
-              <><FaCheck /> {t('rodo.accept_btn')}</>
+              <><FaCheck /> {t('rodo.accept')}</>
             )}
           </button>
           
@@ -90,12 +90,12 @@ export default function RodoModal({ onAccept, onDecline }: RodoModalProps) {
             onClick={onDecline}
             disabled={isProcessing}
           >
-            <FaSignOutAlt /> {t('rodo.decline_btn')}
+            <FaSignOutAlt /> {t('rodo.decline')}
           </button>
         </div>
         
         <p className="mt-5 md:mt-6 text-[11px] md:text-xs text-textSecondary opacity-60 font-medium">
-          {t('rodo.guest_mode_note')}
+          {t('rodo.guest_notice')}
         </p>
       </div>
     </div>

@@ -2,7 +2,6 @@ import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaExclamationTriangle, FaArrowUp, FaTimes } from 'react-icons/fa';
 
-// Додаємо інтерфейс для пропсів
 interface SubscriptionCardProps {
   subscription: any; 
   onManage: () => void;
@@ -19,8 +18,8 @@ export default function SubscriptionCard({ subscription, onManage, isCancelling,
   const actualPlanKey = (subscription?.isExpired || !subscription?.plan) ? 'free' : subscription.plan;
   const isActive = subscription?.status === 'active' && actualPlanKey !== 'free';
   
-  const planName = t(`billing.plans.${actualPlanKey}.name`, { defaultValue: 'Free' });
-  const amount = t(`billing.plans.${actualPlanKey}.price`, { defaultValue: '€0' });
+  const planName = t(`billing.plans.${actualPlanKey}.name`);
+  const amount = t(`billing.plans.${actualPlanKey}.price`);
   
   const expiresAt = (isActive && subscription?.expiresAt) 
     ? dateFormatter.format(new Date(subscription.expiresAt))
@@ -29,17 +28,15 @@ export default function SubscriptionCard({ subscription, onManage, isCancelling,
   return (
     <section className="bg-surface border border-borderClient rounded-2xl p-6 md:p-8 shadow-card flex flex-col gap-6 lg:sticky lg:top-[calc(var(--header-height)+20px)]">
       
-      {/* Шапка картки */}
       <div className="flex justify-between items-center border-b border-borderClient pb-4">
           <h3 className="font-heading text-xl m-0 text-textMain font-bold">{t('billing.current_sub')}</h3>
           <span className={`text-[0.7rem] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${isActive ? 'bg-success/10 text-success border border-success/20' : 'bg-hover text-textSecondary border border-borderClient'}`}>
               {isActive 
                 ? t('billing.status_map.active') 
-                : t('billing.plans.free.name', { defaultValue: 'Free' })}
+                : t('billing.plans.free.name')}
           </span>
       </div>
       
-      {/* Інформація про план */}
       <div className="flex flex-col gap-4">
         <div className="flex justify-between items-baseline border-b border-dashed border-borderClient/30 pb-2">
             <span className="text-textSecondary text-[0.9rem] font-medium">{t('billing.plan_label')}</span>
@@ -59,7 +56,6 @@ export default function SubscriptionCard({ subscription, onManage, isCancelling,
         )}
       </div>
 
-      {/* Повідомлення про помилку */}
       {error && (
           <div className="text-[0.85rem] text-danger bg-danger/10 p-3 rounded-lg flex items-center gap-2 border border-danger/20">
               <FaExclamationTriangle className="shrink-0" /> 
@@ -67,7 +63,6 @@ export default function SubscriptionCard({ subscription, onManage, isCancelling,
           </div>
       )}
 
-      {/* Кнопка дії */}
       <button 
         className={`w-full p-4 rounded-xl font-heading font-bold uppercase tracking-widest cursor-pointer transition-all duration-300 mt-2 flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed ${
           isActive 
@@ -88,7 +83,6 @@ export default function SubscriptionCard({ subscription, onManage, isCancelling,
         )}
       </button>
 
-      {/* Анімація пульсації тіні для кнопки "Оновити" (ВИПРАВЛЕНО jsx на звичайний style) */}
       <style>{`
         @keyframes pulse-shadow-anim {
           0% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0.6); }

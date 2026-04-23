@@ -29,14 +29,14 @@ export default function LastActivity({ lastActive, favoriteDistrict }: LastActiv
     }
   };
 
-  const formattedDate = lastActive ? formatDate(lastActive, i18n.language) : t('stats.stats_page.never');
+  const formattedDate = lastActive ? formatDate(lastActive, i18n.language) : t('stats.last_activity.never');
   const hasValidDistrict = !!(districtName && districtCity && districtCountry);
 
   return (
     <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 bg-surface p-4 md:p-6 rounded-xl md:rounded-2xl border border-borderClient shadow-sm">
       <div className="flex flex-col gap-1 md:gap-1.5 min-w-0">
         <span className="text-[0.7rem] md:text-xs uppercase tracking-widest text-textSecondary font-semibold">
-          {t('stats.stats_page.last_visit')}
+          {t('stats.last_activity.last_visit')}
         </span>
         <span className="font-heading text-lg md:text-xl font-bold text-textMain truncate">
           {formattedDate}
@@ -47,7 +47,7 @@ export default function LastActivity({ lastActive, favoriteDistrict }: LastActiv
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-t sm:border-none border-borderClient pt-3 sm:pt-0">
         <span className="text-[0.9rem] text-textSecondary font-medium shrink-0">
-          {t('stats.stats_page.fav_district')}
+          {t('stats.last_activity.fav_district')}
         </span>
         {hasValidDistrict ? (
           <button 
@@ -62,7 +62,7 @@ export default function LastActivity({ lastActive, favoriteDistrict }: LastActiv
           </button>
         ) : (
           <span className="italic text-textSecondary text-[0.9rem] shrink-0">
-            {t('stats.stats_page.not_defined')}
+            {t('stats.last_activity.not_defined')}
           </span>
         )}
       </div>

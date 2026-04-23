@@ -43,7 +43,6 @@ export default function LocationSelectorModal({
   
   const [loading, setLoading] = useState({ countries: true, cities: false, districts: false });
   const [error, setError] = useState<string | null>(null);
-  
   const districtsCache = useRef<Record<string, any[]>>({});
 
   useEffect(() => {
@@ -57,7 +56,7 @@ export default function LocationSelectorModal({
       })
       .catch(() => {
         if (isMounted) {
-          setError(t('stats.error_load')); 
+          setError(t('stats.errors.load_failed')); 
           setLoading(p => ({ ...p, countries: false }));
         }
       });
@@ -71,45 +70,32 @@ export default function LocationSelectorModal({
     setCities([]); 
     setDistricts([]);
     setSelectedDistricts([]);
-    
     if (!country) return;
-
     setLoading(p => ({ ...p, cities: true }));
     try {
       const data = await fetchCitiesByCountry(country);
       setCities(Array.isArray(data) ? data.map((i: any) => i.value || i) : []);
-    } catch { 
-      // Handle error implicitly
-    } finally { 
-      setLoading(p => ({ ...p, cities: false })); 
-    }
+    } catch { } finally { setLoading(p => ({ ...p, cities: false })); }
   };
 
   const handleCityChange = async (e: ChangeEvent<HTMLSelectElement>) => {
     const city = e.target.value;
     setSelectedCity(city);
     setDistricts([]); 
-
     if (includeDistrict && city && selectedCountry) {
       setLoading(p => ({ ...p, districts: true }));
       const cacheKey = `${selectedCountry}_${city}`;
-      
       if (districtsCache.current[cacheKey]) {
         setDistricts(districtsCache.current[cacheKey]);
         setLoading(p => ({ ...p, districts: false }));
         return;
       }
-
       try {
         const response = await fetchDistrictsWithFilters(selectedCountry, city, false);
         const allDistricts = Array.isArray(response) ? response : ((response as any)?.districts || (response as any)?.data || []);
         districtsCache.current[cacheKey] = allDistricts;
         setDistricts(allDistricts);
-      } catch { 
-        // Handle error implicitly
-      } finally { 
-        setLoading(p => ({ ...p, districts: false })); 
-      }
+      } catch { } finally { setLoading(p => ({ ...p, districts: false })); }
     }
   };
 
@@ -124,17 +110,15 @@ export default function LocationSelectorModal({
 
   const addDistrict = (districtData: any) => {
     if (maxSelection !== null && (currentCount + selectedDistricts.length >= maxSelection)) {
-      alert(t('comparison.limit_reached', { max: maxSelection }));
+      alert(t('stats.errors.limit_reached', { max: maxSelection }));
       return;
     }
-
     const newDistrict: DistrictSelection = {
       ...(typeof districtData === 'object' ? districtData : {}), 
       name: districtData.name || districtData,
       city: selectedCity,
       country: selectedCountry
     };
-
     setSelectedDistricts(prev => [...prev, newDistrict]);
   };
 
@@ -164,9 +148,9 @@ export default function LocationSelectorModal({
           <div className="w-[60px] h-[60px] bg-hover border border-borderClient rounded-2xl flex items-center justify-center mx-auto mb-4 text-accent text-[26px] shadow-sm">
             <FaMapMarkerAlt />
           </div>
-          <h3 className="text-[1.5rem] font-heading font-bold text-textMain m-0 mb-2">{includeDistrict ? t('stats.add_districts_title') : t('stats.select_location')}</h3>
+          <h3 className="text-[1.5rem] font-heading font-bold text-textMain m-0 mb-2">{includeDistrict ? t('stats.modals.select_location.title_add') : t('stats.modals.select_location.title_select')}</h3>
           <p className="text-textSecondary m-0 text-[0.95rem] leading-relaxed">
-            {includeDistrict ? t('stats.select_multiple_districts_subtitle') : t('stats.select_city_subtitle')}
+            {includeDistrict ? t('stats.modals.select_location.subtitle_add') : t('stats.modals.select_location.subtitle_select')}
           </p>
         </div>
 
@@ -174,11 +158,11 @@ export default function LocationSelectorModal({
           <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto p-6 flex flex-col gap-5 custom-scrollbar">
             <div className="flex flex-col gap-2">
               <label className="text-[0.85rem] font-bold uppercase tracking-widest text-textSecondary flex items-center gap-2">
-                <FaGlobe className="text-accent"/> {t('stats.country')}
+                <FaGlobe className="text-accent"/> {t('stats.labels.country')}
               </label>
               <div className="relative w-full">
-                <select value={selectedCountry} onChange={handleCountryChange} disabled={loading.countries} className="w-full py-3 pl-4 pr-11 bg-surface border border-borderClient rounded-lg text-base text-textMain appearance-none cursor-pointer transition-all hover:not(:disabled):border-accent focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-hover" required={!includeDistrict}>
-                  <option value="">{loading.countries ? t('stats.loading') : t('stats.select_country_placeholder')}</option>
+                <select value={selectedCountry} onChange={handleCountryChange} disabled={loading.countries} className="w-full py-3 pl-4 pr-11 bg-surface border border-borderClient rounded-lg text-base text-textMain appearance-none cursor-pointer transition-all focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-hover" required={!includeDistrict}>
+                  <option value="">{loading.countries ? t('stats.status.loading') : t('stats.placeholders.select_country')}</option>
                   {countries.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-textSecondary pointer-events-none text-xs">▼</span>
@@ -187,11 +171,11 @@ export default function LocationSelectorModal({
             
             <div className="flex flex-col gap-2">
               <label className="text-[0.85rem] font-bold uppercase tracking-widest text-textSecondary flex items-center gap-2">
-                <FaCity className="text-accent"/> {t('stats.city')}
+                <FaCity className="text-accent"/> {t('stats.labels.city')}
               </label>
               <div className="relative w-full">
-                <select value={selectedCity} onChange={handleCityChange} disabled={!selectedCountry || loading.cities} className="w-full py-3 pl-4 pr-11 bg-surface border border-borderClient rounded-lg text-base text-textMain appearance-none cursor-pointer transition-all hover:not(:disabled):border-accent focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-hover" required={!includeDistrict}>
-                  <option value="">{!selectedCountry ? t('stats.select_country_first') : loading.cities ? t('stats.loading') : t('stats.select_city_placeholder')}</option>
+                <select value={selectedCity} onChange={handleCityChange} disabled={!selectedCountry || loading.cities} className="w-full py-3 pl-4 pr-11 bg-surface border border-borderClient rounded-lg text-base text-textMain appearance-none cursor-pointer transition-all focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent disabled:opacity-60 disabled:cursor-not-allowed disabled:bg-hover" required={!includeDistrict}>
+                  <option value="">{!selectedCountry ? t('stats.status.select_country_first') : loading.cities ? t('stats.status.loading') : t('stats.placeholders.select_city')}</option>
                   {cities.map((c) => <option key={c} value={c}>{c}</option>)}
                 </select>
                 <span className="absolute right-4 top-1/2 -translate-y-1/2 text-textSecondary pointer-events-none text-xs">▼</span>
@@ -202,19 +186,19 @@ export default function LocationSelectorModal({
                 <>
                     <div className="flex flex-col gap-2">
                       <label className="text-[0.85rem] font-bold uppercase tracking-widest text-textSecondary flex items-center gap-2">
-                        <FaMap className="text-accent"/> {t('stats.districts_label')}
+                        <FaMap className="text-accent"/> {t('stats.labels.districts')}
                       </label>
                       
                       {!selectedCity ? (
-                          <div className="text-center py-6 text-textSecondary text-[0.95rem] bg-hover rounded-lg border border-dashed border-borderClient">{t('stats.select_city_first')}</div>
+                          <div className="text-center py-6 text-textSecondary text-[0.95rem] bg-hover rounded-lg border border-dashed border-borderClient">{t('stats.status.select_city_first')}</div>
                       ) : loading.districts ? (
                           <div className="text-center py-6 text-textSecondary text-[0.95rem] bg-hover rounded-lg border border-dashed border-borderClient flex justify-center"><Loader size="small" /></div>
                       ) : availableDistricts.length === 0 ? (
-                          <div className="text-center py-6 text-textSecondary text-[0.95rem] bg-hover rounded-lg border border-dashed border-borderClient">{t('stats.all_districts_added')}</div>
+                          <div className="text-center py-6 text-textSecondary text-[0.95rem] bg-hover rounded-lg border border-dashed border-borderClient">{t('stats.status.all_added')}</div>
                       ) : (
                           <div className="flex flex-wrap gap-2 max-h-[200px] overflow-y-auto p-1 custom-scrollbar">
                             {availableDistricts.map((d) => (
-                              <div key={d.id || d.name || d} className="px-3.5 py-2 rounded-full border border-borderClient bg-surface text-textMain text-[0.9rem] cursor-pointer transition-all select-none hover:border-accent hover:text-accent hover:bg-hover hover:-translate-y-[1px]" onClick={() => addDistrict(d)}>
+                              <div key={d.id || d.name || d} className="px-3.5 py-2 rounded-full border border-borderClient bg-surface text-textMain text-[0.9rem] cursor-pointer transition-all hover:border-accent hover:text-accent hover:bg-hover" onClick={() => addDistrict(d)}>
                                   {d.name || d}
                               </div>
                             ))}
@@ -224,7 +208,7 @@ export default function LocationSelectorModal({
 
                     {selectedDistricts.length > 0 && (
                         <div className="border-t border-dashed border-borderClient pt-4 mt-2">
-                            <h4 className="text-[0.8rem] uppercase text-textSecondary m-0 mb-3 font-bold">{t('stats.stats_page.selected_districts')} ({selectedDistricts.length})</h4>
+                            <h4 className="text-[0.8rem] uppercase text-textSecondary m-0 mb-3 font-bold">{t('stats.labels.selected_count')} ({selectedDistricts.length})</h4>
                             <div className="flex flex-wrap gap-2 max-h-[120px] overflow-y-auto custom-scrollbar">
                                 {selectedDistricts.map((d) => (
                                     <div key={d.id || `${d.country}-${d.city}-${d.name}`} className="flex items-center gap-2 bg-accent/10 text-accent py-1.5 px-3 rounded-md text-[0.85rem] font-semibold border border-accent/30">
@@ -233,17 +217,17 @@ export default function LocationSelectorModal({
                                             <FaTimes />
                                         </button>
                                     </div>
-                                ))}
+                                ))}\
                             </div>
                         </div>
                     )}
                 </>
             )}
 
-            <button type="submit" className="mt-auto w-full bg-textMain text-surface border-none py-3.5 rounded-lg font-heading font-semibold uppercase tracking-widest text-[0.95rem] cursor-pointer transition-all hover:not(:disabled):-translate-y-0.5 hover:not(:disabled):bg-accent hover:not(:disabled):shadow-sm disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isFormValid || loading.cities || loading.districts}>
+            <button type="submit" className="mt-auto w-full bg-textMain text-surface border-none py-3.5 rounded-lg font-heading font-semibold uppercase tracking-widest text-[0.95rem] cursor-pointer transition-all hover:not(:disabled):bg-accent disabled:opacity-50 disabled:cursor-not-allowed" disabled={!isFormValid || loading.cities || loading.districts}>
               {includeDistrict 
-                ? `${t('stats.add_selected_button')} (+${selectedDistricts.length})` 
-                : t('stats.show_popular')}
+                ? `${t('stats.actions.add_selected')} (+${selectedDistricts.length})` 
+                : t('stats.actions.show_popular')}
             </button>
           </form>
         )}

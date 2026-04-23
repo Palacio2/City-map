@@ -71,7 +71,7 @@ export default function FeedbackWidget() {
       }, 3000);
     },
     onError: () => {
-      setErrorMsg(t('common.error', { defaultValue: 'Помилка відправки' }));
+      setErrorMsg(t('feedback.errors.submit_failed'));
     }
   });
 
@@ -111,14 +111,14 @@ export default function FeedbackWidget() {
       setErrorMsg('');
       await captureScreen(widgetRef as React.RefObject<any>);
     } catch (error) {
-      setErrorMsg(t('feedback.screenshot_error', { defaultValue: 'Помилка скріншоту' }));
+      setErrorMsg(t('feedback.errors.screenshot_failed'));
     }
   };
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!formData.message.trim() && !screenshotFile) {
-      setErrorMsg(t('feedback.need_desc_or_screen', { defaultValue: 'Додайте опис або скріншот' }));
+      setErrorMsg(t('feedback.errors.description_required'));
       return;
     }
     setErrorMsg('');
@@ -140,12 +140,13 @@ export default function FeedbackWidget() {
         <div className="ui-glass-panel pointer-events-auto p-4 flex items-start gap-3 max-w-[300px] animate-slideUp relative pr-10 shadow-xl border-accent/30">
           <HiOutlineGift className="text-3xl text-accent shrink-0 animate-pulse" />
           <div className="flex flex-col gap-1 text-sm text-textSecondary">
-            <strong className="text-textMain font-heading">{t('feedback.hint_title')}</strong>
-            <span className="leading-tight">{t('feedback.hint_subtitle')}</span>
+            <strong className="text-textMain font-heading">{t('feedback.hint.title')}</strong>
+            <span className="leading-tight">{t('feedback.hint.subtitle')}</span>
           </div>
           <button 
             className="absolute top-3 right-3 text-textSecondary hover:text-textMain transition-colors"
             onClick={() => setShowHint(false)}
+            aria-label={t('feedback.actions.close')}
           >
             <HiX />
           </button>
@@ -160,20 +161,21 @@ export default function FeedbackWidget() {
           <button 
             onClick={toggleModal}
             className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface border border-borderClient flex items-center justify-center text-textSecondary hover:text-danger hover:border-danger transition-colors z-10 shadow-sm"
+            aria-label={t('feedback.actions.close')}
           >
             <HiX className="text-lg" />
           </button>
 
           <div className="bg-surface p-6 pb-2 border-b border-borderClient pr-14">
-            <h3 className="font-heading font-bold text-lg text-textMain mb-1">{t('feedback.header_title')}</h3>
-            <p className="text-sm text-textSecondary leading-snug">{t('feedback.header_subtitle')}</p>
+            <h3 className="font-heading font-bold text-lg text-textMain mb-1">{t('feedback.modal.title')}</h3>
+            <p className="text-sm text-textSecondary leading-snug">{t('feedback.modal.subtitle')}</p>
           </div>
 
           {sent ? (
             <div className="p-10 text-center flex flex-col items-center gap-3">
               <div className="text-5xl animate-bounce">✨</div>
-              <h4 className="font-bold text-success text-lg">{t('feedback.success_title')}</h4>
-              <p className="text-sm text-textSecondary">{t('feedback.success_desc')}</p>
+              <h4 className="font-bold text-success text-lg">{t('feedback.modal.success_title')}</h4>
+              <p className="text-sm text-textSecondary">{t('feedback.modal.success_desc')}</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5" noValidate>
@@ -185,7 +187,7 @@ export default function FeedbackWidget() {
               )}
 
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-textMain">{t('feedback.type_label')}</label>
+                <label className="text-sm font-semibold text-textMain">{t('feedback.fields.type_label')}</label>
                 <select 
                   value={formData.type} 
                   onChange={e => {
@@ -195,17 +197,17 @@ export default function FeedbackWidget() {
                   className="ui-input py-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none"
                   disabled={submitMutation.isPending}
                 >
-                  <option value="critical">{t('feedback.type_critical')}</option>
-                  <option value="data_error">{t('feedback.type_data')}</option>
-                  <option value="ui_bug">{t('feedback.type_ui')}</option>
-                  <option value="suggestion">{t('feedback.type_suggestion')}</option>
+                  <option value="critical">{t('feedback.types.critical')}</option>
+                  <option value="data_error">{t('feedback.types.data_error')}</option>
+                  <option value="ui_bug">{t('feedback.types.ui_bug')}</option>
+                  <option value="suggestion">{t('feedback.types.suggestion')}</option>
                 </select>
               </div>
 
               <div className="flex flex-col gap-2">
-                <label className="text-sm font-semibold text-textMain">{t('feedback.desc_label')}</label>
+                <label className="text-sm font-semibold text-textMain">{t('feedback.fields.description_label')}</label>
                 <textarea 
-                  placeholder={t('feedback.desc_placeholder')}
+                  placeholder={t('feedback.fields.description_placeholder')}
                   value={formData.message}
                   onChange={e => {
                     setFormData({...formData, message: e.target.value});
@@ -225,18 +227,18 @@ export default function FeedbackWidget() {
                     className="w-full flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 border-dashed border-borderClient text-textSecondary font-medium hover:border-accent hover:text-accent hover:bg-accent/5 transition-all disabled:opacity-50"
                   >
                     <HiCamera className="text-xl" />
-                    {isCapturing ? t('feedback.capturing_btn') : t('feedback.capture_btn')}
+                    {isCapturing ? t('feedback.actions.capturing') : t('feedback.actions.capture')}
                   </button>
                 ) : (
                   <div className="relative w-full h-[140px] rounded-xl overflow-hidden border border-borderClient shadow-sm group">
-                    <img src={screenshotPreview} alt="Screenshot" className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
+                    <img src={screenshotPreview} alt={t('feedback.alt.screenshot')} className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
                     <button 
                       type="button" 
                       onClick={removeScreenshot} 
                       disabled={submitMutation.isPending}
                       className="absolute top-2 right-2 bg-red-500/90 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-1.5 shadow-lg transition-all active:scale-95 disabled:opacity-50"
                     >
-                      <HiTrash size={16} /> {t('feedback.remove_btn')}
+                      <HiTrash size={16} /> {t('feedback.actions.remove')}
                     </button>
                   </div>
                 )}
@@ -250,7 +252,7 @@ export default function FeedbackWidget() {
                 {submitMutation.isPending ? (
                   <div className="w-5 h-5 border-2 border-surface/30 border-t-surface rounded-full animate-spin"></div>
                 ) : (
-                  t('feedback.submit_btn')
+                  t('feedback.actions.submit')
                 )}
               </button>
             </form>
@@ -262,6 +264,7 @@ export default function FeedbackWidget() {
         <button 
           className="w-14 h-14 rounded-full flex items-center justify-center text-3xl transition-all duration-300 shadow-xl border border-white/10 shrink-0 bg-textMain text-surface hover:-translate-y-1 hover:scale-105 hover:bg-accent hover:shadow-accent/30 pointer-events-auto active:scale-90"
           onClick={toggleModal}
+          aria-label={t('feedback.actions.open')}
         >
           <HiOutlineLightBulb />
         </button>

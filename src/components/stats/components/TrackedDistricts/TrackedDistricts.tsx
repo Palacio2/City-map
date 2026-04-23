@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FaBookmark, FaKey, FaHome, FaArrowRight, FaTrash, FaChevronLeft, FaChevronRight, FaPlus, FaClock } from 'react-icons/fa';
 import { fetchTrackedDistrictsWithStats, removeTrackedDistrict, addTrackedDistrict } from '@api/trackedDistrictsApi';
-import { formatPrice } from '@utils/formatters';
+import { formatPrice, getCurrencyInfo } from '@utils/formatters'; // Виправлено: додано getCurrencyInfo
 import LocationSelectorModal, { DistrictSelection } from '../PopularDistricts/LocationSelectorModal';
 import ConfirmationModal from './ConfirmationModal';
 
@@ -48,7 +48,6 @@ export default function TrackedDistricts({ districts: initialDistricts }: Tracke
   });
 
   const [loading, setLoading] = useState<boolean>(() => trackedItems.length === 0);
-
   const [currentPage, setCurrentPage] = useState<number>(() => {
     try {
       const saved = sessionStorage.getItem(STORAGE_KEY_PAGE);
@@ -111,7 +110,7 @@ export default function TrackedDistricts({ districts: initialDistricts }: Tracke
       const maxPage = Math.ceil(newItems.length / ITEMS_PER_PAGE) - 1;
       if (currentPage > maxPage && maxPage >= 0) setCurrentPage(maxPage);
     } catch {
-      alert(t('stats.error_delete'));
+      alert(t('stats.errors.delete_failed'));
     } finally {
       setDeleteModalOpen(false);
       setDistrictToDelete(null);
@@ -130,7 +129,7 @@ export default function TrackedDistricts({ districts: initialDistricts }: Tracke
         setIsModalOpen(false);
     } catch (error) {
         console.error(error);
-        alert(t('stats.error_add_multiple_districts'));
+        alert(t('stats.errors.add_failed'));
     } finally {
         setIsAdding(false);
     }
@@ -141,7 +140,7 @@ export default function TrackedDistricts({ districts: initialDistricts }: Tracke
   const visibleItems = trackedItems.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   if (loading && trackedItems.length === 0) {
-    return <div className="text-center p-12 text-textSecondary bg-body rounded-xl border border-dashed border-borderClient font-heading">{t('stats.loading')}</div>;
+    return <div className="text-center p-12 text-textSecondary bg-body rounded-xl border border-dashed border-borderClient font-heading">{t('stats.status.loading')}</div>;
   }
 
   return (
@@ -152,30 +151,30 @@ export default function TrackedDistricts({ districts: initialDistricts }: Tracke
           <div className="w-10 h-10 flex items-center justify-center rounded-full bg-warning/10 text-warning text-lg shrink-0">
             <FaBookmark />
           </div>
-          <h2 className="text-xl font-heading font-bold text-textMain m-0 tracking-wide">{t('stats.stats_page.saved_districts_prices')}</h2>
+          <h2 className="text-xl font-heading font-bold text-textMain m-0 tracking-wide">{t('stats.tracked_districts.title')}</h2>
         </div>
         
         <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto">
           {trackedItems.length > ITEMS_PER_PAGE && (
             <div className="flex items-center gap-2 bg-body p-1 rounded-lg border border-borderClient">
-              <button className="bg-surface border border-borderClient w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-all text-textSecondary text-xs hover:not(:disabled):bg-hover hover:not(:disabled):text-textMain hover:not(:disabled):border-accent disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-transparent" onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 0}>
+              <button className="bg-surface border border-borderClient w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-all text-textSecondary text-xs hover:not(:disabled):bg-hover hover:not(:disabled):text-textMain hover:not(:disabled):border-accent disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => setCurrentPage(p => p - 1)} disabled={currentPage === 0}>
                 <FaChevronLeft />
               </button>
               <span className="text-sm text-textSecondary font-semibold min-w-[40px] text-center tabular-nums">{currentPage + 1} / {totalPages}</span>
-              <button className="bg-surface border border-borderClient w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-all text-textSecondary text-xs hover:not(:disabled):bg-hover hover:not(:disabled):text-textMain hover:not(:disabled):border-accent disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-transparent disabled:border-transparent" onClick={() => setCurrentPage(p => p + 1)} disabled={currentPage >= totalPages - 1}>
+              <button className="bg-surface border border-borderClient w-8 h-8 rounded flex items-center justify-center cursor-pointer transition-all text-textSecondary text-xs hover:not(:disabled):bg-hover hover:not(:disabled):text-textMain hover:not(:disabled):border-accent disabled:opacity-50 disabled:cursor-not-allowed" onClick={() => setCurrentPage(p => p + 1)} disabled={currentPage >= totalPages - 1}>
                 <FaChevronRight />
               </button>
             </div>
           )}
-          <button className="flex items-center gap-2 bg-body text-accent border border-borderClient px-4 py-2 rounded-lg font-semibold text-sm cursor-pointer transition-all font-heading uppercase tracking-widest hover:not(:disabled):bg-hover hover:not(:disabled):border-accent hover:not(:disabled):-translate-y-[1px]" onClick={() => setIsModalOpen(true)} disabled={isAdding}>
-            <FaPlus /> {isAdding ? '...' : t('stats.add_button')}
+          <button className="flex items-center gap-2 bg-body text-accent border border-borderClient px-4 py-2 rounded-lg font-semibold text-sm cursor-pointer transition-all font-heading uppercase tracking-widest hover:not(:disabled):bg-hover hover:not(:disabled):border-accent" onClick={() => setIsModalOpen(true)} disabled={isAdding}>
+            <FaPlus /> {isAdding ? '...' : t('stats.actions.add')}
           </button>
         </div>
       </div>
 
       {trackedItems.length === 0 ? (
         <div className="text-center p-12 text-textSecondary bg-body rounded-xl border border-dashed border-borderClient font-heading">
-          <p>{t('stats.empty_tracked_list')}</p>
+          <p>{t('stats.tracked_districts.empty')}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
@@ -199,7 +198,8 @@ export default function TrackedDistricts({ districts: initialDistricts }: Tracke
                       <span>{t('common.fields.average_rent_price')}</span>
                     </div>
                     <span className="font-bold text-textMain text-base font-heading">
-                        {formatPrice(item.rental_price || item.avg_price_rent, item.country)}
+                        {/* Виправлено: обгортаємо item.country у getCurrencyInfo */}
+                        {formatPrice(item.rental_price || item.avg_price_rent, getCurrencyInfo(item.country))}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -208,7 +208,8 @@ export default function TrackedDistricts({ districts: initialDistricts }: Tracke
                       <span>{t('common.fields.propertyPricePerSqm')}</span>
                     </div>
                     <span className="font-bold text-textMain text-base font-heading">
-                        {formatPrice(item.sale_price || item.avg_price_sqm, item.country)}
+                        {/* Виправлено: обгортаємо item.country у getCurrencyInfo */}
+                        {formatPrice(item.sale_price || item.avg_price_sqm, getCurrencyInfo(item.country))}
                     </span>
                   </div>
                 </div>
@@ -216,7 +217,7 @@ export default function TrackedDistricts({ districts: initialDistricts }: Tracke
                 <div className="mt-auto flex justify-between items-center pt-3 border-t border-borderClient">
                     <div className="flex items-center gap-1.5 text-xs text-textSecondary">
                       <FaClock className="text-textSecondary text-xs" />
-                      <span>{t('stats.updated_label')} {formatDate(item.updated_at || item.created_at, t('stats.date_unknown'))}</span>
+                      <span>{t('stats.labels.updated')} {formatDate(item.updated_at || item.created_at, t('stats.labels.date_unknown'))}</span>
                     </div>
                     <div className="text-accent flex items-center justify-center w-7 h-7 rounded-full bg-accent/10 transition-all text-xs group-hover:bg-accent group-hover:text-white group-hover:translate-x-1">
                       <FaArrowRight />
@@ -240,8 +241,8 @@ export default function TrackedDistricts({ districts: initialDistricts }: Tracke
         isOpen={deleteModalOpen}
         onClose={() => setDeleteModalOpen(false)}
         onConfirm={confirmDelete}
-        title={t('stats.delete_modal_title')}
-        message={t('stats.confirm_delete_district')}
+        title={t('stats.modals.delete_title')}
+        message={t('stats.modals.delete_confirm')}
       />
     </div>
   );

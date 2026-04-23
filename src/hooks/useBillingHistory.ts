@@ -17,7 +17,7 @@ interface BillingState {
 }
 
 export const useBillingHistory = () => {
-  const { t, i18n } = useTranslation('billing');
+  const { t, i18n } = useTranslation('db'); // Змінено на 'db'
   const { subscription, updateSubscription, isLoading: isSubLoading } = useSubscription();
   
   const [state, setState] = useState<BillingState>({
@@ -49,14 +49,13 @@ export const useBillingHistory = () => {
       setState(prev => ({ 
         ...prev, 
         history: subscriptions || [], 
-        // ВИПРАВЛЕНО: Додано fallback до 0, якщо count === null
         totalCount: count || 0,
         isLoading: false 
       }));
     } catch {
       setState(prev => ({ 
         ...prev, 
-        error: t('error_load'), 
+        error: t('billing.errors.load'), // Оновлений ключ
         isLoading: false 
       }));
     }
@@ -86,7 +85,7 @@ export const useBillingHistory = () => {
       setState(prev => ({ 
         ...prev, 
         isCancelling: false, 
-        cancellationError: error?.message || t('error_cancel') 
+        cancellationError: error?.message || t('billing.errors.cancel') // Оновлений ключ
       }));
     }
   };

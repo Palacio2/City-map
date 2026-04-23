@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect, RefObject } from 'react';
 import html2canvas from 'html2canvas';
 import imageCompression from 'browser-image-compression';
+import { useTranslation } from 'react-i18next';
 
 export interface UseScreenshotReturn {
   isCapturing: boolean;
@@ -11,6 +12,7 @@ export interface UseScreenshotReturn {
 }
 
 export const useScreenshot = (): UseScreenshotReturn => {
+  const { t } = useTranslation('db');
   const [isCapturing, setIsCapturing] = useState<boolean>(false);
   const [screenshotFile, setScreenshotFile] = useState<File | Blob | null>(null);
   const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
@@ -23,7 +25,6 @@ export const useScreenshot = (): UseScreenshotReturn => {
     setScreenshotPreview(null);
   }, [screenshotPreview]);
 
-  // Очищення пам'яті (URL.revokeObjectURL) при розмонтуванні компонента
   useEffect(() => {
     return () => {
       if (screenshotPreview) {
@@ -38,7 +39,6 @@ export const useScreenshot = (): UseScreenshotReturn => {
     const originalScrollBehavior = document.documentElement.style.scrollBehavior;
     document.documentElement.style.scrollBehavior = 'auto';
 
-    // Зберігаємо оригінальний display, щоб після скріншота повернути його
     const originalDisplay = hideRef?.current ? hideRef.current.style.display : null;
     if (hideRef?.current) hideRef.current.style.display = 'none';
 
@@ -62,27 +62,25 @@ export const useScreenshot = (): UseScreenshotReturn => {
       });
       
       const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.9));
-      if (!blob) throw new Error("Не вдалося створити Blob");
+      if (!blob) throw new Error(t('feedback.errors.blob_error'));
 
       const options = { maxSizeMB: 0.5, maxWidthOrHeight: 1920, useWebWorker: true };
-      // imageCompression очікує File, але Blob теж підходить у більшості випадків
       const compressedFile = await imageCompression(blob as File, options);
       
       setScreenshotFile(compressedFile);
       setScreenshotPreview(URL.createObjectURL(compressedFile));
       
     } catch (error) {
-      console.error('Помилка генерації скріншота:', error);
+      console.error(t('feedback.errors.screenshot_log'), error);
       throw error;
     } finally {
-      // Відновлюємо саме той display, який був до скріншота (а не жорстко 'flex')
       if (hideRef?.current && originalDisplay !== null) {
         hideRef.current.style.display = originalDisplay;
       }
       document.documentElement.style.scrollBehavior = originalScrollBehavior;
       setIsCapturing(false);
     }
-  }, []);
+  }, [t]);
 
   return {
     isCapturing,

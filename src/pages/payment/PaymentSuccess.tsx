@@ -42,10 +42,10 @@ export default function PaymentSuccess() {
               <div className="absolute inset-0 rounded-full border border-success/40 animate-ping opacity-20" />
            </div>
            <h2 className="m-0 mb-3 text-textMain font-heading text-3xl font-bold tracking-wide">
-             {t('payment.success.access_granted')}
+             {t('payment.success.title')}
            </h2>
            <p className="m-0 text-textSecondary text-lg">
-             {t('payment.success.subscription_active')}
+             {t('payment.success.subtitle')}
            </p>
         </div>
 
@@ -59,26 +59,26 @@ export default function PaymentSuccess() {
           
           <div className="flex flex-col gap-4">
             <div className="flex justify-between items-center text-sm">
-                <span className="text-textSecondary font-medium">{t('payment.success.status_label')}</span>
+                <span className="text-textSecondary font-medium">{t('payment.success.labels.status')}</span>
                 <span className="text-success font-bold uppercase tracking-wider bg-success/10 px-3 py-1 rounded-full text-xs border border-success/20">
-                  {t('payment.success.status_success')}
+                  {t('payment.success.status_ok')}
                 </span>
             </div>
             
             <div className="flex justify-between items-center text-sm">
-                <span className="text-textSecondary font-medium">{t('payment.success.date_label')}</span>
+                <span className="text-textSecondary font-medium">{t('payment.success.labels.date')}</span>
                 <span className="font-semibold text-textMain">{displayData.date}</span>
             </div>
 
             {displayData.amount !== undefined && (
                 <div className="flex justify-between items-center text-sm">
-                    <span className="text-textSecondary font-medium">{t('payment.success.amount_label')}</span>
+                    <span className="text-textSecondary font-medium">{t('payment.success.labels.amount')}</span>
                     <span className="font-bold text-accent font-heading text-base">{formatEuro(displayData.amount)}</span>
                 </div>
             )}
             
             <div className="flex justify-between items-center text-sm pt-4 border-t border-borderClient/50">
-                <span className="text-textSecondary font-medium">{t('payment.success.tx_label')}</span>
+                <span className="text-textSecondary font-medium">{t('payment.success.labels.tx_id')}</span>
                 <span className="font-mono text-textSecondary text-xs bg-body px-2 py-1 rounded border border-borderClient truncate max-w-[150px] sm:max-w-[200px]" title={displayData.txId}>
                   {displayData.txId}
                 </span>
@@ -90,7 +90,7 @@ export default function PaymentSuccess() {
           onClick={() => navigate('/')} 
           className="w-full py-4 bg-gradient-to-br from-accent to-accent-hover text-white rounded-xl font-heading text-base font-bold uppercase tracking-widest cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-md"
         >
-            {t('payment.success.to_map')}
+            {t('payment.success.actions.to_map')}
         </button>
       </div>
     </div>

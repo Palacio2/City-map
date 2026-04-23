@@ -12,7 +12,6 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
   const [isTyping, setIsTyping] = useState(false);
   const [chatContext, setChatContext] = useState(null);
   
-  // Стани для анімації
   const [shouldRender, setShouldRender] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   
@@ -57,27 +56,27 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
 
   const quickPrompts = useMemo(() => {
     if (!chatContext?.city) return [
-      t('assistant.sidebar.prompts.def1'), 
-      t('assistant.sidebar.prompts.def2'), 
-      t('assistant.sidebar.prompts.def3'), 
-      t('assistant.sidebar.prompts.def4')
+      t('ia.assistant.sidebar.prompts.def1'), 
+      t('ia.assistant.sidebar.prompts.def2'), 
+      t('ia.assistant.sidebar.prompts.def3'), 
+      t('ia.assistant.sidebar.prompts.def4')
     ];
     
     const city = chatContext.city;
     let prompts = [];
     
-    if (chatContext.purpose === 'investment') prompts.push(t('assistant.sidebar.prompts.investment', { city }));
-    if (chatContext.purpose === 'living') prompts.push(t('assistant.sidebar.prompts.living', { city }));
-    if (chatContext.budget) prompts.push(t('assistant.sidebar.prompts.budget', { budget: chatContext.budget }));
-    if (chatContext.safetyImportance === 'critical') prompts.push(t('assistant.sidebar.prompts.safety', { city }));
-    if (chatContext.ecologyImportance === 'high') prompts.push(t('assistant.sidebar.prompts.ecology'));
-    if (chatContext.transport === 'public') prompts.push(t('assistant.sidebar.prompts.transport'));
-    if (chatContext.amenities?.includes('dog_parks')) prompts.push(t('assistant.sidebar.prompts.pets'));
-    if (chatContext.vibe === 'quiet') prompts.push(t('assistant.sidebar.prompts.quiet', { city }));
+    if (chatContext.purpose === 'investment') prompts.push(t('ia.assistant.sidebar.prompts.investment', { city }));
+    if (chatContext.purpose === 'living') prompts.push(t('ia.assistant.sidebar.prompts.living', { city }));
+    if (chatContext.budget) prompts.push(t('ia.assistant.sidebar.prompts.budget', { budget: chatContext.budget }));
+    if (chatContext.safetyImportance === 'critical') prompts.push(t('ia.assistant.sidebar.prompts.safety', { city }));
+    if (chatContext.ecologyImportance === 'high') prompts.push(t('ia.assistant.sidebar.prompts.ecology'));
+    if (chatContext.transport === 'public') prompts.push(t('ia.assistant.sidebar.prompts.transport'));
+    if (chatContext.amenities?.includes('dog_parks')) prompts.push(t('ia.assistant.sidebar.prompts.pets'));
+    if (chatContext.vibe === 'quiet') prompts.push(t('ia.assistant.sidebar.prompts.quiet', { city }));
 
     if (prompts.length < 4) {
-      prompts.push(t('assistant.sidebar.prompts.overview', { city }));
-      prompts.push(t('assistant.sidebar.prompts.cheapest'));
+      prompts.push(t('ia.assistant.sidebar.prompts.overview', { city }));
+      prompts.push(t('ia.assistant.sidebar.prompts.cheapest'));
     }
 
     return prompts.sort(() => 0.5 - Math.random()).slice(0, 4);
@@ -129,7 +128,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
       setMessages(prev => [...prev, { 
         id: Date.now() + 1, 
         sender: 'ai', 
-        text: t('assistant.sidebar.error_msg') 
+        text: t('ia.assistant.sidebar.error_msg') 
       }]);
     } finally {
       setIsTyping(false);
@@ -140,72 +139,55 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
 
   const sidebarContent = (
     <div className="fixed inset-0 z-[9998] flex justify-end">
-      
-      {/* Темний Оверлей */}
-      <div 
-        className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ease-out ${isAnimating ? 'opacity-100' : 'opacity-0'}`} 
-        onClick={onClose} 
-      />
-      
-      {/* Панель */}
+      <div className={`absolute inset-0 bg-black/30 transition-opacity duration-300 ease-out ${isAnimating ? 'opacity-100' : 'opacity-0'}`} onClick={onClose} />
       <div className={`relative w-full max-w-[480px] h-[100dvh] bg-surface flex flex-col shadow-2xl border-l border-borderClient transition-transform duration-300 ease-out ${isAnimating ? 'translate-x-0' : 'translate-x-full'}`}>
-        
-        {/* Хедер чату */}
         <div className="p-4 md:p-5 border-b border-borderClient flex justify-between items-center bg-surface shrink-0">
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 bg-gradient-to-br from-accent to-accent-hover text-white rounded-full flex items-center justify-center text-lg shadow-sm">
               <FaSketch />
             </div>
             <div>
-              <h3 className="font-heading font-bold text-textMain text-[1.1rem] leading-tight">{t('assistant.sidebar.title')}</h3>
+              <h3 className="font-heading font-bold text-textMain text-[1.1rem] leading-tight">{t('ia.assistant.sidebar.title')}</h3>
             </div>
           </div>
           <div className="flex gap-2">
             {messages.length > 0 && (
-              <button className="w-9 h-9 rounded-full flex items-center justify-center bg-hover text-textSecondary hover:bg-danger hover:text-white transition-colors" onClick={clearChat} title={t('assistant.sidebar.tooltip_clear')}>
+              <button className="w-9 h-9 rounded-full flex items-center justify-center bg-hover text-textSecondary hover:bg-danger hover:text-white transition-colors" onClick={clearChat} title={t('ia.assistant.sidebar.tooltip_clear')}>
                 <FaTrashAlt />
               </button>
             )}
-            <button className="w-9 h-9 rounded-full flex items-center justify-center bg-hover text-textSecondary hover:bg-accent hover:text-white transition-colors" onClick={onOpenSettings} title={t('assistant.sidebar.tooltip_settings')}>
+            <button className="w-9 h-9 rounded-full flex items-center justify-center bg-hover text-textSecondary hover:bg-accent hover:text-white transition-colors" onClick={onOpenSettings} title={t('ia.assistant.sidebar.tooltip_settings')}>
               <FaCog />
             </button>
-            <button className="w-9 h-9 rounded-full flex items-center justify-center bg-hover text-textSecondary hover:bg-danger/10 hover:text-danger transition-colors" onClick={onClose} title={t('assistant.sidebar.tooltip_close')}>
+            <button className="w-9 h-9 rounded-full flex items-center justify-center bg-hover text-textSecondary hover:bg-danger/10 hover:text-danger transition-colors" onClick={onClose} title={t('ia.assistant.sidebar.tooltip_close')}>
               <FaTimes />
             </button>
           </div>
         </div>
 
-        {/* Область повідомлень */}
         <div className="flex-1 p-5 overflow-y-auto flex flex-col gap-4 bg-body custom-scrollbar">
           {messages.length === 0 && (
             <div className="m-auto w-full max-w-[90%]">
               <div className="bg-surface p-6 rounded-2xl border border-borderClient text-center shadow-sm">
                 <FaSketch className="text-5xl text-accent mx-auto mb-3 opacity-80" />
-                <h4 className="font-heading font-bold text-lg text-textMain mb-2">{t('assistant.sidebar.welcome_title')}</h4>
-                
+                <h4 className="font-heading font-bold text-lg text-textMain mb-2">{t('ia.assistant.sidebar.welcome_title')}</h4>
                 {chatContext?.city ? (
                   <p className="text-sm text-textSecondary leading-relaxed">
-                    {t('assistant.sidebar.welcome_city')} <strong className="text-textMain">{chatContext.city}</strong>. 
-                    {chatContext.safetyImportance === 'critical' && ` ${t('assistant.sidebar.welcome_safety')}`}
-                    {chatContext.ecologyImportance === 'high' && ` ${t('assistant.sidebar.welcome_ecology')}`}
+                    {t('ia.assistant.sidebar.welcome_city')} <strong className="text-textMain">{chatContext.city}</strong>. 
+                    {chatContext.safetyImportance === 'critical' && ` ${t('ia.assistant.sidebar.welcome_safety')}`}
+                    {chatContext.ecologyImportance === 'high' && ` ${t('ia.assistant.sidebar.welcome_ecology')}`}
                   </p>
                 ) : (
                   <div className="text-warning text-sm font-medium flex items-center justify-center gap-2 mt-4 bg-warning/10 p-3 rounded-lg border border-warning/20">
                     <FaExclamationCircle className="shrink-0" />
-                    <span>{t('assistant.sidebar.welcome_no_prefs')}</span>
+                    <span>{t('ia.assistant.sidebar.welcome_no_prefs')}</span>
                   </div>
                 )}
-                
-                <p className="mt-5 text-sm font-medium text-textMain">{t('assistant.sidebar.welcome_choose_prompt')}</p>
+                <p className="mt-5 text-sm font-medium text-textMain">{t('ia.assistant.sidebar.welcome_choose_prompt')}</p>
               </div>
-              
               <div className="flex flex-wrap justify-center gap-2 mt-4">
                 {quickPrompts.map((prompt, idx) => (
-                  <button 
-                    key={idx} 
-                    className="bg-surface border border-accent/30 text-textMain px-4 py-2 rounded-full text-xs font-medium hover:bg-accent hover:text-white hover:border-transparent transition-all shadow-sm hover:shadow-md"
-                    onClick={() => handleSend(prompt)}
-                  >
+                  <button key={idx} className="bg-surface border border-accent/30 text-textMain px-4 py-2 rounded-full text-xs font-medium hover:bg-accent hover:text-white hover:border-transparent transition-all shadow-sm hover:shadow-md" onClick={() => handleSend(prompt)}>
                     {prompt}
                   </button>
                 ))}
@@ -213,7 +195,6 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
             </div>
           )}
 
-          {/* Список повідомлень */}
           {messages.map((msg) => (
             <div key={msg.id} className={`flex gap-3 max-w-[90%] ${msg.sender === 'user' ? 'self-end flex-row-reverse' : 'self-start'}`}>
               {msg.sender === 'ai' && (
@@ -233,7 +214,6 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
             </div>
           ))}
 
-          {/* Індикатор друкування */}
           {isTyping && (
             <div className="flex gap-3 max-w-[90%] self-start">
               <div className="w-8 h-8 bg-gradient-to-br from-accent to-accent-hover text-white rounded-full flex items-center justify-center shrink-0 shadow-sm mt-1">
@@ -249,13 +229,12 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }) {
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Область вводу */}
         <form onSubmit={handleSend} className="p-4 bg-surface border-t border-borderClient flex gap-3 shrink-0">
           <input
             type="text"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder={t('assistant.sidebar.input_placeholder')}
+            placeholder={t('ia.assistant.sidebar.input_placeholder')}
             className="flex-1 ui-input rounded-full py-3.5 px-5 text-[0.95rem]"
           />
           <button 

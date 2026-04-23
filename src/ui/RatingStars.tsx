@@ -1,11 +1,14 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface RatingStarsProps {
   rating?: number | null;
 }
 
 export const RatingStars: React.FC<RatingStarsProps> = ({ rating }) => {
-  if (rating === null || rating === undefined) return <span>-</span>;
+  const { t } = useTranslation('db');
+
+  if (rating === null || rating === undefined) return <span>{t('common.status.na')}</span>;
   
   const numericRating = Number(rating);
   const fullStars = Math.floor(numericRating / 2);

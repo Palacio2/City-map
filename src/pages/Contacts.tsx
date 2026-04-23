@@ -9,7 +9,7 @@ export default function Contacts() {
   const { t } = useTranslation('db');
   const [form, setForm] = useState({ name: '', email: '', message: '' });
   const [consent, setConsent] = useState(false);
-  const [status, setStatus] = useState('idle'); 
+  const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle'); 
   const [errorMsg, setErrorMsg] = useState('');
 
   useEffect(() => {
@@ -46,9 +46,10 @@ export default function Contacts() {
     }
   ], [t]);
 
-  const handleChange = (e) => setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => 
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!consent) return;
 
@@ -77,7 +78,10 @@ export default function Contacts() {
   if (status === 'success') {
     return (
       <div className="min-h-[80vh] pt-32 pb-24 px-4 flex items-center justify-center relative z-10">
-        <SeoMeta title={t('contacts.seo.title')} />
+        <SeoMeta 
+          title={t('contacts.seo.title')} 
+          description={t('contacts.seo.desc')} 
+        />
         
         <div className="ui-glass-panel max-w-xl w-full p-10 sm:p-16 text-center animate-popIn">
           <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-success/10 text-success mb-8">
@@ -132,7 +136,7 @@ export default function Contacts() {
                     id={field.id}
                     type={field.type}
                     name={field.name}
-                    value={form[field.name]}
+                    value={form[field.name as keyof typeof form]}
                     onChange={handleChange}
                     placeholder={field.placeholder}
                     className="ui-input"
@@ -152,7 +156,7 @@ export default function Contacts() {
             <textarea
               id={fields[2].id}
               name={fields[2].name}
-              value={form[fields[2].name]}
+              value={form.message}
               onChange={handleChange}
               placeholder={fields[2].placeholder}
               className="ui-input resize-y min-h-[150px]"

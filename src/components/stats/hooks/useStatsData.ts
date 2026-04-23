@@ -16,13 +16,13 @@ export interface DashboardStats {
 }
 
 export function useStatsData(isPremium: boolean, isRealtor: boolean) {
-  const { t } = useTranslation(['stats', 'common']);
+  const { t } = useTranslation('db'); // Змінено на 'db'
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['userStatsDashboard'],
     queryFn: fetchDashboardData,
     enabled: isPremium,
-    staleTime: 1000 * 60 * 5, // Кешуємо в пам'яті на 5 хвилин
+    staleTime: 1000 * 60 * 5, 
     select: (result) => ({
       stats: result?.stats as DashboardStats | null,
       weeklyActivity: (Array.isArray(result?.weeklyActivity) ? result.weeklyActivity : []) as WeeklyActivityData[],
@@ -37,7 +37,7 @@ export function useStatsData(isPremium: boolean, isRealtor: boolean) {
     popularDistricts: data?.popularDistricts || [],
     trackedDistricts: data?.trackedDistricts || [],
     loading: isLoading,
-    error: error instanceof Error ? error.message : (error ? t('stats:stats_page.error_unknown') : null),
+    error: error instanceof Error ? error.message : (error ? t('stats.errors.unknown') : null), // Ключ змінено
     reload: refetch
   };
 }

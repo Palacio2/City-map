@@ -61,7 +61,7 @@ export default function DistrictDetailsModal({
   if (!isOpen || !district) return null;
 
   const districtTitle = `${district.name}, ${paramCity || ''}`;
-  const districtDesc = t('seo.districtDesc', { 
+  const districtDesc = t('district.seo.description', { 
     district: district.name, 
     city: paramCity || '', 
   });
@@ -75,7 +75,7 @@ export default function DistrictDetailsModal({
           type="button"
           className="absolute inset-0 w-full h-full bg-transparent border-none appearance-none cursor-default z-0"
           onClick={onClose}
-          aria-label={t('actions.close')}
+          aria-label={t('district.actions.close')}
           tabIndex={-1}
         />
         
@@ -110,8 +110,8 @@ export default function DistrictDetailsModal({
             ) : (
               <div className="flex flex-col items-center justify-center p-16 px-8 text-center text-[var(--text-secondary)] h-full">
                 <div className="text-5xl mb-4 opacity-50 grayscale">📊</div>
-                <h3 id="district-modal-title">{t('modal.no_data_title')}</h3>
-                <p>{t('modal.no_data_text')}</p>
+                <h3 id="district-modal-title">{t('district.status.no_data_title')}</h3>
+                <p>{t('district.status.no_data_text')}</p>
               </div>
             )}
           </div>
