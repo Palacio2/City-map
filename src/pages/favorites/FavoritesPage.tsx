@@ -13,7 +13,6 @@ const TrashIcon = () => (
   </svg>
 );
 
-// ОНОВЛЕНО: Додано всі категорії та виправлено іконки під твій дизайн
 const STATS_CONFIG = [
   ["economics", "💰"],
   ["education", "🎓"],
@@ -23,8 +22,63 @@ const STATS_CONFIG = [
   ["sports", "⚽"],
   ["transport", "🚌"],
   ["security", "🛡️"],
-
 ] as const;
+
+// УЛЬТИМАТИВНІ ЕКСТРАКТОРИ
+const getRawDB = (d: any) => {
+  if (!d) return {};
+  if (d.district_filter_data) return Array.isArray(d.district_filter_data) ? d.district_filter_data[0] : d.district_filter_data;
+  if (d.district_data) return Array.isArray(d.district_data) ? d.district_data[0] : d.district_data;
+  return d;
+};
+
+const extractBaseVal = (d: any, key: string) => {
+  if (!d) return null;
+  const raw = getRawDB(d);
+  
+  const altKeys: Record<string, string[]> = {
+     'average_sale_price_sqm': ['average_property_price', 'propertyPrice', 'average_sale_price'],
+     'average_rent_price': ['rentPrice', 'average_rent'],
+     'population': ['pop']
+  };
+
+  if (raw[key] !== undefined && raw[key] !== null) return Number(raw[key]);
+  
+  for (const alt of (altKeys[key] || [])) {
+     if (raw[alt] !== undefined && raw[alt] !== null) return Number(raw[alt]);
+  }
+
+  if (d.filterData && typeof d.filterData === 'object') {
+      for (const catKey of Object.keys(d.filterData)) {
+          const fields = d.filterData[catKey]?.fields;
+          if (fields) {
+              if (fields[key]?.value !== undefined && fields[key]?.value !== null) return Number(fields[key].value);
+              for (const alt of (altKeys[key] || [])) {
+                 if (fields[alt]?.value !== undefined && fields[alt]?.value !== null) return Number(fields[alt].value);
+              }
+          }
+      }
+  }
+  return null;
+};
+
+const extractRating = (d: any, catKey: string) => {
+   if (!d) return null;
+   const raw = getRawDB(d);
+   const ratingKeys = [`${catKey}_rating`, `${catKey}Rating`, 'rating', 'qualityRating'];
+   
+   // Шукаємо в сирій базі (це вирішить проблему з 0.0)
+   for (const rk of ratingKeys) {
+      if (raw[rk] !== undefined && raw[rk] !== null && Number(raw[rk]) > 0) return Number(raw[rk]);
+   }
+
+   const cat = d.filterData?.[catKey];
+   if (cat) {
+      if (cat.rating !== undefined && cat.rating !== null && Number(cat.rating) > 0) return Number(cat.rating);
+      if (cat.qualityRating !== undefined && cat.qualityRating !== null && Number(cat.qualityRating) > 0) return Number(cat.qualityRating);
+   }
+   return null;
+};
 
 interface FavoriteDistrictCardProps {
   district: TransformedDistrict;
@@ -37,6 +91,8 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onCategoryClick, o
   const { t } = useTranslation("db");
   const currencyInfo = useMemo(() => getCurrencyInfo(district.country || (district as any).cities?.countries?.name || ""), [district]);
   const filterData = district.filterData;
+
+  const price = extractBaseVal(district, 'average_sale_price_sqm');
 
   return (
     <div 
@@ -75,28 +131,33 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onCategoryClick, o
             {t("favorites.labels.price")}
           </span>
           <span className="text-[1.2rem] font-extrabold text-accent font-heading">
-            {filterData?.general?.propertyPrice ? formatPrice(filterData.general.propertyPrice, currencyInfo) : t("favorites.status.na")}
+            {price !== null ? formatPrice(price, currencyInfo) : t("favorites.status.na")}
           </span>
         </div>
 
         {filterData && (
-          <div className="grid gap-1.5 grid-cols-3 sm:grid-cols-5">
-            {STATS_CONFIG.map(([key, icon]) => (
-              <button 
-                key={key} 
-                className="bg-hover rounded-[10px] p-2 flex flex-col items-center justify-center border border-borderClient text-textMain transition-all duration-200 cursor-pointer outline-none font-body hover:-translate-y-[2px] hover:border-accent hover:bg-accent hover:text-white hover:shadow-[0_4px_10px_rgba(197,164,126,0.2)] focus-visible:ring focus-visible:ring-accent focus-visible:outline-none" 
-                title={t(`favorites.categories.${key}`)}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onCategoryClick(district, key);
-                }}
-              >
-                <span className="text-base mb-1 drop-shadow-sm">{icon}</span>
-                <span className="font-bold text-[0.85rem]">
-                  {((filterData as any)?.[key]?.rating ?? (filterData as any)?.[key]?.qualityRating)?.toFixed(1) || t("favorites.status.na")}
-                </span>
-              </button>
-            ))}
+          <div className="grid gap-1.5 grid-cols-3 sm:grid-cols-4">
+            {STATS_CONFIG.map(([key, icon]) => {
+              const ratingVal = extractRating(district, key);
+              const displayRating = ratingVal !== null ? ratingVal.toFixed(1) : t("favorites.status.na");
+
+              return (
+                <button 
+                  key={key} 
+                  className="bg-hover rounded-[10px] p-2 flex flex-col items-center justify-center border border-borderClient text-textMain transition-all duration-200 cursor-pointer outline-none font-body hover:-translate-y-[2px] hover:border-accent hover:bg-accent hover:text-white hover:shadow-[0_4px_10px_rgba(197,164,126,0.2)] focus-visible:ring focus-visible:ring-accent focus-visible:outline-none" 
+                  title={t(`favorites.categories.${key}`)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onCategoryClick(district, key);
+                  }}
+                >
+                  <span className="text-base mb-1 drop-shadow-sm">{icon}</span>
+                  <span className="font-bold text-[0.85rem]">
+                    {displayRating}
+                  </span>
+                </button>
+              );
+            })}
           </div>
         )}
       </div>

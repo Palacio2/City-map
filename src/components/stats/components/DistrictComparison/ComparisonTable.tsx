@@ -11,8 +11,62 @@ const safeStringify = (val: unknown): string => {
   return '-';
 };
 
+const getRawDB = (d: any) => {
+  if (!d) return {};
+  if (d.district_filter_data) return Array.isArray(d.district_filter_data) ? d.district_filter_data[0] : d.district_filter_data;
+  if (d.district_data) return Array.isArray(d.district_data) ? d.district_data[0] : d.district_data;
+  return d;
+};
+
+const extractBaseVal = (d: any, key: string) => {
+  if (!d) return null;
+  const raw = getRawDB(d);
+  
+  const altKeys: Record<string, string[]> = {
+     'average_sale_price_sqm': ['average_property_price', 'propertyPrice', 'average_sale_price'],
+     'average_rent_price': ['rentPrice', 'average_rent'],
+     'population': ['pop']
+  };
+
+  if (raw[key] !== undefined && raw[key] !== null) return Number(raw[key]);
+  
+  for (const alt of (altKeys[key] || [])) {
+     if (raw[alt] !== undefined && raw[alt] !== null) return Number(raw[alt]);
+  }
+
+  if (d.filterData && typeof d.filterData === 'object') {
+      for (const catKey of Object.keys(d.filterData)) {
+          const fields = d.filterData[catKey]?.fields;
+          if (fields) {
+              if (fields[key]?.value !== undefined && fields[key]?.value !== null) return Number(fields[key].value);
+              for (const alt of (altKeys[key] || [])) {
+                 if (fields[alt]?.value !== undefined && fields[alt]?.value !== null) return Number(fields[alt].value);
+              }
+          }
+      }
+  }
+  return null;
+};
+
+const extractRating = (d: any, catKey: string) => {
+   if (!d) return null;
+   const raw = getRawDB(d);
+   const ratingKeys = [`${catKey}_rating`, `${catKey}Rating`, 'rating', 'qualityRating'];
+   
+   for (const rk of ratingKeys) {
+      if (raw[rk] !== undefined && raw[rk] !== null && Number(raw[rk]) > 0) return Number(raw[rk]);
+   }
+
+   const cat = d.filterData?.[catKey];
+   if (cat) {
+      if (cat.rating !== undefined && cat.rating !== null && Number(cat.rating) > 0) return Number(cat.rating);
+      if (cat.qualityRating !== undefined && cat.qualityRating !== null && Number(cat.qualityRating) > 0) return Number(cat.qualityRating);
+   }
+   return null;
+};
+
 const FormattedRating = ({ value }: { value: unknown }) => {
-  if (!value) return <>{'-'}</>;
+  if (value === null || value === undefined) return <>{'-'}</>;
   return (
     <span className="flex items-center justify-center gap-1 font-bold text-accent">
       {Number(value).toFixed(1)} <FaStar className="text-xs" />
@@ -38,8 +92,8 @@ const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[
 
   const ratingRow: RowDef = {
     label: t(['stats.comparison.rating', 'rating'], { defaultValue: 'Rating' }),
-    key: `filterData.${catKey}.rating`,
-    format: (val) => <FormattedRating value={val} />
+    key: `rating_${catKey}`,
+    format: (_, d) => <FormattedRating value={extractRating(d, catKey)} />
   };
 
   const fieldRows: RowDef[] = categoryConfig.fields.map((f: any) => {
@@ -87,18 +141,18 @@ export default function ComparisonTable({ districts, config }: ComparisonTablePr
     const baseRows: RowDef[] = [
       {
         label: t(['common.fields.propertyPricePerSqm', 'propertyPricePerSqm'], { defaultValue: 'propertyPricePerSqm' }),
-        key: 'filterData.general.propertyPrice',
-        format: (val) => formatPrice(val as string | number | null)
+        key: 'average_sale_price_sqm',
+        format: (_, d) => formatPrice(extractBaseVal(d, 'average_sale_price_sqm'))
       },
       {
         label: t(['common.fields.average_rent_price', 'average_rent_price'], { defaultValue: 'average_rent_price' }),
-        key: 'filterData.general.average_rent_price',
-        format: (val) => formatPrice(val as string | number | null)
+        key: 'average_rent_price',
+        format: (_, d) => formatPrice(extractBaseVal(d, 'average_rent_price'))
       },
       {
         label: t(['common.fields.population', 'population'], { defaultValue: 'population' }),
-        key: 'filterData.general.population',
-        format: (val) => formatNumber(val as string | number | null)
+        key: 'population',
+        format: (_, d) => formatNumber(extractBaseVal(d, 'population'))
       },
     ];
 
@@ -146,7 +200,15 @@ export default function ComparisonTable({ districts, config }: ComparisonTablePr
                   {row.label}
                 </td>
                 {districts.map((d, dIdx) => {
-                  const rawVal = row.key ? getValue(d, row.key) : null;
+                  let rawVal = null;
+                  if (['average_sale_price_sqm', 'average_rent_price', 'population'].includes(row.key || '')) {
+                      rawVal = extractBaseVal(d, row.key!);
+                  } else if (row.key?.startsWith('rating_')) {
+                      rawVal = extractRating(d, row.key.replace('rating_', ''));
+                  } else {
+                      rawVal = row.key ? getValue(d, row.key) : null;
+                  }
+                  
                   const displayVal = row.format ? row.format(rawVal, d) : safeStringify(rawVal);
                   
                   return (
