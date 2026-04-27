@@ -8,7 +8,6 @@ const pdfStyles = {
     justifyContent: 'space-between', 
     alignItems: 'center', 
     fontSize: '11px', 
-    lineHeight: '1.4', 
     paddingBottom: '5px', 
     borderBottom: '1px dotted #e5e7eb', 
     marginBottom: '5px'
@@ -26,7 +25,7 @@ const pdfStyles = {
     backgroundColor: '#ffffff', 
     border: '1px solid #e5e7eb', 
     width: '100%', 
-    marginBottom: '20px', 
+    marginBottom: '15px', 
     pageBreakInside: 'avoid' as const
   },
   sectionHeader: {
@@ -49,18 +48,8 @@ const pdfStyles = {
     flexGrow: 1, 
     textTransform: 'uppercase' as const
   },
-  sectionRating: (bg: string) => ({
-    color: '#ffffff', 
-    fontSize: '11px', 
-    fontWeight: 700, 
-    padding: '2px 6px', 
-    minWidth: '20px', 
-    textAlign: 'center' as const, 
-    borderRadius: '4px', 
-    backgroundColor: bg
-  }),
   sectionBody: {
-    padding: '10px 12px', 
+    padding: '8px 12px', 
     display: 'flex', 
     flexDirection: 'column' as const
   }
@@ -96,17 +85,29 @@ export interface SectionProps {
 export const Section: React.FC<SectionProps> = ({ categoryConfig, data, t, formatValue }) => {
   if (!data?.fields) return null;
 
+  const bg = getRatingBg(data.rating);
+  const ratingText = (data.rating || 0).toFixed(1);
+
   return (
     <div style={pdfStyles.sectionContainer}>
       <div style={pdfStyles.sectionHeader}>
         <span style={pdfStyles.sectionIcon}>{data.icon || categoryConfig.icon}</span>
         <h3 style={pdfStyles.sectionTitle}>
-          {/* ОНОВЛЕНО: динамічний ключ з бази */}
           {t(`groups.${categoryConfig.key}`, { defaultValue: categoryConfig.key })}
         </h3>
-        <span style={pdfStyles.sectionRating(getRatingBg(data.rating))}>
-          {(data.rating || 0).toFixed(1)}
-        </span>
+        
+        {/* ЯДЕРНА ЗБРОЯ: SVG графіка. Тут текст фізично не може зсунутися! */}
+        <div style={{ width: '32px', height: '20px', flexShrink: 0 }}>
+          <svg xmlns="http://www.w3.org/2000/svg" width="32" height="20" viewBox="0 0 32 20" style={{ display: 'block' }}>
+            {/* Прямокутник із закругленими кутами */}
+            <rect width="32" height="20" rx="4" fill={bg} />
+            {/* Текст жорстко відцентрований по координатах */}
+            <text x="16" y="14" fontFamily="sans-serif" fontSize="11px" fontWeight="bold" fill="#ffffff" textAnchor="middle">
+              {ratingText}
+            </text>
+          </svg>
+        </div>
+
       </div>
       <div style={pdfStyles.sectionBody}>
         {Object.values(data.fields).map((fieldData) => {
@@ -115,7 +116,6 @@ export const Section: React.FC<SectionProps> = ({ categoryConfig, data, t, forma
            return (
              <StatRow 
                 key={fieldData.key}
-                /* ОНОВЛЕНО: динамічний ключ з бази */
                 label={t(`common.fields.${fieldData.key}`, { defaultValue: t(fieldData.key) })}
                 value={formatValue(fieldData.value, fieldData.type, fieldData.key)}
              />

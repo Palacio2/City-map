@@ -13,9 +13,17 @@ const TrashIcon = () => (
   </svg>
 );
 
+// ОНОВЛЕНО: Додано всі категорії та виправлено іконки під твій дизайн
 const STATS_CONFIG = [
-  ["education", "🏫"], ["transport", "🚍"], ["safety", "🛡️"],
-  ["social", "🌳"], ["medicine", "🏥"], ["commerce", "🛒"], ["utilities", "⚡"]
+  ["economics", "💰"],
+  ["education", "🎓"],
+  ["medicine", "🏥"],
+  ["commerce", "🛍️"],
+  ["culture_leisure", "🎭"],
+  ["sports", "⚽"],
+  ["transport", "🚌"],
+  ["security", "🛡️"],
+
 ] as const;
 
 interface FavoriteDistrictCardProps {
@@ -72,7 +80,7 @@ const FavoriteDistrictCard = React.memo(({ district, onClick, onCategoryClick, o
         </div>
 
         {filterData && (
-          <div className="grid gap-1.5 grid-cols-3 sm:grid-cols-4">
+          <div className="grid gap-1.5 grid-cols-3 sm:grid-cols-5">
             {STATS_CONFIG.map(([key, icon]) => (
               <button 
                 key={key} 

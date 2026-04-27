@@ -111,7 +111,7 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
   }
 
   return (
-    <div style={{ width: '794px', minHeight: '1122px', padding: '30px', backgroundColor: '#ffffff', color: '#2d3748', fontFamily: 'sans-serif', position: 'relative' }}>
+    <div style={{ width: '794px', minHeight: '1122px', padding: '30px', paddingBottom: '80px', backgroundColor: '#ffffff', color: '#2d3748', fontFamily: 'sans-serif', position: 'relative' }}>
       
       <div className="flex justify-between items-start border-b-2 border-[#cbd5e0] pb-4 mb-6">
         <div>
@@ -132,8 +132,8 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
          </div>
       )}
 
-      <div className="w-full">
-        <table className="w-full border-collapse">
+      <div className="w-full mb-10">
+        <table className="w-full border-collapse" style={{ pageBreakInside: 'auto' }}>
           <thead>
             <tr>
               <th className="p-2 border-b border-[#cbd5e0] text-left w-[180px]"></th>
@@ -149,7 +149,7 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
               const rowKey = row.key || `header-${idx}`;
               if (row.type === 'header') {
                 return (
-                  <tr key={rowKey} className="bg-[#edf2f7]">
+                  <tr key={rowKey} className="bg-[#edf2f7]" style={{ pageBreakInside: 'avoid' }}>
                     <td colSpan={districts.length + 1} className="py-2 px-3 text-left font-bold text-[#2d3748] text-[11px] uppercase border-y border-[#cbd5e0]">
                       {row.title}
                     </td>
@@ -160,7 +160,7 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
               const bestVal = row.key ? getBestValue(row.key, districts) : null;
 
               return (
-                <tr key={rowKey}>
+                <tr key={rowKey} style={{ pageBreakInside: 'avoid' }}>
                   <td className="py-2 px-3 border-b border-[#e2e8f0] text-left text-[10px] font-semibold text-[#4a5568] w-[180px] bg-[#f8fafc]">
                     {row.label}
                   </td>
