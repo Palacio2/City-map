@@ -8,17 +8,27 @@ export const plAdapter = {
     },
     
     scrapeProperty: async (browser, url, retryCount = PARSER_CONFIG.TIMEOUTS.RETRY_SCRAPING) => {
-        if (!url || url === '#') return { sale: {}, rent: {} };
+        // ДОДАЙТЕ ЦЕЙ РЯДОК ДЛЯ ТЕСТУ:
+        console.log("DEBUG: Скрапер отримав URL:", url);
+
+        if (!url || url === '#' || url === 'undefined') {
+            console.log(`[Scraper] ⚠️ URL для Otodom не вказано або він недійсний!`);
+            return { sale: { avgPrice: 0, avgSqm: 0 }, rent: { avgPrice: 0, avgSqm: 0 } };
+        }
+        
+        console.log(`[Scraper] 🚀 Запуск скрапера для ${url}`);
         const rentUrl = url.replace('/sprzedaz/', '/wynajem/');
+        
         const saleStats = await scrapePage(browser, url, 'sale', retryCount);
         const rentStats = await scrapePage(browser, rentUrl, 'rent', retryCount);
+        
         return { sale: saleStats, rent: rentStats };
     },
 
     formatPropertyLog: (saleStats, rentStats) => {
         if (saleStats?.avgPrice > 0 || rentStats?.avgPrice > 0) {
-            return `Продаж: ${saleStats.avgPrice}zł | Оренда: ${rentStats.avgPrice}zł`;
+            return `Продаж: ${saleStats.avgPrice || 0}zł | Оренда: ${rentStats.avgPrice || 0}zł`;
         }
-        return null;
+        return `⚠️ Нерухомість не знайдена (0zł) - перевірте селектори або посилання!`;
     }
 };

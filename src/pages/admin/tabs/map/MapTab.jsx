@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { MapContainer, TileLayer, GeoJSON, Marker, Tooltip } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster'; // 👈 ОСЬ ЦЕЙ РЯДОК БУВ ПРОПУЩЕНИЙ!
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import * as turf from '@turf/turf';
 import 'leaflet/dist/leaflet.css';
 import { supabase } from '@supabaseClient';
@@ -72,7 +75,7 @@ export default function MapTab() {
 
     const renderMarkers = useMemo(() => {
         if (activeLayer !== 'markers' && activeLayer !== 'all') return null;
-        return mapData.flatMap(dist => dist.poi_data.map((poi, idx) => {
+        const markers = mapData.flatMap(dist => dist.poi_data.map((poi, idx) => {
             if (!poi || poi.length < 3) return null;
             return (
                 <Marker key={`${dist.id}-${idx}`} position={[poi[0], poi[1]]} icon={createEmojiIcon(poi[2], poi[3], fieldsConfig)}>
@@ -84,6 +87,13 @@ export default function MapTab() {
                 </Marker>
             );
         }).filter(Boolean));
+
+        // 🚀 КЛАСТЕРИ ДЛЯ ГОЛОВНОЇ КАРТИ
+        return (
+            <MarkerClusterGroup chunkedLoading={true} maxClusterRadius={50} showCoverageOnHover={false}>
+                {markers}
+            </MarkerClusterGroup>
+        );
     }, [mapData, activeLayer, fieldsConfig, getLabelForKey]);
 
     const filteredCities = useMemo(() => {

@@ -1,5 +1,8 @@
 import React, { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { MapContainer, TileLayer, GeoJSON, Marker, Tooltip } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster'; // 👈 ОСЬ ЦЕЙ РЯДОК БУВ ПРОПУЩЕНИЙ!
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import * as turf from '@turf/turf';
 import 'leaflet/dist/leaflet.css';
 import { useDynamicFields } from '../../hooks/useDynamicFields';
@@ -181,21 +184,24 @@ export default function MapEditorModal({ isOpen, onClose, rowData, onSaveMapData
                                     <MapFitBounds mapData={[{ geojson: rowData.geojson }]} pois={localPois} />
                                 </>
                             )}
-                            {filteredPois.map((poi) => (
-                                <Marker 
-                                    key={poi.originalIndex} 
-                                    position={[poi[0], poi[1]]} 
-                                    icon={createEmojiIcon(poi[2], poi[3], fieldsConfig, 32)}
-                                    eventHandlers={{ click: () => setSelectedPoiIndex(poi.originalIndex) }}
-                                >
-                                    <Tooltip direction="top" offset={[0, -16]} className="modern-tooltip">
-                                        <div className="font-bold">{getFieldByPoiType(poi[2])?.label || poi[2]}</div>
-                                        <div className="text-[0.7rem] opacity-70">
-                                            {t('admin_map.editor.source')}: {poi[3] === 'manual' ? t('admin_map.editor.manual') : t('admin_map.editor.parser')}
-                                        </div>
-                                    </Tooltip>
-                                </Marker>
-                            ))}
+                            {/* 🚀 МАГІЯ КЛАСТЕРІВ ТУТ */}
+                            <MarkerClusterGroup chunkedLoading={true} maxClusterRadius={50} showCoverageOnHover={false}>
+                                {filteredPois.map((poi) => (
+                                    <Marker 
+                                        key={poi.originalIndex} 
+                                        position={[poi[0], poi[1]]} 
+                                        icon={createEmojiIcon(poi[2], poi[3], fieldsConfig, 32)}
+                                        eventHandlers={{ click: () => setSelectedPoiIndex(poi.originalIndex) }}
+                                    >
+                                        <Tooltip direction="top" offset={[0, -16]} className="modern-tooltip">
+                                            <div className="font-bold">{getFieldByPoiType(poi[2])?.label || poi[2]}</div>
+                                            <div className="text-[0.7rem] opacity-70">
+                                                {t('admin_map.editor.source')}: {poi[3] === 'manual' ? t('admin_map.editor.manual') : t('admin_map.editor.parser')}
+                                            </div>
+                                        </Tooltip>
+                                    </Marker>
+                                ))}
+                            </MarkerClusterGroup>
                             {isAddingMode && <div className="absolute inset-0 z-[400] cursor-crosshair" onClick={(e) => {
                                 const map = mapRef.current;
                                 if(map) handleMapClick({latlng: map.mouseEventToLatLng(e)});

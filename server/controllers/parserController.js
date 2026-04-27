@@ -49,28 +49,77 @@ export const updatePendingResults = (req, res) => {
 };
 
 export const findDistricts = async (req, res) => {
-    try {
-        const { cityName } = req.body;
-        const query = PARSER_CONFIG.QUERIES.OVERPASS_DISTRICTS(cityName);
-        const response = await axios.post("https://overpass-api.de/api/interpreter", query, { timeout: 30000 });
-        const elements = response.data.elements || [];
-        
-        const officialDistricts = elements.filter(el => el.tags && el.tags.admin_level === "9");
-        let targetElements = officialDistricts.length > 0 ? officialDistricts : elements;
-        
-        const districts = targetElements
-            .map(el => el.tags?.name)
-            .filter(Boolean)
-            .filter(name => name.toLowerCase() !== cityName.toLowerCase())
-            .filter(name => !PARSER_CONFIG.FILTERS.INVALID_DISTRICT_TERMS.some(term => name.toLowerCase().includes(term)));
+    const { cityName } = req.body;
+    if (!cityName) return res.status(400).json({ error: "Missing cityName" });
 
-        const uniqueDistricts = [...new Set(districts)].map(name => ({ name })).sort((a, b) => a.name.localeCompare(b.name));
-        res.json({ districts: uniqueDistricts });
-    } catch (err) { res.status(500).json({ error: err.message }); }
+    const query = PARSER_CONFIG.QUERIES.OVERPASS_DISTRICTS(cityName);
+    
+    // Список резервних серверів Overpass API (на випадок блокування або лімітів)
+    const endpoints = [
+        "https://overpass-api.de/api/interpreter",
+        "https://lz4.overpass-api.de/api/interpreter",
+        "https://z.overpass-api.de/api/interpreter",
+        "https://overpass.kumi.systems/api/interpreter"
+    ];
+
+    let lastError = null;
+
+    // Пробуємо сервери по черзі
+    for (const endpoint of endpoints) {
+        try {
+            console.log(`[OSM SCAN] Спроба отримати райони з сервера: ${endpoint}`);
+            
+            // Створюємо правильне кодування через URLSearchParams
+            const params = new URLSearchParams();
+            params.append('data', query);
+
+            const response = await axios.post(endpoint, params.toString(), { 
+                headers: { 
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json',
+                    'User-Agent': 'CityMapsParserBot/1.0 (Contact: admin@citymaps.com)' // Обов'язковий заголовок для OSM
+                },
+                timeout: 15000 
+            });
+            
+            const elements = response.data?.elements || [];
+            
+            // Ваша логіка фільтрації
+            const officialDistricts = elements.filter(el => el.tags && el.tags.admin_level === "9");
+            let targetElements = officialDistricts.length > 0 ? officialDistricts : elements;
+            
+            const districts = targetElements
+                .map(el => el.tags?.name)
+                .filter(Boolean)
+                .filter(name => name.toLowerCase() !== cityName.toLowerCase())
+                .filter(name => {
+                    if (PARSER_CONFIG.FILTERS?.INVALID_DISTRICT_TERMS) {
+                        return !PARSER_CONFIG.FILTERS.INVALID_DISTRICT_TERMS.some(term => name.toLowerCase().includes(term));
+                    }
+                    return true;
+                });
+
+            const uniqueDistricts = [...new Set(districts)].map(name => ({ name })).sort((a, b) => a.name.localeCompare(b.name));
+            
+            console.log(`[OSM SCAN] ✅ Успішно знайдено ${uniqueDistricts.length} районів!`);
+            return res.json({ districts: uniqueDistricts });
+            
+        } catch (err) {
+            console.log(`[OSM SCAN] ⚠️ Сервер ${endpoint} не відповів: ${err.message}`);
+            lastError = err;
+            // Продовжуємо цикл і пробуємо наступний сервер
+        }
+    }
+
+    // Якщо жоден сервер не відповів
+    console.error(`[OSM SCAN] ❌ Всі сервери OSM недоступні.`);
+    res.status(500).json({ error: `OSM API Error: ${lastError?.message || 'Всі сервери недоступні'}` });
 };
 
 export const runOsmParser = (req, res) => {
-    const { cityName, pbfFileName, districts, useOSM, useWAQI, useGUS, countryCode } = req.body;
+    // 1. Беремо ВЕСЬ об'єкт req.body без жорсткої фільтрації
+    const config = req.body; 
+    
     if (isParsingRunning) return res.status(400).json({ error: "Parser busy" });
 
     res.status(202).json({ success: true });
@@ -79,18 +128,26 @@ export const runOsmParser = (req, res) => {
         isParsingRunning = true;
         const start = Date.now();
         try {
-            logger.log(LOGS.START(cityName, districts.length));
-            const enabledSources = [];
-            if (useOSM) enabledSources.push('osm', 'osm_pbf');
-            if (useWAQI) enabledSources.push('api');
-            if (useGUS) enabledSources.push('gus');
+            logger.log(LOGS.START(config.cityName, config.districts?.length || 0));
+            
+            // 2. Якщо фронтенд раптом не передав масив enabledSources, формуємо його (з підтримкою Otodom)
+            if (!config.enabledSources || config.enabledSources.length === 0) {
+                config.enabledSources = [];
+                if (config.useOSM) config.enabledSources.push('osm', 'osm_pbf');
+                if (config.useWAQI) config.enabledSources.push('api');
+                if (config.useGUS) config.enabledSources.push('gus');
+                if (config.useOtodom) config.enabledSources.push('scraper', 'otodom');
+            }
 
-            await runUniversalParser({ cityName, pbfFileName, districts, countryCode, enabledSources }, logger);
-            logger.log(LOGS.END(districts.length, Math.round((Date.now() - start) / 1000)), 'SUCCESS');
-        } catch (err) {
-            logger.log(err.message, 'ERROR');
-        } finally {
+            // 3. Передаємо весь config у ядро (включно з propertyUrls!)
+            await runUniversalParser(config, logger);
+
             isParsingRunning = false;
+            const time = ((Date.now() - start) / 1000).toFixed(1);
+            logger.log(LOGS.END(config.districts?.length || 0, time), 'SUCCESS');
+        } catch (e) {
+            isParsingRunning = false;
+            logger.log(LOGS.ERR_CRIT(e.message), 'ERROR');
         }
     })();
 };

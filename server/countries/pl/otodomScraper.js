@@ -74,6 +74,7 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
         .single();
 
     if (error || !rule) {
+        console.error(`[Scraper] ❌ Не знайдено активного правила в базі для ${platform} (${type})`);
         return { avgPrice: 0, avgSqm: 0 };
     }
 
@@ -86,16 +87,30 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
             let url = baseUrl.includes('?') ? `${baseUrl}&page=${i}` : `${baseUrl}?page=${i}`;
             if (platform === 'otodom' && !url.includes('ownerTypeSingleFamily')) url += '&limit=72'; 
 
+            console.log(`[Scraper] 🔍 Перехід на сторінку: ${url}`);
             await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
             
+            // --- БРОНЕБІЙНІСТЬ: Очікування редиректів та завантаження React-компонентів ---
+            // 1. Чекаємо 3-4 секунди для проходження редиректів (якщо була помилка в URL)
+            await delay(3000, 4000); 
+            
+            // 2. Примусово чекаємо появи карток квартир на екрані
+            try {
+                await page.waitForSelector(rule.item_selector, { timeout: 10000 });
+            } catch (e) {
+                console.log(`[Scraper] ⏳ Картки не з'явилися протягом 10 сек. Можливо, порожня сторінка або капча.`);
+            }
+            // -------------------------------------------------------------------------------
+
             if (i === 1 && platform === 'otodom') {
                 try {
                     await page.waitForSelector('#onetrust-accept-btn-handler', { timeout: 4000 });
                     await page.click('#onetrust-accept-btn-handler');
+                    // Даємо час банеру зникнути після кліку
+                    await delay(1000, 1500); 
                 } catch (e) {}
-            }
+            }   
 
-            await delay(1000, 2000);
             await autoScroll(page);
 
             const data = await page.evaluate((r) => {
@@ -134,7 +149,11 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
                 return { prices, sqm };
             }, rule);
 
-            if (data.prices.length === 0) break;
+            if (data.prices.length === 0) {
+                console.log(`[Scraper] ⚠️ На сторінці ${i} не знайдено об'єктів. Селектор: ${rule.item_selector}`);
+                break;
+            }
+            
             rawPrices.push(...data.prices);
             rawSqmPrices.push(...data.sqm);
             
@@ -156,6 +175,7 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
             avgSqm: type === 'sale' ? Math.round(calculateMedian(filteredSqm)) : 0
         };
     } catch (e) {
+        console.log(`[SCRAPER ERROR] Помилка на сторінці:`, e.message);
         return { avgPrice: 0, avgSqm: 0 };
     } finally {
         if (page) await page.close(); 

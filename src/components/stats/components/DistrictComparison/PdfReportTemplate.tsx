@@ -35,29 +35,42 @@ interface RowDef {
 }
 
 const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[] => {
-  const catName = t(`common.categories.${catKey}`);
+  const catName = t([`common.categories.${catKey}`, catKey], { defaultValue: catKey });
   const catHeader: RowDef = { type: 'header', title: catName, key: `header-${catKey}` };
 
   const ratingRow: RowDef = {
-    label: t('stats.comparison.rating'),
+    label: t(['stats.comparison.rating', 'rating'], { defaultValue: 'Rating' }),
     key: `filterData.${catKey}.rating`,
     format: (val) => val ? Number(val).toFixed(1) : '-'
   };
 
-  const fieldRows: RowDef[] = categoryConfig.fields.map((f: any) => ({
-    label: t(`common.fields.${f.key}`),
-    key: `filterData.${catKey}.fields.${f.key}.value`,
-    format: (val: any) => {
-      if (val === null || val === undefined) return '-';
-      if (f.type === 'boolean') {
-          if (typeof val === 'number') return formatNumber(val);
-          return val ? t('common.status.yes') : t('common.status.no');
+  const fieldRows: RowDef[] = categoryConfig.fields.map((f: any) => {
+    const baseKey = f.key || '';
+    const withCount = baseKey.endsWith('_count') ? baseKey : `${baseKey}_count`;
+    const withoutCount = baseKey.replace('_count', '');
+
+    return {
+      label: t([
+        `common.fields.${baseKey}`,
+        baseKey,
+        `common.fields.${withCount}`,
+        withCount,
+        `common.fields.${withoutCount}`,
+        withoutCount
+      ], { defaultValue: withoutCount }),
+      key: `filterData.${catKey}.fields.${f.key}.value`,
+      format: (val: any) => {
+        if (val === null || val === undefined) return '-';
+        if (f.type === 'boolean') {
+            if (typeof val === 'number') return formatNumber(val);
+            return val ? t('common.status.yes') : t('common.status.no');
+        }
+        if (f.type === 'price') return formatPrice(val);
+        if (f.type === 'number' || f.type === 'numeric') return formatNumber(val);
+        return safeStringify(val);
       }
-      if (f.type === 'price') return formatPrice(val);
-      if (f.type === 'number' || f.type === 'numeric') return formatNumber(val);
-      return safeStringify(val);
-    }
-  }));
+    };
+  });
 
   return [catHeader, ratingRow, ...fieldRows];
 };
@@ -75,9 +88,9 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
     if (!districts.length) return [];
     
     const baseRows: RowDef[] = [
-      { label: t('common.fields.propertyPricePerSqm'), key: 'filterData.general.propertyPrice', format: (val) => formatPrice(val as string | number | null) },
-      { label: t('common.fields.average_rent_price'), key: 'filterData.general.average_rent_price', format: (val) => formatPrice(val as string | number | null) },
-      { label: t('common.fields.population'), key: 'filterData.general.population', format: (val) => formatNumber(val as string | number | null) },
+      { label: t(['common.fields.propertyPricePerSqm', 'propertyPricePerSqm'], { defaultValue: 'propertyPricePerSqm' }), key: 'filterData.general.propertyPrice', format: (val) => formatPrice(val as string | number | null) },
+      { label: t(['common.fields.average_rent_price', 'average_rent_price'], { defaultValue: 'average_rent_price' }), key: 'filterData.general.average_rent_price', format: (val) => formatPrice(val as string | number | null) },
+      { label: t(['common.fields.population', 'population'], { defaultValue: 'population' }), key: 'filterData.general.population', format: (val) => formatNumber(val as string | number | null) },
     ];
 
     if (!config) return baseRows;
@@ -100,7 +113,6 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
   return (
     <div style={{ width: '794px', minHeight: '1122px', padding: '30px', backgroundColor: '#ffffff', color: '#2d3748', fontFamily: 'sans-serif', position: 'relative' }}>
       
-      {/* HEADER */}
       <div className="flex justify-between items-start border-b-2 border-[#cbd5e0] pb-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-[#1a202c] m-0 uppercase tracking-wide">
@@ -120,7 +132,6 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
          </div>
       )}
 
-      {/* TABLE */}
       <div className="w-full">
         <table className="w-full border-collapse">
           <thead>
@@ -171,7 +182,6 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
         </table>
       </div>
 
-      {/* FOOTER */}
       <div className="absolute bottom-8 left-[30px] right-[30px] pt-4 border-t border-[#cbd5e0] flex justify-between items-center text-[9px] text-[#718096]">
         <div className="flex gap-4">
           {website && <span className="flex items-center gap-1"><FaGlobe /> {website}</span>}

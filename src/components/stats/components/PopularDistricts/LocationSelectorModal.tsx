@@ -133,7 +133,7 @@ export default function LocationSelectorModal({
     if (includeDistrict && selectedDistricts.length > 0) {
       onSubmit(selectedDistricts); 
     } else if (!includeDistrict && selectedCountry && selectedCity) {
-      onSubmit(selectedCountry, selectedCity);
+      onSubmit({ country: selectedCountry, city: selectedCity });
     }
   };
 
@@ -217,7 +217,7 @@ export default function LocationSelectorModal({
                                             <FaTimes />
                                         </button>
                                     </div>
-                                ))}\
+                                ))}
                             </div>
                         </div>
                     )}

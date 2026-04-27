@@ -123,14 +123,17 @@ export default function ParserTab() {
                     return isFloat ? num : Math.round(num);
                 };
 
+                // ОНОВЛЕНА ЛОГІКА: Безпечно дістаємо ключі та типи для збереження
                 allFields.forEach(field => {
-                    if (field.key in row) {
-                        if (field.type === 'float' || field.type === 'numeric') {
-                            payload[field.key] = parseNumber(row[field.key], true);
-                        } else if (field.type === 'number' || field.type === 'integer') {
-                            payload[field.key] = parseNumber(row[field.key], false);
+                    const key = field.key || field.field_code; 
+                    if (key in row) {
+                        const type = field.type || field.data_type;
+                        if (type === 'float' || type === 'numeric') {
+                            payload[key] = parseNumber(row[key], true);
+                        } else if (type === 'number' || type === 'integer') {
+                            payload[key] = parseNumber(row[key], false);
                         } else {
-                            payload[field.key] = row[field.key];
+                            payload[key] = row[key];
                         }
                     }
                 });
@@ -141,13 +144,12 @@ export default function ParserTab() {
                 payloadsToSave.push(payload);
             }
             
-            const savePromises = payloadsToSave.map(payload => 
-                supabase.functions.invoke('admin-district-manage', {
-                    body: { action: 'save', districtId: payload.district_id, payload }
-                })
-            );
+            // ОНОВЛЕНА ЛОГІКА: Відправляємо єдиний запит на наш бекенд
+            const results = await Promise.all([
+                ...statusPromises,
+                api.geo.saveParsedResults(payloadsToSave)
+            ]);
             
-            const results = await Promise.all([...statusPromises, ...savePromises]);
             const errors = results.filter(r => r?.error || r?.data?.error);
             if (errors.length > 0) throw new Error(errors[0]?.error?.message || errors[0]?.data?.error || 'Unknown error');
             

@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { useModals } from '../ui/ModalContext';
 
 export const useParserLogic = () => {
-    const { t, i18n } = useTranslation('db'); // Використовуємо спільний неймспейс 'db'
+    const { t, i18n } = useTranslation('db');
     const { showConfirm, showAlert } = useModals();
     const queryClient = useQueryClient();
 
@@ -210,6 +210,13 @@ export const useParserLogic = () => {
         });
     }, [clearLogs, showConfirm, t]);
 
+    // ДОДАНО ОСЬ ЦЮ ФУНКЦІЮ
+    const clearResultsSilent = useCallback(async () => {
+        setParsedData([]);
+        setShowResults(false);
+        await api.parser.deletePendingResults().catch(() => {});
+    }, []);
+
     const downloadLogs = useCallback(async () => {
         try {
             const text = await api.parser.getCurrentLog();
@@ -230,6 +237,7 @@ export const useParserLogic = () => {
     return {
         loading, logs, availableFiles, countries, cities, dbDistricts, foundDistrictsOSM, parsedData, showResults,
         loadCities, fetchDbDistricts, deleteDbDistrict, scanOSM, createDistrictsInDb, runOfflineOsmParser, importBoundariesGeoJSON,
-        removeParsedItem, clearAllData, clearLogs, downloadLogs, setParsedData, setFoundDistrictsOSM, loadAvailableFiles
+        removeParsedItem, clearAllData, clearLogs, downloadLogs, setParsedData, setFoundDistrictsOSM, loadAvailableFiles,
+        clearResultsSilent // ТА ДОДАНО ЇЇ СЮДИ
     };
 };

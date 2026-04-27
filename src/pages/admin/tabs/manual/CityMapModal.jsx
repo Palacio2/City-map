@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { MapContainer, TileLayer, GeoJSON, Marker, Tooltip } from 'react-leaflet';
+import MarkerClusterGroup from 'react-leaflet-cluster'; // 👈 ОСЬ ЦЕЙ РЯДОК БУВ ПРОПУЩЕНИЙ!
+import 'leaflet.markercluster/dist/MarkerCluster.css';
+import 'leaflet.markercluster/dist/MarkerCluster.Default.css';
 import * as turf from '@turf/turf';
 import 'leaflet/dist/leaflet.css';
 import { supabase } from '@supabaseClient';
@@ -72,7 +75,7 @@ export default function CityMapModal({ isOpen, onClose, city }) {
     const renderMarkers = useMemo(() => {
         if (activeLayer === 'polygons') return null;
 
-        return mapData.flatMap(district => {
+        const markers = mapData.flatMap(district => {
             if (!district.poi_data || district.poi_data.length === 0) return [];
             return district.poi_data.map((poi, idx) => {
                 const shortKey = poi[2].replace('_count', '');
@@ -88,6 +91,13 @@ export default function CityMapModal({ isOpen, onClose, city }) {
                 );
             });
         });
+
+        // 🚀 КЛАСТЕРИ ДЛЯ МІСТА ТУТ
+        return (
+            <MarkerClusterGroup chunkedLoading={true} maxClusterRadius={50} showCoverageOnHover={false}>
+                {markers}
+            </MarkerClusterGroup>
+        );
     }, [mapData, fieldsConfig, getLabelForKey, activeLayer]);
 
     const titleContent = (
@@ -102,7 +112,6 @@ export default function CityMapModal({ isOpen, onClose, city }) {
     return (
         <BaseModal isOpen={isOpen} onClose={onClose} title={titleContent} maxWidth="90vw" bodyStyle={{ padding: 0 }}>
             <div className="h-[75vh] w-full relative bg-main/50 overflow-hidden">
-                
                 {!loading && mapData.length > 0 && (
                     <div className="absolute top-4 right-4 z-[400] flex bg-surface/90 backdrop-blur-md p-1.5 rounded-xl shadow-lg border border-border animate-[fadeIn_0.3s_ease-out]">
                         {['polygons', 'markers', 'all'].map(layer => (
@@ -118,7 +127,6 @@ export default function CityMapModal({ isOpen, onClose, city }) {
                         ))}
                     </div>
                 )}
-
                 {loading ? (
                     <div className="absolute inset-0 flex items-center justify-center bg-surface/80 z-50 backdrop-blur-sm">
                         <div className="flex flex-col items-center gap-3 text-primary bg-surface p-6 rounded-2xl shadow-xl border border-border">

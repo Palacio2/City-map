@@ -51,7 +51,19 @@ export const GeoMapSidebar: React.FC<GeoMapSidebarProps> = ({
           const rawName = type.replaceAll('_count', '');
           
           // ОНОВЛЕНО ТУТ: Використовуємо common.fields з фолбеком на чистий ключ
-          const translatedName = t(`common.fields.${rawName}`, { defaultValue: t(rawName) });
+          // 1. Формуємо обидві версії ключа (з _count та без)
+const withCount = type.endsWith('_count') ? type : `${type}_count`;
+const withoutCount = type.replace('_count', '');
+
+// 2. Передаємо масив ключів. i18next знайде перший, який існує в БД
+const translatedName = t([
+  `common.fields.${withCount}`,    // Шукає: common.fields.police_stations_count
+  withCount,                       // Шукає: police_stations_count (ТУТ ВІН ЗНАЙДЕ 90% ПЕРЕКЛАДІВ)
+  `common.fields.${withoutCount}`, // Шукає: common.fields.police_stations
+  withoutCount                     // Шукає: police_stations
+], { 
+  defaultValue: withoutCount       // Якщо нічого не знайдено, виведе чисту назву без _count
+});
           
           return (
             <button 

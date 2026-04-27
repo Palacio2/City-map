@@ -1,11 +1,11 @@
-import { useState, useEffect } from 'react'; // Виправлено: видалено React
+import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaMapMarkerAlt, FaHome, FaClock } from 'react-icons/fa';
 import LocationSelectorModal from './LocationSelectorModal';
 import DistrictDetailsModal from '@components/districtMap/DistrictDetailsModal'; 
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import { transformDistrictsForDisplay, TransformedDistrict } from '@utils/dataTransformers';
-import { formatPrice, getCurrencyInfo } from '@utils/formatters'; // Виправлено: додано getCurrencyInfo
+import { formatPrice, getCurrencyInfo } from '@utils/formatters';
 import { useFiltersConfig } from '@hooks/useFiltersConfig';
 import { useSubscription } from '@subscription/SubscriptionContext';
 
@@ -13,6 +13,19 @@ interface SelectedLocation {
   country: string;
   city: string;
 }
+
+const formatDate = (dateString?: string | null) => {
+  if (!dateString) return '-';
+  try {
+    return new Date(dateString).toLocaleDateString('uk-UA', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
+  } catch (e) {
+    return '-';
+  }
+};
 
 export default function PopularDistricts() {
   const { t } = useTranslation('db');
@@ -26,43 +39,45 @@ export default function PopularDistricts() {
 
   const [selectedLocation, setSelectedLocation] = useState<SelectedLocation | null>(() => {
     try {
-      const saved = localStorage.getItem('popular_districts_location');
+      const saved = localStorage.getItem('selectedLocation');
       return saved ? JSON.parse(saved) : null;
-    } catch { return null; }
+    } catch (e) {
+      return null;
+    }
   });
 
   useEffect(() => {
-    if (selectedLocation && config) {
-      const loadData = async () => {
-        setLoading(true);
-        try {
-          const data = await fetchDistrictsWithFilters(selectedLocation.country, selectedLocation.city);
-          const transformed = transformDistrictsForDisplay(data, config, { isFree, isRealtor });
-          
-          const popular = transformed.slice(0, 6);
-          setDistricts(popular);
-        } catch (err) {
-          console.error("Error loading popular districts", err);
-        } finally {
-          setLoading(false);
-        }
-      };
-      loadData();
-    }
+    const loadData = async () => {
+      if (
+        !selectedLocation?.country || 
+        !selectedLocation?.city || 
+        selectedLocation.country === 'undefined' || 
+        selectedLocation.city === 'undefined' ||
+        !config
+      ) {
+        return;
+      }
+
+      setLoading(true);
+      try {
+        const data = await fetchDistrictsWithFilters(selectedLocation.country, selectedLocation.city);
+        const transformed = transformDistrictsForDisplay(data, config, { isFree, isRealtor });
+        
+        setDistricts(transformed.slice(0, 4));
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadData();
   }, [selectedLocation, config, isFree, isRealtor]);
 
-  const handleLocationSubmit = (loc: SelectedLocation[]) => {
-    if (loc && loc.length > 0) {
-       const selection = { country: loc[0].country, city: loc[0].city };
-       setSelectedLocation(selection);
-       localStorage.setItem('popular_districts_location', JSON.stringify(selection));
-    }
+  const handleLocationSubmit = (location: SelectedLocation) => {
+    setSelectedLocation(location);
+    localStorage.setItem('selectedLocation', JSON.stringify(location));
     setIsModalOpen(false);
-  };
-
-  const formatDate = (dateString?: string | null) => {
-    if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('uk-UA');
   };
 
   return (
@@ -78,7 +93,9 @@ export default function PopularDistricts() {
       
       <div className="min-h-[200px]">
         {loading || !config ? (
-          <div className="flex justify-center items-center h-[200px] text-accent"><div className="w-8 h-8 border-4 border-t-accent border-borderClient rounded-full animate-spin"></div></div>
+          <div className="flex justify-center items-center h-[200px] text-accent">
+            <div className="w-8 h-8 border-4 border-t-accent border-borderClient rounded-full animate-spin"></div>
+          </div>
         ) : districts.length > 0 ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {districts.map(district => {
@@ -100,7 +117,6 @@ export default function PopularDistricts() {
                       <div className="flex justify-between items-center bg-body p-3 rounded-lg border border-borderClient">
                           <div className="text-[0.75rem] uppercase tracking-widest text-textSecondary font-semibold flex gap-1.5 items-center"><FaHome className="text-textMain" /> <span>{t('common.fields.propertyPricePerSqm')}</span></div>
                           <div className="text-base font-bold font-heading text-textMain">
-                              {/* Виправлено: передаємо результат getCurrencyInfo */}
                               {formatPrice(salePrice, getCurrencyInfo(selectedLocation?.country))}
                           </div>
                       </div>

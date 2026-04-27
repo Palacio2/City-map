@@ -9,10 +9,18 @@ const supabase = createClient(
 // Отримати всі переклади
 export const getTranslations = async (req, res) => {
     try {
-        const { data, error } = await supabase.from('translations').select('*').order('translation_key');
+        // Додаємо .limit(5000) щоб обійти стандартне обмеження Supabase у 1000 записів
+        const { data, error } = await supabase
+            .from('translations')
+            .select('*')
+            .limit(5000) 
+            .order('translation_key');
+            
         if (error) throw error;
         res.json(data);
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { 
+        res.status(500).json({ error: e.message }); 
+    }
 };
 
 // Зберегти або оновити переклад

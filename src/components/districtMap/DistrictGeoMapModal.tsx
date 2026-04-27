@@ -119,10 +119,21 @@ const FastMapMarkers: React.FC<{ pois: PoiData[], t: any, config: DynamicDistric
 
     const leafletMarkers = pois.map(poi => {
       const marker = L.marker(poi.coord, { icon: getCachedIcon(poi.type, config) });
-      const rawName = (poi.type || 'default').replaceAll('_count', '');
       
-      // ОНОВЛЕНО ТУТ: Використовуємо common.fields або чистий ключ
-      const labelText = t(`common.fields.${rawName}`, { defaultValue: t(rawName) });
+      // === ОНОВЛЕНИЙ БЛОК ПЕРЕКЛАДУ ПОЧИНАЄТЬСЯ ТУТ ===
+      const baseType = poi.type || 'default';
+      const withCount = baseType.endsWith('_count') ? baseType : `${baseType}_count`;
+      const withoutCount = baseType.replace('_count', '');
+      
+      const labelText = t([
+        `common.fields.${withCount}`,
+        withCount,
+        `common.fields.${withoutCount}`,
+        withoutCount
+      ], { 
+        defaultValue: withoutCount 
+      });
+      // === ОНОВЛЕНИЙ БЛОК ПЕРЕКЛАДУ ЗАКІНЧУЄТЬСЯ ТУТ ===
       
       marker.bindTooltip(`<strong>${labelText}</strong>`, { 
         direction: 'top', 

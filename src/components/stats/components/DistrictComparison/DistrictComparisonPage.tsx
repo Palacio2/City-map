@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { FaArrowLeft, FaFilePdf } from 'react-icons/fa';
+import { FaArrowLeft, FaFilePdf, FaTimes } from 'react-icons/fa';
 import { fetchDistrictsByIds } from '@api/districtsApi'; 
 import LocationSelectorModal, { DistrictSelection } from '../PopularDistricts/LocationSelectorModal';
 import ComparisonTable from './ComparisonTable';
@@ -55,7 +55,7 @@ export default function DistrictComparisonPage() {
         const sorted = selectedDistricts.map(sd => transformed.find(td => td.id === sd.id)).filter(Boolean) as TransformedDistrict[];
         setDisplayDistricts(sorted);
       } catch (error) {
-        console.error('Failed to load comparison districts', error);
+        console.error(error);
       } finally {
         setIsLoadingData(false);
       }
@@ -77,6 +77,10 @@ export default function DistrictComparisonPage() {
     }, 500);
   };
 
+  const handleClearSelection = () => {
+    setSelectedDistricts([]);
+  };
+
   return (
     <div className="flex flex-col w-full max-w-[1440px] mx-auto px-4 md:px-6 xl:px-8 py-6 md:py-8 box-border min-h-[calc(100vh-var(--header-height))] animate-fadeIn">
       <div className="mb-6 flex items-center justify-between">
@@ -88,12 +92,22 @@ export default function DistrictComparisonPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <div>
           <h1 className="m-0 font-heading text-2xl md:text-3xl font-bold text-textMain">{t('stats.comparison.title')}</h1>
-          <p className="m-0 mt-2 text-[0.95rem] text-textSecondary">
-            {t('stats.comparison.subtitle')}
-          </p>
+          <div className="flex items-center gap-4 mt-2">
+            <p className="m-0 text-[0.95rem] text-textSecondary">
+              {t('stats.comparison.subtitle')}
+            </p>
+          </div>
         </div>
         
-        <div className="flex gap-3">
+        <div className="flex items-center gap-4">
+          {selectedDistricts.length > 0 && (
+            <button 
+              className="bg-transparent border-none text-danger text-[0.9rem] font-semibold cursor-pointer transition-colors hover:text-danger/70 flex items-center gap-1.5 p-0" 
+              onClick={handleClearSelection}
+            >
+              <FaTimes /> {t('stats.actions.clear_selection')}
+            </button>
+          )}
           <button className="ui-button-outline !py-2.5 flex items-center gap-2" onClick={() => setIsModalOpen(true)}>
             {t('stats.comparison.change_districts')}
           </button>

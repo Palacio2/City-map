@@ -1,7 +1,8 @@
-// src/utils/mapHelpers.jsx
-import { useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
+import { renderToString } from 'react-dom/server';
+import * as FaIcons from 'react-icons/fa';
 
 export const COLORS = [
     '#3b82f6', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6', 
@@ -15,7 +16,6 @@ export const assignColorsToFeatures = (validData) => {
         coloredData.forEach(cd => {
             const b1 = d.geojson?.bbox;
             const b2 = cd.geojson?.bbox;
-            // Перевірка перетину bboxes для призначення різних кольорів сусідам
             if (b1 && b2 && !(b2[0] > b1[2] || b2[2] < b1[0] || b2[1] > b1[3] || b2[3] < b1[1])) {
                 usedColors.add(cd.fillColor);
             }
@@ -62,7 +62,6 @@ export const normalizePoiData = (rawPoi) => {
 
     let flatPois = [];
 
-    // Обробка FeatureCollection або масиву Features
     if (Array.isArray(poi)) {
         if (poi.length > 0 && poi[0].type === 'Feature') {
             poi.forEach(f => {
@@ -81,7 +80,6 @@ export const normalizePoiData = (rawPoi) => {
                 }
             });
         } else {
-            // Формат { "school": [[lat, lng], ...], "park": [...] }
             Object.keys(poi).forEach(type => {
                 const points = poi[type];
                 if (Array.isArray(points)) {
@@ -108,7 +106,6 @@ export const normalizePoiData = (rawPoi) => {
 
         if (isNaN(lat) || isNaN(lng) || !type) return null;
         
-        // Авто-корекція переплутаних координат (якщо lng/lat поміняні місцями для Європи)
         if ((lat > 14 && lat < 40 && lng > 44 && lng < 55)) {
             const temp = lat; lat = lng; lng = temp;
         }
@@ -117,25 +114,46 @@ export const normalizePoiData = (rawPoi) => {
 };
 
 export const createEmojiIcon = (key, source, fieldsConfig, size = 28, dbIconMap = null) => {
-    let emoji = dbIconMap?.[key]?.icon;
+    let iconValue = dbIconMap?.[key]?.icon;
     
-    if (!emoji && fieldsConfig) {
-        // Пошук іконки в конфігурації (обробляємо як масив так і об'єкт)
+    // ВИПРАВЛЕНИЙ ПОШУК: Ігноруємо _count щоб завжди знаходити правильну іконку в базі
+    if (!iconValue && fieldsConfig) {
         const cleanKey = key.replace('_count', '');
         const field = Array.isArray(fieldsConfig) 
-            ? fieldsConfig.find(f => f.key === cleanKey || f.field_code === cleanKey)
-            : fieldsConfig[cleanKey];
-        emoji = field?.icon;
+            ? fieldsConfig.find(f => {
+                const fKeyClean = (f.key || f.field_code || '').replace('_count', '');
+                return fKeyClean === cleanKey;
+            })
+            : fieldsConfig[cleanKey] || fieldsConfig[`${cleanKey}_count`];
+            
+        iconValue = field?.icon;
     }
     
-    emoji = emoji || '📍';
+    // Якщо іконки немає навіть в базі, ставимо запасну пінеску
+    iconValue = iconValue || '📍';
     
-    const borderColor = source === 'manual' ? '#3b82f6' : '#9ca3af';
+    // Автоматично підбираємо колір для рамки маркера на основі його типу
+    const getCategoryColor = (str) => {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) hash += str.charCodeAt(i);
+        return COLORS[hash % COLORS.length];
+    };
+
+    const uniqueColor = getCategoryColor(key);
+    const borderColor = source === 'manual' ? '#3b82f6' : uniqueColor;
     const bgColor = source === 'manual' ? '#dbeafe' : '#ffffff';
-    const fontSize = size > 28 ? 18 : 14;
+    const fontSize = size > 28 ? 16 : 14;
+    
+    let htmlContent = iconValue;
+
+    // ПІДТРИМКА FONT AWESOME: Якщо в базі написано "FaSchool", малюємо векторну іконку
+    if (typeof iconValue === 'string' && iconValue.startsWith('Fa') && FaIcons[iconValue]) {
+        const IconComponent = FaIcons[iconValue];
+        htmlContent = renderToString(<IconComponent style={{ color: uniqueColor, width: '100%', height: '100%' }} />);
+    }
     
     return L.divIcon({
-        html: `<div style="display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:50%;border:2px solid ${borderColor};background-color:${bgColor};box-shadow:0 2px 4px rgba(0,0,0,0.1);font-size:${fontSize}px; z-index: 1000;">${emoji}</div>`,
+        html: `<div style="display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:50%;border:2px solid ${borderColor};background-color:${bgColor};box-shadow:0 2px 4px rgba(0,0,0,0.1);font-size:${fontSize}px; z-index: 1000; padding: ${iconValue.startsWith('Fa') ? '4px' : '0'};">${htmlContent}</div>`,
         className: 'custom-emoji-marker',
         iconSize: [size, size],
         iconAnchor: [size / 2, size / 2],

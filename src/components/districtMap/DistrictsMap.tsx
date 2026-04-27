@@ -93,13 +93,15 @@ interface DistrictsMapProps {
   onDistrictClick: (district: TransformedDistrict, categoryKey?: string | null) => void;
   selectedFilters?: Record<string, any>;
   totalCount?: number;
+  originalTotal?: number; // <--- ДОДАНО ПРОПС ДЛЯ РЕАЛЬНОЇ КІЛЬКОСТІ
 }
 
 export default function DistrictsMap({ 
   districts, 
   onDistrictClick, 
   selectedFilters = {},
-  totalCount
+  totalCount,
+  originalTotal
 }: DistrictsMapProps) {
   const { t } = useTranslation('db');
   const { country, city } = useParams();
@@ -117,8 +119,10 @@ export default function DistrictsMap({
   const totalPages = Math.ceil(districts.length / itemsPerPage);
   const hasActiveFilters = Object.keys(selectedFilters).length > 0;
 
-  const shownCount = districts.length;
-  const realTotal = totalCount || shownCount;
+  // РОЗУМНА МАТЕМАТИКА ДЛЯ ВІДОБРАЖЕННЯ ЦИФР
+  const shownCount = districts.length; // Скільки бачить юзер на екрані (напр. 5 для безкоштовного)
+  const filteredTotal = totalCount || shownCount; // Скільки всього підійшло під фільтри (напр. 19)
+  const dbTotal = originalTotal || filteredTotal; // Скільки їх всього в базі міста (напр. 29)
 
   useEffect(() => {
     if (currentPage > 1 && mapContainerRef.current) {
@@ -137,11 +141,13 @@ export default function DistrictsMap({
         <div className="flex justify-center flex-wrap gap-2">
           {districts.length > 0 && (
             <span className="bg-hover py-1 px-3 rounded-full text-[0.8rem] md:text-[0.85rem] text-textSecondary border border-borderClient font-medium">
-              {t('district.status.stats_shown', { shown: shownCount, total: realTotal })}
+              {/* Показуємо "19 з 29" */}
+              {t('district.status.stats_shown', { shown: filteredTotal, total: dbTotal })}
               
-              {isFree && realTotal > shownCount && (
+              {/* Рахуємо скільки відфільтрованих районів приховано для безкоштовного юзера */}
+              {isFree && filteredTotal > shownCount && (
                   <span className="ml-1.5 opacity-70 text-[0.9em]">
-                    ({t('district.premium.hidden_title', { count: realTotal - shownCount })})
+                    ({t('district.premium.hidden_title', { count: filteredTotal - shownCount })})
                   </span>
               )}
             </span>

@@ -163,25 +163,49 @@ export const saveResults = async (req, res) => {
 
             const { geojson, poi_data, ...rest } = row;
             
+            // 1. Зберігаємо гео-дані і ПЕРЕВІРЯЄМО на помилки
             if (geojson !== undefined || poi_data !== undefined) {
                 const geoUpdate = { district_id: currentDistrictId };
                 if (geojson !== undefined) geoUpdate.geojson = geojson;
                 if (poi_data !== undefined) geoUpdate.poi_data = poi_data;
-                await supabase.from('district_geo_data').upsert(geoUpdate, { onConflict: 'district_id' });
+                
+                const { error: geoErr } = await supabase.from('district_geo_data').upsert(geoUpdate, { onConflict: 'district_id' });
+                if (geoErr) throw new Error(`Помилка запису Гео-даних: ${geoErr.message}`);
             }
 
+            // 2. Готуємо метрики (цифри)
             const filterData = { district_id: currentDistrictId, last_updated: now, data_updated_at: now };
             Object.keys(rest).forEach(k => { 
-                if (rest[k] != null && !ignoreFields.includes(k)) filterData[k] = rest[k]; 
+                if (rest[k] != null && !ignoreFields.includes(k)) {
+                    let val = rest[k];
+
+                    // БРОНЕБІЙНІСТЬ: Якщо це число у вигляді рядка, перетворюємо на число
+                    if (typeof val === 'string' && !isNaN(Number(val)) && val.trim() !== '') {
+                        val = Number(val);
+                    }
+
+                    // БРОНЕБІЙНІСТЬ: Якщо це дріб, округлюємо до цілого (щоб integer у базі не ламався)
+                    if (typeof val === 'number' && !Number.isInteger(val)) {
+                        val = Math.round(val);
+                    }
+
+                    filterData[k] = val;
+                }
             });
             filterPayloads.push(filterData);
         }
 
+        // 3. Зберігаємо метрики і ПЕРЕВІРЯЄМО на помилки
         if (filterPayloads.length) {
-            await supabase.from('district_filter_data').upsert(filterPayloads, { onConflict: 'district_id' });
+            const { error: filterErr } = await supabase.from('district_filter_data').upsert(filterPayloads, { onConflict: 'district_id' });
+            if (filterErr) throw new Error(`Помилка запису метрик: ${filterErr.message}`);
         }
+        
         res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) { 
+        console.error("[DB SAVE ERROR]", e.message);
+        res.status(500).json({ error: e.message }); 
+    }
 };
 
 export const getDashboardStats = async (req, res) => {

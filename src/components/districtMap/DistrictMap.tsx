@@ -55,6 +55,7 @@ export default function DistrictMap() {
   }, [allDistricts, selectedFilters, config]);
 
   const totalCount = allFilteredDistricts.length;
+  const originalTotal = allDistricts.length; // <--- ОСЬ ТУТ БЕРЕМО РЕАЛЬНУ КІЛЬКІСТЬ З БД
 
   const districtsToDisplay = useMemo(() => {
     if (isFree) {
@@ -104,6 +105,7 @@ export default function DistrictMap() {
         key={listKey}
         districts={districtsToDisplay as TransformedDistrict[]}
         totalCount={totalCount}
+        originalTotal={originalTotal} // <--- І ПЕРЕДАЄМО ЇЇ У КОМПОНЕНТ КАРТИ
         onDistrictClick={handleDistrictClick}
         selectedFilters={selectedFilters}
       />

@@ -43,7 +43,8 @@ export const runUniversalParser = async (config, logger) => {
             osm: sourceResults.osm?.[d.id] || {},
             gus: sourceResults.gus || {},
             api: sourceResults.api?.[d.id] || {},
-            scraper: sourceResults.scraper?.[d.id] || {}
+            scraper: sourceResults.scraper?.[d.id] || {},
+            otodom: sourceResults.scraper?.[d.id] || {}
         };
 
         // ВИПРАВЛЕНО ТУТ: Тепер ми не губимо poi_data!

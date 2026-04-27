@@ -144,7 +144,7 @@ export default function FieldsManager() {
         { 
             header: t('admin_fields.modal.source_type'), 
             render: (row) => (
-                <Badge variant={row.source_type === 'osm' ? 'success' : 'primary'}>
+                <Badge variant={row.source_type === 'osm' ? 'success' : row.source_type === 'gus' ? 'warning' : 'primary'}>
                     {row.source_type.toUpperCase()}
                 </Badge>
             )
@@ -240,8 +240,9 @@ export default function FieldsManager() {
                         <FormGroup label={t('admin_fields.modal.source_type')} className="mb-0">
                             <Select name="source_type" value={formData.source_type} onChange={handleInputChange}>
                                 <option value="osm">OSM PBF</option>
-                                <option value="scraper">Scraper</option>
-                                <option value="api">External API</option>
+                                <option value="scraper">Scraper (Нерухомість)</option>
+                                <option value="api">External API (WAQI)</option>
+                                <option value="gus">GUS (Макроекономіка)</option>
                                 <option value="manual">Manual</option>
                             </Select>
                         </FormGroup>

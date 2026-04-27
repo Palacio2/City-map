@@ -10,7 +10,7 @@ export const getValue = (obj: any, path: string): any => {
 };
 
 export const getCurrencyInfo = (countryName?: string | null): CurrencyInfo => {
-  if (!countryName) return { code: 'UAH', locale: 'uk-UA', symbol: '₴' };
+  if (!countryName) return { code: 'PLN', locale: 'pl-PL', symbol: 'zł' };
   const normalized = countryName.toLowerCase().trim();
   
   if (['pl', 'poland', 'polska', 'польща'].some(k => normalized.includes(k))) {
@@ -29,13 +29,13 @@ export const getCurrencyInfo = (countryName?: string | null): CurrencyInfo => {
 export const formatNumber = (value: any): string => {
   const num = Number.parseFloat(String(value));
   if (Number.isNaN(num)) return String(value || '');
-  return new Intl.NumberFormat('uk-UA').format(num);
+  return new Intl.NumberFormat('pl-PL').format(num);
 };
 
 export const formatPrice = (value: any, info?: CurrencyInfo): string => {
   const num = Number.parseFloat(String(value));
   if (Number.isNaN(num)) return String(value || '');
-  const currency = info || { code: 'UAH', locale: 'uk-UA', symbol: '₴' };
+  const currency = info || { code: 'PLN', locale: 'pl-PL', symbol: 'zł' };
   return new Intl.NumberFormat(currency.locale, {
     style: 'currency',
     currency: currency.code,

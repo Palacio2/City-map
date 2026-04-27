@@ -29,8 +29,7 @@ interface RowDef {
 }
 
 const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[] => {
-  // Використовуємо common.categories для уніфікації назв інфраструктури
-  const catName = t(`common.categories.${catKey}`);
+  const catName = t([`common.categories.${catKey}`, catKey], { defaultValue: catKey });
   const catHeader: RowDef = {
     type: 'header',
     title: catName,
@@ -38,25 +37,38 @@ const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[
   };
 
   const ratingRow: RowDef = {
-    label: t('stats.comparison.rating'),
+    label: t(['stats.comparison.rating', 'rating'], { defaultValue: 'Rating' }),
     key: `filterData.${catKey}.rating`,
     format: (val) => <FormattedRating value={val} />
   };
 
-  const fieldRows: RowDef[] = categoryConfig.fields.map((f: any) => ({
-    label: t(`common.fields.${f.key}`),
-    key: `filterData.${catKey}.fields.${f.key}.value`,
-    format: (val: any) => {
-      if (val === null || val === undefined) return '-';
-      if (f.type === 'boolean') {
-          if (typeof val === 'number') return formatNumber(val);
-          return val ? t('common.status.yes') : t('common.status.no');
+  const fieldRows: RowDef[] = categoryConfig.fields.map((f: any) => {
+    const baseKey = f.key || '';
+    const withCount = baseKey.endsWith('_count') ? baseKey : `${baseKey}_count`;
+    const withoutCount = baseKey.replace('_count', '');
+
+    return {
+      label: t([
+        `common.fields.${baseKey}`,
+        baseKey,
+        `common.fields.${withCount}`,
+        withCount,
+        `common.fields.${withoutCount}`,
+        withoutCount
+      ], { defaultValue: withoutCount }),
+      key: `filterData.${catKey}.fields.${f.key}.value`,
+      format: (val: any) => {
+        if (val === null || val === undefined) return '-';
+        if (f.type === 'boolean') {
+            if (typeof val === 'number') return formatNumber(val);
+            return val ? t('common.status.yes') : t('common.status.no');
+        }
+        if (f.type === 'price') return formatPrice(val);
+        if (f.type === 'number' || f.type === 'numeric') return formatNumber(val);
+        return safeStringify(val);
       }
-      if (f.type === 'price') return formatPrice(val);
-      if (f.type === 'number' || f.type === 'numeric') return formatNumber(val);
-      return safeStringify(val);
-    }
-  }));
+    };
+  });
 
   return [catHeader, ratingRow, ...fieldRows];
 };
@@ -74,17 +86,17 @@ export default function ComparisonTable({ districts, config }: ComparisonTablePr
     
     const baseRows: RowDef[] = [
       {
-        label: t('common.fields.propertyPricePerSqm'),
+        label: t(['common.fields.propertyPricePerSqm', 'propertyPricePerSqm'], { defaultValue: 'propertyPricePerSqm' }),
         key: 'filterData.general.propertyPrice',
         format: (val) => formatPrice(val as string | number | null)
       },
       {
-        label: t('common.fields.average_rent_price'),
+        label: t(['common.fields.average_rent_price', 'average_rent_price'], { defaultValue: 'average_rent_price' }),
         key: 'filterData.general.average_rent_price',
         format: (val) => formatPrice(val as string | number | null)
       },
       {
-        label: t('common.fields.population'),
+        label: t(['common.fields.population', 'population'], { defaultValue: 'population' }),
         key: 'filterData.general.population',
         format: (val) => formatNumber(val as string | number | null)
       },
