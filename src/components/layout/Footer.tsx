@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
@@ -7,7 +6,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-[#0f1014] text-white/70 pt-20 pb-8 mt-auto overflow-hidden border-t border-white/10">
+    <footer className="relative bg-slate-950 text-white/70 pt-20 pb-8 mt-auto overflow-hidden border-t border-white/10">
       <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-full h-1/2 bg-gradient-to-t from-[var(--accent-color)]/10 to-transparent pointer-events-none opacity-50" />
 
       <div className="max-w-[1440px] mx-auto px-6 lg:px-8 relative z-10">

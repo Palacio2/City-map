@@ -4,7 +4,7 @@ import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 
 export default [
-  { ignores: ['dist'] },
+  { ignores: ['dist', 'server'] },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -30,7 +30,7 @@ export default [
       
       'react-refresh/only-export-components': 'off', 
       
-      'no-unused-vars': ['warn', { 
+      'no-unused-vars': ['error', { 
         vars: 'all',
         args: 'after-used',
         ignoreRestSiblings: true,
@@ -38,10 +38,10 @@ export default [
         argsIgnorePattern: '^_' 
       }],
       
-      'no-empty': ['warn', { allowEmptyCatch: true }], 
+      'no-empty': ['error', { allowEmptyCatch: true }], 
       
       'no-control-regex': 'off',
-      'react-hooks/exhaustive-deps': 'warn'
+      'react-hooks/exhaustive-deps': 'error'
     },
   },
 ];

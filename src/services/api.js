@@ -50,7 +50,7 @@ export const api = {
         signIn: async (credentials) => await supabase.auth.signInWithPassword(credentials),
         signOut: async () => await supabase.auth.signOut(),
         getAdminProfile: async (userId) => {
-            const { data, error } = await supabase.from('admin_profiles').select('role, assigned_cities').eq('user_id', userId).single();
+            const { data, error } = await supabase.from('admin_profiles').select('role, assigned_cities, allowed_tabs').eq('user_id', userId).single();
             if (error && error.code !== 'PGRST116') throw error;
             return data;
         },

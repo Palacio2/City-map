@@ -1,134 +1,35 @@
-import { useState, useEffect, useRef, FormEvent } from 'react';
 import { HiOutlineLightBulb, HiX, HiCamera, HiTrash, HiOutlineGift } from 'react-icons/hi';
-import { useMutation } from '@tanstack/react-query';
-import { supabase } from '@supabaseClient';
-import { useAuth } from '@/components/auth/AuthContext';
-import { contactsAPI } from '@api/contactsAPI';
-import { useTranslation } from 'react-i18next';
-import { useUserConsent } from '@hooks/useUserConsent';
-import { useScreenshot } from '@hooks/useScreenshot';
+import { useFeedbackWidget } from './hooks/useFeedbackWidget';
+import type { FeedbackType } from './types';
 
 export default function FeedbackWidget() {
-  const { t } = useTranslation('db');
-  const { session } = useAuth();
-  const { showRodoModal } = useUserConsent();
-  const { isCapturing, screenshotFile, screenshotPreview, captureScreen, removeScreenshot } = useScreenshot();
-  
-  const [isOpen, setIsOpen] = useState(false);
-  const [isClosing, setIsClosing] = useState(false);
-  const [showHint, setShowHint] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [errorMsg, setErrorMsg] = useState('');
-  
-  const widgetRef = useRef<HTMLDivElement>(null);
-
-  const [formData, setFormData] = useState({
-    type: 'data_error',
-    message: ''
-  });
-
-  const submitMutation = useMutation({
-    mutationFn: async () => {
-      let uploadedScreenshotUrl = null;
-
-      if (screenshotFile) {
-        const fileName = `feedback_${Date.now()}.jpg`;
-        const { error: uploadError } = await supabase.storage
-          .from('feedback_images')
-          .upload(fileName, screenshotFile);
-
-        if (!uploadError) {
-          const { data: publicUrlData } = supabase.storage
-            .from('feedback_images')
-            .getPublicUrl(fileName);
-          uploadedScreenshotUrl = publicUrlData.publicUrl;
-        }
-      }
-
-      const payload = {
-        email: session?.user?.email,
-        message: formData.message,
-        type: formData.type,
-        user_id: session?.user?.id,
-        page_url: globalThis.location.href,
-        screenshot_url: uploadedScreenshotUrl,
-        screen_size: `${globalThis.innerWidth}x${globalThis.innerHeight}`,
-        browser_info: navigator.userAgent
-      };
-
-      return contactsAPI.submitFeedback(payload);
-    },
-    onSuccess: () => {
-      setSent(true);
-      setErrorMsg('');
-      setTimeout(() => {
-        closeWithAnimation();
-        setTimeout(() => {
-          setSent(false);
-          setFormData({ type: 'data_error', message: '' });
-          removeScreenshot();
-        }, 300);
-      }, 3000);
-    },
-    onError: () => {
-      setErrorMsg(t('feedback.errors.submit_failed'));
-    }
-  });
-
-  useEffect(() => {
-    if (showRodoModal) return;
-    const hintShown = sessionStorage.getItem('feedback_hint_shown');
-    if (!hintShown) {
-      const timer = setTimeout(() => {
-        setShowHint(true);
-        sessionStorage.setItem('feedback_hint_shown', 'true');
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
-  }, [showRodoModal]);
-
-  const closeWithAnimation = () => {
-    setIsClosing(true);
-    setTimeout(() => {
-      setIsOpen(false);
-      setIsClosing(false);
-      setShowHint(false);
-      setErrorMsg('');
-    }, 250); 
-  };
-
-  const toggleModal = () => {
-    if (isOpen) {
-      closeWithAnimation();
-    } else {
-      setIsOpen(true);
-      setShowHint(false);
-    }
-  };
-
-  const handleCapture = async () => {
-    try {
-      setErrorMsg('');
-      await captureScreen(widgetRef as React.RefObject<any>);
-    } catch (error) {
-      setErrorMsg(t('feedback.errors.screenshot_failed'));
-    }
-  };
-
-  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!formData.message.trim() && !screenshotFile) {
-      setErrorMsg(t('feedback.errors.description_required'));
-      return;
-    }
-    setErrorMsg('');
-    submitMutation.mutate();
-  };
+  const {
+    session,
+    showRodoModal,
+    isOpen,
+    isClosing,
+    showHint,
+    sent,
+    errorMsg,
+    widgetRef,
+    formData,
+    isCapturing,
+    screenshotPreview,
+    isPending,
+    setShowHint,
+    toggleModal,
+    handleCapture,
+    handleSubmit,
+    removeScreenshot,
+    updateType,
+    updateMessage,
+    t
+  } = useFeedbackWidget();
 
   if (!session || showRodoModal) return null;
 
   return (
-    <div 
+    <div
       ref={widgetRef}
       className="fixed z-[1000] flex flex-col items-end gap-4 pointer-events-none"
       style={{
@@ -143,7 +44,8 @@ export default function FeedbackWidget() {
             <strong className="text-textMain font-heading">{t('feedback.hint.title')}</strong>
             <span className="leading-tight">{t('feedback.hint.subtitle')}</span>
           </div>
-          <button 
+          <button
+            type="button"
             className="absolute top-3 right-3 text-textSecondary hover:text-textMain transition-colors"
             onClick={() => setShowHint(false)}
             aria-label={t('feedback.actions.close')}
@@ -158,7 +60,8 @@ export default function FeedbackWidget() {
           ui-glass-panel pointer-events-auto w-[min(calc(100vw-40px),380px)] overflow-hidden shadow-2xl origin-bottom-right transition-all duration-250 ease-[cubic-bezier(0.4,0,0.2,1)]
           ${isClosing ? 'opacity-0 scale-90 translate-y-4' : 'opacity-100 scale-100 translate-y-0'}
         `}>
-          <button 
+          <button
+            type="button"
             onClick={toggleModal}
             className="absolute top-4 right-4 w-8 h-8 rounded-full bg-surface border border-borderClient flex items-center justify-center text-textSecondary hover:text-danger hover:border-danger transition-colors z-10 shadow-sm"
             aria-label={t('feedback.actions.close')}
@@ -178,8 +81,7 @@ export default function FeedbackWidget() {
               <p className="text-sm text-textSecondary">{t('feedback.modal.success_desc')}</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5" noValidate>
-              
+            <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-5">
               {errorMsg && (
                 <div className="bg-danger/10 text-danger border border-danger/20 p-3 rounded-lg text-sm font-medium text-center">
                   {errorMsg}
@@ -188,14 +90,11 @@ export default function FeedbackWidget() {
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-textMain">{t('feedback.fields.type_label')}</label>
-                <select 
-                  value={formData.type} 
-                  onChange={e => {
-                    setFormData({...formData, type: e.target.value});
-                    setErrorMsg('');
-                  }}
+                <select
+                  value={formData.type}
+                  onChange={e => updateType(e.target.value as FeedbackType)}
                   className="ui-input py-3 text-sm focus:ring-2 focus:ring-accent/20 outline-none"
-                  disabled={submitMutation.isPending}
+                  disabled={isPending}
                 >
                   <option value="critical">{t('feedback.types.critical')}</option>
                   <option value="data_error">{t('feedback.types.data_error')}</option>
@@ -206,24 +105,21 @@ export default function FeedbackWidget() {
 
               <div className="flex flex-col gap-2">
                 <label className="text-sm font-semibold text-textMain">{t('feedback.fields.description_label')}</label>
-                <textarea 
+                <textarea
                   placeholder={t('feedback.fields.description_placeholder')}
                   value={formData.message}
-                  onChange={e => {
-                    setFormData({...formData, message: e.target.value});
-                    setErrorMsg('');
-                  }}
+                  onChange={e => updateMessage(e.target.value)}
                   className="ui-input py-3 text-sm h-[120px] resize-none focus:ring-2 focus:ring-accent/20 outline-none"
-                  disabled={submitMutation.isPending}
+                  disabled={isPending}
                 />
               </div>
 
               <div className="w-full">
                 {!screenshotPreview ? (
-                  <button 
-                    type="button" 
-                    onClick={handleCapture} 
-                    disabled={isCapturing || submitMutation.isPending} 
+                  <button
+                    type="button"
+                    onClick={handleCapture}
+                    disabled={isCapturing || isPending}
                     className="w-full flex items-center justify-center gap-2 p-3.5 rounded-xl border-2 border-dashed border-borderClient text-textSecondary font-medium hover:border-accent hover:text-accent hover:bg-accent/5 transition-all disabled:opacity-50"
                   >
                     <HiCamera className="text-xl" />
@@ -232,10 +128,10 @@ export default function FeedbackWidget() {
                 ) : (
                   <div className="relative w-full h-[140px] rounded-xl overflow-hidden border border-borderClient shadow-sm group">
                     <img src={screenshotPreview} alt={t('feedback.alt.screenshot')} className="w-full h-full object-cover object-top transition-transform duration-500 group-hover:scale-105" />
-                    <button 
-                      type="button" 
-                      onClick={removeScreenshot} 
-                      disabled={submitMutation.isPending}
+                    <button
+                      type="button"
+                      onClick={removeScreenshot}
+                      disabled={isPending}
                       className="absolute top-2 right-2 bg-red-500/90 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold flex items-center gap-1.5 shadow-lg transition-all active:scale-95 disabled:opacity-50"
                     >
                       <HiTrash size={16} /> {t('feedback.actions.remove')}
@@ -244,13 +140,13 @@ export default function FeedbackWidget() {
                 )}
               </div>
 
-              <button 
-                type="submit" 
-                disabled={submitMutation.isPending} 
+              <button
+                type="submit"
+                disabled={isPending}
                 className="w-full bg-[#0f1014] text-white font-bold py-3.5 rounded-xl mt-2 hover:bg-accent hover:-translate-y-0.5 active:translate-y-0 transition-all shadow-md disabled:opacity-70 disabled:hover:transform-none flex items-center justify-center"
               >
-                {submitMutation.isPending ? (
-                  <div className="w-5 h-5 border-2 border-surface/30 border-t-surface rounded-full animate-spin"></div>
+                {isPending ? (
+                  <div className="w-5 h-5 border-2 border-surface/30 border-t-surface rounded-full animate-spin" />
                 ) : (
                   t('feedback.actions.submit')
                 )}
@@ -261,7 +157,8 @@ export default function FeedbackWidget() {
       )}
 
       {!isOpen && !isClosing && (
-        <button 
+        <button
+          type="button"
           className="w-14 h-14 rounded-full flex items-center justify-center text-3xl transition-all duration-300 shadow-xl border border-white/10 shrink-0 bg-textMain text-surface hover:-translate-y-1 hover:scale-105 hover:bg-accent hover:shadow-accent/30 pointer-events-auto active:scale-90"
           onClick={toggleModal}
           aria-label={t('feedback.actions.open')}

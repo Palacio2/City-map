@@ -1,8 +1,10 @@
-import puppeteer from 'puppeteer-extra';
+import puppeteerCore from 'puppeteer';
+import { addExtra } from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { createClient } from "@supabase/supabase-js";
 import 'dotenv/config';
 
+const puppeteer = addExtra(puppeteerCore);
 const supabase = createClient(
     process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
     process.env.SUPABASE_SERVICE_ROLE_KEY

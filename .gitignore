@@ -143,5 +143,8 @@ server/pending-results.json
 # Кеш локального Vercel CLI (якщо колись встановиш)
 .vercel/
 
-
-
+# Додаткові файли розробника
+.env.local
+.eslintcache
+supabase/.temp/
+scratch/

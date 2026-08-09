@@ -1,0 +1,55 @@
+{
+  "output": {
+    "filePath": "city-maps-context.xml",
+    "style": "xml",
+    "headerText": "Project context for city-maps-client (Vite + React 18 + TanStack Query v5 + Leaflet + Supabase)",
+    "topFilesFirst": true,
+    "showLineNumbers": false,
+    "removeComments": true,
+    "removeEmptyLines": true
+  },
+  "include": [
+    "src/pages/admin/**/*",
+    "eslint.config.js",
+    "index.html",
+    "jsconfig.json",
+    "package.json",
+    "postcss.config.js",
+    "README.md",
+    "tailwind.config.js",
+    "tsconfig.json",
+    "tsconfig.node.json",
+    "vercel.json",
+    "vite.config.ts",
+    "vitest.setup.js"
+  ],
+  "ignore": {
+    "customPatterns": [
+      "src/components/stats/**",
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/build/**",
+      "**/.git/**",
+      "**/package-lock.json",
+      "**/yarn.lock",
+      "**/pnpm-lock.yaml",
+      "**/*.png",
+      "**/*.jpg",
+      "**/*.jpeg",
+      "**/*.svg",
+      "**/*.ico",
+      "**/*.webp",
+      "**/*.pdf",
+      "**/*.ttf",
+      "**/*.woff",
+      "**/*.woff2",
+      "**/*.spec.ts",
+      "**/*.test.ts",
+      "**/*.spec.tsx",
+      "**/*.test.tsx",
+      "**/vite-env.d.ts",
+      "city-maps-context.xml",
+      "repomix-output.xml"
+    ]
+  }
+}

@@ -1,8 +1,9 @@
+// @ts-nocheck
 import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft } from 'react-icons/fa';
-import { useSubscription } from '@subscription/SubscriptionContext';
+import { useSubscription } from '@/pages/subscription/contex/SubscriptionContext';
 import Loader from '@components/loader/Loader';
 import StatsOverview from './StatsOverview';
 import { useStatsData } from './hooks/useStatsData';

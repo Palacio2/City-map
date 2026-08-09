@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate, useLocation, useSearchParams } from 'react-router-dom';
 import { FaCheckCircle, FaReceipt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
-import { useSubscription } from '@subscription/SubscriptionContext';
+import { useSubscription } from '../subscription/contex/SubscriptionContext';
+import { useFormat } from '@hooks/useFormat';
+import type { PaymentLocationState } from './types';
 
 export default function PaymentSuccess() {
   const navigate = useNavigate();
@@ -10,32 +12,35 @@ export default function PaymentSuccess() {
   const [searchParams] = useSearchParams();
   const { updateSubscription } = useSubscription();
   const { t } = useTranslation('db');
+  const { formatPrice, getCurrencyInfo } = useFormat();
 
   const paymentIntent = searchParams.get('payment_intent');
   const setupIntent = searchParams.get('setup_intent');
   const realTxId = paymentIntent || setupIntent;
+  
+  const locationState = location.state as PaymentLocationState;
+  const amount = locationState?.amount ?? (setupIntent ? 0 : undefined);
+  const txId = realTxId || `TX-${Date.now().toString().slice(-8)}`;
+  
+  const date = new Date().toLocaleDateString('uk-UA', { 
+    day: '2-digit', 
+    month: '2-digit', 
+    year: 'numeric', 
+    hour: '2-digit', 
+    minute: '2-digit' 
+  });
 
-  const formatEuro = (amount: number | undefined | null) => {
-    if (amount === undefined || amount === null) return '';
-    return new Intl.NumberFormat('uk-UA', { style: 'currency', currency: 'EUR' }).format(amount);
-  };
-
-  const [displayData] = useState(() => ({
-    amount: (location.state as any)?.amount ?? (setupIntent ? 0 : undefined),
-    txId: realTxId || `TX-${Date.now().toString().slice(-8)}`,
-    date: new Date().toLocaleDateString('uk-UA', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
-  }));
+  const currencyInfo = getCurrencyInfo('EU');
 
   useEffect(() => {
-    updateSubscription(); 
+    updateSubscription();
   }, [updateSubscription]);
 
   return (
     <div className="min-h-[100dvh] bg-body px-4 py-24 flex flex-col items-center justify-center animate-fadeIn">
       <div className="w-full max-w-[540px] ui-glass-panel p-8 md:p-12 text-center relative overflow-hidden flex flex-col items-center shadow-2xl border-success/30">
-        
         <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-success to-emerald-400" />
-
+        
         <div className="mb-8">
            <div className="w-24 h-24 rounded-full bg-success/10 border border-success/20 flex items-center justify-center text-success text-5xl mx-auto mb-6 shadow-[0_0_30px_rgba(46,204,113,0.15)] relative">
               <FaCheckCircle className="drop-shadow-lg" />
@@ -67,27 +72,30 @@ export default function PaymentSuccess() {
             
             <div className="flex justify-between items-center text-sm">
                 <span className="text-textSecondary font-medium">{t('payment.success.labels.date')}</span>
-                <span className="font-semibold text-textMain">{displayData.date}</span>
+                <span className="font-semibold text-textMain">{date}</span>
             </div>
-
-            {displayData.amount !== undefined && (
+            
+            {amount !== undefined && (
                 <div className="flex justify-between items-center text-sm">
                     <span className="text-textSecondary font-medium">{t('payment.success.labels.amount')}</span>
-                    <span className="font-bold text-accent font-heading text-base">{formatEuro(displayData.amount)}</span>
+                    <span className="font-bold text-accent font-heading text-base">
+                      {formatPrice(amount, currencyInfo)}
+                    </span>
                 </div>
             )}
             
             <div className="flex justify-between items-center text-sm pt-4 border-t border-borderClient/50">
                 <span className="text-textSecondary font-medium">{t('payment.success.labels.tx_id')}</span>
-                <span className="font-mono text-textSecondary text-xs bg-body px-2 py-1 rounded border border-borderClient truncate max-w-[150px] sm:max-w-[200px]" title={displayData.txId}>
-                  {displayData.txId}
+                <span className="font-mono text-textSecondary text-xs bg-body px-2 py-1 rounded border border-borderClient truncate max-w-[150px] sm:max-w-[200px]" title={txId}>
+                  {txId}
                 </span>
             </div>
           </div>
         </div>
 
-        <button 
-          onClick={() => navigate('/')} 
+        <button
+          type="button"
+          onClick={() => navigate('/')}
           className="w-full py-4 bg-gradient-to-br from-accent to-accent-hover text-white rounded-xl font-heading text-base font-bold uppercase tracking-widest cursor-pointer transition-all hover:-translate-y-0.5 hover:shadow-lg shadow-md"
         >
             {t('payment.success.actions.to_map')}

@@ -2,12 +2,12 @@ import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaMapMarkerAlt, FaHome, FaClock } from 'react-icons/fa';
 import LocationSelectorModal from './LocationSelectorModal';
-import DistrictDetailsModal from '@components/districtMap/DistrictDetailsModal'; 
+import DistrictDetailsModal from '@pages/districtMap/components/DistrictDetailsModal'; 
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import { transformDistrictsForDisplay, TransformedDistrict } from '@utils/dataTransformers';
 import { formatPrice, getCurrencyInfo } from '@utils/formatters';
 import { useFiltersConfig } from '@hooks/useFiltersConfig';
-import { useSubscription } from '@subscription/SubscriptionContext';
+import { useSubscription } from '@/pages/subscription/contex/SubscriptionContext';
 
 interface SelectedLocation {
   country: string;

@@ -2,7 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FaBookmark, FaKey, FaHome, FaArrowRight, FaTrash, FaChevronLeft, FaChevronRight, FaPlus, FaClock } from 'react-icons/fa';
-import { fetchTrackedDistrictsWithStats, removeTrackedDistrict, addTrackedDistrict } from '@api/trackedDistrictsApi';
+import { fetchTrackedDistrictsWithStats, removeTrackedDistrict, addTrackedDistrict } from '@stats/api/trackedDistrictsApi';
 import { formatPrice, getCurrencyInfo } from '@utils/formatters'; // Виправлено: додано getCurrencyInfo
 import LocationSelectorModal, { DistrictSelection } from '../PopularDistricts/LocationSelectorModal';
 import ConfirmationModal from './ConfirmationModal';

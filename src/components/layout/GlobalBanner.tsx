@@ -1,52 +1,7 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../../supabaseClient';
-
-interface BannerData {
-  message: string;
-  type: string;
-  is_active: boolean;
-}
+import { useGlobalBanner } from './hooks/useGlobalBanner';
 
 export default function GlobalBanner() {
-  const [banner, setBanner] = useState<BannerData | null>(null);
-
-  useEffect(() => {
-    let isMounted = true;
-
-    const fetchBanner = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('global_notifications')
-          .select('*')
-          .eq('is_active', true)
-          .maybeSingle();
-
-        if (isMounted) {
-          if (!error && data) {
-            setBanner(data as BannerData);
-          } else {
-            setBanner(null);
-          }
-        }
-      } catch (err) {
-        console.warn('Failed to fetch global banner:', err);
-      }
-    };
-
-    fetchBanner();
-
-    const channel = supabase
-      .channel('public:global_notifications')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'global_notifications' }, () => {
-        fetchBanner();
-      })
-      .subscribe();
-
-    return () => {
-      isMounted = false;
-      supabase.removeChannel(channel);
-    };
-  }, []);
+  const { banner } = useGlobalBanner();
 
   if (!banner) return null;
 
