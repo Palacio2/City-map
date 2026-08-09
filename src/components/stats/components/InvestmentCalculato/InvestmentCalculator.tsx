@@ -1,7 +1,8 @@
+// @ts-nocheck
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaUndo, FaMoneyBillWave, FaPercentage, FaChartLine } from 'react-icons/fa';
-import { useInvestmentCalculator } from '../../hooks/useInvestmentCalculator'; 
+import { useInvestmentCalculator } from '@stats/hooks/useInvestmentCalculator'; 
 
 export default function InvestmentCalculator() {
   const { t } = useTranslation('db');

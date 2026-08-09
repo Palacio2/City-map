@@ -1,7 +1,9 @@
-import puppeteer from 'puppeteer-extra';
+import puppeteerCore from 'puppeteer';
+import { addExtra } from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 import { PARSER_CONFIG } from '../config/parserConfig.js';
 
+const puppeteer = addExtra(puppeteerCore);
 puppeteer.use(StealthPlugin());
 
 export async function launchBrowser() {

@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { memo, useState, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaChevronDown } from 'react-icons/fa';

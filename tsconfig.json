@@ -1,42 +1,49 @@
 {
   "compilerOptions": {
-    "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "skipLibCheck": true,
-
-    /* Bundler mode */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
     "jsx": "react-jsx",
-
-    /* Linting */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "allowJs": true,
-
-    /* Шляхи */
+    "ignoreDeprecations": "6.0",
     "baseUrl": ".",
+    
+    "types": ["vite/client"],
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
-      "@ui/*": ["src/ui/*"],
-      "@api/*": ["src/components/api/*"],
-      "@utils/*": ["src/utils/*"],
-      "@config/*": ["src/config/*"],
+      "@api/*": ["src/shared/api/*"],
+      "@seo/*": ["src/seo/*"],
+      "@layout/*": ["src/components/layout/*"],
+      "@header/*": ["src/components/header/*"],
+      "@footer/*": ["src/components/footer/*"],
+      "@auth/*": ["src/pages/auth/*"],
+      "@ui/*": ["src/shared/ui/*"],
       "@pages/*": ["src/pages/*"],
-      "@supabaseClient": ["src/supabaseClient.ts"],
-      "@hooks/*": ["src/hooks/*"],
+      "@hooks/*": ["src/shared/hooks/*"],
+      "@supabaseClient": ["src/supabaseClient"],
       "@subscription/*": ["src/pages/subscription/*"],
+      "@profile/*": ["src/pages/profile/*"],
+      "@utils/*": ["src/shared/utils/*"],
+      "@shared/*": ["src/shared/*"],
+      "@modals/*": ["src/components/modals/*"],
+      "@config/*": ["src/config/*"],
       "@cityCountrySelect/*": ["src/components/cityCountrySelect/*"],
-      "@filtersPanel/*": ["src/components/filtersPanel/*"]
+      "@filtersPanel/*": ["src/components/filtersPanel/*"],
+      "@districtMap/*": ["src/pages/districtMap/*"],
+      "@stats/*": ["src/components/stats/*"]
     }
   },
-  "include": ["src", "vite.config.ts", "src/vite-env.d.ts"],
+  "include": ["src"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

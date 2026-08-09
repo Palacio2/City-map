@@ -6,6 +6,31 @@ import { useTranslation } from 'react-i18next';
 import { FaExclamationTriangle, FaSyncAlt } from 'react-icons/fa';
 import './index.css';
 import './i18n/i18n';
+import * as Sentry from '@sentry/react';
+
+if (import.meta.env.MODE === 'production') {
+  Sentry.init({
+    dsn: import.meta.env.VITE_SENTRY_DSN || "",
+    integrations: [
+      Sentry.browserTracingIntegration(),
+      Sentry.replayIntegration(),
+    ],
+    tracesSampleRate: 1.0,
+    replaysSessionSampleRate: 0.1,
+    replaysOnErrorSampleRate: 1.0,
+  });
+}
+
+if (import.meta.env.MODE === 'production') {
+  console.log(
+    '%cЗУПИНИСЯ!',
+    'color: red; font-size: 50px; font-weight: bold; text-shadow: 2px 2px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;'
+  );
+  console.log(
+    '%cЦя функція браузера призначена для розробників. Якщо хтось сказав вам скопіювати-вставити сюди код, це шахрайство, яке дасть їм доступ до вашого акаунту!',
+    'font-size: 18px; font-weight: bold; color: #333;'
+  );
+}
 
 const GlobalErrorFallback: React.FC = () => {
   const { t } = useTranslation('db');

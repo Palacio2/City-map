@@ -19,3 +19,14 @@ export interface DistrictCategory {
 }
 
 export type DynamicDistrictConfig = Record<string, DistrictCategory>;
+
+export const STATS_CONFIG: ReadonlyArray<readonly [string, string]> = [
+  ['economics', '💰'],
+  ['education', '🎓'],
+  ['medicine', '🏥'],
+  ['commerce', '🛍️'],
+  ['culture_leisure', '🎭'],
+  ['sports', '⚽'],
+  ['transport', '🚌'],
+  ['security', '🛡️'],
+] as const;

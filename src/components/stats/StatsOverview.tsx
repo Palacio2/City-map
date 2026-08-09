@@ -2,8 +2,9 @@ import React, { useState, useCallback, ReactNode } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaChevronDown, FaChartBar, FaMapMarkerAlt, FaHistory, FaBookmark, FaCalculator } from 'react-icons/fa';
-import { useSubscription } from '@subscription/SubscriptionContext';
+import { useSubscription } from '@/pages/subscription/contex/SubscriptionContext';
 import StatsCards from './components/StatsCards/StatsCards';
+import { RequireSubscription } from '@/shared/components/guards';
 import WeeklyChart from './components/WeeklyChart/WeeklyChart';
 import PopularDistricts from './components/PopularDistricts/PopularDistricts';
 import TrackedDistricts from './components/TrackedDistricts/TrackedDistricts';
@@ -110,7 +111,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
         />
       </div>
 
-      {isRealtor && (
+      <RequireSubscription allowedPlans={['realtor']} showLockFallback={true}>
         <CollapsibleSection 
           id="investment_calculator"
           title={t('stats.sections.investment_calculator')}
@@ -120,9 +121,9 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
         >
           <InvestmentCalculator />
         </CollapsibleSection>
-      )}
+      </RequireSubscription>
 
-      {isRealtor && (
+      <RequireSubscription allowedPlans={['realtor']} showLockFallback={true}>
         <CollapsibleSection 
           id="saved_districts"
           title={t('stats.sections.saved_districts')} 
@@ -132,7 +133,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
         >
           <TrackedDistricts districts={trackedDistricts || []} />
         </CollapsibleSection>
-      )}
+      </RequireSubscription>
 
       <CollapsibleSection 
         id="weekly_activity"
@@ -144,7 +145,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
         <WeeklyChart data={weeklyActivity || []} />
       </CollapsibleSection>
 
-      {isRealtor && (
+      <RequireSubscription allowedPlans={['realtor']} showLockFallback={true}>
         <CollapsibleSection 
           id="popular_districts"
           title={t('stats.sections.popular_districts')} 
@@ -154,7 +155,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
         >
           <PopularDistricts /> 
         </CollapsibleSection>
-      )}
+      </RequireSubscription>
 
       <CollapsibleSection 
         id="last_activity"

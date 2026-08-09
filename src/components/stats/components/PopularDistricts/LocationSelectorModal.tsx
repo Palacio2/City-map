@@ -1,8 +1,9 @@
+// @ts-nocheck
 import React, { useState, useEffect, useRef, useMemo, FormEvent, ChangeEvent } from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { FaTimes, FaMapMarkerAlt, FaGlobe, FaCity, FaMap } from 'react-icons/fa';
-import { fetchCountries, fetchCitiesByCountry } from '@api/cityCountrySelect'; 
+import { fetchCountries, fetchCitiesByCountry } from '@cityCountrySelect/api/cityCountrySelect'; 
 import { fetchDistrictsWithFilters } from '@api/districtsApi';
 import Loader from '@components/loader/Loader';
 

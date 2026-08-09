@@ -1,10 +1,8 @@
 import { createClient } from '@supabase/supabase-js';
+import { env } from '@config/env';
+import type { Database } from '@shared/types/database.types';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
+export const supabase = createClient<Database>(env.VITE_SUPABASE_URL, env.VITE_SUPABASE_ANON_KEY);
 export const auth = supabase.auth;
 
 export const getCurrentSession = async () => {

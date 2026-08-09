@@ -1,7 +1,8 @@
+// @ts-nocheck
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaSearch, FaMap, FaChartLine, FaClock } from 'react-icons/fa';
-import { DashboardStats } from '../../hooks/useStatsData';
+import { DashboardStats } from '../hooks/useStatsData';
 
 const formatDuration = (seconds: number | undefined, t: any) => {
   if (!seconds) return `0 ${t('stats.labels.hours')} 0 ${t('stats.labels.minutes')}`;

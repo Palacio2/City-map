@@ -1,7 +1,7 @@
 import { useState, useCallback, useEffect, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useSubscription } from '@subscription/SubscriptionContext';
+import { useSubscription } from '@/pages/subscription/contex/SubscriptionContext';
 import GenericCategoryFilter from './GenericCategoryFilter'; 
 import { FaFilter, FaChevronDown, FaSpinner } from 'react-icons/fa';
 import { Filters, FilterValue } from './filterLogic';

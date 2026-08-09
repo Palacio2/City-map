@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useEffect, useState, useMemo, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useState, useMemo } from 'react';
+import type { ReactNode } from 'react';
 
 export type Theme = 'light' | 'dark';
 
@@ -13,7 +14,7 @@ interface ThemeProviderProps {
   readonly children: ReactNode;
 }
 
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
+export const ThemeProvider = ({ children }: ThemeProviderProps) => {
   const [theme, setTheme] = useState<Theme>(() => {
     return (localStorage.getItem('theme') as Theme) || 'light';
   });
