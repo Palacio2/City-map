@@ -12,7 +12,7 @@ import { useActionGuard } from '@admin/core/context/useActionGuard';
 import { useModals } from '@admin/core/context/ModalContext';
 import { Entity } from './types';
 
-const EMPTY_ARRAY: any[] = [];
+const EMPTY_ARRAY: Entity[] = [];
 
 interface SidebarListProps {
     title: string;
@@ -221,31 +221,24 @@ export default function ManualSidebar({ selectedCountry, setSelectedCountry, sel
                 onSuccess: () => {
                     if (type === 'country') { 
                         queryClient.invalidateQueries({ queryKey: ['countries'] }); 
-                        setSelectedCountry((prev: Entity | null) => prev?.id === item.id ? null : prev);
-                        setSelectedCity((prev: Entity | null) => prev?.country_id === item.id || !prev ? null : prev); 
-                        
-                        setSelectedCountry((prev: Entity | null) => {
-                            if (prev?.id === item.id) {
-                                setSelectedCity(null);
-                                setSelectedDistrict(null);
-                                return null;
-                            }
-                            return prev;
-                        });
+                        if (selectedCountry?.id === item.id) {
+                            setSelectedCountry(null);
+                            setSelectedCity(null);
+                            setSelectedDistrict(null);
+                        }
                     }
                     if (type === 'city') { 
                         queryClient.invalidateQueries({ queryKey: ['cities'] }); 
-                        setSelectedCity((prev: Entity | null) => {
-                            if (prev?.id === item.id) {
-                                setSelectedDistrict(null);
-                                return null;
-                            }
-                            return prev;
-                        });
+                        if (selectedCity?.id === item.id) {
+                            setSelectedCity(null);
+                            setSelectedDistrict(null);
+                        }
                     }
                     if (type === 'district') { 
                         queryClient.invalidateQueries({ queryKey: ['districts'] }); 
-                        setSelectedDistrict((prev: Entity | null) => prev?.id === item.id ? null : prev); 
+                        if (selectedDistrict?.id === item.id) {
+                            setSelectedDistrict(null);
+                        }
                     }
                 }
             }),
