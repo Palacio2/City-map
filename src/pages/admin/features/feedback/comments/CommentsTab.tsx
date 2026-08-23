@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { FaTrash, FaEye, FaEyeSlash, FaStar, FaUserCircle, FaComments, FaSyncAlt } from 'react-icons/fa';
 import DataTable, { Column } from '@admin/core/ui/DataTable';
 import { Badge } from '@admin/core/ui/Badge';
+import { CustomSelect } from '@admin/core/ui/CustomSelect';
 import { DistrictComment } from '@/components/stats/api/commentsApi';
 import { useComments } from '@admin/features/feedback/comments/useComments';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
@@ -135,28 +136,30 @@ export default function CommentsTab() {
         </div>
         
         <div className="flex items-center gap-2 w-full lg:w-auto flex-wrap">
-          <select
-            value={selectedCity}
-            onChange={(e) => setSelectedCity(e.target.value)}
-            className="h-10 text-xs bg-surface border border-border rounded-xl px-3 text-textMain font-semibold focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all shadow-sm"
-          >
-            <option value="">{t('admin_comments.tab.all_cities')}</option>
-            {cities.map((c: { id: string; name: string }) => (
-              <option key={c.id} value={c.id}>{c.name}</option>
-            ))}
-          </select>
+          <div className="w-48">
+            <CustomSelect
+              value={selectedCity}
+              onChange={(val) => setSelectedCity(String(val))}
+              options={[
+                { value: '', label: t('admin_comments.tab.all_cities') },
+                ...cities.map((c: { id: string; name: string }) => ({ value: c.id, label: c.name }))
+              ]}
+              placeholder={t('admin_comments.tab.all_cities')}
+            />
+          </div>
           
-          <select
-            value={selectedDistrict}
-            onChange={(e) => setSelectedDistrict(e.target.value)}
-            disabled={!selectedCity || districtsLoading}
-            className="h-10 text-xs bg-surface border border-border rounded-xl px-3 text-textMain font-semibold focus:border-primary focus:ring-1 focus:ring-primary/20 outline-none transition-all disabled:opacity-50 shadow-sm"
-          >
-            <option value="">{t('admin_comments.tab.all_districts')}</option>
-            {districts.map((d: { id: string; name: string }) => (
-              <option key={d.id} value={d.id}>{d.name}</option>
-            ))}
-          </select>
+          <div className="w-48">
+            <CustomSelect
+              value={selectedDistrict}
+              onChange={(val) => setSelectedDistrict(String(val))}
+              disabled={!selectedCity || districtsLoading}
+              options={[
+                { value: '', label: t('admin_comments.tab.all_districts') },
+                ...districts.map((d: { id: string; name: string }) => ({ value: d.id, label: d.name }))
+              ]}
+              placeholder={t('admin_comments.tab.all_districts')}
+            />
+          </div>
           
           <Button
             variant="cancel"

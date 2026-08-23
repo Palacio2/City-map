@@ -8,19 +8,31 @@ import { api } from '@services/api';
 import { adminUsersAPI } from '@admin/features/users/adminUsersAPI';
 import { useActionLogger } from '@admin/core/context/useActionLogger';
 
+import { useActionGuard } from '@admin/core/context/useActionGuard';
+
+import { useAdmin } from '@admin/core/context/AdminContext';
+
 export const useComments = () => {
     const { t } = useTranslation('db');
     const { showConfirm, showAlert } = useModals();
     const { withLogging } = useActionLogger();
+    const { currentAdmin } = useAdmin();
+    const { isSuperAdmin } = useActionGuard();
+    const adminCityIds = useMemo(() => currentAdmin?.cities || [], [currentAdmin?.cities]);
     const queryClient = useQueryClient();
 
     const [selectedCity, setSelectedCity] = useState<string>('');
     const [selectedDistrict, setSelectedDistrict] = useState<string>('');
 
-    const { data: cities = [] } = useQuery<{id: string, name: string}[]>({
+    const { data: citiesData = [] } = useQuery<{id: string, name: string}[]>({
         queryKey: ['citiesList'],
         queryFn: () => api.geo.getAllCities()
     });
+
+    const cities = useMemo(() => {
+        if (isSuperAdmin) return citiesData;
+        return citiesData.filter(c => adminCityIds.includes(c.id));
+    }, [citiesData, isSuperAdmin, adminCityIds]);
 
     const { data: districts = [], isLoading: districtsLoading } = useQuery<{id: string, name: string}[]>({
         queryKey: ['districtsList', selectedCity],
@@ -79,7 +91,19 @@ export const useComments = () => {
     };
 
     const filteredComments = useMemo(() => {
-        const safeComments = comments || [];
+        let safeComments = comments || [];
+        
+        // 1. Filter out comments from cities the user does not have access to
+        if (!isSuperAdmin) {
+            safeComments = safeComments.filter(c => {
+                // Now comments have `districts` object with `city_id` from our updated Edge Function join
+                const commentWithDistrict = c as DistrictComment & { districts?: { city_id: string } };
+                const cityId = commentWithDistrict.districts?.city_id;
+                return cityId && adminCityIds.includes(cityId);
+            });
+        }
+
+        // 2. Filter by dropdown selection
         if (!selectedCity && !selectedDistrict) return safeComments;
         if (selectedDistrict) return safeComments.filter((c) => c.district_id === selectedDistrict);
         if (selectedCity && districts.length > 0) {
@@ -87,7 +111,7 @@ export const useComments = () => {
             return safeComments.filter((c) => validDistrictIds.has(c.district_id));
         }
         return safeComments;
-    }, [comments, selectedCity, selectedDistrict, districts]);
+    }, [comments, selectedCity, selectedDistrict, districts, isSuperAdmin, adminCityIds]);
 
     return {
         comments: filteredComments,
