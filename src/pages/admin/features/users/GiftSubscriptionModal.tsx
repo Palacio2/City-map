@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FaGift, FaCrown, FaUserShield } from 'react-icons/fa';
+import { FaGift, FaCrown, FaUserShield, FaTrash } from 'react-icons/fa';
 import BaseModal from '@admin/core/ui/BaseModal';
 import { Button } from '@admin/core/ui/Button';
 import { Input, FormGroup } from '@admin/core/ui/Input';
@@ -76,7 +76,7 @@ const GiftSubscriptionModal = ({ isOpen, onClose, selectedUser, onGrant, onRevok
         <>
             {onRevoke && (
                 <Button variant="danger" size="sm" onClick={handleRevoke} disabled={loading || revoking} className="mr-auto">
-                    {revoking ? '...' : t('admin_users.gift_modal.revoke', 'Скасувати')}
+                    {revoking ? '...' : <><FaTrash /> {t('admin_users.gift_modal.revoke', 'Анулювати підписку')}</>}
                 </Button>
             )}
             <Button variant="cancel" size="sm" onClick={onClose} disabled={loading || revoking}>

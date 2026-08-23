@@ -116,7 +116,7 @@ export function useUsersManager(_currentAdmin: AdminUser | null | undefined, t: 
                     { onSuccess: () => showAlert(t('common.success'), t('admin_users.confirm.terminate_success'), 'success') }
                 );
             },
-            { confirmText: t('admin_users.confirm.terminate_btn'), confirmVariant: 'warning' }
+            { confirmText: t('admin_users.confirm.terminate_btn'), confirmVariant: 'danger' }
         );
     };
 
