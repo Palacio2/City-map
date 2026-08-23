@@ -1,12 +1,6 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import Stripe from 'npm:stripe@^14.21.0';
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, sentry-trace, baggage',
-};
+import { verifyAdminUser, corsHeaders } from '../_shared/auth.ts';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
   apiVersion: '2023-10-16',
@@ -17,34 +11,22 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) throw new Error('No authorization header');
-
-    const supabaseUserClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
-    );
-
-    const { data: { user }, error: userError } = await supabaseUserClient.auth.getUser();
-    if (userError || !user) throw new Error('Unauthorized');
-
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    const { data: profile } = await supabaseAdmin
-      .from('admin_profiles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single();
-
-    const isSuperAdmin = profile?.role === 'super_admin' || user.app_metadata?.role === 'super_admin';
-    if (!isSuperAdmin) throw new Error('Forbidden: Super Admins only');
+    const { user, supabaseAdmin, isSuperAdmin, hasTab } = await verifyAdminUser(req);
 
     const { action, payload } = await req.json();
     if (!action) throw new Error('Missing action');
+
+    if (action === 'grant_subscription' || action === 'revoke_subscription') {
+      if (!hasTab('users.gift_sub')) {
+        throw new Error('Forbidden: Required gift_sub permission');
+      }
+    } else if (['create_promo', 'list_promos', 'delete_promo'].includes(action)) {
+      if (!hasTab('users.promo_codes')) {
+        throw new Error('Forbidden: Required promo_codes permission');
+      }
+    } else if (!isSuperAdmin) {
+      throw new Error('Forbidden: Super Admins only');
+    }
 
     let result = {};
 
@@ -54,6 +36,13 @@ serve(async (req) => {
       const days = payload.days;
 
       if (!targetUserId) throw new Error('Missing target user ID');
+
+      const { data: targetProfile } = await supabaseAdmin.from("admin_profiles").select("role").eq("user_id", targetUserId).maybeSingle();
+      const targetRole = targetProfile?.role || "user";
+
+      if ((targetRole === "admin" || targetRole === "super_admin") && !isSuperAdmin) {
+        throw new Error("Тільки Super Admin може керувати підписками інших адміністраторів");
+      }
       
       await supabaseAdmin
         .from('user_subscriptions')
@@ -93,6 +82,37 @@ serve(async (req) => {
       });
 
       result = { success: true, message: `Granted ${planName} for ${days} days` };
+    }
+    else if (action === 'revoke_subscription') {
+      const targetUserId = payload.targetUserId || payload.userId || payload.user_id;
+      if (!targetUserId) throw new Error('Missing target user ID');
+
+      const { data: targetProfile } = await supabaseAdmin.from("admin_profiles").select("role").eq("user_id", targetUserId).maybeSingle();
+      const targetRole = targetProfile?.role || "user";
+
+      if ((targetRole === "admin" || targetRole === "super_admin") && !isSuperAdmin) {
+        throw new Error("Тільки Super Admin може керувати підписками інших адміністраторів");
+      }
+
+      await supabaseAdmin
+        .from('user_subscriptions')
+        .update({ status: 'canceled', cancelled_at: new Date().toISOString() })
+        .eq('user_id', targetUserId)
+        .eq('status', 'active');
+
+      await supabaseAdmin.auth.admin.updateUserById(targetUserId, {
+        user_metadata: { plan: 'free' }
+      });
+
+      await supabaseAdmin.from('audit_logs').insert({
+        admin_id: user.id,
+        action: 'REVOKE_SUBSCRIPTION',
+        target_table: 'user_subscriptions',
+        record_id: targetUserId,
+        new_data: { plan: 'free' }
+      });
+
+      result = { success: true, message: `Revoked subscription for user` };
     }
     else if (action === 'create_promo') {
       const { code, percentOff, duration, maxRedemptions } = payload;
