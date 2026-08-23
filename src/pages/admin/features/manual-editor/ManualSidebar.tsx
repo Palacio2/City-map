@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@services/api';
 import EntityModal from '@admin/core/ui/EntityModal';
@@ -11,6 +11,8 @@ import { useAdmin } from '@admin/core/context/AdminContext';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
 import { useModals } from '@admin/core/context/ModalContext';
 import { Entity } from './types';
+
+const EMPTY_ARRAY: any[] = [];
 
 interface SidebarListProps {
     title: string;
@@ -127,14 +129,14 @@ export default function ManualSidebar({ selectedCountry, setSelectedCountry, sel
     const [modal, setModal] = useState({ isOpen: false, type: '', title: '', placeholder: '' });
     const [mapModal, setMapModal] = useState({ isOpen: false, city: null as Entity | null });
 
-    const { data: countriesData = [] } = useQuery({
+    const { data: countriesData = EMPTY_ARRAY } = useQuery({
         queryKey: ['countries'],
         queryFn: () => api.geo.getCountries()
     });
     
     const countries = isSuperAdmin ? countriesData : countriesData.filter((_c: Entity) => adminCityIds.some((cityId: string) => cityId));
 
-    const { data: citiesData = [] } = useQuery({
+    const { data: citiesData = EMPTY_ARRAY } = useQuery({
         queryKey: ['cities', selectedCountry?.id],
         queryFn: () => api.geo.getCities(selectedCountry?.id || ''),
         enabled: !!selectedCountry
@@ -142,36 +144,42 @@ export default function ManualSidebar({ selectedCountry, setSelectedCountry, sel
     
     const cities = isSuperAdmin ? citiesData : citiesData.filter((c: Entity) => adminCityIds.includes(c.id));
 
-    const { data: districts = [] } = useQuery({
+    const { data: districts = EMPTY_ARRAY } = useQuery({
         queryKey: ['districts', selectedCity?.id],
         queryFn: () => api.geo.getDistricts(selectedCity?.id || ''),
         enabled: !!selectedCity
     });
 
+    const initialCountryResolved = useRef(false);
     useEffect(() => {
-        if (initialCountryId && countries.length > 0) {
+        if (!initialCountryResolved.current && initialCountryId && countries.length > 0) {
             const found = countries.find((c: Entity) => c.id === initialCountryId);
             if (found && (!selectedCountry || selectedCountry.name === '...')) {
                 setSelectedCountry(found);
             }
+            initialCountryResolved.current = true;
         }
     }, [countries, initialCountryId, selectedCountry, setSelectedCountry]);
 
+    const initialCityResolved = useRef(false);
     useEffect(() => {
-        if (initialCityId && cities.length > 0) {
+        if (!initialCityResolved.current && initialCityId && cities.length > 0) {
             const found = cities.find((c: Entity) => c.id === initialCityId);
             if (found && (!selectedCity || selectedCity.name === '...')) {
                 setSelectedCity(found);
             }
+            initialCityResolved.current = true;
         }
     }, [cities, initialCityId, selectedCity, setSelectedCity]);
 
+    const initialDistrictResolved = useRef(false);
     useEffect(() => {
-        if (initialDistrictId && districts.length > 0) {
+        if (!initialDistrictResolved.current && initialDistrictId && districts.length > 0) {
             const found = districts.find((d: Entity) => d.id === initialDistrictId);
             if (found && (!selectedDistrict || selectedDistrict.name === '...')) {
                 setSelectedDistrict(found);
             }
+            initialDistrictResolved.current = true;
         }
     }, [districts, initialDistrictId, selectedDistrict, setSelectedDistrict]);
 
@@ -200,31 +208,50 @@ export default function ManualSidebar({ selectedCountry, setSelectedCountry, sel
             if (type === 'city') return api.geo.deleteCity(id);
             if (type === 'district') return api.geo.deleteDistrict(id);
         },
-        onSuccess: (_, { type, id }) => {
-            if (type === 'country') { 
-                queryClient.invalidateQueries({ queryKey: ['countries'] }); 
-                if (selectedCountry?.id === id) {
-                    setSelectedCountry(null);
-                    setSelectedCity(null);
-                    setSelectedDistrict(null);
-                }
-            }
-            if (type === 'city') { 
-                queryClient.invalidateQueries({ queryKey: ['cities'] }); 
-                if (selectedCity?.id === id) {
-                    setSelectedCity(null);
-                    setSelectedDistrict(null);
-                }
-            }
-            if (type === 'district') { 
-                queryClient.invalidateQueries({ queryKey: ['districts'] }); 
-                if (selectedDistrict?.id === id) setSelectedDistrict(null); 
-            }
-        },
         onError: (err: Error) => showAlert(t('common.error'), err.message, 'error')
     });
 
     const filterList = (list: Entity[], search: string) => list.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
+
+    const handleDeleteEntity = (type: string, item: Entity) => {
+        showConfirm(
+            t('admin_manual.sidebar.confirm_delete_title'),
+            t('admin_manual.sidebar.confirm_delete_msg', { name: item?.name }),
+            () => deleteMutation.mutate({ type, id: item.id }, {
+                onSuccess: () => {
+                    if (type === 'country') { 
+                        queryClient.invalidateQueries({ queryKey: ['countries'] }); 
+                        setSelectedCountry((prev: Entity | null) => prev?.id === item.id ? null : prev);
+                        setSelectedCity((prev: Entity | null) => prev?.country_id === item.id || !prev ? null : prev); 
+                        
+                        setSelectedCountry((prev: Entity | null) => {
+                            if (prev?.id === item.id) {
+                                setSelectedCity(null);
+                                setSelectedDistrict(null);
+                                return null;
+                            }
+                            return prev;
+                        });
+                    }
+                    if (type === 'city') { 
+                        queryClient.invalidateQueries({ queryKey: ['cities'] }); 
+                        setSelectedCity((prev: Entity | null) => {
+                            if (prev?.id === item.id) {
+                                setSelectedDistrict(null);
+                                return null;
+                            }
+                            return prev;
+                        });
+                    }
+                    if (type === 'district') { 
+                        queryClient.invalidateQueries({ queryKey: ['districts'] }); 
+                        setSelectedDistrict((prev: Entity | null) => prev?.id === item.id ? null : prev); 
+                    }
+                }
+            }),
+            { confirmVariant: 'danger' }
+        );
+    };
 
     const openModal = (type: string) => {
         const titles: Record<string, string> = {
@@ -235,14 +262,6 @@ export default function ManualSidebar({ selectedCountry, setSelectedCountry, sel
         setModal({ isOpen: true, type, title: titles[type], placeholder: t('admin_manual.entity_modal.placeholder') });
     };
 
-    const handleDeleteEntity = (type: string, item: Entity) => {
-        showConfirm(
-            t('admin_manual.sidebar.confirm_delete_title'),
-            t('admin_manual.sidebar.confirm_delete_msg', { name: item?.name }),
-            () => deleteMutation.mutate({ type, id: item.id }),
-            { confirmVariant: 'danger' }
-        );
-    };
 
     return (
         <div className="flex flex-col gap-3.5">
