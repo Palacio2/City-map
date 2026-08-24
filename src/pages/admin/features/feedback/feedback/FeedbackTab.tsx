@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+﻿import { useMemo, useCallback } from 'react';
 import { FaBug, FaLightbulb, FaEnvelope, FaImage, FaExternalLinkAlt, FaExclamationTriangle, FaTrash, FaComments, FaSyncAlt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import DataTable from '@admin/core/ui/DataTable';
@@ -75,7 +75,7 @@ export default function FeedbackTab() {
             header: t('admin_feedback.tab.col_message'),
             render: (msg: FeedbackMessage) => (
                 <div className="max-w-md flex flex-col gap-2">
-                    <p className="text-xs text-textMain leading-relaxed m-0 p-2.5 bg-main/50 rounded-xl border border-[#d6ccbf] dark:border-[#4a3f37] whitespace-pre-wrap break-words font-medium">
+                    <p className="text-xs text-textMain leading-relaxed m-0 p-2.5 bg-main/50 rounded-xl border border-border whitespace-pre-wrap break-words font-medium">
                         {msg.message}
                     </p>
                     <div className="flex gap-2 flex-wrap items-center">
@@ -85,12 +85,12 @@ export default function FeedbackTab() {
                             </a>
                         )}
                         {msg.page_url && (
-                            <a href={msg.page_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 py-1 px-2.5 bg-surface border border-[#d6ccbf] dark:border-[#4a3f37] text-textMuted rounded-lg text-[11px] font-semibold no-underline hover:text-textMain truncate max-w-[150px]" title={msg.page_url}>
+                            <a href={msg.page_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 py-1 px-2.5 bg-surface border border-border text-textMuted rounded-lg text-[11px] font-semibold no-underline hover:text-textMain truncate max-w-[150px]" title={msg.page_url}>
                                 <FaExternalLinkAlt className="text-[10px]" /> URL
                             </a>
                         )}
                         {msg.screen_size && (
-                            <span className="text-[10px] font-mono font-bold text-textMuted bg-surface border border-[#d6ccbf] dark:border-[#4a3f37] px-2 py-0.5 rounded-md" title={msg.browser_info}>
+                            <span className="text-[10px] font-mono font-bold text-textMuted bg-surface border border-border px-2 py-0.5 rounded-md" title={msg.browser_info}>
                                 {msg.screen_size}
                             </span>
                         )}
@@ -137,7 +137,7 @@ export default function FeedbackTab() {
 
     if (loading) {
         return (
-            <div className="py-16 text-xs text-textMuted font-bold flex flex-col items-center gap-2 bg-surface rounded-2xl border border-[#d6ccbf] dark:border-[#4a3f37]">
+            <div className="py-16 text-xs text-textMuted font-bold flex flex-col items-center gap-2 bg-surface rounded-2xl border border-border">
                 <div className="w-8 h-8 border-3 border-border border-t-primary rounded-full animate-spin" />
                 <div>{t('common.loading')}</div>
             </div>
@@ -146,7 +146,7 @@ export default function FeedbackTab() {
 
     return (
         <div className="flex flex-col gap-6 w-full pb-4 flex-1 h-full">
-            <div className="bg-surface p-5 rounded-2xl border border-[#d6ccbf] dark:border-[#4a3f37] shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+            <div className="bg-surface p-5 rounded-2xl border border-border shadow-xs flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
                 <div className="flex items-center gap-3.5">
                     <div className="w-10 h-10 bg-primary-subtle text-primary rounded-xl border border-primary/20 flex items-center justify-center text-base shadow-2xs">
                         <FaComments />
@@ -162,7 +162,7 @@ export default function FeedbackTab() {
                 </div>
 
                 <div className="flex items-center gap-2.5 self-end sm:self-auto flex-wrap">
-                    <div className="flex gap-1 bg-main p-1 rounded-2xl border border-[#d6ccbf] dark:border-[#4a3f37]">
+                    <div className="flex gap-1 bg-main p-1 rounded-2xl border border-border">
                         <button className={getFilterClass('all')} onClick={() => setFilter('all')}>{t('admin_feedback.tab.filter_all')}</button>
                         <button className={getFilterClass('bug')} onClick={() => setFilter('bug')}>{t('admin_feedback.tab.filter_bugs')}</button>
                         <button className={getFilterClass('suggestion')} onClick={() => setFilter('suggestion')}>{t('admin_feedback.tab.filter_suggestions')}</button>
@@ -170,7 +170,7 @@ export default function FeedbackTab() {
                     </div>
                     <button
                         onClick={() => refetch()}
-                        className="p-2.5 text-textMuted hover:text-textMain bg-surface border border-[#d6ccbf] dark:border-[#4a3f37] rounded-xl transition-colors shadow-2xs cursor-pointer"
+                        className="p-2.5 text-textMuted hover:text-textMain bg-surface border border-border rounded-xl transition-colors shadow-2xs cursor-pointer"
                         title={t('common.refresh')}
                     >
                         <FaSyncAlt className="text-xs" />
@@ -178,7 +178,7 @@ export default function FeedbackTab() {
                 </div>
             </div>
 
-            <div className="bg-surface rounded-2xl border border-[#d6ccbf] dark:border-[#4a3f37] shadow-xs overflow-hidden">
+            <div className="bg-surface rounded-2xl border border-border shadow-xs overflow-hidden">
                 <DataTable
                     columns={columns}
                     data={filteredMessages}

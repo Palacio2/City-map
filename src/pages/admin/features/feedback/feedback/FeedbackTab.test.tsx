@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import React from 'react';
 import FeedbackTab from './FeedbackTab';
 
@@ -20,7 +20,7 @@ vi.mock('@admin/features/feedback/feedback/useFeedback', () => ({
   useFeedback: () => mockUseFeedback()
 }));
 
-// Mock child components to simplify testing
+// Mock child components
 vi.mock('@admin/core/ui/DataTable', () => ({
   default: ({ columns, emptyMessage }: { columns: Record<string, unknown>[], emptyMessage: string }) => (
     <div data-testid="data-table">
@@ -33,6 +33,9 @@ vi.mock('@admin/core/ui/DataTable', () => ({
 }));
 
 describe('FeedbackTab', () => {
+  const mockSetFilter = vi.fn();
+  const mockRefetch = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseActionGuard.mockReturnValue({
@@ -41,11 +44,11 @@ describe('FeedbackTab', () => {
     mockUseFeedback.mockReturnValue({
       loading: false,
       filter: 'all',
-      setFilter: vi.fn(),
-      filteredMessages: [],
+      setFilter: mockSetFilter,
+      filteredMessages: [{ id: '1', message: 'Test message', created_at: new Date().toISOString() }],
       handleDelete: vi.fn(),
       handleStatusChange: vi.fn(),
-      refetch: vi.fn()
+      refetch: mockRefetch
     });
   });
 
@@ -56,5 +59,29 @@ describe('FeedbackTab', () => {
   it('renders the feedback tab correctly', () => {
     renderComponent();
     expect(screen.getByText('admin_feedback.tab.title')).toBeInTheDocument();
+    expect(screen.getByTestId('data-table')).toBeInTheDocument();
+  });
+
+  it('shows loading state when loading is true', () => {
+    mockUseFeedback.mockReturnValueOnce({
+      loading: true,
+      filteredMessages: []
+    });
+    renderComponent();
+    expect(screen.getByText('common.loading')).toBeInTheDocument();
+  });
+
+  it('calls setFilter when filter buttons are clicked', () => {
+    renderComponent();
+    const bugFilter = screen.getByText('admin_feedback.tab.filter_bugs');
+    fireEvent.click(bugFilter);
+    expect(mockSetFilter).toHaveBeenCalledWith('bug');
+  });
+
+  it('calls refetch when refresh button is clicked', () => {
+    renderComponent();
+    const refreshBtn = screen.getByTitle('common.refresh');
+    fireEvent.click(refreshBtn);
+    expect(mockRefetch).toHaveBeenCalled();
   });
 });
