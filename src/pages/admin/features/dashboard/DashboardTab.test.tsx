@@ -29,9 +29,9 @@ vi.mock('@admin/features/dashboard/useDashboard', () => ({
 
 // Mock child components to simplify testing
 vi.mock('@admin/core/ui/DataTable', () => ({
-  default: ({ columns, emptyMessage }: any) => (
+  default: ({ columns, emptyMessage }: { columns: { header: string }[], emptyMessage: string }) => (
     <div data-testid="data-table">
-      {columns.map((col: any) => (
+      {columns.map((col) => (
         <span key={col.header} data-testid={`col-${col.header}`}>{col.header}</span>
       ))}
       <div data-testid="empty-msg">{emptyMessage}</div>
@@ -44,7 +44,7 @@ vi.mock('@admin/core/ui/MiniStatsChart', () => ({
 }));
 
 vi.mock('@admin/core/ui/StatCard', () => ({
-  StatCard: ({ title }: any) => <div data-testid={`stat-card-${title}`} />
+  StatCard: ({ title }: { title: string }) => <div data-testid={`stat-card-${title}`} />
 }));
 
 describe('DashboardTab Logic', () => {
@@ -76,7 +76,7 @@ describe('DashboardTab Logic', () => {
     expect(screen.getByTestId('mini-stats-chart')).toBeInTheDocument();
     
     // Combined table should have edit column
-    const editCols = screen.getAllByTestId('col-');
+    const editCols = screen.getAllByTestId('col-admin_dashboard.tab.col_edit');
     expect(editCols.length).toBe(1);
   });
 
@@ -94,8 +94,8 @@ describe('DashboardTab Logic', () => {
     // Chart should be visible
     expect(screen.getByTestId('mini-stats-chart')).toBeInTheDocument();
     
-    // Edit columns should NOT exist
-    const editCols = screen.queryAllByTestId('col-');
+    // No edit column
+    const editCols = screen.queryAllByTestId('col-admin_dashboard.tab.col_edit');
     expect(editCols.length).toBe(0);
   });
 

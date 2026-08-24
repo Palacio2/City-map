@@ -8,24 +8,47 @@ import {
     FaChartBar,
     FaEdit,
     FaExclamationTriangle,
-    FaFilter
+    FaFilter,
+    FaRocket
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import DataTable from '@admin/core/ui/DataTable';
 import MiniStatsChart from '@admin/core/ui/MiniStatsChart';
 import { StatCard } from '@admin/core/ui/StatCard';
 import { Badge } from '@admin/core/ui/Badge';
+import { Button } from '@admin/core/ui/Button';
 
 import { useActionGuard } from '@admin/core/context/useActionGuard';
+import { useModals } from '@admin/core/context/ModalContext';
 import { useDashboard } from '@admin/features/dashboard/useDashboard';
 import { DistrictRowData } from './types';
 
 export default function DashboardTab() {
     const { t } = useTranslation('db');
     const { canDo } = useActionGuard();
+    const { showAlert } = useModals();
     const { stats, chartData, loading, chartDays, setChartDays } = useDashboard();
     
     const [filterType, setFilterType] = useState<'all' | 'issues' | 'outdated'>('all');
+    const [isDeploying, setIsDeploying] = useState(false);
+
+    const handleDeploy = async () => {
+        const webhookUrl = import.meta.env.VITE_DEPLOY_WEBHOOK_URL;
+        if (!webhookUrl) {
+            showAlert(t('common.warning', 'Попередження'), t('admin_dashboard.deploy.missing_url', 'Webhook URL не налаштовано в оточенні (VITE_DEPLOY_WEBHOOK_URL).'), 'warning');
+            return;
+        }
+        
+        setIsDeploying(true);
+        try {
+            await fetch(webhookUrl, { method: 'POST' });
+            showAlert(t('common.success', 'Успіх'), t('admin_dashboard.deploy.success', 'Зміни успішно відправлені на публікацію! Сайт оновиться через декілька хвилин.'), 'success');
+        } catch {
+            showAlert(t('common.error', 'Помилка'), t('admin_dashboard.deploy.error', 'Помилка при спробі публікації.'), 'error');
+        } finally {
+            setIsDeploying(false);
+        }
+    };
 
     const handleEditDistrict = useCallback((district: DistrictRowData) => {
         localStorage.setItem('admin_active_tab', 'manual');
@@ -122,7 +145,7 @@ export default function DashboardTab() {
 
         if (canEditManual) {
             cols.push({
-                header: '',
+                header: t('admin_dashboard.tab.col_edit'),
                 render: (d: DistrictRowData) => (
                     <div className="flex justify-end">
                         <button
@@ -177,6 +200,23 @@ export default function DashboardTab() {
                             {t('admin_dashboard.tab.subtitle')}
                         </p>
                     </div>
+                </div>
+                
+                <div className="flex items-center gap-2">
+                    <Button 
+                        variant="primary" 
+                        size="sm" 
+                        onClick={handleDeploy}
+                        disabled={isDeploying}
+                        className={isDeploying ? 'opacity-70' : ''}
+                    >
+                        {isDeploying ? (
+                            <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        ) : (
+                            <FaRocket className="text-xs" />
+                        )}
+                        {t('admin_dashboard.deploy.btn', 'Опублікувати зміни')}
+                    </Button>
                 </div>
             </div>
 
