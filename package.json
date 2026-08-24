@@ -9,7 +9,8 @@
     "preview": "vite preview",
     "test": "vitest",
     "pull-translations": "node scripts/pull_translations.mjs",
-    "sync-translations": "node scripts/sync_translations_db.mjs"
+    "sync-translations": "node scripts/sync_translations_db.mjs",
+    "extract-keys": "node src/pages/admin/features/translations/extract-keys.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",

@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
-import { FaLanguage, FaPlus, FaEdit, FaTrash, FaCheckCircle, FaExclamationTriangle, FaSearch } from 'react-icons/fa';
+import { FaLanguage, FaPlus, FaEdit, FaTrash, FaCheckCircle, FaExclamationTriangle, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import DataTable from '@admin/core/ui/DataTable';
 import BaseModal from '@admin/core/ui/BaseModal';
 import { Button } from '@admin/core/ui/Button';
@@ -145,7 +145,7 @@ export default function TranslationsManager() {
                             onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
                             disabled={currentPage === 1}
                         >
-                            {t('common.prev')}
+                            <FaChevronLeft className="text-xs" />
                         </Button>
                         <span className="text-[11px] text-textMuted font-bold">
                             {currentPage} / {totalPages}
@@ -156,7 +156,7 @@ export default function TranslationsManager() {
                             onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
                             disabled={currentPage === totalPages}
                         >
-                            {t('common.next')}
+                            <FaChevronRight className="text-xs" />
                         </Button>
                     </div>
                 )}
