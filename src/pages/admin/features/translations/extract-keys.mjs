@@ -17,7 +17,7 @@ const OUTPUT_FILE = path.join(SRC_PATH, 'extracted_keys.json');
  * Група (match[1]) захоплює системні ключі (літери, цифри, крапки, підкреслення та двокрапки).
  * Він зупиниться перед закриваючими лапками або символами на кшталт + чи ${
  */
-const KEY_REGEX = /t\(['"`]([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9._:]+)*)/g;
+const KEY_REGEX = /(?:^|[^a-zA-Z0-9_$])t\(['"`]([a-zA-Z0-9_]+(?:\.[a-zA-Z0-9._:]+)*)/g;
 
 function getFiles(dir) {
     let results = [];

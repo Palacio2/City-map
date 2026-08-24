@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+﻿import { useMemo, useState, useEffect } from 'react';
 import { FaLanguage, FaPlus, FaEdit, FaTrash, FaCheckCircle, FaExclamationTriangle, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
 import DataTable from '@admin/core/ui/DataTable';
 import BaseModal from '@admin/core/ui/BaseModal';
@@ -262,7 +262,7 @@ export default function TranslationsManager() {
                                     disabled={logic.isLoading}
                                     className="h-7 text-[10px]"
                                 >
-                                    <FaTrash className="text-[10px]" /> {t('admin_translations.audit.delete_unused_btn')}
+                                    <FaTrash className="text-[10px]" /> {t('admin_translations.audit.delete_unused_btn', { count: logic.auditResults.unusedInCode.length })}
                                 </Button>
                             )}
                         </div>
