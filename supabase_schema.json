@@ -202,6 +202,9 @@
             "$ref": "#/parameters/rowFilter.admin_profiles.updated_at"
           },
           {
+            "$ref": "#/parameters/rowFilter.admin_profiles.allowed_tabs"
+          },
+          {
             "$ref": "#/parameters/select"
           },
           {
@@ -280,6 +283,9 @@
             "$ref": "#/parameters/rowFilter.admin_profiles.updated_at"
           },
           {
+            "$ref": "#/parameters/rowFilter.admin_profiles.allowed_tabs"
+          },
+          {
             "$ref": "#/parameters/preferReturn"
           }
         ],
@@ -308,6 +314,9 @@
           },
           {
             "$ref": "#/parameters/rowFilter.admin_profiles.updated_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.admin_profiles.allowed_tabs"
           },
           {
             "$ref": "#/parameters/body.admin_profiles"
@@ -836,743 +845,6 @@
         ]
       }
     },
-    "/DISTRICT_DATA": {
-      "get": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.district_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.is_active"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.data_source"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.created_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.last_updated"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.data_updated_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.population"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.population_density"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_property_price"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_rent_price"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_sale_price_sqm"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_salary"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.unemployment_rate"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.kindergartens_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.schools_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.universities_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.education_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.hospitals_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.clinics_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.pharmacies_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.medicine_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.bus_stops_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.tram_stops_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.metro_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.parking_spots_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.bike_lanes_km"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.bike_rental_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.ev_charging_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.transport_average_distance_m"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.transport_frequency"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.transport_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.police_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.cctv_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.street_lighting_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.crime_level"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.safety_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.gyms_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.outdoor_gyms_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.swimming_pools_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.sports_facilities_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.parks_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.green_spaces_percent"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_park_size_sqm"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.playgrounds_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.cafes_restaurants_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.cinemas_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.theaters_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.museums_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.libraries_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.churches_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.social_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.grocery_stores_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.markets_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.shopping_malls_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.banks_atms_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.post_offices_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.parcel_lockers_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.coworking_spaces_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.beauty_salons_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.pet_stores_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.vet_clinics_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.commerce_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_water_supply"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_heating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_electricity"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_gas_supply"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_waste_removal"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.utilities_cost_per_sqm"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.utilities_quality_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.air_quality"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/order"
-          },
-          {
-            "$ref": "#/parameters/range"
-          },
-          {
-            "$ref": "#/parameters/rangeUnit"
-          },
-          {
-            "$ref": "#/parameters/offset"
-          },
-          {
-            "$ref": "#/parameters/limit"
-          },
-          {
-            "$ref": "#/parameters/preferCount"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/DISTRICT_DATA"
-              },
-              "type": "array"
-            }
-          },
-          "206": {
-            "description": "Partial Content"
-          }
-        },
-        "tags": [
-          "DISTRICT_DATA"
-        ]
-      },
-      "post": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/body.DISTRICT_DATA"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/preferPost"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        },
-        "tags": [
-          "DISTRICT_DATA"
-        ]
-      },
-      "delete": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.district_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.is_active"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.data_source"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.created_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.last_updated"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.data_updated_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.population"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.population_density"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_property_price"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_rent_price"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_sale_price_sqm"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_salary"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.unemployment_rate"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.kindergartens_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.schools_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.universities_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.education_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.hospitals_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.clinics_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.pharmacies_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.medicine_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.bus_stops_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.tram_stops_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.metro_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.parking_spots_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.bike_lanes_km"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.bike_rental_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.ev_charging_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.transport_average_distance_m"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.transport_frequency"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.transport_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.police_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.cctv_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.street_lighting_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.crime_level"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.safety_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.gyms_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.outdoor_gyms_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.swimming_pools_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.sports_facilities_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.parks_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.green_spaces_percent"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_park_size_sqm"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.playgrounds_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.cafes_restaurants_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.cinemas_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.theaters_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.museums_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.libraries_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.churches_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.social_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.grocery_stores_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.markets_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.shopping_malls_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.banks_atms_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.post_offices_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.parcel_lockers_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.coworking_spaces_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.beauty_salons_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.pet_stores_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.vet_clinics_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.commerce_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_water_supply"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_heating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_electricity"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_gas_supply"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_waste_removal"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.utilities_cost_per_sqm"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.utilities_quality_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.air_quality"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "DISTRICT_DATA"
-        ]
-      },
-      "patch": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.district_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.is_active"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.data_source"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.created_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.last_updated"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.data_updated_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.population"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.population_density"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_property_price"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_rent_price"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_sale_price_sqm"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_salary"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.unemployment_rate"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.kindergartens_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.schools_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.universities_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.education_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.hospitals_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.clinics_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.pharmacies_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.medicine_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.bus_stops_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.tram_stops_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.metro_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.parking_spots_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.bike_lanes_km"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.bike_rental_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.ev_charging_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.transport_average_distance_m"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.transport_frequency"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.transport_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.police_stations_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.cctv_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.street_lighting_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.crime_level"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.safety_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.gyms_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.outdoor_gyms_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.swimming_pools_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.sports_facilities_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.parks_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.green_spaces_percent"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.average_park_size_sqm"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.playgrounds_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.cafes_restaurants_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.cinemas_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.theaters_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.museums_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.libraries_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.churches_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.social_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.grocery_stores_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.markets_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.shopping_malls_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.banks_atms_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.post_offices_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.parcel_lockers_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.coworking_spaces_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.beauty_salons_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.pet_stores_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.vet_clinics_count"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.commerce_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_water_supply"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_heating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_electricity"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_gas_supply"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.has_waste_removal"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.utilities_cost_per_sqm"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.utilities_quality_rating"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_DATA.air_quality"
-          },
-          {
-            "$ref": "#/parameters/body.DISTRICT_DATA"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "DISTRICT_DATA"
-        ]
-      }
-    },
     "/user_stats": {
       "get": {
         "parameters": [
@@ -1973,158 +1245,6 @@
         },
         "tags": [
           "user_subscriptions"
-        ]
-      }
-    },
-    "/DISTRICT": {
-      "get": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.name"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.city_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.is_available"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.created_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.updated_at"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/order"
-          },
-          {
-            "$ref": "#/parameters/range"
-          },
-          {
-            "$ref": "#/parameters/rangeUnit"
-          },
-          {
-            "$ref": "#/parameters/offset"
-          },
-          {
-            "$ref": "#/parameters/limit"
-          },
-          {
-            "$ref": "#/parameters/preferCount"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/DISTRICT"
-              },
-              "type": "array"
-            }
-          },
-          "206": {
-            "description": "Partial Content"
-          }
-        },
-        "tags": [
-          "DISTRICT"
-        ]
-      },
-      "post": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/body.DISTRICT"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/preferPost"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        },
-        "tags": [
-          "DISTRICT"
-        ]
-      },
-      "delete": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.name"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.city_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.is_available"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.created_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.updated_at"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "DISTRICT"
-        ]
-      },
-      "patch": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.name"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.city_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.is_available"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.created_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT.updated_at"
-          },
-          {
-            "$ref": "#/parameters/body.DISTRICT"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "DISTRICT"
         ]
       }
     },
@@ -2566,6 +1686,176 @@
         ]
       }
     },
+    "/district_comments": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.district_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.user_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.content"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.rating"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.is_hidden"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.updated_at"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/district_comments"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "district_comments"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.district_comments"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "district_comments"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.district_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.user_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.content"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.rating"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.is_hidden"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.updated_at"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "district_comments"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.district_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.user_id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.content"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.rating"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.is_hidden"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.district_comments.updated_at"
+          },
+          {
+            "$ref": "#/parameters/body.district_comments"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "district_comments"
+        ]
+      }
+    },
     "/favorite_districts": {
       "get": {
         "parameters": [
@@ -3004,6 +2294,203 @@
         ]
       }
     },
+    "/parser_jobs": {
+      "get": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.city_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.progress"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.config"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.error_message"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.started_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.completed_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.results"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.logs"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/order"
+          },
+          {
+            "$ref": "#/parameters/range"
+          },
+          {
+            "$ref": "#/parameters/rangeUnit"
+          },
+          {
+            "$ref": "#/parameters/offset"
+          },
+          {
+            "$ref": "#/parameters/limit"
+          },
+          {
+            "$ref": "#/parameters/preferCount"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/parser_jobs"
+              },
+              "type": "array"
+            }
+          },
+          "206": {
+            "description": "Partial Content"
+          }
+        },
+        "tags": [
+          "parser_jobs"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/body.parser_jobs"
+          },
+          {
+            "$ref": "#/parameters/select"
+          },
+          {
+            "$ref": "#/parameters/preferPost"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created"
+          }
+        },
+        "tags": [
+          "parser_jobs"
+        ]
+      },
+      "delete": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.city_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.progress"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.config"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.error_message"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.started_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.completed_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.results"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.logs"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "parser_jobs"
+        ]
+      },
+      "patch": {
+        "parameters": [
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.id"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.city_name"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.status"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.progress"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.config"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.error_message"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.started_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.completed_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.created_at"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.results"
+          },
+          {
+            "$ref": "#/parameters/rowFilter.parser_jobs.logs"
+          },
+          {
+            "$ref": "#/parameters/body.parser_jobs"
+          },
+          {
+            "$ref": "#/parameters/preferReturn"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "No Content"
+          }
+        },
+        "tags": [
+          "parser_jobs"
+        ]
+      }
+    },
     "/scraper_rules": {
       "get": {
         "parameters": [
@@ -3216,140 +2703,6 @@
         },
         "tags": [
           "scraper_rules"
-        ]
-      }
-    },
-    "/COUNTRY": {
-      "get": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.name"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.is_available"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.created_at"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/order"
-          },
-          {
-            "$ref": "#/parameters/range"
-          },
-          {
-            "$ref": "#/parameters/rangeUnit"
-          },
-          {
-            "$ref": "#/parameters/offset"
-          },
-          {
-            "$ref": "#/parameters/limit"
-          },
-          {
-            "$ref": "#/parameters/preferCount"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/COUNTRY"
-              },
-              "type": "array"
-            }
-          },
-          "206": {
-            "description": "Partial Content"
-          }
-        },
-        "tags": [
-          "COUNTRY"
-        ]
-      },
-      "post": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/body.COUNTRY"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/preferPost"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        },
-        "tags": [
-          "COUNTRY"
-        ]
-      },
-      "delete": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.name"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.is_available"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.created_at"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "COUNTRY"
-        ]
-      },
-      "patch": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.name"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.is_available"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.COUNTRY.created_at"
-          },
-          {
-            "$ref": "#/parameters/body.COUNTRY"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "COUNTRY"
         ]
       }
     },
@@ -3645,167 +2998,6 @@
         },
         "tags": [
           "district_geo_data"
-        ]
-      }
-    },
-    "/DISTRICT_FOTO": {
-      "get": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.district_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.photo_url"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.description"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.is_main"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.created_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.updated_at"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/order"
-          },
-          {
-            "$ref": "#/parameters/range"
-          },
-          {
-            "$ref": "#/parameters/rangeUnit"
-          },
-          {
-            "$ref": "#/parameters/offset"
-          },
-          {
-            "$ref": "#/parameters/limit"
-          },
-          {
-            "$ref": "#/parameters/preferCount"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/DISTRICT_FOTO"
-              },
-              "type": "array"
-            }
-          },
-          "206": {
-            "description": "Partial Content"
-          }
-        },
-        "tags": [
-          "DISTRICT_FOTO"
-        ]
-      },
-      "post": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/body.DISTRICT_FOTO"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/preferPost"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        },
-        "tags": [
-          "DISTRICT_FOTO"
-        ]
-      },
-      "delete": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.district_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.photo_url"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.description"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.is_main"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.created_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.updated_at"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "DISTRICT_FOTO"
-        ]
-      },
-      "patch": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.district_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.photo_url"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.description"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.is_main"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.created_at"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.DISTRICT_FOTO.updated_at"
-          },
-          {
-            "$ref": "#/parameters/body.DISTRICT_FOTO"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "DISTRICT_FOTO"
         ]
       }
     },
@@ -4271,149 +3463,6 @@
         },
         "tags": [
           "user_activity_logs"
-        ]
-      }
-    },
-    "/CITY": {
-      "get": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.CITY.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.name"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.country_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.is_available"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.created_at"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/order"
-          },
-          {
-            "$ref": "#/parameters/range"
-          },
-          {
-            "$ref": "#/parameters/rangeUnit"
-          },
-          {
-            "$ref": "#/parameters/offset"
-          },
-          {
-            "$ref": "#/parameters/limit"
-          },
-          {
-            "$ref": "#/parameters/preferCount"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "items": {
-                "$ref": "#/definitions/CITY"
-              },
-              "type": "array"
-            }
-          },
-          "206": {
-            "description": "Partial Content"
-          }
-        },
-        "tags": [
-          "CITY"
-        ]
-      },
-      "post": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/body.CITY"
-          },
-          {
-            "$ref": "#/parameters/select"
-          },
-          {
-            "$ref": "#/parameters/preferPost"
-          }
-        ],
-        "responses": {
-          "201": {
-            "description": "Created"
-          }
-        },
-        "tags": [
-          "CITY"
-        ]
-      },
-      "delete": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.CITY.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.name"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.country_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.is_available"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.created_at"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "CITY"
-        ]
-      },
-      "patch": {
-        "parameters": [
-          {
-            "$ref": "#/parameters/rowFilter.CITY.id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.name"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.country_id"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.is_available"
-          },
-          {
-            "$ref": "#/parameters/rowFilter.CITY.created_at"
-          },
-          {
-            "$ref": "#/parameters/body.CITY"
-          },
-          {
-            "$ref": "#/parameters/preferReturn"
-          }
-        ],
-        "responses": {
-          "204": {
-            "description": "No Content"
-          }
-        },
-        "tags": [
-          "CITY"
         ]
       }
     },
@@ -5656,6 +4705,51 @@
         ]
       }
     },
+    "/rpc/get_total_users": {
+      "get": {
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) get_total_users"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) get_total_users"
+        ]
+      }
+    },
     "/rpc/check_license_date": {
       "get": {
         "parameters": [
@@ -6272,6 +5366,69 @@
         ]
       }
     },
+    "/rpc/get_district_comments_with_users": {
+      "get": {
+        "parameters": [
+          {
+            "format": "uuid",
+            "in": "query",
+            "name": "p_district_id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) get_district_comments_with_users"
+        ]
+      },
+      "post": {
+        "parameters": [
+          {
+            "in": "body",
+            "name": "args",
+            "required": true,
+            "schema": {
+              "properties": {
+                "p_district_id": {
+                  "format": "uuid",
+                  "type": "string"
+                }
+              },
+              "required": [
+                "p_district_id"
+              ],
+              "type": "object"
+            }
+          },
+          {
+            "$ref": "#/parameters/preferParams"
+          }
+        ],
+        "produces": [
+          "application/json",
+          "application/vnd.pgrst.object+json;nulls=stripped",
+          "application/vnd.pgrst.object+json"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        },
+        "tags": [
+          "(rpc) get_district_comments_with_users"
+        ]
+      }
+    },
     "/rpc/get_top_city_districts": {
       "get": {
         "parameters": [
@@ -6696,6 +5853,13 @@
           "default": "now()",
           "format": "timestamp with time zone",
           "type": "string"
+        },
+        "allowed_tabs": {
+          "format": "text[]",
+          "items": {
+            "type": "string"
+          },
+          "type": "array"
         }
       },
       "type": "object"
@@ -6842,372 +6006,6 @@
       },
       "type": "object"
     },
-    "DISTRICT_DATA": {
-      "required": [
-        "id",
-        "district_id",
-        "is_active",
-        "created_at",
-        "last_updated"
-      ],
-      "properties": {
-        "id": {
-          "default": "gen_random_uuid()",
-          "description": "Note:\nThis is a Primary Key.<pk/>",
-          "format": "uuid",
-          "type": "string"
-        },
-        "district_id": {
-          "description": "Note:\nThis is a Foreign Key to `DISTRICT.id`.<fk table='DISTRICT' column='id'/>",
-          "format": "uuid",
-          "type": "string"
-        },
-        "is_active": {
-          "default": true,
-          "format": "boolean",
-          "type": "boolean"
-        },
-        "data_source": {
-          "format": "text",
-          "type": "string"
-        },
-        "created_at": {
-          "default": "now()",
-          "format": "timestamp with time zone",
-          "type": "string"
-        },
-        "last_updated": {
-          "default": "now()",
-          "format": "timestamp with time zone",
-          "type": "string"
-        },
-        "data_updated_at": {
-          "format": "timestamp with time zone",
-          "type": "string"
-        },
-        "population": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "population_density": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "average_property_price": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "average_rent_price": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "average_sale_price_sqm": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "average_salary": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "unemployment_rate": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "kindergartens_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "schools_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "universities_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "education_rating": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "hospitals_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "clinics_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "pharmacies_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "medicine_rating": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "bus_stops_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "tram_stops_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "metro_stations_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "parking_spots_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "bike_lanes_km": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "bike_rental_stations_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "ev_charging_stations_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "transport_average_distance_m": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "transport_frequency": {
-          "default": "medium",
-          "format": "text",
-          "type": "string"
-        },
-        "transport_rating": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "police_stations_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "cctv_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "street_lighting_rating": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "crime_level": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "safety_rating": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "gyms_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "outdoor_gyms_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "swimming_pools_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "sports_facilities_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "parks_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "green_spaces_percent": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "average_park_size_sqm": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "playgrounds_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "cafes_restaurants_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "cinemas_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "theaters_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "museums_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "libraries_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "churches_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "social_rating": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "grocery_stores_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "markets_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "shopping_malls_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "banks_atms_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "post_offices_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "parcel_lockers_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "coworking_spaces_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "beauty_salons_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "pet_stores_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "vet_clinics_count": {
-          "default": 0,
-          "format": "integer",
-          "type": "integer"
-        },
-        "commerce_rating": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "has_water_supply": {
-          "default": true,
-          "format": "boolean",
-          "type": "boolean"
-        },
-        "has_heating": {
-          "default": true,
-          "format": "boolean",
-          "type": "boolean"
-        },
-        "has_electricity": {
-          "default": true,
-          "format": "boolean",
-          "type": "boolean"
-        },
-        "has_gas_supply": {
-          "default": true,
-          "format": "boolean",
-          "type": "boolean"
-        },
-        "has_waste_removal": {
-          "default": true,
-          "format": "boolean",
-          "type": "boolean"
-        },
-        "utilities_cost_per_sqm": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "utilities_quality_rating": {
-          "default": 0,
-          "format": "numeric",
-          "type": "number"
-        },
-        "air_quality": {
-          "default": "medium",
-          "format": "text",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "user_stats": {
       "required": [
         "id",
@@ -7333,49 +6131,6 @@
       },
       "type": "object"
     },
-    "DISTRICT": {
-      "required": [
-        "id",
-        "name",
-        "city_id",
-        "is_available",
-        "created_at",
-        "updated_at"
-      ],
-      "properties": {
-        "id": {
-          "default": "gen_random_uuid()",
-          "description": "Note:\nThis is a Primary Key.<pk/>",
-          "format": "uuid",
-          "type": "string"
-        },
-        "name": {
-          "format": "text",
-          "type": "string"
-        },
-        "city_id": {
-          "description": "Note:\nThis is a Foreign Key to `CITY.id`.<fk table='CITY' column='id'/>",
-          "format": "uuid",
-          "type": "string"
-        },
-        "is_available": {
-          "default": true,
-          "format": "boolean",
-          "type": "boolean"
-        },
-        "created_at": {
-          "default": "now()",
-          "format": "timestamp with time zone",
-          "type": "string"
-        },
-        "updated_at": {
-          "default": "now()",
-          "format": "timestamp with time zone",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "global_notifications": {
       "required": [
         "id",
@@ -7472,6 +6227,57 @@
         },
         "is_available": {
           "default": true,
+          "format": "boolean",
+          "type": "boolean"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "updated_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "district_comments": {
+      "required": [
+        "id",
+        "district_id",
+        "user_id",
+        "content",
+        "rating"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "district_id": {
+          "description": "Note:\nThis is a Foreign Key to `districts.id`.<fk table='districts' column='id'/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "user_id": {
+          "format": "uuid",
+          "type": "string"
+        },
+        "content": {
+          "format": "text",
+          "type": "string"
+        },
+        "rating": {
+          "default": 5,
+          "format": "integer",
+          "type": "integer"
+        },
+        "is_hidden": {
+          "default": false,
           "format": "boolean",
           "type": "boolean"
         },
@@ -7601,6 +6407,62 @@
       },
       "type": "object"
     },
+    "parser_jobs": {
+      "required": [
+        "id",
+        "city_name",
+        "status"
+      ],
+      "properties": {
+        "id": {
+          "default": "gen_random_uuid()",
+          "description": "Note:\nThis is a Primary Key.<pk/>",
+          "format": "uuid",
+          "type": "string"
+        },
+        "city_name": {
+          "format": "text",
+          "type": "string"
+        },
+        "status": {
+          "default": "pending",
+          "format": "text",
+          "type": "string"
+        },
+        "progress": {
+          "default": 0,
+          "format": "integer",
+          "type": "integer"
+        },
+        "config": {
+          "format": "jsonb"
+        },
+        "error_message": {
+          "format": "text",
+          "type": "string"
+        },
+        "started_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "completed_at": {
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "created_at": {
+          "default": "now()",
+          "format": "timestamp with time zone",
+          "type": "string"
+        },
+        "results": {
+          "format": "jsonb"
+        },
+        "logs": {
+          "format": "jsonb"
+        }
+      },
+      "type": "object"
+    },
     "scraper_rules": {
       "required": [
         "id",
@@ -7674,37 +6536,6 @@
       },
       "type": "object"
     },
-    "COUNTRY": {
-      "required": [
-        "id",
-        "name",
-        "is_available",
-        "created_at"
-      ],
-      "properties": {
-        "id": {
-          "default": "gen_random_uuid()",
-          "description": "Note:\nThis is a Primary Key.<pk/>",
-          "format": "uuid",
-          "type": "string"
-        },
-        "name": {
-          "format": "text",
-          "type": "string"
-        },
-        "is_available": {
-          "default": true,
-          "format": "boolean",
-          "type": "boolean"
-        },
-        "created_at": {
-          "default": "now()",
-          "format": "timestamp with time zone",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
     "cities": {
       "required": [
         "id",
@@ -7766,53 +6597,6 @@
         },
         "poi_data": {
           "format": "jsonb"
-        },
-        "created_at": {
-          "default": "now()",
-          "format": "timestamp with time zone",
-          "type": "string"
-        },
-        "updated_at": {
-          "default": "now()",
-          "format": "timestamp with time zone",
-          "type": "string"
-        }
-      },
-      "type": "object"
-    },
-    "DISTRICT_FOTO": {
-      "required": [
-        "id",
-        "district_id",
-        "photo_url",
-        "is_main",
-        "created_at",
-        "updated_at"
-      ],
-      "properties": {
-        "id": {
-          "default": "gen_random_uuid()",
-          "description": "Note:\nThis is a Primary Key.<pk/>",
-          "format": "uuid",
-          "type": "string"
-        },
-        "district_id": {
-          "description": "Note:\nThis is a Foreign Key to `DISTRICT.id`.<fk table='DISTRICT' column='id'/>",
-          "format": "uuid",
-          "type": "string"
-        },
-        "photo_url": {
-          "format": "text",
-          "type": "string"
-        },
-        "description": {
-          "format": "text",
-          "type": "string"
-        },
-        "is_main": {
-          "default": false,
-          "format": "boolean",
-          "type": "boolean"
         },
         "created_at": {
           "default": "now()",
@@ -7937,43 +6721,6 @@
           "default": 0,
           "format": "integer",
           "type": "integer"
-        }
-      },
-      "type": "object"
-    },
-    "CITY": {
-      "required": [
-        "id",
-        "name",
-        "country_id",
-        "is_available",
-        "created_at"
-      ],
-      "properties": {
-        "id": {
-          "default": "gen_random_uuid()",
-          "description": "Note:\nThis is a Primary Key.<pk/>",
-          "format": "uuid",
-          "type": "string"
-        },
-        "name": {
-          "format": "text",
-          "type": "string"
-        },
-        "country_id": {
-          "description": "Note:\nThis is a Foreign Key to `COUNTRY.id`.<fk table='COUNTRY' column='id'/>",
-          "format": "uuid",
-          "type": "string"
-        },
-        "is_available": {
-          "default": true,
-          "format": "boolean",
-          "type": "boolean"
-        },
-        "created_at": {
-          "default": "now()",
-          "format": "timestamp with time zone",
-          "type": "string"
         }
       },
       "type": "object"
@@ -8671,6 +7418,12 @@
       "in": "query",
       "type": "string"
     },
+    "rowFilter.admin_profiles.allowed_tabs": {
+      "name": "allowed_tabs",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
     "body.contacts_messages": {
       "name": "contacts_messages",
       "description": "contacts_messages",
@@ -8842,441 +7595,6 @@
       "in": "query",
       "type": "string"
     },
-    "body.DISTRICT_DATA": {
-      "name": "DISTRICT_DATA",
-      "description": "DISTRICT_DATA",
-      "required": false,
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/DISTRICT_DATA"
-      }
-    },
-    "rowFilter.DISTRICT_DATA.id": {
-      "name": "id",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.district_id": {
-      "name": "district_id",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.is_active": {
-      "name": "is_active",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.data_source": {
-      "name": "data_source",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.created_at": {
-      "name": "created_at",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.last_updated": {
-      "name": "last_updated",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.data_updated_at": {
-      "name": "data_updated_at",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.population": {
-      "name": "population",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.population_density": {
-      "name": "population_density",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.average_property_price": {
-      "name": "average_property_price",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.average_rent_price": {
-      "name": "average_rent_price",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.average_sale_price_sqm": {
-      "name": "average_sale_price_sqm",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.average_salary": {
-      "name": "average_salary",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.unemployment_rate": {
-      "name": "unemployment_rate",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.kindergartens_count": {
-      "name": "kindergartens_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.schools_count": {
-      "name": "schools_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.universities_count": {
-      "name": "universities_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.education_rating": {
-      "name": "education_rating",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.hospitals_count": {
-      "name": "hospitals_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.clinics_count": {
-      "name": "clinics_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.pharmacies_count": {
-      "name": "pharmacies_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.medicine_rating": {
-      "name": "medicine_rating",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.bus_stops_count": {
-      "name": "bus_stops_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.tram_stops_count": {
-      "name": "tram_stops_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.metro_stations_count": {
-      "name": "metro_stations_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.parking_spots_count": {
-      "name": "parking_spots_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.bike_lanes_km": {
-      "name": "bike_lanes_km",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.bike_rental_stations_count": {
-      "name": "bike_rental_stations_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.ev_charging_stations_count": {
-      "name": "ev_charging_stations_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.transport_average_distance_m": {
-      "name": "transport_average_distance_m",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.transport_frequency": {
-      "name": "transport_frequency",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.transport_rating": {
-      "name": "transport_rating",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.police_stations_count": {
-      "name": "police_stations_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.cctv_count": {
-      "name": "cctv_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.street_lighting_rating": {
-      "name": "street_lighting_rating",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.crime_level": {
-      "name": "crime_level",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.safety_rating": {
-      "name": "safety_rating",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.gyms_count": {
-      "name": "gyms_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.outdoor_gyms_count": {
-      "name": "outdoor_gyms_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.swimming_pools_count": {
-      "name": "swimming_pools_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.sports_facilities_count": {
-      "name": "sports_facilities_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.parks_count": {
-      "name": "parks_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.green_spaces_percent": {
-      "name": "green_spaces_percent",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.average_park_size_sqm": {
-      "name": "average_park_size_sqm",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.playgrounds_count": {
-      "name": "playgrounds_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.cafes_restaurants_count": {
-      "name": "cafes_restaurants_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.cinemas_count": {
-      "name": "cinemas_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.theaters_count": {
-      "name": "theaters_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.museums_count": {
-      "name": "museums_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.libraries_count": {
-      "name": "libraries_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.churches_count": {
-      "name": "churches_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.social_rating": {
-      "name": "social_rating",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.grocery_stores_count": {
-      "name": "grocery_stores_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.markets_count": {
-      "name": "markets_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.shopping_malls_count": {
-      "name": "shopping_malls_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.banks_atms_count": {
-      "name": "banks_atms_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.post_offices_count": {
-      "name": "post_offices_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.parcel_lockers_count": {
-      "name": "parcel_lockers_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.coworking_spaces_count": {
-      "name": "coworking_spaces_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.beauty_salons_count": {
-      "name": "beauty_salons_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.pet_stores_count": {
-      "name": "pet_stores_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.vet_clinics_count": {
-      "name": "vet_clinics_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.commerce_rating": {
-      "name": "commerce_rating",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.has_water_supply": {
-      "name": "has_water_supply",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.has_heating": {
-      "name": "has_heating",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.has_electricity": {
-      "name": "has_electricity",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.has_gas_supply": {
-      "name": "has_gas_supply",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.has_waste_removal": {
-      "name": "has_waste_removal",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.utilities_cost_per_sqm": {
-      "name": "utilities_cost_per_sqm",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.utilities_quality_rating": {
-      "name": "utilities_quality_rating",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_DATA.air_quality": {
-      "name": "air_quality",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
     "body.user_stats": {
       "name": "user_stats",
       "description": "user_stats",
@@ -9433,51 +7751,6 @@
       "in": "query",
       "type": "string"
     },
-    "body.DISTRICT": {
-      "name": "DISTRICT",
-      "description": "DISTRICT",
-      "required": false,
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/DISTRICT"
-      }
-    },
-    "rowFilter.DISTRICT.id": {
-      "name": "id",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT.name": {
-      "name": "name",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT.city_id": {
-      "name": "city_id",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT.is_available": {
-      "name": "is_available",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT.created_at": {
-      "name": "created_at",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT.updated_at": {
-      "name": "updated_at",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
     "body.global_notifications": {
       "name": "global_notifications",
       "description": "global_notifications",
@@ -9596,6 +7869,63 @@
       "type": "string"
     },
     "rowFilter.districts.updated_at": {
+      "name": "updated_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "body.district_comments": {
+      "name": "district_comments",
+      "description": "district_comments",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/district_comments"
+      }
+    },
+    "rowFilter.district_comments.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.district_comments.district_id": {
+      "name": "district_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.district_comments.user_id": {
+      "name": "user_id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.district_comments.content": {
+      "name": "content",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.district_comments.rating": {
+      "name": "rating",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.district_comments.is_hidden": {
+      "name": "is_hidden",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.district_comments.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.district_comments.updated_at": {
       "name": "updated_at",
       "required": false,
       "in": "query",
@@ -9724,6 +8054,81 @@
       "in": "query",
       "type": "string"
     },
+    "body.parser_jobs": {
+      "name": "parser_jobs",
+      "description": "parser_jobs",
+      "required": false,
+      "in": "body",
+      "schema": {
+        "$ref": "#/definitions/parser_jobs"
+      }
+    },
+    "rowFilter.parser_jobs.id": {
+      "name": "id",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.city_name": {
+      "name": "city_name",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.status": {
+      "name": "status",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.progress": {
+      "name": "progress",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.config": {
+      "name": "config",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.error_message": {
+      "name": "error_message",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.started_at": {
+      "name": "started_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.completed_at": {
+      "name": "completed_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.created_at": {
+      "name": "created_at",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.results": {
+      "name": "results",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
+    "rowFilter.parser_jobs.logs": {
+      "name": "logs",
+      "required": false,
+      "in": "query",
+      "type": "string"
+    },
     "body.scraper_rules": {
       "name": "scraper_rules",
       "description": "scraper_rules",
@@ -9811,39 +8216,6 @@
       "in": "query",
       "type": "string"
     },
-    "body.COUNTRY": {
-      "name": "COUNTRY",
-      "description": "COUNTRY",
-      "required": false,
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/COUNTRY"
-      }
-    },
-    "rowFilter.COUNTRY.id": {
-      "name": "id",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.COUNTRY.name": {
-      "name": "name",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.COUNTRY.is_available": {
-      "name": "is_available",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.COUNTRY.created_at": {
-      "name": "created_at",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
     "body.cities": {
       "name": "cities",
       "description": "cities",
@@ -9923,57 +8295,6 @@
       "type": "string"
     },
     "rowFilter.district_geo_data.updated_at": {
-      "name": "updated_at",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "body.DISTRICT_FOTO": {
-      "name": "DISTRICT_FOTO",
-      "description": "DISTRICT_FOTO",
-      "required": false,
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/DISTRICT_FOTO"
-      }
-    },
-    "rowFilter.DISTRICT_FOTO.id": {
-      "name": "id",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_FOTO.district_id": {
-      "name": "district_id",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_FOTO.photo_url": {
-      "name": "photo_url",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_FOTO.description": {
-      "name": "description",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_FOTO.is_main": {
-      "name": "is_main",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_FOTO.created_at": {
-      "name": "created_at",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.DISTRICT_FOTO.updated_at": {
       "name": "updated_at",
       "required": false,
       "in": "query",
@@ -10116,45 +8437,6 @@
     },
     "rowFilter.user_activity_logs.comparisons_count": {
       "name": "comparisons_count",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "body.CITY": {
-      "name": "CITY",
-      "description": "CITY",
-      "required": false,
-      "in": "body",
-      "schema": {
-        "$ref": "#/definitions/CITY"
-      }
-    },
-    "rowFilter.CITY.id": {
-      "name": "id",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.CITY.name": {
-      "name": "name",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.CITY.country_id": {
-      "name": "country_id",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.CITY.is_available": {
-      "name": "is_available",
-      "required": false,
-      "in": "query",
-      "type": "string"
-    },
-    "rowFilter.CITY.created_at": {
-      "name": "created_at",
       "required": false,
       "in": "query",
       "type": "string"

@@ -11,6 +11,8 @@ import { DistrictCategory } from '@config/districtFields';
 export interface FilterFieldDef {
   name: string;
   type: string;
+  disabled?: boolean;
+  locked?: boolean;
 }
 
 interface FilterSectionProps {
@@ -33,23 +35,23 @@ const FilterSection = memo(({
 
   const getSelectOptions = (filterName: string, type: string) => {
     const isLowMedHigh = type === 'crimeLevel';
-    const anyLabel = t('filter.options.any', { defaultValue: 'Будь-який' });
+    const anyLabel = t('filter.options.any');
 
     // Оновлено: використовуємо універсальні common.enums
     if (isLowMedHigh) {
       return [
         { value: 'any', label: anyLabel },
-        { value: 'low', label: t('common.enums.low', { defaultValue: 'Низький' }) },
-        { value: 'medium', label: t('common.enums.medium', { defaultValue: 'Середній' }) },
-        { value: 'high', label: t('common.enums.high', { defaultValue: 'Високий' }) }
+        { value: 'low', label: t('common.enums.low') },
+        { value: 'medium', label: t('common.enums.medium_level') },
+        { value: 'high', label: t('common.enums.high') }
       ];
     }
     
     return [
       { value: '', label: anyLabel },
-      { value: 'good', label: t('common.enums.good', { defaultValue: 'Добре' }) },
-      { value: 'medium', label: t('common.enums.medium', { defaultValue: 'Середньо' }) },
-      { value: 'bad', label: t('common.enums.bad', { defaultValue: 'Погано' }) }
+      { value: 'good', label: t('common.enums.good') },
+      { value: 'medium', label: t('common.enums.medium') },
+      { value: 'bad', label: t('common.enums.bad') }
     ];
   };
 
@@ -62,6 +64,7 @@ const FilterSection = memo(({
           <CustomCheckbox
             name={filter.name}
             checked={!!value}
+            disabled={filter.disabled}
             onChange={(e: ChangeEvent<HTMLInputElement>) => 
               onChange?.(categoryConfig.key, { [filter.name]: e.target.checked ? true : undefined })
             }
@@ -74,6 +77,7 @@ const FilterSection = memo(({
           <CustomSelect
             name={filter.name}
             value={String(value || (filter.type === 'crimeLevel' ? 'any' : ''))}
+            disabled={filter.disabled}
             onChange={(e: ChangeEvent<HTMLSelectElement>) => onChange?.(categoryConfig.key, { [filter.name]: e.target.value })}
             options={getSelectOptions(filter.name, filter.type)}
             className="ui-input !py-2 !text-[0.8rem] w-full"
@@ -88,6 +92,7 @@ const FilterSection = memo(({
             name={filter.name}
             type="number"
             value={String(value || '')}
+            disabled={filter.disabled}
             onChange={(e: ChangeEvent<HTMLInputElement>) => onChange?.(categoryConfig.key, { [filter.name]: e.target.value })}
             className="ui-input !py-2 !text-[0.8rem] w-full"
           />
@@ -108,21 +113,20 @@ const FilterSection = memo(({
         onClick={() => setIsOpen(!isOpen)} 
         type="button"
       >
-        <div className="flex items-center gap-3">
-          <div className={`flex items-center justify-center w-7 h-7 rounded-lg transition-colors duration-300 ${isOpen ? 'bg-[var(--accent-color)]/10 text-[var(--accent-color)]' : 'bg-[var(--bg-body)] text-[var(--text-secondary)] group-hover:text-[var(--accent-color)]'}`}>
+        <div className="flex items-center gap-3 flex-1 min-w-0 pr-2">
+          <div className={`shrink-0 flex items-center justify-center w-7 h-7 rounded-lg transition-colors duration-300 ${isOpen ? 'bg-[var(--accent-color)]/10 text-[var(--accent-color)]' : 'bg-[var(--bg-body)] text-[var(--text-secondary)] group-hover:text-[var(--accent-color)]'}`}>
             <span className="text-lg leading-none">{categoryConfig.icon || '📌'}</span>
           </div>
-          {/* ОНОВЛЕНО: Використовуємо groups. замість filter.categories. */}
-          <span className={`text-[0.85rem] font-bold uppercase tracking-wider font-heading transition-colors ${isOpen ? 'text-[var(--text-main)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-main)]'}`}>
+          <span className={`shrink min-w-0 truncate text-[0.85rem] font-bold uppercase tracking-wider font-heading transition-colors ${isOpen ? 'text-[var(--text-main)]' : 'text-[var(--text-secondary)] group-hover:text-[var(--text-main)]'}`}>
             {t(`groups.${categoryConfig.key}`, { defaultValue: categoryConfig.labelKey || categoryConfig.key })}
           </span>
           {activeCount > 0 && (
-            <span className="bg-[var(--accent-color)] text-white text-[10px] w-5 h-5 aspect-square rounded-full flex items-center justify-center font-bold shadow-sm">
+            <span className="shrink-0 bg-[var(--accent-color)] text-white text-[10px] w-5 h-5 aspect-square rounded-full flex items-center justify-center font-bold shadow-sm">
               {activeCount}
             </span>
           )}
         </div>
-        <FaChevronDown className={`text-[var(--text-secondary)] text-sm transition-transform duration-500 ease-in-out ${isOpen ? 'rotate-180 text-[var(--accent-color)]' : 'group-hover:text-[var(--text-main)]'}`} />
+        <FaChevronDown className={`shrink-0 text-[var(--text-secondary)] text-sm transition-transform duration-500 ease-in-out ${isOpen ? 'rotate-180 text-[var(--accent-color)]' : 'group-hover:text-[var(--text-main)]'}`} />
       </button>
 
       <div className={`grid transition-all duration-500 ease-in-out ${isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'}`}>
@@ -134,10 +138,16 @@ const FilterSection = memo(({
               
               return (
                 <div className={`flex gap-2 w-full ${isColumn ? 'flex-col items-start' : 'items-center justify-between'}`} key={filter.name}>
-                  {/* ОНОВЛЕНО: Використовуємо common.fields. замість filter.fields. */}
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-[var(--text-secondary)] font-body whitespace-nowrap">
-                    {t(`common.fields.${filter.name}`, { defaultValue: t(filter.name) })}
-                  </label>
+                  <div className="flex items-center gap-1.5 shrink-0 min-w-0">
+                    {filter.locked && (
+                      <span title="Premium Feature" className="text-[var(--accent-color)] opacity-70 flex-shrink-0">
+                        <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd"></path></svg>
+                      </span>
+                    )}
+                    <label className={`text-[10px] font-bold uppercase tracking-widest font-body truncate ${filter.disabled ? 'text-[var(--text-secondary)] opacity-50' : 'text-[var(--text-secondary)]'}`}>
+                      {t(`common.fields.${filter.name}`, { defaultValue: t(filter.name) })}
+                    </label>
+                  </div>
                   <div className={isColumn ? 'w-full mt-1' : isBoolean ? 'flex-1 flex justify-end' : 'w-1/2'}>
                     {renderInput(filter)}
                   </div>

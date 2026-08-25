@@ -7,7 +7,9 @@ import { FaFilter, FaChevronDown, FaSpinner } from 'react-icons/fa';
 import { Filters, FilterValue } from './filterLogic';
 import { useFiltersConfig } from '@hooks/useFiltersConfig';
 
-const FREE_ALLOWED_CATEGORIES = new Set<string>(['medicine', 'transport', 'commerce']);
+import { FEATURES_CONFIG } from '@config/features';
+
+const FREE_ALLOWED_CATEGORIES = new Set<string>(FEATURES_CONFIG.FREE_ALLOWED_CATEGORIES);
 
 interface FiltersPanelProps {
   readonly onFiltersChange: (filters: Filters) => void;
@@ -32,17 +34,38 @@ const FiltersPanel = memo(({
     setLocalFilters(selectedFilters);
   }, [selectedFilters]);
 
+  const countActiveFilters = (filtersObj: Filters) => {
+    let count = 0;
+    Object.values(filtersObj).forEach(section => {
+      Object.values(section).forEach(val => {
+        if (val !== undefined && val !== null && val !== '' && val !== false) {
+          count++;
+        }
+      });
+    });
+    return count;
+  };
+
   const updateFilters = useCallback((section: string, newSectionData: Record<string, FilterValue>) => {
     const updated = { 
       ...localFilters, 
       [section]: { ...localFilters[section], ...newSectionData } 
     };
+    
+    if (isFree) {
+      const newCount = countActiveFilters(updated);
+      if (newCount > FEATURES_CONFIG.FREE_FILTERS_LIMIT) {
+        // Just block it, no alert, no redirect
+        return; 
+      }
+    }
+
     setLocalFilters(updated);
     
     setTimeout(() => {
       onFiltersChange(updated);
     }, 0);
-  }, [localFilters, onFiltersChange]);
+  }, [localFilters, onFiltersChange, isFree]);
 
   const handleClearFilters = useCallback(() => {
     setLocalFilters({});
@@ -100,7 +123,7 @@ const FiltersPanel = memo(({
           );
         })}
 
-        {isFree && (
+        {(isFree && FEATURES_CONFIG.ENABLE_SUBSCRIPTIONS_PAGE) && (
           <div className="mt-4 p-5 rounded-2xl bg-[var(--bg-body)] border border-dashed border-[var(--border-accent)] text-center shrink-0">
             <h4 className="text-sm font-bold mb-2 uppercase tracking-tighter font-heading">{t('filter.panel.banner_title')}</h4>
             <p className="text-xs text-[var(--text-secondary)] mb-4 font-body">{t('filter.panel.banner_text')}</p>

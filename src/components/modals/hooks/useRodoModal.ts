@@ -10,8 +10,7 @@ export const useRodoModal = (onAccept: () => Promise<void> | void) => {
     setIsProcessing(true);
     try {
       await onAccept();
-    } catch {
-    } finally {
+    } catch (err) { console.error('Error caught in empty catch block:', err); } finally {
       setIsProcessing(false);
     }
   }, [onAccept]);

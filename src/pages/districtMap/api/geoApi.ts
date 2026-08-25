@@ -4,13 +4,11 @@ import type { ProcessedGeoData } from '../types/geo';
 
 export const geoApi = {
   async getDistrictGeoData(districtId: string | number): Promise<ProcessedGeoData> {
-    const { data, error } = await supabase
-      .from('district_geo_data')
-      .select('geojson, poi_data')
-      .eq('district_id', String(districtId))
-      .single();
+    const { data, error } = await supabase.functions.invoke('get-district-geo', {
+      body: { districtId: String(districtId) }
+    });
 
-    if (error && error.code !== 'PGRST116') {
+    if (error) {
       throw new Error(error.message);
     }
 

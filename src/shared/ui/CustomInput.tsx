@@ -9,6 +9,7 @@ interface CustomInputProps {
   type?: 'text' | 'number' | 'email' | 'password';
   id?: string;
   className?: string; // Додано
+  disabled?: boolean;
 }
 
 export const CustomInput: React.FC<CustomInputProps> = ({ 
@@ -19,7 +20,8 @@ export const CustomInput: React.FC<CustomInputProps> = ({
   min = "0", 
   type = "number",
   id,
-  className = ''
+  className = '',
+  disabled
 }) => {
   return (
     <input
@@ -28,8 +30,8 @@ export const CustomInput: React.FC<CustomInputProps> = ({
       name={name}
       value={value}
       onChange={onChange}
-      // Додаємо className
-      className={`w-full py-3 px-4 rounded-lg border border-borderClient bg-surface text-textMain font-body text-[0.95rem] transition-all outline-none hover:border-accent focus:border-accent focus:ring-[3px] focus:ring-accent/10 ${className}`}
+      disabled={disabled}
+      className={`w-full py-3 px-4 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] text-[var(--text-main)] font-body text-[0.95rem] transition-all outline-none hover:border-[var(--accent-color)] focus:border-[var(--accent-color)] focus:ring-[3px] focus:ring-[var(--accent-color)]/10 disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
       placeholder={placeholder}
       min={min}
     />

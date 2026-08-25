@@ -8,7 +8,8 @@ puppeteer.use(StealthPlugin());
 
 export async function launchBrowser() {
     return await puppeteer.launch({
-        headless: "new", // Виправлено згідно з попередженням у логах
+        executablePath: process.env.CHROME_EXECUTABLE_PATH || undefined,
+        headless: false, // Вікно з'являтиметься для уникнення блокувань від Otodom (Cloudflare/Datadome)
         protocolTimeout: PARSER_CONFIG.TIMEOUTS.PROTOCOL || 240000,
         timeout: 120000, 
         args: [

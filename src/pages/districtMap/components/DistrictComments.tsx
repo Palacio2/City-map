@@ -46,7 +46,7 @@ export const DistrictComments: React.FC<DistrictCommentsProps> = ({ districtId }
       setNewComment('');
       setNewRating(5);
     } catch (err: any) {
-      alert(err.message || 'Помилка при додаванні коментаря');
+      alert(err.message || t('comments.add_error'));
     } finally {
       setSubmitting(false);
     }
@@ -61,7 +61,7 @@ export const DistrictComments: React.FC<DistrictCommentsProps> = ({ districtId }
       {session ? (
         <form onSubmit={handleSubmit} className="flex flex-col gap-3">
           <div className="flex items-center gap-2 px-1">
-            <span className="text-sm font-semibold text-textSecondary">Оцінка:</span>
+            <span className="text-sm font-semibold text-textSecondary">{t('comments.rating_label')}</span>
             <div className="flex gap-1">
               {[1, 2, 3, 4, 5].map((star) => (
                 <button
@@ -80,7 +80,7 @@ export const DistrictComments: React.FC<DistrictCommentsProps> = ({ districtId }
               type="text"
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
-              placeholder="Написати відгук..."
+              placeholder={t('comments.placeholder')}
               className="flex-1 bg-surface border border-borderClient rounded-lg px-4 py-2 text-sm text-textMain focus:outline-none focus:border-accent transition-colors"
               disabled={submitting}
             />
@@ -95,13 +95,13 @@ export const DistrictComments: React.FC<DistrictCommentsProps> = ({ districtId }
         </form>
       ) : (
         <div className="bg-warning/10 text-warning border border-warning/20 rounded-lg p-3 text-sm text-center">
-          Зареєструйтесь, щоб залишати коментарі.
+          {t('comments.auth_required')}
         </div>
       )}
       
       <div className="flex flex-col gap-3 mt-2">
         {comments.length === 0 ? (
-          <div className="text-center text-sm text-textSecondary py-4">Ще немає коментарів. Будьте першим!</div>
+          <div className="text-center text-sm text-textSecondary py-4">{t('comments.empty')}</div>
         ) : (
           comments.map(c => (
             <div key={c.id} className="bg-surface border border-borderClient rounded-lg p-3 flex flex-col gap-2">
@@ -112,7 +112,7 @@ export const DistrictComments: React.FC<DistrictCommentsProps> = ({ districtId }
                   ) : (
                     <FaUserCircle className="text-textMuted text-lg" />
                   )}
-                  <span>{c.full_name || 'Користувач'}</span>
+                  <span>{c.full_name || t('comments.default_user')}</span>
                 </div>
                 <span>{new Date(c.created_at).toLocaleDateString()}</span>
               </div>

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaChevronDown, FaChartBar, FaMapMarkerAlt, FaHistory, FaBookmark, FaCalculator } from 'react-icons/fa';
 import { useSubscription } from '@/pages/subscription/contex/SubscriptionContext';
+import { FEATURES_CONFIG } from '@/config/features';
 import StatsCards from './components/StatsCards/StatsCards';
 import { RequireSubscription } from '@/shared/components/guards';
 import WeeklyChart from './components/WeeklyChart/WeeklyChart';
@@ -94,7 +95,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
   const handleNavigateToCompare = useCallback(() => {
     if (isRealtor) {
       navigate('/profile/stats/compare');
-    } else {
+    } else if (FEATURES_CONFIG.ENABLE_SUBSCRIPTIONS_PAGE) {
       navigate('/subscription');
     }
   }, [isRealtor, navigate]);

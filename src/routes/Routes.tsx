@@ -1,10 +1,11 @@
-// @ts-nocheck
 import { lazy } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import MainLayout from '@layout/MainLayout';
 import PrivateRoute from './PrivateRoute';
 import ProtectedRoute from './ProtectedRoute';
 import AdminRoute from './AdminRoute';
+import { useGoogleAnalytics } from '@shared/hooks/useGoogleAnalytics';
+import { FEATURES_CONFIG } from '../config/features';
 
 const DistrictMap = lazy(() => import('@pages/districtMap/DistrictMap'));
 const Contacts = lazy(() => import('@pages/contacts/Contacts'));
@@ -30,9 +31,12 @@ const ProfileEditPage = lazy(() => import('@profile/ProfileEditPage'));
 const PasswordChangePage = lazy(() => import('@profile/PasswordChangePage'));
 
 export default function AppRoutes() {
+  useGoogleAnalytics('G-XXXXXXXXXX');
+
   return (
     <Routes>
       <Route path="/" element={<MainLayout />}>
+        <Route path="admin/*" element={<AdminRoute><AdminPanel /></AdminRoute>} />
         <Route index element={<DistrictMap />} />
         <Route path="city/:country" element={<DistrictMap />} />
         <Route path="map/:country/:city" element={<DistrictMap />} />
@@ -40,13 +44,14 @@ export default function AppRoutes() {
         <Route path="about" element={<About />} />
         <Route path="faq" element={<FaqPage />} />
         <Route path="terms" element={<TermsOfService />} />
-        <Route path="subscription" element={<Subscription />} />
+        {FEATURES_CONFIG.ENABLE_SUBSCRIPTIONS_PAGE && (
+          <Route path="subscription" element={<Subscription />} />
+        )}
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
         <Route path="register-success" element={<RegisterSuccess />} />
         <Route path="auth/callback" element={<AuthCallback />} />
-        <Route path="admin" element={<AdminRoute><AdminPanel /></AdminRoute>} />
         <Route
           path="favorites"
           element={

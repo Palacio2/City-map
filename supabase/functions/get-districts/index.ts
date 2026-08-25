@@ -1,12 +1,8 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.44.2';
 import { serve } from 'https://deno.land/std@0.178.0/http/server.ts';
+import { getUserAccess, getFieldsConfig, stripRestrictedFields, corsHeaders } from '../_shared/security.ts';
 
 const CACHE_TTL = 300; 
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
 
 const districtCache = new Map();
 
@@ -26,9 +22,26 @@ serve(async (req) => {
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const url = new URL(req.url);
-    const countryName = decodeURIComponent(url.searchParams.get('country') || '');
-    const cityName = decodeURIComponent(url.searchParams.get('city') || '');
+    let countryName = decodeURIComponent(url.searchParams.get('country') || '');
+    let cityName = decodeURIComponent(url.searchParams.get('city') || '');
     let idsParam = url.searchParams.get('ids'); 
+    let filtersParam = url.searchParams.get('filters');
+
+    if (req.method === 'POST') {
+      try {
+        const body = await req.json();
+        if (body.country) countryName = body.country;
+        if (body.city) cityName = body.city;
+        if (body.ids) idsParam = body.ids;
+        if (body.filters) filtersParam = body.filters;
+      } catch (e) {
+        // body might be empty
+      }
+    }
+
+    // SECURITY: Get user access level
+    const access = await getUserAccess(req);
+    const accessLevel = access.isRealtor ? 'realtor' : (access.isPremium ? 'premium' : 'free');
 
     let orderedIds: string[] = [];
 
@@ -47,7 +60,7 @@ serve(async (req) => {
         orderedIds = idsParam.split(',');
     }
 
-    const withFilters = url.searchParams.get('filters') === 'true' || !!idsParam;
+    const withFilters = filtersParam === 'true' || !!idsParam;
 
     if (!idsParam && (!countryName || !cityName)) {
       return new Response(JSON.stringify({ error: 'Params required: ids OR (country, city)' }), { 
@@ -57,8 +70,8 @@ serve(async (req) => {
     }
 
     const cacheKey = idsParam 
-        ? `ids:${idsParam}`
-        : `${countryName}|${cityName}|${withFilters}`;
+        ? `ids:${idsParam}:${accessLevel}`
+        : `${countryName}|${cityName}|${withFilters}:${accessLevel}`;
 
     if (CACHE_TTL > 0) {
         const cached = districtCache.get(cacheKey);
@@ -101,6 +114,9 @@ serve(async (req) => {
 
     if (error) throw error;
 
+    // Get fields configuration to know what to strip
+    const fieldsConfig = await getFieldsConfig();
+
     let result = districts.map((d: any) => {
       let mainPhoto = null;
       if (Array.isArray(d.district_photos)) {
@@ -112,6 +128,9 @@ serve(async (req) => {
       let f = null;
       if (withFilters && d.district_filter_data) {
         f = Array.isArray(d.district_filter_data) ? d.district_filter_data[0] : d.district_filter_data;
+        
+        // SECURITY: Strip restricted fields
+        stripRestrictedFields(f, fieldsConfig, access);
       }
 
       const bestDate = f?.data_updated_at || f?.last_updated || d.updated_at;

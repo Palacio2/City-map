@@ -8,9 +8,9 @@ export default {
     extend: {
       colors: {
         primary: {
-          DEFAULT: '#2563eb', // Clean Royal Blue
-          hover: '#1d4ed8',
-          subtle: 'rgba(37, 99, 235, 0.08)',
+          DEFAULT: 'var(--primary, #c5a47e)',
+          hover: 'var(--primary-hover, #d4b895)',
+          subtle: 'var(--primary-subtle, rgba(197, 164, 126, 0.1))',
         },
         main: 'var(--bg-main)',
         surface: 'var(--bg-surface)',

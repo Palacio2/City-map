@@ -5,6 +5,7 @@ import type { RealtimeChannel } from '@supabase/supabase-js';
 import { fetchSubscriptionStatus, FREE_PLAN_DATA } from '../api/subscriptionApi';
 import type { SubscriptionData, SubscriptionContextType } from '../types';
 import { SubscriptionContextSchema } from '../validation';
+import { FEATURES_CONFIG } from '../../../config/features';
 
 const SubscriptionContext = createContext<SubscriptionContextType | null>(null);
 
@@ -56,8 +57,11 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
       const { data: { user } } = await supabase.auth.getUser();
       
       if (user && isMounted.current) {
+        if (channelRef.current) {
+          supabase.removeChannel(channelRef.current);
+        }
         channelRef.current = supabase
-          .channel('subscription-updates')
+          .channel(`subscription-updates-${user.id}`)
           .on(
             'postgres_changes',
             {
@@ -106,13 +110,17 @@ export const SubscriptionProvider = ({ children }: SubscriptionProviderProps) =>
     const isPlanActive = subscription.plan !== 'free' && !subscription.isExpired;
     const premiumPlans = ['weekly', 'premium', 'realtor'];
     
+    const dbIsPremium = premiumPlans.includes(subscription.plan) && isPlanActive;
+    const dbIsRealtor = subscription.plan === 'realtor' && isPlanActive;
+    const dbIsFree = subscription.plan === 'free' || Boolean(subscription.isExpired);
+
     return {
       subscription,
       isLoading,
-      hasFeature: (feature: string) => Boolean(subscription.features?.includes(feature)),
-      isPremium: premiumPlans.includes(subscription.plan) && isPlanActive,
-      isRealtor: subscription.plan === 'realtor' && isPlanActive,
-      isFree: subscription.plan === 'free' || Boolean(subscription.isExpired),
+      hasFeature: (feature: string) => (FEATURES_CONFIG.UNLOCK_ALL_PREMIUM_FEATURES || FEATURES_CONFIG.UNLOCK_ALL_REALTOR_FEATURES) ? true : Boolean(subscription.features?.includes(feature)),
+      isPremium: (FEATURES_CONFIG.UNLOCK_ALL_PREMIUM_FEATURES || FEATURES_CONFIG.UNLOCK_ALL_REALTOR_FEATURES) ? true : dbIsPremium,
+      isRealtor: FEATURES_CONFIG.UNLOCK_ALL_REALTOR_FEATURES ? true : dbIsRealtor,
+      isFree: (FEATURES_CONFIG.UNLOCK_ALL_PREMIUM_FEATURES || FEATURES_CONFIG.UNLOCK_ALL_REALTOR_FEATURES) ? false : dbIsFree,
       updateSubscription,
       getFeatureKeys: () => subscription.features || []
     };

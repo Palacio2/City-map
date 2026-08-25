@@ -16,6 +16,6 @@ export interface TrackedDistrictPayload {
 export interface TrackedDistrict extends TrackedDistrictPayload {
   id: string;
 }
-export interface DistrictCardProps { district: any; onClick: (district: any, categoryKey?: string) => void; }
+export interface DistrictCardProps { district: any; onClick: (district: any, categoryKey?: string) => void; isPriority?: boolean; }
 export interface DistrictsMapProps { districts: any[]; onDistrictClick: (district: any) => void; filters?: any; totalCount?: number; originalTotal?: number; selectedFilters?: any; }
 export interface DistrictMapFilters { [key: string]: any; }

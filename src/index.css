@@ -1,34 +1,61 @@
-@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Manrope:wght@300;400;500;600&display=swap');
+@import "leaflet/dist/leaflet.css";
+@import url('https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600;700&family=Manrope:wght@300;400;500;600;700&display=swap');
 
+/* =========================================================
+   СВІТЛА ТЕМА (Cyber Emerald & Charcoal)
+   ========================================================= */
 :root {
+  /* Шрифти */
   --font-heading: 'Lora', serif;
   --font-body: 'Manrope', sans-serif;
-  --primary-color: #0f1014;
-  --primary-gradient: linear-gradient(135deg, #0f1014 0%, #2c2e35 100%);
-  --primary-light: #2c2e35;
-  --accent-color: #c5a47e;
-  --accent-hover: #d4b895;
-  --danger-color: #ef4444;
-  --success-color: #22c55e;
-  --warning-color: #eab308;
-  --bg-body: #f4f5f7;
-  --bg-surface: #ffffff;
-  --bg-footer: #0f1014;
-  --bg-hover: #e2e8f0;
-  --glass-bg: rgba(255, 255, 255, 0.9);
-  --glass-border: rgba(255, 255, 255, 0.6);
-  --glass-blur: 16px;
-  --text-main: #0f172a;
-  --text-secondary: #475569;
+
+  /* Базові поверхні та фони */
+  --bg-main: #f4f5f6;            /* Нейтральний м'який світло-сірий */
+  --bg-body: #f4f5f6;
+  --bg-surface: #ffffff;         /* Чистий білий для карток і модалок */
+  --bg-hover: #e9ecef;           /* Плавний hover-фон */
+  --bg-footer: #121820;
+
+  /* Рамки */
+  --border: #e2e5e8;             /* Тонкі акуратні рамки */
+  --border-color: #e2e5e8;
+  --border-accent: rgba(5, 150, 105, 0.3);
+
+  /* Текст */
+  --text-main: #121820;          /* Насичений вугільний */
+  --text-muted: #5a6578;         /* Читабельний другорядний текст */
+  --text-secondary: #5a6578;
   --text-inverse: #ffffff;
   --text-inverse-secondary: #94a3b8;
-  --border-color: rgba(0, 0, 0, 0.06);
-  --border-accent: rgba(197, 164, 126, 0.4);
+
+  /* Акцентний колір (Emerald) */
+  --primary: #059669;            /* emerald-600 */
+  --primary-hover: #047857;      /* emerald-700 */
+  --primary-subtle: #ecfdf5;     /* emerald-50 */
+  --primary-color: #059669;
+  --accent-color: #059669;
+  --accent-hover: #047857;
+
+  /* Статуси */
+  --success: #059669;
+  --success-color: #059669;
+  --warning: #d97706;
+  --warning-color: #d97706;
+  --danger: #dc2626;
+  --danger-color: #dc2626;
+
+  /* Скло та ефекти */
+  --glass-bg: rgba(255, 255, 255, 0.85);
+  --glass-border: rgba(226, 229, 232, 0.6);
+  --glass-blur: 16px;
+
+  /* Layout, відступи та радіуси */
   --header-height: 80px;
   --safe-top: env(safe-area-inset-top, 0px);
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --safe-left: env(safe-area-inset-left, 0px);
   --safe-right: env(safe-area-inset-right, 0px);
+
   --z-base: 1;
   --z-dropdown: 100;
   --z-sticky: 200;
@@ -38,41 +65,74 @@
   --z-modal: 9999;
   --z-tooltip: 10000;
   --z-toast: 100000;
+
   --spacing-xs: 0.25rem;
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
   --spacing-lg: 2rem;
   --spacing-xl: 4rem;
-  --radius-sm: 6px;
-  --radius-md: 12px;
-  --radius-lg: 24px;
+
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
   --radius-full: 9999px;
+
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
   --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-  --shadow-glass: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
-  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-glass: 0 8px 32px 0 rgba(18, 24, 32, 0.05);
+  --shadow-modal: 0 25px 50px -12px rgba(0, 0, 0, 0.18);
   --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* =========================================================
+   ТЕМНА ТЕМА (GitHub Dark / Obsidian GIS)
+   ========================================================= */
 [data-theme='dark'] {
-  --primary-color: #f8fafc;
-  --primary-gradient: linear-gradient(135deg, #e2e8f0 0%, #94a3b8 100%);
-  --primary-light: #1e293b;
-  --bg-body: #111318;
-  --bg-surface: #1a1d24;
-  --bg-footer: #0b0c10;
-  --bg-hover: #232730;
-  --glass-bg: rgba(26, 29, 36, 0.8);
-  --glass-border: rgba(255, 255, 255, 0.05);
-  --text-main: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --border-color: rgba(255, 255, 255, 0.06);
-  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-  --shadow-hover: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+  /* Базові поверхні та фони */
+  --bg-main: #0d1117;            /* Глибокий чорно-графітовий */
+  --bg-body: #0d1117;
+  --bg-surface: #161b22;         /* Поверхня карток і панелей */
+  --bg-hover: #21262d;           /* Контрастний hover */
+  --bg-footer: #080b0f;
+
+  /* Рамки */
+  --border: rgba(255, 255, 255, 0.05);
+  --border-color: rgba(255, 255, 255, 0.05);
+  --border-accent: rgba(16, 185, 129, 0.2);
+
+  /* Текст */
+  --text-main: #f0f6fc;          /* Чистий світлий текст */
+  --text-muted: #8b949e;
+  --text-secondary: #8b949e;
+
+  /* Акцентний колір (Emerald Neon) */
+  --primary: #10b981;            /* emerald-500 */
+  --primary-hover: #34d399;      /* emerald-400 */
+  --primary-subtle: rgba(16, 185, 129, 0.15);
+  --primary-color: #10b981;
+  --accent-color: #10b981;
+  --accent-hover: #34d399;
+
+  /* Статуси */
+  --success: #10b981;
+  --success-color: #10b981;
+  --warning: #fbbf24;
+  --warning-color: #fbbf24;
+  --danger: #f87171;
+  --danger-color: #f87171;
+
+  /* Скло та ефекти */
+  --glass-bg: rgba(22, 27, 34, 0.85);
+  --glass-border: rgba(48, 54, 61, 0.6);
+  --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-hover: 0 10px 20px -3px rgba(0, 0, 0, 0.5);
+  --shadow-glass: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
 }
 
+/* =========================================================
+   БАЗОВІ СКИДАННЯ ТА ТИПОГРАФІКА
+   ========================================================= */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -136,13 +196,16 @@ button {
 }
 
 :focus-visible {
-  outline: 2px solid var(--accent-color);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
+/* =========================================================
+   КАСТОМНІ СКРОЛБАРИ
+   ========================================================= */
 ::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -150,16 +213,94 @@ button {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--border-accent);
+  background-color: var(--border);
   border-radius: 99px;
-  border: 2px solid transparent;
-  background-clip: content-box;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background-color: var(--accent-color);
+  background-color: var(--primary);
 }
 
+.scrollbar-thin::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 9999px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* =========================================================
+   ДЕКОРАТИВНІ ФОНИ
+   ========================================================= */
+.bg-dot-grid-light {
+  background-image: radial-gradient(rgba(5, 150, 105, 0.15) 1.5px, transparent 1.5px);
+  background-size: 24px 24px;
+}
+
+[data-theme='dark'] .bg-dot-grid-light {
+  background-image: radial-gradient(rgba(16, 185, 129, 0.15) 1.5px, transparent 1.5px);
+}
+
+/* =========================================================
+   КАРТИ LEAFLET ТА КЛАСТЕРИ
+   ========================================================= */
+.leaflet-control-container {
+  display: none !important;
+}
+
+.modern-tooltip {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 10px !important;
+  color: var(--text-main) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+  padding: 8px 12px !important;
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+}
+
+.modern-tooltip::before {
+  border-top-color: var(--border) !important;
+}
+
+/* Кластеризація маркерів (Emerald Theme) */
+.marker-cluster-small {
+  background-color: rgba(5, 150, 105, 0.35) !important;
+}
+.marker-cluster-small div {
+  background-color: #059669 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.marker-cluster-medium {
+  background-color: rgba(16, 185, 129, 0.35) !important;
+}
+.marker-cluster-medium div {
+  background-color: #10b981 !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+}
+
+.marker-cluster-large {
+  background-color: rgba(22, 27, 34, 0.5) !important;
+}
+.marker-cluster-large div {
+  background-color: var(--text-main) !important;
+  color: var(--bg-surface) !important;
+  font-weight: 700 !important;
+}
+
+/* =========================================================
+   МЕДІА-ЗАПИТИ
+   ========================================================= */
 @media (max-width: 768px) {
   :root {
     --header-height: 64px;

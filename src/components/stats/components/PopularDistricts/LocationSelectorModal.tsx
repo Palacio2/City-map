@@ -76,7 +76,7 @@ export default function LocationSelectorModal({
     try {
       const data = await fetchCitiesByCountry(country);
       setCities(Array.isArray(data) ? data.map((i: any) => i.value || i) : []);
-    } catch { } finally { setLoading(p => ({ ...p, cities: false })); }
+    } catch (err) { console.error('Error caught in empty catch block:', err); } finally { setLoading(p => ({ ...p, cities: false })); }
   };
 
   const handleCityChange = async (e: ChangeEvent<HTMLSelectElement>) => {
@@ -96,7 +96,7 @@ export default function LocationSelectorModal({
         const allDistricts = Array.isArray(response) ? response : ((response as any)?.districts || (response as any)?.data || []);
         districtsCache.current[cacheKey] = allDistricts;
         setDistricts(allDistricts);
-      } catch { } finally { setLoading(p => ({ ...p, districts: false })); }
+      } catch (err) { console.error('Error caught in empty catch block:', err); } finally { setLoading(p => ({ ...p, districts: false })); }
     }
   };
 

@@ -11,6 +11,7 @@ import AiSidebar from '../aiAssistant/AiSidebar';
 import { useBodyScrollLock } from '@hooks/useBodyScrollLock';
 import { useUserConsent } from '@hooks/useUserConsent';
 import GlobalBanner from './GlobalBanner';
+import { FEATURES_CONFIG } from '../../config/features';
 
 const Header = () => {
   const location = useLocation();
@@ -122,10 +123,10 @@ const Header = () => {
                   { path: '/', label: t('header.home') },
                   { path: '/about', label: t('header.about') },
                   { path: '/contacts', label: t('header.contacts') },
-                  { path: '/subscription', label: t('header.subscription') },
+                  ...(FEATURES_CONFIG.ENABLE_SUBSCRIPTIONS_PAGE ? [{ path: '/subscription', label: t('header.subscription') }] : []),
                   ...(isAuthenticated ? [{ path: '/profile', label: t('header.profile') }] : []),
                   ...((user?.app_metadata?.role === 'admin' || user?.app_metadata?.role === 'super_admin') 
-                        ? [{ path: '/admin', label: 'Адмін Панель' }] 
+                        ? [{ path: '/admin', label: t('header.admin_panel') }] 
                         : [])
                 ].map((link) => (
                   <Link

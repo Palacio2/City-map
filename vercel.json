@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/sitemap.xml",
-      "destination": "https://твій-бекенд-на-heroku-чи-десь-інде.com/api/geo/sitemap.xml"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
