@@ -22,6 +22,30 @@ const UsersTab = lazy(() => import('@admin/features/users/UsersTab'));
 const AiLogsTab = lazy(() => import('@admin/features/logs/ai/AiLogsTab'));
 const AuditLogsTab = lazy(() => import('@admin/features/logs/audit/AuditLogsTab'));
 
+import React from 'react';
+
+class ErrorBoundary extends React.Component<{ children: React.ReactNode, fallback: React.ReactNode }, { hasError: boolean }> {
+    constructor(props: { children: React.ReactNode, fallback: React.ReactNode }) {
+        super(props);
+        this.state = { hasError: false };
+    }
+
+    static getDerivedStateFromError() {
+        return { hasError: true };
+    }
+
+    componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+        console.error("AdminPanel ErrorBoundary caught an error", error, errorInfo);
+    }
+
+    render() {
+        if (this.state.hasError) {
+            return this.props.fallback;
+        }
+        return this.props.children;
+    }
+}
+
 function AdminPanelContent() {
     const { t } = useTranslation('db');
     const { currentAdmin, loadingAdmin, adminLogout } = useAdmin();
@@ -155,15 +179,29 @@ function AdminPanelContent() {
                 </div>
 
                 <main className={`flex-1 overflow-y-auto scrollbar-thin ${activeTab === 'map' ? 'p-0' : 'p-4 sm:p-6'}`}>
-                    <Suspense fallback={
-                        <div className="h-full flex items-center justify-center py-20">
-                            <div className="w-8 h-8 border-3 border-border border-t-primary rounded-full animate-spin" />
+                    <ErrorBoundary fallback={
+                        <div className="h-full flex flex-col items-center justify-center p-8 text-center">
+                            <div className="w-12 h-12 rounded-2xl bg-rose-500/10 text-rose-600 flex items-center justify-center text-xl mb-3">
+                                <FaExclamationTriangle />
+                            </div>
+                            <h3 className="text-base font-bold text-textMain m-0 mb-1">
+                                {t('common.error')}
+                            </h3>
+                            <button onClick={() => window.location.reload()} className="mt-4 px-4 py-2 bg-primary text-white rounded-lg">
+                                {t('common.refresh', 'Оновити сторінку')}
+                            </button>
                         </div>
                     }>
-                        <div className="w-full h-full flex flex-col">
-                            {renderActiveTab()}
-                        </div>
-                    </Suspense>
+                        <Suspense fallback={
+                            <div className="h-full flex items-center justify-center py-20">
+                                <div className="w-8 h-8 border-3 border-border border-t-primary rounded-full animate-spin" />
+                            </div>
+                        }>
+                            <div className="w-full h-full flex flex-col">
+                                {renderActiveTab()}
+                            </div>
+                        </Suspense>
+                    </ErrorBoundary>
                 </main>
             </div>
         </div>

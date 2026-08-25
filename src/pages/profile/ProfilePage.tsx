@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { FaSignOutAlt } from 'react-icons/fa';
 import { useAuth } from '@auth/context/AuthContext';
 import { useSubscription } from '@subscription/contex/SubscriptionContext';
+import { FEATURES_CONFIG } from '@config/features';
 import Loader from '@components/loader/Loader';
 import SeoMeta from '@seo/SeoMeta';
 import { useProfile } from './hooks/useProfile';
@@ -61,11 +62,13 @@ export default function ProfilePage() {
           <QuickActions />
         </div>
         <div className="w-full">
-          <SubscriptionCard
-            subscription={subscription}
-            onManage={() => navigate('/subscription')}
-            isCancelling={false}
-          />
+          {FEATURES_CONFIG.ENABLE_SUBSCRIPTIONS_PAGE && (
+            <SubscriptionCard
+              subscription={subscription}
+              onManage={() => navigate('/subscription')}
+              isCancelling={false}
+            />
+          )}
         </div>
       </div>
     </div>

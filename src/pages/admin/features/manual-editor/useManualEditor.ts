@@ -54,13 +54,19 @@ export const useManualEditor = (
                         setFormData(res.data);
                     }
                     setPhotoPreview((res.data.photo_url as string) || null);
+                } else {
+                    setSelectedDistrict(null);
                 }
-            } catch (err) {
+            } catch (err: unknown) {
                 console.error(err);
+                if (err instanceof Error && (err.message.includes('Район не знайдено') || err.message.includes('Cannot coerce'))) {
+                    setSelectedDistrict(null);
+                    showAlert(t('common.error'), 'Район не знайдено', 'error');
+                }
             }
         };
         loadData();
-    }, [selectedDistrict?.id]);
+    }, [selectedDistrict?.id, setSelectedDistrict, showAlert, t]);
 
     const handleFieldChange = (key: string, value: unknown) => {
         updateFormDataWithDraft({ [key]: value });

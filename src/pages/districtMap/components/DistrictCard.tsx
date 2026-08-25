@@ -3,7 +3,7 @@ import type { KeyboardEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { DistrictCardProps } from '../types';
 
-export const DistrictCard = memo(({ district, onClick }: DistrictCardProps) => {
+export const DistrictCard = memo(({ district, onClick, isPriority = false }: DistrictCardProps) => {
   const { t } = useTranslation('db');
   const [imgError, setImgError] = useState(false);
   const filterData = district.filterData;
@@ -45,7 +45,8 @@ export const DistrictCard = memo(({ district, onClick }: DistrictCardProps) => {
               src={district.photo_url}
               alt={district.name}
               className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-              loading="lazy"
+              loading={isPriority ? "eager" : "lazy"}
+              fetchpriority={isPriority ? "high" : "auto"}
               width="300"
               height="200"
               onError={() => setImgError(true)}

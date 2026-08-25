@@ -4,7 +4,9 @@ import {
     FaUsers, FaSyncAlt, FaTag
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
+import React from 'react';
 import DataTable from '@admin/core/ui/DataTable';
+import { Pagination } from '@admin/core/ui/Pagination';
 import { Button } from '@admin/core/ui/Button';
 import { SearchInput } from '@admin/core/ui/SearchInput';
 import { useAdmin } from '@admin/core/context/AdminContext';
@@ -46,6 +48,21 @@ export default function UsersTab() {
     ];
 
     const columns = useUsersColumns({ logic, currentAdmin, canDo, copiedId, handleCopyId });
+
+    const ITEMS_PER_PAGE = 20;
+    const [currentPage, setCurrentPage] = React.useState(1);
+
+    const safeUsers = logic.filteredUsers || [];
+    const paginatedUsers = React.useMemo(() => {
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        return safeUsers.slice(start, start + ITEMS_PER_PAGE);
+    }, [safeUsers, currentPage]);
+
+    const totalPages = Math.ceil(safeUsers.length / ITEMS_PER_PAGE);
+
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [logic.searchQuery, logic.filterTab]);
 
     return (
         <div className="flex flex-col gap-4 sm:gap-6 w-full pb-8 flex-1 h-full animate-fadeIn">

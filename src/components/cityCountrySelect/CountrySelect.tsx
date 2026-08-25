@@ -25,6 +25,7 @@ export default function CountrySelect() {
       selectedValue={selected}
       onValueChange={setSelected}
       onSubmit={handleSubmit}
+      isSearchable
     />
   );
 }

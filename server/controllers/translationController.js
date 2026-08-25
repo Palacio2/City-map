@@ -1,47 +1,54 @@
-import { createClient } from "@supabase/supabase-js";
-import 'dotenv/config';
+import { supabase } from "../utils/supabase.js";
+import { z } from 'zod';
 
-const supabase = createClient(
-    process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+const TranslationSchema = z.object({
+    translation_key: z.string().min(1, 'translation_key is required'),
+    uk: z.string().optional().default(''),
+    pl: z.string().optional().default(''),
+    en: z.string().optional().default(''),
+});
 
-// Отримати всі переклади
 export const getTranslations = async (req, res) => {
     try {
-        // Додаємо .limit(5000) щоб обійти стандартне обмеження Supabase у 1000 записів
         const { data, error } = await supabase
             .from('translations')
             .select('*')
-            .limit(5000) 
+            .limit(5000)
             .order('translation_key');
-            
+
         if (error) throw error;
         res.json(data);
-    } catch (e) { 
-        res.status(500).json({ error: e.message }); 
+    } catch (e) {
+        res.status(500).json({ error: e.message });
     }
 };
 
-// Зберегти або оновити переклад
+const stripHtml = (str) => typeof str === 'string' ? str.replace(/<[^>]*>?/gm, '') : str;
+
 export const saveTranslation = async (req, res) => {
     try {
-        const { translation_key, uk, pl, en } = req.body;
-        
-        // upsert оновлює існуючий ключ або створює новий
+        const parsed = TranslationSchema.parse(req.body);
+
         const { error } = await supabase.from('translations').upsert({
-            translation_key, uk, pl, en, updated_at: new Date().toISOString()
+            translation_key: parsed.translation_key,
+            uk: stripHtml(parsed.uk),
+            pl: stripHtml(parsed.pl),
+            en: stripHtml(parsed.en),
+            updated_at: new Date().toISOString()
         }, { onConflict: 'translation_key' });
-        
+
         if (error) throw error;
         res.json({ success: true });
-    } catch (e) { res.status(500).json({ error: e.message }); }
+    } catch (e) {
+        if (e.name === 'ZodError') return res.status(400).json({ error: e.errors });
+        res.status(500).json({ error: e.message });
+    }
 };
 
-// Видалити переклад
 export const deleteTranslation = async (req, res) => {
     try {
         const { key } = req.params;
+        if (!key || key.trim() === '') return res.status(400).json({ error: 'Missing translation key' });
         const { error } = await supabase.from('translations').delete().eq('translation_key', key);
         if (error) throw error;
         res.json({ success: true });

@@ -1,13 +1,17 @@
-﻿import { useMemo, useCallback } from 'react';
+﻿import React, { useMemo, useCallback, useState } from 'react';
 import { FaBug, FaLightbulb, FaEnvelope, FaImage, FaExternalLinkAlt, FaExclamationTriangle, FaTrash, FaComments, FaSyncAlt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import DataTable from '@admin/core/ui/DataTable';
+import { Pagination } from '@admin/core/ui/Pagination';
 import { Badge } from '@admin/core/ui/Badge';
 import { CustomSelect, SelectOption } from '@admin/core/ui/CustomSelect';
 import { useFeedback } from '@admin/features/feedback/feedback/useFeedback';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
 
 import { FeedbackMessage } from './types';
+
+/** Prevents XSS via javascript: / data: URLs — only allows http(s) */
+const safeUrl = (url: string): string => /^https?:\/\//i.test(url) ? url : '#';
 
 export default function FeedbackTab() {
     const { t } = useTranslation('db');
@@ -80,12 +84,12 @@ export default function FeedbackTab() {
                     </p>
                     <div className="flex gap-2 flex-wrap items-center">
                         {msg.screenshot_url && (
-                            <a href={msg.screenshot_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 py-1 px-2.5 bg-primary-subtle text-primary border border-primary/20 rounded-lg text-[11px] font-bold no-underline hover:underline">
+                            <a href={safeUrl(msg.screenshot_url)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 py-1 px-2.5 bg-primary-subtle text-primary border border-primary/20 rounded-lg text-[11px] font-bold no-underline hover:underline">
                                 <FaImage className="text-[10px]" /> {t('admin_feedback.tab.screenshot_btn')}
                             </a>
                         )}
                         {msg.page_url && (
-                            <a href={msg.page_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 py-1 px-2.5 bg-surface border border-border text-textMuted rounded-lg text-[11px] font-semibold no-underline hover:text-textMain truncate max-w-[150px]" title={msg.page_url}>
+                            <a href={safeUrl(msg.page_url)} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1.5 py-1 px-2.5 bg-surface border border-border text-textMuted rounded-lg text-[11px] font-semibold no-underline hover:text-textMain truncate max-w-[150px]" title={msg.page_url}>
                                 <FaExternalLinkAlt className="text-[10px]" /> URL
                             </a>
                         )}
@@ -134,6 +138,20 @@ export default function FeedbackTab() {
                 ? 'bg-primary text-white shadow-xs'
                 : 'text-textMuted hover:text-textMain hover:bg-surface'
         }`;
+
+    const ITEMS_PER_PAGE = 20;
+    const [currentPage, setCurrentPage] = useState(1);
+
+    const paginatedMessages = useMemo(() => {
+        const start = (currentPage - 1) * ITEMS_PER_PAGE;
+        return filteredMessages.slice(start, start + ITEMS_PER_PAGE);
+    }, [filteredMessages, currentPage]);
+
+    const totalPages = Math.ceil(filteredMessages.length / ITEMS_PER_PAGE);
+
+    React.useEffect(() => {
+        setCurrentPage(1);
+    }, [filter]);
 
     if (loading) {
         return (

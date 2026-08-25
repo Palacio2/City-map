@@ -12,10 +12,11 @@ interface CustomSelectProps {
   options: Option[];
   id?: string;
   className?: string; // Додано для підтримки кастомних стилів
+  disabled?: boolean;
 }
 
 export const CustomSelect: React.FC<CustomSelectProps> = ({ 
-  name, value, onChange, options, id, className = '' 
+  name, value, onChange, options, id, className = '', disabled 
 }) => {
   return (
     <select
@@ -23,8 +24,8 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
       name={name}
       value={value}
       onChange={onChange}
-      // Додаємо className до існуючих стилів
-      className={`w-full py-3 px-4 rounded-lg border border-borderClient bg-surface font-body text-[0.95rem] text-textMain cursor-pointer transition-all outline-none hover:border-accent focus:border-accent focus:ring-[3px] focus:ring-accent/10 appearance-none bg-no-repeat bg-[position:right_1rem_center] bg-[url('data:image/svg+xml,...')] ${className}`}
+      disabled={disabled}
+      className={`w-full py-3 px-4 rounded-lg border border-[var(--border-color)] bg-[var(--bg-surface)] font-body text-[0.95rem] text-[var(--text-main)] cursor-pointer transition-all outline-none hover:border-[var(--accent-color)] focus:border-[var(--accent-color)] focus:ring-[3px] focus:ring-[var(--accent-color)]/10 appearance-none bg-no-repeat bg-[position:right_1rem_center] bg-[url('data:image/svg+xml,...')] disabled:opacity-50 disabled:cursor-not-allowed ${className}`}
     >
       {options.map((opt) => (
         <option key={opt.value} value={opt.value}>

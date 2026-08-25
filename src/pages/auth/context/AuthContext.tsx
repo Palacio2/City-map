@@ -24,6 +24,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
     staleTime: Infinity,
   });
 
+  // Silently refresh token on app mount to pick up any role/claim changes
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session: currentSession } }) => {
+      if (currentSession) {
+        supabase.auth.refreshSession().catch(e => console.warn("Silent token refresh failed", e));
+      }
+    });
+  }, []);
+
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT' || event === 'TOKEN_REFRESHED') {

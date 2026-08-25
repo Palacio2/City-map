@@ -17,6 +17,7 @@ import MiniStatsChart from '@admin/core/ui/MiniStatsChart';
 import { StatCard } from '@admin/core/ui/StatCard';
 import { Badge } from '@admin/core/ui/Badge';
 import { Button } from '@admin/core/ui/Button';
+import { supabase } from '@supabaseClient';
 
 import { useActionGuard } from '@admin/core/context/useActionGuard';
 import { useModals } from '@admin/core/context/ModalContext';
@@ -33,18 +34,26 @@ export default function DashboardTab() {
     const [isDeploying, setIsDeploying] = useState(false);
 
     const handleDeploy = async () => {
-        const webhookUrl = import.meta.env.VITE_DEPLOY_WEBHOOK_URL;
-        if (!webhookUrl) {
-            showAlert(t('common.warning', 'Попередження'), t('admin_dashboard.deploy.missing_url', 'Webhook URL не налаштовано в оточенні (VITE_DEPLOY_WEBHOOK_URL).'), 'warning');
-            return;
-        }
-        
         setIsDeploying(true);
         try {
-            await fetch(webhookUrl, { method: 'POST' });
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error('No session');
+
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+            const res = await fetch(`${apiUrl}/geo/deploy`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || `Deploy failed: ${res.status}`);
+            }
             showAlert(t('common.success', 'Успіх'), t('admin_dashboard.deploy.success', 'Зміни успішно відправлені на публікацію! Сайт оновиться через декілька хвилин.'), 'success');
-        } catch {
-            showAlert(t('common.error', 'Помилка'), t('admin_dashboard.deploy.error', 'Помилка при спробі публікації.'), 'error');
+        } catch (err) {
+            showAlert(t('common.error', 'Помилка'), err instanceof Error ? err.message : t('admin_dashboard.deploy.error', 'Помилка при спробі публікації.'), 'error');
         } finally {
             setIsDeploying(false);
         }

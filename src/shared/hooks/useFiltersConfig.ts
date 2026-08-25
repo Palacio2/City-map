@@ -1,6 +1,7 @@
 // hooks/useFiltersConfig.ts
 import { useState, useEffect } from 'react';
 import { DynamicDistrictConfig } from '@config/districtFields';
+import { FEATURES_CONFIG } from '@config/features';
 
 // Простий in-memory кеш, щоб не смикати API при кожному рендері компонента
 let cachedConfig: DynamicDistrictConfig | null = null;
@@ -25,6 +26,20 @@ export const useFiltersConfig = () => {
         if (!response.ok) throw new Error('Failed to fetch filters config');
         
         const data = await response.json();
+
+        // Застосовуємо ручні перевизначення полів з конфігу
+        if (FEATURES_CONFIG.FIELD_OVERRIDES) {
+          Object.values(data as DynamicDistrictConfig).forEach(category => {
+            category.fields.forEach(field => {
+              const override = FEATURES_CONFIG.FIELD_OVERRIDES[field.dbKey];
+              if (override) {
+                if (override.isPremiumField !== undefined) field.isPremiumField = override.isPremiumField;
+                if (override.isRealtorOnly !== undefined) field.isRealtorOnly = override.isRealtorOnly;
+              }
+            });
+          });
+        }
+
         cachedConfig = data;
         setConfig(data);
       } catch (err) {

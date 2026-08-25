@@ -39,7 +39,8 @@ export default function AdminRoute({ children }: { readonly children: ReactNode 
   if (authLoading || isChecking) return null;
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
+    // Не редіректимо на /login — AdminPanel покаже свій LoginTab
+    return <>{children}</>;
   }
 
   if (!isAdmin) {

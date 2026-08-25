@@ -1,37 +1,37 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, sentry-trace, baggage",
-};
+import { verifyAdminUser, corsHeaders } from "../_shared/auth.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") ?? "";
-    const anonKey = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-    const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
+    const { supabaseAdmin, isSuperAdmin, user, hasTab } = await verifyAdminUser(req);
 
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("Missing Authorization header");
+    let reqBody = {};
+    try {
+        const reqText = await req.text();
+        if (reqText) reqBody = JSON.parse(reqText);
+    } catch (e) {
+        // ignore JSON parse errors
+    }
+    const mapMode = (reqBody as any)?.mapMode === true;
 
-    const token = authHeader.replace("Bearer ", "");
-    const supabaseClient = createClient(supabaseUrl, anonKey);
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
-    
-    if (userError || !user) throw new Error("Unauthorized");
+    const { data: profile } = await supabaseAdmin.from("admin_profiles").select("assigned_cities").eq("user_id", user.id).maybeSingle();
+    const assignedCities = profile?.assigned_cities || [];
+    const canAssignCities = hasTab("users.assign_cities");
 
-    const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey);
-    const { data: profile } = await supabaseAdmin.from("admin_profiles").select("role").eq("user_id", user.id).maybeSingle();
+    let query = supabaseAdmin.from("cities").select("id, name, country_id, countries(name)");
 
-    const role = profile?.role || user.app_metadata?.role || "user";
-    if (role !== "admin" && role !== "super_admin") throw new Error("Forbidden");
+    if (!isSuperAdmin) {
+        if (mapMode || !canAssignCities) {
+            if (assignedCities.length === 0) {
+                return new Response(JSON.stringify({ cities: [] }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
+            }
+            query = query.in("id", assignedCities);
+        }
+    }
 
-    const { data: cities, error: citiesErr } = await supabaseAdmin
-      .from("cities")
-      .select("id, name, country_id, countries(name)");
+    const { data: cities, error: citiesErr } = await query;
 
     if (citiesErr) throw citiesErr;
 

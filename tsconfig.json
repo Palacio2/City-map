@@ -15,14 +15,16 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "ignoreDeprecations": "6.0",
+
     "baseUrl": ".",
-    
-    "types": ["vite/client"],
+    "ignoreDeprecations": "6.0",
+
+    "types": ["vite/client", "@testing-library/jest-dom"],
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
       "@api/*": ["src/shared/api/*"],
+      "@services/*": ["src/services/*"],
       "@seo/*": ["src/seo/*"],
       "@layout/*": ["src/components/layout/*"],
       "@header/*": ["src/components/header/*"],
@@ -41,7 +43,8 @@
       "@cityCountrySelect/*": ["src/components/cityCountrySelect/*"],
       "@filtersPanel/*": ["src/components/filtersPanel/*"],
       "@districtMap/*": ["src/pages/districtMap/*"],
-      "@stats/*": ["src/components/stats/*"]
+      "@stats/*": ["src/components/stats/*"],
+      "@admin/*": ["src/pages/admin/*"]
     }
   },
   "include": ["src"],

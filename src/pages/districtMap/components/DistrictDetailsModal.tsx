@@ -89,12 +89,12 @@ export default function DistrictDetailsModal({
           {isCommentsOpen ? (
             <div className="flex-1 min-h-0 overflow-y-auto p-5 md:p-8 bg-body custom-scrollbar relative">
               <div className="flex justify-between items-center mb-6 border-b border-borderClient pb-4">
-                <h2 className="text-xl font-heading font-semibold text-textMain">Коментарі</h2>
+                <h2 className="text-xl font-heading font-semibold text-textMain">{t('comments.title')}</h2>
                 <button 
                   onClick={() => setIsCommentsOpen(false)}
                   className="text-textSecondary hover:text-textMain transition-colors"
                 >
-                  Закрити
+                  {t('common.actions.close_text')}
                 </button>
               </div>
               <DistrictComments districtId={String(district.id)} />

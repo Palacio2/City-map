@@ -14,8 +14,7 @@ export const trackDistrictVisit = async (district: TransformedDistrict): Promise
         country: (district as Record<string, unknown>).country
       }
     });
-  } catch {
-  }
+  } catch (err) { console.error('Error caught in empty catch block:', err); }
 };
 
 export const fetchDashboardData = async (): Promise<any> => {
@@ -50,6 +49,5 @@ export const updateUserTime = async (timeSpentMs: number): Promise<void> => {
     await supabase.rpc('update_user_time', { 
       seconds: Math.floor(timeSpentMs / 1000) 
     });
-  } catch {
-  }
+  } catch (err) { console.error('Error caught in empty catch block:', err); }
 };

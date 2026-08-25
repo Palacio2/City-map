@@ -1,5 +1,10 @@
 import { supabase } from '@supabaseClient';
 
+const getCurrentUserId = async (): Promise<string | null> => {
+    const { data: { session } } = await supabase.auth.getSession();
+    return session?.user?.id ?? null;
+};
+
 export const adminUsersAPI = {
     getUsers: async () => {
         const { data: { session } } = await supabase.auth.getSession();
@@ -70,11 +75,21 @@ export const adminUsersAPI = {
         return await adminUsersAPI.updateUser(userId, 'update_tabs', tabs);
     },
 
+    // H2 fix: Prevent self-role-modification (defense-in-depth)
     updateRole: async (userId: string, role: string) => {
+        const currentUserId = await getCurrentUserId();
+        if (currentUserId && userId === currentUserId) {
+            throw new Error('Cannot modify your own role');
+        }
         return await adminUsersAPI.updateUser(userId, 'update_role', role);
     },
 
+    // H2 fix: Prevent self-deletion (defense-in-depth)
     deleteUser: async (userId: string) => {
+        const currentUserId = await getCurrentUserId();
+        if (currentUserId && userId === currentUserId) {
+            throw new Error('Cannot delete your own account');
+        }
         return await adminUsersAPI.updateUser(userId, 'delete_user', null);
     },
 

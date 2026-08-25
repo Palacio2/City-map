@@ -1,10 +1,31 @@
-import { createClient } from "@supabase/supabase-js";
-import 'dotenv/config';
+import { supabase } from "../utils/supabase.js";
+import { z } from 'zod';
 
-const supabaseUrl = process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL;
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_KEY;
+const FieldPayloadSchema = z.object({
+    field_code: z.string().min(2).regex(/^[a-z0-9_]+$/),
+    admin_label: z.string().min(1),
+    icon: z.string().min(1),
+    data_type: z.enum(['integer', 'numeric', 'boolean', 'text']),
+    ui_group: z.string().min(1),
+    source_type: z.enum(['osm', 'scraper', 'api', 'gus', 'manual']),
+    ui_component: z.enum(['input_number', 'input_text', 'select', 'textarea']),
+    parser_config: z.union([z.string(), z.record(z.unknown()), z.null()]).optional(),
+    is_visible_table: z.boolean().optional().default(false),
+    is_visible_form: z.boolean().optional().default(false),
+    sort_order: z.number().int().optional().default(0),
+    is_active: z.boolean().optional().default(true),
+}).strict();
 
-const supabase = createClient(supabaseUrl, supabaseKey);
+const normalizeParserConfig = (payload) => {
+    if (typeof payload.parser_config === 'string') {
+        try {
+            payload.parser_config = JSON.parse(payload.parser_config);
+        } catch {
+            payload.parser_config = {};
+        }
+    }
+    return payload;
+};
 
 export const getFields = async (req, res) => {
     try {
@@ -18,20 +39,14 @@ export const getFields = async (req, res) => {
 
 export const createField = async (req, res) => {
     try {
-        const payload = { ...req.body };
-        
-        if (typeof payload.parser_config === 'string') {
-            try { 
-                payload.parser_config = JSON.parse(payload.parser_config); 
-            } catch (e) { 
-                payload.parser_config = {}; 
-            }
-        }
+        const parsed = FieldPayloadSchema.parse(req.body);
+        const payload = normalizeParserConfig({ ...parsed });
 
         const { data, error } = await supabase.from('fields_config').insert([payload]).select();
         if (error) throw error;
         res.json(data[0]);
     } catch (err) {
+        if (err.name === 'ZodError') return res.status(400).json({ error: err.errors });
         res.status(500).json({ error: err.message });
     }
 };
@@ -39,20 +54,14 @@ export const createField = async (req, res) => {
 export const updateField = async (req, res) => {
     try {
         const { id } = req.params;
-        const payload = { ...req.body };
-        
-        if (typeof payload.parser_config === 'string') {
-            try { 
-                payload.parser_config = JSON.parse(payload.parser_config); 
-            } catch (e) { 
-                payload.parser_config = {}; 
-            }
-        }
+        const parsed = FieldPayloadSchema.partial().parse(req.body);
+        const payload = normalizeParserConfig({ ...parsed });
 
         const { data, error } = await supabase.from('fields_config').update(payload).eq('id', id).select();
         if (error) throw error;
         res.json(data[0]);
     } catch (err) {
+        if (err.name === 'ZodError') return res.status(400).json({ error: err.errors });
         res.status(500).json({ error: err.message });
     }
 };

@@ -25,7 +25,10 @@ serve(async (req) => {
       case "getComments":
         const { data: comments, error: commentsErr } = await supabaseAdmin
             .from("district_comments")
-            .select("*")
+            .select(`
+                *,
+                districts (city_id)
+            `)
             .order("created_at", { ascending: false });
         if (commentsErr) throw commentsErr;
         responseData = comments || [];

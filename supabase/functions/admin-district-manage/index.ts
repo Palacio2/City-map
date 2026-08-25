@@ -10,7 +10,11 @@ serve(async (req) => {
 
     const { supabaseAdmin, isSuperAdmin, user, hasTab, role, allowedTabs } = await verifyAdminUser(req);
 
-    const { data: districtCheck } = await supabaseAdmin.from('districts').select('city_id').eq('id', districtId).single();
+    const { data: districtCheck, error: districtCheckErr } = await supabaseAdmin.from('districts').select('city_id').eq('id', districtId).maybeSingle();
+    
+    if (districtCheckErr) throw districtCheckErr;
+    if (!districtCheck && action !== "save") throw new Error("Район не знайдено");
+
     if (!isSuperAdmin && districtCheck) {
         const { data: profile } = await supabaseAdmin.from("admin_profiles").select("assigned_cities").eq("user_id", user.id).maybeSingle();
         if (!profile?.assigned_cities?.includes(districtCheck.city_id)) {
@@ -19,12 +23,13 @@ serve(async (req) => {
     }
 
     if (action === "get") {
-      const { data: dist, error: distErr } = await supabaseAdmin.from('districts').select('*').eq('id', districtId).single();
+      const { data: dist, error: distErr } = await supabaseAdmin.from('districts').select('*').eq('id', districtId).maybeSingle();
       const { data: filterData } = await supabaseAdmin.from('district_filter_data').select('*').eq('district_id', districtId).maybeSingle();
       const { data: geoData } = await supabaseAdmin.from('district_geo_data').select('*').eq('district_id', districtId).maybeSingle();
       const { data: photoData } = await supabaseAdmin.from('district_photos').select('*').eq('district_id', districtId).eq('is_main', true).maybeSingle();
 
       if (distErr) throw distErr;
+      if (!dist) throw new Error("Район не знайдено");
 
       let parsedGeojson = geoData?.geojson;
       let parsedPoi = geoData?.poi_data;

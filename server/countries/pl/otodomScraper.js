@@ -1,54 +1,6 @@
-import puppeteerCore from 'puppeteer';
-import { addExtra } from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
-import { createClient } from "@supabase/supabase-js";
-import 'dotenv/config';
-
-const puppeteer = addExtra(puppeteerCore);
-const supabase = createClient(
-    process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-);
-
-puppeteer.use(StealthPlugin());
+import { supabase } from '../../utils/supabase.js';
 
 const delay = (min, max) => new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * (max - min + 1)) + min));
-
-export async function initScraper() {
-    return await puppeteer.launch({
-        headless: "new",
-        args: [
-            '--no-sandbox', 
-            '--disable-setuid-sandbox', 
-            '--disable-blink-features=AutomationControlled',
-            '--disable-dev-shm-usage',
-            '--disable-web-security',
-            '--disable-features=IsolateOrigins,site-per-process'
-        ]
-    });
-}
-
-export async function closeScraper(browser) {
-    if (browser) await browser.close();
-}
-
-async function autoScroll(page) {
-    await page.evaluate(async () => {
-        await new Promise((resolve) => {
-            let totalHeight = 0;
-            const distance = 150 + Math.floor(Math.random() * 50);
-            const timer = setInterval(() => {
-                const scrollHeight = document.body.scrollHeight;
-                window.scrollBy(0, distance);
-                totalHeight += distance;
-                if (totalHeight >= scrollHeight - window.innerHeight) {
-                    clearInterval(timer);
-                    resolve();
-                }
-            }, 100 + Math.floor(Math.random() * 100));
-        });
-    });
-}
 
 function filterOutliers(arr) {
     if (arr.length < 4) return arr; 
@@ -59,6 +11,26 @@ function filterOutliers(arr) {
     const maxValue = q3 + iqr * 1.5;
     const minValue = q1 - iqr * 1.5;
     return values.filter(x => x >= minValue && x <= maxValue);
+}
+
+async function autoScroll(page) {
+    const MAX_SCROLL_TIME = 30000; // 30 seconds max
+    await page.evaluate(async (maxTime) => {
+        await new Promise((resolve) => {
+            const startTime = Date.now();
+            let totalHeight = 0;
+            const distance = 150 + Math.floor(Math.random() * 50);
+            const timer = setInterval(() => {
+                const scrollHeight = document.body.scrollHeight;
+                window.scrollBy(0, distance);
+                totalHeight += distance;
+                if (totalHeight >= scrollHeight - window.innerHeight || Date.now() - startTime > maxTime) {
+                    clearInterval(timer);
+                    resolve();
+                }
+            }, 100 + Math.floor(Math.random() * 100));
+        });
+    }, MAX_SCROLL_TIME);
 }
 
 export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, countryCode = 'PL', platform = 'otodom') {
@@ -76,7 +48,7 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
         .single();
 
     if (error || !rule) {
-        console.error(`[Scraper] ❌ Не знайдено активного правила в базі для ${platform} (${type})`);
+        console.error(`[Scraper] \u274c \u041d\u0435 \u0437\u043d\u0430\u0439\u0434\u0435\u043d\u043e \u0430\u043a\u0442\u0438\u0432\u043d\u043e\u0433\u043e \u043f\u0440\u0430\u0432\u0438\u043b\u0430 \u0432 \u0431\u0430\u0437\u0456 \u0434\u043b\u044f ${platform} (${type})`);
         return { avgPrice: 0, avgSqm: 0 };
     }
 
@@ -89,28 +61,23 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
             let url = baseUrl.includes('?') ? `${baseUrl}&page=${i}` : `${baseUrl}?page=${i}`;
             if (platform === 'otodom' && !url.includes('ownerTypeSingleFamily')) url += '&limit=72'; 
 
-            console.log(`[Scraper] 🔍 Перехід на сторінку: ${url}`);
             await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 60000 });
             
-            // --- БРОНЕБІЙНІСТЬ: Очікування редиректів та завантаження React-компонентів ---
-            // 1. Чекаємо 3-4 секунди для проходження редиректів (якщо була помилка в URL)
+            // Wait for redirects and React component loading
             await delay(3000, 4000); 
             
-            // 2. Примусово чекаємо появи карток квартир на екрані
             try {
                 await page.waitForSelector(rule.item_selector, { timeout: 10000 });
             } catch (e) {
-                console.log(`[Scraper] ⏳ Картки не з'явилися протягом 10 сек. Можливо, порожня сторінка або капча.`);
+                // Selector not found - page may be empty
             }
-            // -------------------------------------------------------------------------------
 
             if (i === 1 && platform === 'otodom') {
                 try {
                     await page.waitForSelector('#onetrust-accept-btn-handler', { timeout: 4000 });
                     await page.click('#onetrust-accept-btn-handler');
-                    // Даємо час банеру зникнути після кліку
                     await delay(1000, 1500); 
-                } catch (e) {}
+                } catch (e) { console.error(e); }
             }   
 
             await autoScroll(page);
@@ -152,7 +119,6 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
             }, rule);
 
             if (data.prices.length === 0) {
-                console.log(`[Scraper] ⚠️ На сторінці ${i} не знайдено об'єктів. Селектор: ${rule.item_selector}`);
                 break;
             }
             
@@ -177,7 +143,6 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
             avgSqm: type === 'sale' ? Math.round(calculateMedian(filteredSqm)) : 0
         };
     } catch (e) {
-        console.log(`[SCRAPER ERROR] Помилка на сторінці:`, e.message);
         return { avgPrice: 0, avgSqm: 0 };
     } finally {
         if (page) await page.close(); 

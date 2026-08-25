@@ -23,15 +23,15 @@ const GenericCategoryFilter = memo(({
     if (!categoryConfig || !categoryConfig.fields) return [];
 
     return categoryConfig.fields
-      .filter(f => {
-        if (isFree && f.isPremiumField) return false;
-        if (f.isRealtorOnly && !isRealtor) return false;
-        return true;
-      })
-      .map(f => ({ 
-        name: f.key,
-        type: f.type
-      }));
+      .map(f => {
+        const isLocked = (isFree && f.isPremiumField) || (f.isRealtorOnly && !isRealtor);
+        return { 
+          name: f.key,
+          type: f.type,
+          disabled: isLocked,
+          locked: isLocked
+        };
+      });
   }, [categoryConfig, isFree, isRealtor]);
 
   if (!categoryConfig) return null;

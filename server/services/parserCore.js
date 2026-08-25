@@ -1,11 +1,7 @@
-import 'dotenv/config';
-import { createClient } from "@supabase/supabase-js";
 import { getSourceAdapter } from './sources/index.js';
 import { evaluateField, castDataType } from './parserEngine.js';
-import fs from 'fs';
-import { PARSER_CONFIG } from '../config/parserConfig.js';
-
-const supabase = createClient(process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+import { queueService } from './queueService.js';
+import { supabase } from '../utils/supabase.js';
 
 export const runUniversalParser = async (config, logger) => {
     const { data: allFields } = await supabase.from('fields_config').select('*').eq('is_active', true);
@@ -63,6 +59,8 @@ export const runUniversalParser = async (config, logger) => {
         return result;
     });
 
-    fs.writeFileSync(PARSER_CONFIG.PATHS.PENDING_RESULTS, JSON.stringify(finalResults, null, 2));
+    // Зберігаємо результати у БД через queueService, а не у файл
+    await queueService.save({ ...config, results: finalResults, status: 'completed' });
+    
     return finalResults;
 };

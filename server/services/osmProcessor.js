@@ -2,6 +2,7 @@ import fs from "fs";
 import OsmPbfParser from "osm-pbf-parser";
 import through from "through2";
 import * as turf from "@turf/turf";
+import RBush from "rbush";
 import { LOGS } from "../config/logTemplates.js";
 import { PARSER_CONFIG } from "../config/parserConfig.js";
 
@@ -50,14 +51,19 @@ export async function processLocalOsmData(filePath, districtsData, fieldsConfig,
 
     logger(LOGS.OSM_START(filePath), 'INFO');
 
-    const districtPolygons = districtsData.map(d => ({
-        id: d.district_id,
-        name: d.name,
-        polygon: d.geojson.type === 'Feature' ? d.geojson : turf.feature(d.geojson),
-        bbox: turf.bbox(d.geojson.type === 'Feature' ? d.geojson : turf.feature(d.geojson))
-    }));
+    const districtPolygons = districtsData.map(d => {
+        const poly = d.geojson.type === 'Feature' ? d.geojson : turf.feature(d.geojson);
+        return {
+            id: d.district_id,
+            name: d.name,
+            polygon: poly,
+            bbox: turf.bbox(poly),
+            area_sqm: turf.area(poly)
+        };
+    });
 
     const amenityWays = [];
+    const buildingWays = [];
     const neededNodeIds = new Set();
 
     let t0 = Date.now();
@@ -67,14 +73,20 @@ export async function processLocalOsmData(filePath, districtsData, fieldsConfig,
             .pipe(parser)
             .pipe(through.obj(function (items, enc, next) {
                 for (const item of items) {
-                    if (item.type === 'way' && item.tags && finalMetrics.some(m => m.filter(item))) {
-                        const refs = item.nodeRefs || item.refs || [];
-                        amenityWays.push({ 
-                            tags: item.tags, 
-                            refs: [...refs], 
-                            matchedMetrics: finalMetrics.filter(m => m.filter(item)).map(m => m.db) 
-                        });
-                        refs.forEach(r => neededNodeIds.add(String(r)));
+                    if (item.type === 'way' && item.tags) {
+                        const isBuilding = item.tags.building === 'residential' || item.tags.building === 'apartments';
+                        const matchedMetrics = finalMetrics.filter(m => m.filter(item)).map(m => m.db);
+                        
+                        if (matchedMetrics.length > 0 || isBuilding) {
+                            const refs = item.nodeRefs || item.refs || [];
+                            if (matchedMetrics.length > 0) {
+                                amenityWays.push({ tags: item.tags, refs: [...refs], matchedMetrics });
+                            }
+                            if (isBuilding) {
+                                buildingWays.push({ refs: [...refs] });
+                            }
+                            refs.forEach(r => neededNodeIds.add(String(r)));
+                        }
                     }
                 }
                 next();
@@ -123,17 +135,57 @@ export async function processLocalOsmData(filePath, districtsData, fieldsConfig,
         if (valid > 0) finalPois.push({ coord: [lonSum / valid, latSum / valid], matchedMetrics: way.matchedMetrics });
     }
 
+    const residentialAreas = [];
+    for (const way of buildingWays) {
+        const coords = [];
+        for (const ref of way.refs) {
+            const coord = nodeCoords.get(String(ref));
+            if (coord) coords.push([coord[0], coord[1]]);
+        }
+        if (coords.length > 2) {
+            // Ensure closed polygon
+            if (coords[0][0] !== coords[coords.length-1][0] || coords[0][1] !== coords[coords.length-1][1]) {
+                coords.push([...coords[0]]);
+            }
+            try {
+                const poly = turf.polygon([coords]);
+                const area = turf.area(poly);
+                const centroid = turf.centroid(poly).geometry.coordinates;
+                residentialAreas.push({ coord: centroid, area });
+            } catch (e) {
+                // Ignore invalid polygons
+            }
+        }
+    }
+
     const results = {};
     districtPolygons.forEach(dp => {
-        results[dp.id] = { district_id: dp.id, district_name: dp.name, poi_data: [] };
+        results[dp.id] = { 
+            district_id: dp.id, 
+            district_name: dp.name, 
+            district_area_sqm: Math.round(dp.area_sqm),
+            residential_area_sqm: 0,
+            poi_data: [] 
+        };
         finalMetrics.forEach(m => results[dp.id][m.db] = 0);
     });
 
+    const tree = new RBush();
+    const treeItems = districtPolygons.map(dp => {
+        const [minX, minY, maxX, maxY] = dp.bbox;
+        return { minX, minY, maxX, maxY, dp };
+    });
+    tree.load(treeItems);
+
     for (const poi of finalPois) {
         const pt = turf.point(poi.coord);
-        for (const dp of districtPolygons) {
-            const [minX, minY, maxX, maxY] = dp.bbox;
-            if (poi.coord[0] < minX || poi.coord[0] > maxX || poi.coord[1] < minY || poi.coord[1] > maxY) continue;
+        const searchRes = tree.search({
+            minX: poi.coord[0], minY: poi.coord[1],
+            maxX: poi.coord[0], maxY: poi.coord[1]
+        });
+
+        for (const item of searchRes) {
+            const dp = item.dp;
             if (turf.booleanPointInPolygon(pt, dp.polygon)) {
                 poi.matchedMetrics.forEach(metricDb => {
                     results[dp.id][metricDb]++;
@@ -144,6 +196,22 @@ export async function processLocalOsmData(filePath, districtsData, fieldsConfig,
                         'parser'
                     ]);
                 });
+                break;
+            }
+        }
+    }
+
+    for (const bld of residentialAreas) {
+        const pt = turf.point(bld.coord);
+        const searchRes = tree.search({
+            minX: bld.coord[0], minY: bld.coord[1],
+            maxX: bld.coord[0], maxY: bld.coord[1]
+        });
+
+        for (const item of searchRes) {
+            const dp = item.dp;
+            if (turf.booleanPointInPolygon(pt, dp.polygon)) {
+                results[dp.id].residential_area_sqm += bld.area;
                 break;
             }
         }

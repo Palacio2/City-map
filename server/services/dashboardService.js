@@ -1,10 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
-import 'dotenv/config';
-
-const supabase = createClient(
-    process.env.VITE_SUPABASE_URL || process.env.SUPABASE_URL,
-    process.env.SUPABASE_SERVICE_ROLE_KEY
-);
+import { supabase } from "../utils/supabase.js";
 
 export const generateDashboardStats = async () => {
     const { count: countriesCount } = await supabase.from('countries').select('*', { count: 'exact', head: true });
@@ -23,7 +17,8 @@ export const generateDashboardStats = async () => {
     const geoSet = new Set((geos || []).filter(g => g.geojson).map(g => g.district_id));
 
     const now = new Date();
-    const sixMonthsAgo = new Date(now.setMonth(now.getMonth() - 6));
+    const sixMonthsAgo = new Date(now);
+    sixMonthsAgo.setMonth(sixMonthsAgo.getMonth() - 6);
 
     const problematicDistricts = [];
     const outdatedDistricts = [];

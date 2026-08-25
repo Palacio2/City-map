@@ -1,9 +1,10 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useSubscription } from '@subscription/contex/SubscriptionContext';
 import { useFiltersConfig } from '@hooks/useFiltersConfig';
 import { useDistrictsQuery } from '../hooks/useDistrictsQuery';
 import { filterDistrictsByCriteria } from '@filtersPanel/filterLogic';
+import { FEATURES_CONFIG } from '@config/features';
 import type { TransformedDistrict } from '@utils/dataTransformers';
 import type { DistrictMapFilters } from '../types';
 
@@ -16,6 +17,13 @@ export const useDistrictMap = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<TransformedDistrict | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const modalTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (modalTimerRef.current) clearTimeout(modalTimerRef.current);
+    };
+  }, []);
 
   const { data: allDistricts = [], isLoading, error, refetch } = useDistrictsQuery(country, city);
 
@@ -35,7 +43,7 @@ export const useDistrictMap = () => {
 
   const districtsToDisplay = useMemo(() => {
     if (isFree) {
-      return allFilteredDistricts.slice(0, 5);
+      return allFilteredDistricts.slice(0, FEATURES_CONFIG.FREE_DISTRICTS_LIMIT);
     }
     return allFilteredDistricts;
   }, [allFilteredDistricts, isFree]);
@@ -56,7 +64,7 @@ export const useDistrictMap = () => {
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
-    setTimeout(() => {
+    modalTimerRef.current = setTimeout(() => {
       setSelectedDistrict(null);
       setSelectedCategory(null);
     }, 300);

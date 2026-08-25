@@ -1,4 +1,4 @@
-// @ts-nocheck
+﻿// @ts-nocheck
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -71,11 +71,12 @@ export const DistrictsMap = ({
           <div className="flex-1 flex flex-col overflow-hidden">
             <div className="flex-1 overflow-y-auto overflow-x-hidden p-1 custom-scrollbar">
               <div className="grid grid-cols-[repeat(auto-fill,minmax(140px,1fr))] md:grid-cols-[repeat(auto-fill,minmax(200px,1fr))] gap-3 md:gap-4 pb-4">
-                {paginatedDistricts.map(district => (
+                {paginatedDistricts.map((district, index) => (
                   <DistrictCard
                     key={district.id}
                     district={district}
                     onClick={onDistrictClick}
+                    isPriority={index < 4}
                   />
                 ))}
               </div>

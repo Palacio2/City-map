@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { supabase } from '@supabaseClient';
+import i18n from '../../../i18n/i18n';
 import { authenticatedApiRequest } from '@api/apiClient';
 import type { TrackedDistrictPayload, TrackedDistrict } from '../types';
 
@@ -20,7 +21,7 @@ export const addTrackedDistrict = async (payload: TrackedDistrictPayload): Promi
     .single();
 
   if (error) {
-    throw new Error(error.code === '23505' ? 'Цей район вже додано' : 'Не вдалося додати район');
+    throw new Error(error.code === '23505' ? i18n.t('stats.errors.already_added') : i18n.t('stats.errors.add_failed'));
   }
   return data;
 };
@@ -31,6 +32,6 @@ export const removeTrackedDistrict = async (id: string): Promise<boolean> => {
     .delete()
     .eq('id', id);
 
-  if (error) throw new Error('Помилка при видаленні');
+  if (error) throw new Error(i18n.t('stats.errors.delete_error'));
   return true;
 };

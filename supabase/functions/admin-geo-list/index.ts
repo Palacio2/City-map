@@ -1,34 +1,13 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, sentry-trace, baggage",
-};
+import { verifyAdminUser, corsHeaders } from "../_shared/auth.ts";
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const authHeader = req.headers.get("Authorization");
-    if (!authHeader) throw new Error("Missing Authorization header");
-
-    const supabaseAdmin = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
-
-    const token = authHeader.replace("Bearer ", "");
-    const supabaseClient = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "");
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError || !user) throw new Error("Unauthorized");
-
-    const { data: profile } = await supabaseAdmin.from("admin_profiles").select("role, assigned_cities").eq("user_id", user.id).maybeSingle();
-    const role = profile?.role || user.app_metadata?.role || "user";
-    if (role !== "super_admin" && role !== "admin") throw new Error("Forbidden");
-
+    const { supabaseAdmin, isSuperAdmin, user } = await verifyAdminUser(req);
+    const { data: profile } = await supabaseAdmin.from("admin_profiles").select("assigned_cities").eq("user_id", user.id).maybeSingle();
     const assignedCities = profile?.assigned_cities || [];
-    const isSuperAdmin = role === "super_admin";
 
     const { action, countryId, cityId } = await req.json();
     let resultData = [];

@@ -8,6 +8,15 @@ const supabase = createClient(
 
 const tokenCache = new Map();
 const CACHE_DURATION_MS = 5 * 60 * 1000;
+const CACHE_MAX_SIZE = 500;
+
+// Periodic cleanup of expired tokens to prevent memory leaks
+setInterval(() => {
+    const now = Date.now();
+    for (const [key, val] of tokenCache) {
+        if (val.exp < now) tokenCache.delete(key);
+    }
+}, 10 * 60 * 1000).unref();
 
 export const requireAuth = async (req, res, next) => {
     const authHeader = req.headers.authorization;
@@ -20,6 +29,8 @@ export const requireAuth = async (req, res, next) => {
     const cachedSession = tokenCache.get(token);
     if (cachedSession && cachedSession.exp > Date.now()) {
         req.user = cachedSession.user;
+        req.adminRole = cachedSession.role;
+        req.allowedTabs = cachedSession.allowedTabs;
         return next();
     }
 
@@ -39,9 +50,21 @@ export const requireAuth = async (req, res, next) => {
                 return res.status(403).json({ error: 'Access Denied: You do not have enough permissions.' });
             }
 
-            tokenCache.set(token, { user, exp: Date.now() + CACHE_DURATION_MS });
+            const { data: profile } = await supabase.from('admin_profiles').select('allowed_tabs, role').eq('user_id', user.id).maybeSingle();
+
+            const finalRole = profile?.role || role;
+            const allowedTabs = profile?.allowed_tabs || [];
+
+            // Evict oldest entries if cache is full
+            if (tokenCache.size >= CACHE_MAX_SIZE) {
+                const firstKey = tokenCache.keys().next().value;
+                tokenCache.delete(firstKey);
+            }
+            tokenCache.set(token, { user, role: finalRole, allowedTabs, exp: Date.now() + CACHE_DURATION_MS });
 
             req.user = user;
+            req.adminRole = finalRole;
+            req.allowedTabs = allowedTabs;
             return next(); 
 
         } catch (err) {
@@ -59,4 +82,12 @@ export const requireAuth = async (req, res, next) => {
             }
         }
     }
+};
+
+export const requireTab = (tab) => {
+    return (req, res, next) => {
+        if (req.adminRole === 'super_admin') return next();
+        if (req.allowedTabs && req.allowedTabs.includes(tab)) return next();
+        return res.status(403).json({ error: `Forbidden: Missing tab permission '${tab}'` });
+    };
 };
