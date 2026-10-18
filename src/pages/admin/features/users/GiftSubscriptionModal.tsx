@@ -76,13 +76,13 @@ const GiftSubscriptionModal = ({ isOpen, onClose, selectedUser, onGrant, onRevok
         <>
             {onRevoke && (
                 <Button variant="danger" size="sm" onClick={handleRevoke} disabled={loading || revoking} className="mr-auto">
-                    {revoking ? '...' : <><FaTrash /> {t('admin_users.gift_modal.revoke', 'Анулювати підписку')}</>}
+                    {revoking ? '...' : <><FaTrash /> {t('admin_users.gift_modal.revoke_gift', { defaultValue: 'Відкликати подарунок' })}</>}
                 </Button>
             )}
             <Button variant="cancel" size="sm" onClick={onClose} disabled={loading || revoking}>
                 {t('admin_users.gift_modal.cancel')}
             </Button>
-            <Button variant="success" size="sm" onClick={handleSubmit} disabled={loading || revoking || Number(days) < 1}>
+            <Button variant="success" size="sm" onClick={handleSubmit} disabled={loading || revoking || !Number.isInteger(Number(days)) || Number(days) < 1 || Number(days) > 365}>
                 {loading ? t('admin_users.gift_modal.granting') : <><FaGift /> {t('admin_users.gift_modal.grant_btn')}</>}
             </Button>
         </>

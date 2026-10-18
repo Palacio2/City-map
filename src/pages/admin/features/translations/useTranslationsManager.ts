@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useModals } from '@admin/core/context/ModalContext';
 import { adminTranslationsApi } from '@admin/features/translations/adminTranslationsApi';
-import extractedKeys from '../../../../extracted_keys.json';
+import extractedKeys from '../../extracted_keys.json';
 import { useActionLogger } from '@admin/core/context/useActionLogger';
 import { TranslationData } from './types';
 

@@ -1,9 +1,7 @@
 import { DynamicDistrictConfig } from '@config/districtFields';
+import { UserAccess } from '@/shared/types/access.types';
 
-export interface UserAccess {
-  isFree: boolean;
-  isRealtor: boolean;
-}
+export type { UserAccess };
 
 export const getVisibleConfig = (
   config: DynamicDistrictConfig | null, 

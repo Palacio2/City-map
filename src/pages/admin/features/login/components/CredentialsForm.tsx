@@ -37,8 +37,8 @@ export default function CredentialsForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
-            placeholder="admin@citymaps.com"
-            className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-[#e2d9cd] dark:border-[#423932] text-sm text-[#2a2421] dark:text-[#faf7f2] placeholder-[#b8ada2] bg-white dark:bg-[#1a1614] focus:outline-none focus:border-[#c25e26] focus:ring-4 focus:ring-[#c25e26]/10 transition-all font-medium"
+            placeholder="admin@kvartals.com"
+            className="w-full pl-9 pr-3.5 py-2.5 rounded-xl border border-[#e2d9cd] dark:border-[#423932] text-sm text-[#2a2421] dark:text-[#faf7f2] placeholder-[#b8ada2] bg-white dark:bg-[#1a1614] focus:outline-hidden focus:border-[#c25e26] focus:ring-4 focus:ring-[#c25e26]/10 transition-all font-medium"
           />
         </div>
       </div>
@@ -62,7 +62,7 @@ export default function CredentialsForm({
             onChange={(e) => setPassword(e.target.value)}
             required
             placeholder="••••••••"
-            className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-[#e2d9cd] dark:border-[#423932] text-sm text-[#2a2421] dark:text-[#faf7f2] placeholder-[#b8ada2] bg-white dark:bg-[#1a1614] focus:outline-none focus:border-[#c25e26] focus:ring-4 focus:ring-[#c25e26]/10 transition-all font-medium"
+            className="w-full pl-9 pr-10 py-2.5 rounded-xl border border-[#e2d9cd] dark:border-[#423932] text-sm text-[#2a2421] dark:text-[#faf7f2] placeholder-[#b8ada2] bg-white dark:bg-[#1a1614] focus:outline-hidden focus:border-[#c25e26] focus:ring-4 focus:ring-[#c25e26]/10 transition-all font-medium"
           />
           <button
             type="button"

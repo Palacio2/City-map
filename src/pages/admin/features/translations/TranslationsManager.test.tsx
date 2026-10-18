@@ -1,6 +1,9 @@
 import { render, screen } from '@testing-library/react';
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, beforeAll } from 'vitest';
 import TranslationsManager from './TranslationsManager';
+import { createInstance } from 'i18next';
+const testI18n = createInstance();
+beforeAll(async () => { await testI18n.init({ lng: 'cimode', resources: {} }); });
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({
@@ -19,7 +22,7 @@ vi.mock('@admin/features/translations/useTranslationsManager', () => ({
 }));
 
 // We need a dummy extracted_keys.json to avoid import errors
-vi.mock('../../../../extracted_keys.json', () => ({
+vi.mock('../../extracted_keys.json', () => ({
   default: ['common.save']
 }));
 
@@ -39,7 +42,7 @@ describe('TranslationsManager Access Control', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(useTranslationsManager).mockReturnValue({
-      t: (key: string) => key,
+      t: testI18n.getFixedT('cimode', 'db'),
       translations: baseTranslations,
       isModalOpen: false,
       setIsModalOpen: vi.fn(),
@@ -52,6 +55,7 @@ describe('TranslationsManager Access Control', () => {
       handleAddNew: mockHandleAddNew,
       handleEdit: mockHandleEdit,
       handleDelete: mockHandleDelete,
+      handleDeleteUnused: vi.fn(),
       runAudit: mockRunAudit,
       handleQuickAdd: vi.fn(),
       handleSubmit: vi.fn(),

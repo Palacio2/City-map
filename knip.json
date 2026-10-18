@@ -1,0 +1,36 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "workspaces": {
+    ".": {
+      "entry": [
+        "scripts/*.mjs",
+        "src/i18n/dynamicKeysManifest.ts",
+        "supabase/functions/*/index.ts",
+        "supabase/tests/*.{ts,mjs}",
+        "shared/*.test.mjs",
+        "src/shared/types/database.types.ts"
+      ],
+      "project": [
+        "src/**/*.{ts,tsx,js,mjs}",
+        "scripts/*.mjs",
+        "shared/*.{ts,js,mjs}",
+        "supabase/functions/**/*.ts",
+        "supabase/tests/*.{ts,mjs}",
+        "src/**/*.css"
+      ],
+      "ignoreDependencies": [
+        "npm:*",
+        "deno"
+      ]
+    },
+    "server": {
+      "entry": [
+        "**/*.test.js",
+        "services/browser.smoke.mjs"
+      ],
+      "project": [
+        "**/*.{js,mjs}"
+      ]
+    }
+  }
+}

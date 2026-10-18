@@ -1,9 +1,12 @@
-﻿import { useMemo, useState, useEffect } from 'react';
-import { FaLanguage, FaPlus, FaEdit, FaTrash, FaCheckCircle, FaExclamationTriangle, FaSearch, FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import { useMemo, useState, useEffect } from 'react';
+import { FaLanguage, FaPlus, FaEdit, FaTrash, FaCheckCircle, FaExclamationTriangle, FaSearch, FaChevronLeft, FaChevronRight, FaRocket } from 'react-icons/fa';
 import DataTable from '@admin/core/ui/DataTable';
 import BaseModal from '@admin/core/ui/BaseModal';
 import { Button } from '@admin/core/ui/Button';
 import { Input, FormGroup } from '@admin/core/ui/Input';
+import { Loader } from '@admin/core/ui/Loader';
+import { supabase } from '@supabaseClient';
+import { useModals } from '@admin/core/context/ModalContext';
 import { useTranslationsManager, normalizedKeys } from '@admin/features/translations/useTranslationsManager';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
 import { TranslationData } from './types';
@@ -13,10 +16,38 @@ const PAGE_SIZE = 50;
 export default function TranslationsManager() {
     const logic = useTranslationsManager();
     const { canDo } = useActionGuard();
+    const { showAlert } = useModals();
     const { t } = logic;
     
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [isDeploying, setIsDeploying] = useState(false);
+
+    const handleDeploy = async () => {
+        setIsDeploying(true);
+        try {
+            const { data: { session } } = await supabase.auth.getSession();
+            if (!session) throw new Error('No session');
+
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
+            const res = await fetch(`${apiUrl}/geo/deploy`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${session.access_token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (!res.ok) {
+                const errData = await res.json().catch(() => ({}));
+                throw new Error(errData.error || `Deploy failed: ${res.status}`);
+            }
+            showAlert(t('common.success', 'Успіх'), t('admin_dashboard.deploy.success', 'Зміни успішно відправлені на публікацію! Сайт оновиться через декілька хвилин.'), 'success');
+        } catch (err) {
+            showAlert(t('common.error', 'Помилка'), err instanceof Error ? err.message : t('admin_dashboard.deploy.error', 'Помилка при спробі публікації.'), 'error');
+        } finally {
+            setIsDeploying(false);
+        }
+    };
 
     const filteredTranslations = useMemo(() => {
         if (!searchQuery.trim()) return logic.translations;
@@ -99,7 +130,23 @@ export default function TranslationsManager() {
                             <p className="m-0 text-textMuted text-xs mt-0.5 font-medium">{t('admin_translations.tab.count_info', { count: filteredTranslations.length })}</p>
                         </div>
                     </div>
-                    <div className="flex items-center gap-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                        {canDo('translations.edit') && (
+                            <Button 
+                                variant="primary" 
+                                size="sm" 
+                                onClick={handleDeploy}
+                                disabled={isDeploying}
+                                className={isDeploying ? 'opacity-70' : ''}
+                            >
+                                {isDeploying ? (
+                                    <Loader variant="spinner" size="sm" colorClass="text-white" />
+                                ) : (
+                                    <FaRocket className="text-xs" />
+                                )}
+                                {t('admin_dashboard.deploy.btn', 'Опублікувати зміни')}
+                            </Button>
+                        )}
                         {canDo('translations.audit') && (
                             <Button variant="cancel" size="sm" onClick={logic.runAudit}>
                                 <FaCheckCircle className="text-xs" /> {t('admin_translations.btn.audit')}
@@ -122,7 +169,7 @@ export default function TranslationsManager() {
                         value={searchQuery}
                         onChange={(e) => setSearchQuery(e.target.value)}
                         placeholder={t('admin_translations.search_placeholder', 'Пошук перекладів (ключ, або текст)...')}
-                        className="w-full pl-9 pr-4 py-2 bg-main/40 border border-border rounded-xl text-xs text-textMain font-medium focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none transition-all"
+                        className="w-full pl-9 pr-4 py-2 bg-main/40 border border-border rounded-xl text-xs text-textMain font-medium focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/15 outline-hidden transition-all"
                     />
                 </div>
             </div>
@@ -188,7 +235,7 @@ export default function TranslationsManager() {
                                 name="uk"
                                 value={logic.formData.uk}
                                 onChange={logic.handleInputChange}
-                                className="w-full pl-12 pr-4 py-3 bg-main/40 dark:bg-main/60 border border-border rounded-xl text-xs text-textMain focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none transition-all min-h-[70px] shadow-2xs hover:border-primary/50 resize-y"
+                                className="w-full pl-12 pr-4 py-3 bg-main/40 dark:bg-main/60 border border-border rounded-xl text-xs text-textMain focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/15 outline-hidden transition-all min-h-[70px] shadow-2xs hover:border-primary/50 resize-y"
                                 placeholder={t('admin_translations.modal.uk_placeholder')}
                             />
                         </div>
@@ -201,7 +248,7 @@ export default function TranslationsManager() {
                                 name="pl"
                                 value={logic.formData.pl}
                                 onChange={logic.handleInputChange}
-                                className="w-full pl-12 pr-4 py-3 bg-main/40 dark:bg-main/60 border border-border rounded-xl text-xs text-textMain focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none transition-all min-h-[70px] shadow-2xs hover:border-primary/50 resize-y"
+                                className="w-full pl-12 pr-4 py-3 bg-main/40 dark:bg-main/60 border border-border rounded-xl text-xs text-textMain focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/15 outline-hidden transition-all min-h-[70px] shadow-2xs hover:border-primary/50 resize-y"
                                 placeholder={t('admin_translations.modal.pl_placeholder')}
                             />
                         </div>
@@ -214,7 +261,7 @@ export default function TranslationsManager() {
                                 name="en"
                                 value={logic.formData.en}
                                 onChange={logic.handleInputChange}
-                                className="w-full pl-12 pr-4 py-3 bg-main/40 dark:bg-main/60 border border-border rounded-xl text-xs text-textMain focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/15 outline-none transition-all min-h-[70px] shadow-2xs hover:border-primary/50 resize-y"
+                                className="w-full pl-12 pr-4 py-3 bg-main/40 dark:bg-main/60 border border-border rounded-xl text-xs text-textMain focus:bg-surface focus:border-primary focus:ring-2 focus:ring-primary/15 outline-hidden transition-all min-h-[70px] shadow-2xs hover:border-primary/50 resize-y"
                                 placeholder={t('admin_translations.modal.en_placeholder')}
                             />
                         </div>

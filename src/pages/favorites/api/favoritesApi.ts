@@ -8,19 +8,17 @@ export const favoritesApi = {
     
     const { data, error } = await supabase
       .from('favorite_districts')
-      .select('*, district:districts(*, city:cities!inner(name, country:countries!inner(name)), filterData:district_filter_data(*), photos:district_photos(*))')
+      .select('district_id')
       .eq('user_id', session.user.id);
       
     if (error) throw new Error(error.message);
-    return (data?.map((item: any) => {
-      const dist = item.district;
-      return {
-        ...dist,
-        city: dist?.city?.name,
-        country: dist?.city?.country?.name,
-        photo_url: dist?.photos?.find((p: any) => p.is_main)?.photo_url || dist?.photos?.[0]?.photo_url || null
-      };
-    }) || []) as TransformedDistrict[];
+    if (!data || data.length === 0) return [];
+
+    const ids = data.map((item: { district_id: string | number }) => item.district_id as string);
+    const { fetchDistrictsByIds } = await import('@shared/api/districtsApi');
+    const districtsData = await fetchDistrictsByIds(ids);
+
+    return districtsData.map((dist) => dist as unknown as TransformedDistrict);
   },
   addFavorite: async (districtId: string | number): Promise<void> => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -28,7 +26,7 @@ export const favoritesApi = {
     const { error } = await supabase
       .from('favorite_districts')
       .insert({ district_id: String(districtId), user_id: session.user.id });
-    if (error) throw new Error(error.message);
+    if (error && error.code !== '23505') throw new Error(error.message);
   },
   removeFavorite: async (districtId: string | number): Promise<void> => {
     const { data: { session } } = await supabase.auth.getSession();

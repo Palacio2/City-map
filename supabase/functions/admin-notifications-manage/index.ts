@@ -1,7 +1,6 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { verifyAdminUser, corsHeaders } from "../_shared/auth.ts";
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
@@ -24,32 +23,17 @@ serve(async (req) => {
         throw new Error("Validation Error: message must be 1-500 characters");
       }
 
-      // Basic rate limiting: prevent creating more than 1 notification per minute per admin
-      const oneMinuteAgo = new Date(Date.now() - 60000).toISOString();
-      const { data: recentNotifications } = await supabaseAdmin
-        .from('global_notifications')
-        .select('id')
-        .eq('created_by', user.id)
-        .gte('created_at', oneMinuteAgo);
-      
-      if (recentNotifications && recentNotifications.length > 0) {
-        throw new Error("Rate limit exceeded: please wait a minute before sending another notification");
-      }
-
-      if (payload.is_active) {
-        await supabaseAdmin.from('global_notifications').update({ is_active: false }).neq('id', '00000000-0000-0000-0000-000000000000');
-      }
-      const { error } = await supabaseAdmin.from('global_notifications').insert({ ...payload, created_by: user.id });
+      const { error } = await supabaseAdmin.rpc('save_global_notification', {
+        p_actor: user.id, p_action: action, p_payload: { ...payload, is_active: payload.is_active === true },
+      });
       if (error) throw error;
       result = { success: true };
     } 
     else if (action === 'update_status') {
       if (!isSuperAdmin && !allowedTabs.includes("notifications.send")) throw new Error("Forbidden: missing notifications.send permission");
-      if (payload.is_active) {
-        
-        await supabaseAdmin.from('global_notifications').update({ is_active: false }).neq('id', '00000000-0000-0000-0000-000000000000');
-      }
-      const { error } = await supabaseAdmin.from('global_notifications').update({ is_active: payload.is_active }).eq('id', payload.id);
+      const { error } = await supabaseAdmin.rpc('save_global_notification', {
+        p_actor: user.id, p_action: action, p_payload: payload,
+      });
       if (error) throw error;
       result = { success: true };
     } 
@@ -65,6 +49,6 @@ serve(async (req) => {
 
     return new Response(JSON.stringify(result), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: err.message }), { status: String(err.message).startsWith('Forbidden:') ? 403 : 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });

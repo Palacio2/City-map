@@ -1,4 +1,6 @@
 import { supabase } from '../../utils/supabase.js';
+import { assertPropertyUrl } from '../../services/outboundPolicy.js';
+import { protectScraperPage } from '../../services/scraperPagePolicy.js';
 
 const delay = (min, max) => new Promise(resolve => setTimeout(resolve, Math.floor(Math.random() * (max - min + 1)) + min));
 
@@ -34,7 +36,9 @@ async function autoScroll(page) {
 }
 
 export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, countryCode = 'PL', platform = 'otodom') {
+    baseUrl = assertPropertyUrl(baseUrl);
     let page;
+    let removePolicy;
     let rawPrices = [];
     let rawSqmPrices = [];
 
@@ -54,6 +58,7 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
 
     try {
         page = await browser.newPage();
+        removePolicy = await protectScraperPage(page);
         await page.setUserAgent('Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36');
         await page.setViewport({ width: 1920, height: 1080 });
         
@@ -145,6 +150,6 @@ export async function scrapePage(browser, baseUrl, type = 'sale', maxPages = 2, 
     } catch (e) {
         return { avgPrice: 0, avgSqm: 0 };
     } finally {
-        if (page) await page.close(); 
+        try { await removePolicy?.(); } finally { if (page) await page.close(); }
     }
 }

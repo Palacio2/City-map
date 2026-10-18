@@ -1,8 +1,7 @@
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import MapTab from './MapTab';
-import { useActionGuard } from '@admin/core/context/useActionGuard';
 
 // Mocks
 vi.mock('react-i18next', () => ({
@@ -125,3 +124,4 @@ describe('MapTab Access Control Logic', () => {
     expect(screen.getByText('admin_map.tab.loading')).toBeInTheDocument();
   });
 });
+

@@ -1,10 +1,12 @@
 import { useState, useMemo } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { api } from '@services/api';
+import { adminFeedbackApi } from './adminFeedbackApi';
 import { useTranslation } from 'react-i18next';
 import { useModals } from '@admin/core/context/ModalContext';
 import { useActionLogger } from '@admin/core/context/useActionLogger';
+import { adminQueryKeys } from '@admin/core/api/adminQueryKeys';
+import { useAdminMutation } from '@admin/core/hooks/useAdminMutation';
 
 export const useFeedback = (canDelete: boolean) => {
     const { t } = useTranslation('db');
@@ -13,38 +15,39 @@ export const useFeedback = (canDelete: boolean) => {
     const { withLogging } = useActionLogger();
     const [filter, setFilter] = useState('all');
 
-    const { data: messages = [], isLoading: loading, refetch } = useQuery({
+    const { data: messages = [], isLoading: loading, refetch } = useQuery<import('./types').FeedbackMessage[]>({
         queryKey: ['feedbackMessages'],
-        queryFn: () => api.feedback.getMessages()
+        queryFn: adminFeedbackApi.getMessages,
+        // Refresh before the server's 15-minute attachment URLs expire.
+        refetchInterval: 10 * 60 * 1000,
+        refetchOnWindowFocus: 'always',
     });
 
-    const deleteMutation = useMutation({
-        mutationFn: async ({ id, screenshotUrl }: { id: string, screenshotUrl?: string }) => {
-            if (screenshotUrl) {
-                const fileName = screenshotUrl.split('/').pop();
-                if (fileName) {
-                    await withLogging('delete_feedback_image', () => api.feedback.deleteImage(fileName), { fileName });
-                }
-            }
-            await withLogging('delete_feedback', () => api.feedback.deleteMessage(id), { id });
-        },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['feedbackMessages'] }),
-        onError: (error: unknown) => showAlert(t('common.error'), error instanceof Error ? error.message : 'Error', 'error')
+    const deleteMutation = useAdminMutation({
+        mutationFn: ({ id }: { id: string }) => withLogging(
+            'feedback.delete', () => adminFeedbackApi.deleteMessage(id), { id },
+        ),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: adminQueryKeys.feedbackMessages });
+            showAlert(t('common.success'), t('admin_feedback.tab.delete_success'), 'success');
+        }
     });
 
-    const statusMutation = useMutation({
-        mutationFn: async ({ id, newStatus }: { id: string, newStatus: string }) => 
-            withLogging('update_feedback_status', () => api.feedback.updateStatus(id, newStatus), { id, newStatus }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['feedbackMessages'] }),
-        onError: (error: unknown) => showAlert(t('common.error'), error instanceof Error ? error.message : 'Error', 'error')
+    const statusMutation = useAdminMutation({
+        mutationFn: ({ id, newStatus }: { id: string, newStatus: string }) => withLogging(
+            'feedback.status', () => adminFeedbackApi.updateStatus(id, newStatus), { id, newStatus },
+        ),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: adminQueryKeys.feedbackMessages });
+        }
     });
 
-    const handleDelete = (id: string, screenshotUrl?: string) => {
+    const handleDelete = (id: string) => {
         if (!canDelete) return;
         showConfirm(
             t('admin_feedback.tab.delete_title'),
             t('admin_feedback.tab.confirm_delete'),
-            () => deleteMutation.mutate({ id, screenshotUrl }),
+            () => deleteMutation.mutate({ id }),
             { confirmVariant: 'danger', confirmText: t('common.actions.delete') }
         );
     };
@@ -52,7 +55,7 @@ export const useFeedback = (canDelete: boolean) => {
     const handleStatusChange = (id: string, newStatus: string) => statusMutation.mutate({ id, newStatus });
 
     const filteredMessages = useMemo(() => {
-        return messages.filter((msg: { type?: string }) => {
+        return messages.filter((msg: import('./types').FeedbackMessage) => {
             if (filter === 'all') return true;
             if (filter === 'contact') return msg.type === 'contact';
             if (filter === 'bug') return msg.type ? ['critical', 'data_error', 'ui_bug'].includes(msg.type) : false;

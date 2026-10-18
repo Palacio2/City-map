@@ -1,11 +1,12 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { requireAction } from '../../../shared/authorization.js';
 import { verifyAdminUser, corsHeaders } from "../_shared/auth.ts";
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
-    const { supabaseAdmin, isSuperAdmin, user, hasTab } = await verifyAdminUser(req);
+    const access = await verifyAdminUser(req);
+    const { supabaseAdmin, isSuperAdmin, hasTab, assignedCities } = access;
 
     let reqBody = {};
     try {
@@ -16,8 +17,7 @@ serve(async (req) => {
     }
     const mapMode = (reqBody as any)?.mapMode === true;
 
-    const { data: profile } = await supabaseAdmin.from("admin_profiles").select("assigned_cities").eq("user_id", user.id).maybeSingle();
-    const assignedCities = profile?.assigned_cities || [];
+    requireAction(access, ...(mapMode ? ['map', 'manual', 'parser'] : ['map', 'manual', 'parser', 'users.assign_cities']));
     const canAssignCities = hasTab("users.assign_cities");
 
     let query = supabaseAdmin.from("cities").select("id, name, country_id, countries(name)");
@@ -49,7 +49,7 @@ serve(async (req) => {
   } catch (error: any) {
     return new Response(JSON.stringify({ error: error?.message || "Server Error" }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
-      status: 400,
+      status: error?.status === 403 ? 403 : 400,
     });
   }
 });

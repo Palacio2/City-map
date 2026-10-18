@@ -1,64 +1,11 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { DynamicDistrictConfig } from '@config/districtFields'; 
-import { getValue, formatPrice, formatNumber } from '@utils/formatters';
-import { TransformedDistrict } from '@utils/dataTransformers';
+import { getValue, formatPrice, formatNumber, formatDate, getCurrencyInfo } from '@utils/formatters';
+import { extractBaseVal, extractRating, TransformedDistrict } from '@utils/dataTransformers';
 import { ExportCustomData } from './ExportSettingsModal';
 import { FaPhone, FaGlobe } from 'react-icons/fa';
-
-const getRawDB = (d: any) => {
-  if (!d) return {};
-  if (d.district_filter_data) return Array.isArray(d.district_filter_data) ? d.district_filter_data[0] : d.district_filter_data;
-  if (d.district_data) return Array.isArray(d.district_data) ? d.district_data[0] : d.district_data;
-  return d;
-};
-
-const extractBaseVal = (d: any, key: string) => {
-  if (!d) return null;
-  const raw = getRawDB(d);
-  
-  const altKeys: Record<string, string[]> = {
-     'average_sale_price_sqm': ['average_property_price', 'propertyPrice', 'average_sale_price'],
-     'average_rent_price': ['rentPrice', 'average_rent'],
-     'population': ['pop']
-  };
-
-  if (raw[key] !== undefined && raw[key] !== null) return Number(raw[key]);
-  
-  for (const alt of (altKeys[key] || [])) {
-     if (raw[alt] !== undefined && raw[alt] !== null) return Number(raw[alt]);
-  }
-
-  if (d.filterData && typeof d.filterData === 'object') {
-      for (const catKey of Object.keys(d.filterData)) {
-          const fields = d.filterData[catKey]?.fields;
-          if (fields) {
-              if (fields[key]?.value !== undefined && fields[key]?.value !== null) return Number(fields[key].value);
-              for (const alt of (altKeys[key] || [])) {
-                 if (fields[alt]?.value !== undefined && fields[alt]?.value !== null) return Number(fields[alt].value);
-              }
-          }
-      }
-  }
-  return null;
-};
-
-const extractRating = (d: any, catKey: string) => {
-   if (!d) return null;
-   const raw = getRawDB(d);
-   const ratingKeys = [`${catKey}_rating`, `${catKey}Rating`, 'rating', 'qualityRating'];
-   
-   for (const rk of ratingKeys) {
-      if (raw[rk] !== undefined && raw[rk] !== null && Number(raw[rk]) > 0) return Number(raw[rk]);
-   }
-
-   const cat = d.filterData?.[catKey];
-   if (cat) {
-      if (cat.rating !== undefined && cat.rating !== null && Number(cat.rating) > 0) return Number(cat.rating);
-      if (cat.qualityRating !== undefined && cat.qualityRating !== null && Number(cat.qualityRating) > 0) return Number(cat.qualityRating);
-   }
-   return null;
-};
+import { buildCategoryRows, safeStringify, RowDef } from '@utils/comparisonHelpers';
 
 const LOW_IS_BETTER = new Set([
   'average_sale_price_sqm',
@@ -67,12 +14,6 @@ const LOW_IS_BETTER = new Set([
   'filterData.safety.crimeLevel',
   'filterData.utilities.costPerSqm'
 ]);
-
-const safeStringify = (val: unknown): string => {
-  if (val === null || val === undefined) return '-';
-  if (typeof val === 'string' || typeof val === 'number' || typeof val === 'boolean') return val.toString();
-  return '-';
-};
 
 const getBestValue = (key: string, districts: TransformedDistrict[]) => {
   const values = districts.map(d => {
@@ -89,58 +30,6 @@ const getBestValue = (key: string, districts: TransformedDistrict[]) => {
   return LOW_IS_BETTER.has(key) ? Math.min(...values) : Math.max(...values);
 };
 
-interface RowDef {
-  type?: 'header';
-  title?: string;
-  label?: string;
-  key?: string;
-  format?: (v: unknown, d: TransformedDistrict) => React.ReactNode;
-}
-
-const buildCategoryRows = (catKey: string, categoryConfig: any, t: any): RowDef[] => {
-  const catName = t([`common.categories.${catKey}`, catKey], { defaultValue: catKey });
-  const catHeader: RowDef = { type: 'header', title: catName, key: `header-${catKey}` };
-
-  const ratingRow: RowDef = {
-    label: t(['stats.comparison.rating', 'rating'], { defaultValue: 'Rating' }),
-    key: `rating_${catKey}`,
-    format: (_, d) => {
-       const val = extractRating(d, catKey);
-       return (val !== null && val !== undefined) ? Number(val).toFixed(1) : '-';
-    }
-  };
-
-  const fieldRows: RowDef[] = categoryConfig.fields.map((f: any) => {
-    const baseKey = f.key || '';
-    const withCount = baseKey.endsWith('_count') ? baseKey : `${baseKey}_count`;
-    const withoutCount = baseKey.replace('_count', '');
-
-    return {
-      label: t([
-        `common.fields.${baseKey}`,
-        baseKey,
-        `common.fields.${withCount}`,
-        withCount,
-        `common.fields.${withoutCount}`,
-        withoutCount
-      ], { defaultValue: withoutCount }),
-      key: `filterData.${catKey}.fields.${f.key}.value`,
-      format: (val: any) => {
-        if (val === null || val === undefined) return '-';
-        if (f.type === 'boolean') {
-            if (typeof val === 'number') return formatNumber(val);
-            return val ? t('common.status.yes') : t('common.status.no');
-        }
-        if (f.type === 'price') return formatPrice(val);
-        if (f.type === 'number' || f.type === 'numeric') return formatNumber(val);
-        return safeStringify(val);
-      }
-    };
-  });
-
-  return [catHeader, ratingRow, ...fieldRows];
-};
-
 interface PdfReportTemplateProps {
   readonly districts: TransformedDistrict[];
   readonly customData: ExportCustomData | null;
@@ -148,7 +37,7 @@ interface PdfReportTemplateProps {
 }
 
 export default function PdfReportTemplate({ districts, customData, config }: PdfReportTemplateProps) {
-  const { t } = useTranslation('db');
+  const { t, i18n } = useTranslation('db');
 
   const rows = useMemo(() => {
     if (!districts.length) return [];
@@ -157,12 +46,12 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
       { 
          label: t(['common.fields.propertyPricePerSqm', 'propertyPricePerSqm'], { defaultValue: 'propertyPricePerSqm' }), 
          key: 'average_sale_price_sqm', 
-         format: (_, d) => formatPrice(extractBaseVal(d, 'average_sale_price_sqm')) 
+         format: (_, d) => formatPrice(extractBaseVal(d, 'average_sale_price_sqm'), getCurrencyInfo(d.country)) 
       },
       { 
          label: t(['common.fields.average_rent_price', 'average_rent_price'], { defaultValue: 'average_rent_price' }), 
          key: 'average_rent_price', 
-         format: (_, d) => formatPrice(extractBaseVal(d, 'average_rent_price')) 
+         format: (_, d) => formatPrice(extractBaseVal(d, 'average_rent_price'), getCurrencyInfo(d.country)) 
       },
       { 
          label: t(['common.fields.population', 'population'], { defaultValue: 'population' }), 
@@ -197,14 +86,14 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
             {t('stats.export.report_title')}
           </h1>
           <p className="text-xs text-[#718096] mt-2 mb-0 font-medium">
-            {t('stats.labels.report_date')}: {new Date().toLocaleDateString('uk-UA')}
+            {t('stats.labels.report_date')}: {formatDate(new Date(), i18n.language || 'uk-UA')}
           </p>
         </div>
         {agencyHeaderContent}
       </div>
 
       {comments && (
-         <div className="bg-[#f7fafc] p-4 rounded border border-[#e2e8f0] mb-6 text-[11px] text-[#4a5568]">
+         <div className="bg-[#f7fafc] p-4 rounded-sm border border-[#e2e8f0] mb-6 text-[11px] text-[#4a5568]">
            <strong className="block mb-1 text-[#2d3748]">{t('stats.export.agent_comments')}:</strong>
            {comments}
          </div>
@@ -274,7 +163,7 @@ export default function PdfReportTemplate({ districts, customData, config }: Pdf
           {phone && <span className="flex items-center gap-1"><FaPhone /> {phone}</span>}
         </div>
         <div className="uppercase tracking-widest">
-          {t('stats.labels.generated_auto')} <strong>GeoAnalyzer</strong>
+          {t('stats.labels.generated_auto')} <strong>Kvartal</strong>
         </div>
       </div>
     </div>

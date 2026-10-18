@@ -1,10 +1,11 @@
-import { supabase } from '@supabaseClient';
+import { edgeRes } from '@services/api';
 
 export interface ContactMessagePayload {
   name: string;
   email: string;
   message: string;
   consent_accepted: boolean;
+  captcha_token: string;
 }
 
 export interface FeedbackPayload {
@@ -20,14 +21,12 @@ export interface FeedbackPayload {
 
 export const contactsAPI = {
   submitMessage: async (payload: ContactMessagePayload): Promise<void> => {
-    const { error } = await supabase.from('contacts_messages').insert([payload]);
-    if (error) throw new Error(error.message);
+    await edgeRes('submit-contact-form', { ...payload, type: 'contact' });
   },
   submitFeedback: async (payload: FeedbackPayload): Promise<void> => {
-    const { error } = await supabase.from('contacts_messages').insert([{
+    await edgeRes('submit-contact-form', {
       ...payload,
-      email: payload.email || 'anonymous@citymaps.com', // required field
-    }]);
-    if (error) throw new Error(error.message);
+      email: payload.email || 'anonymous@kvartals.com',
+    });
   }
 };

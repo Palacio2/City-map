@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import FieldsManager from './FieldsManager';
 
@@ -84,3 +85,4 @@ describe('FieldsManager Access Control', () => {
     expect(screen.queryByTitle('common.delete')).not.toBeInTheDocument();
   });
 });
+

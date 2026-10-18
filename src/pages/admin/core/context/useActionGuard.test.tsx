@@ -1,3 +1,4 @@
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 import { renderHook } from '@testing-library/react';
 import { useActionGuard } from './useActionGuard';
 import { useAdmin } from '@admin/core/context/AdminContext';
@@ -47,3 +48,5 @@ describe('useActionGuard', () => {
         expect(result.current.canDo('specific.action')).toBe(false);
     });
 });
+
+

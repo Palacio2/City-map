@@ -1,12 +1,16 @@
 {
-  "name": "city-maps-server",
+  "name": "kvartals-server",
   "version": "1.0.0",
   "type": "module",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "extract": "node ../src/pages/admin/tabs/adminManeger/extract-keys.mjs"
+    "dev": "node --watch index.js",
+    "extract": "node ../src/pages/admin/features/translations/extract-keys.mjs",
+    "test": "node --test middleware/*.test.js services/*.test.js controllers/*.test.js"
+  },
+  "engines": {
+    "node": ">=24.0.0"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.39.0",
@@ -20,15 +24,13 @@
     "helmet": "^8.3.0",
     "osm-pbf-parser": "^2.3.0",
     "p-limit": "^7.3.1",
-    "puppeteer": "^21.11.0",
-    "puppeteer-extra": "^3.3.6",
-    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "puppeteer": "^25.13.0",
     "rbush": "^4.0.1",
     "through2": "^4.0.2",
     "winston": "^3.19.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
-    "nodemon": "^3.0.1"
+    "esbuild": "^0.25.12"
   }
 }

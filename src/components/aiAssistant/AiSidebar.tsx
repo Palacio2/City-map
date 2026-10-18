@@ -38,7 +38,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }: AiSidebar
   if (!isOpen) return null;
 
   const sidebarContent = (
-    <div className="fixed inset-0 z-[3000] flex justify-end bg-black/40 backdrop-blur-sm animate-fadeIn">
+    <div className="fixed inset-0 z-[3000] flex justify-end bg-black/40 backdrop-blur-xs animate-fadeIn">
       <button
         type="button"
         className="absolute inset-0 w-full h-full bg-transparent border-none cursor-default"
@@ -123,7 +123,7 @@ export default function AiSidebar({ isOpen, onClose, onOpenSettings }: AiSidebar
               value={input}
               onChange={e => setInput(e.target.value)}
               placeholder={t('ia.assistant.sidebar.input_placeholder')}
-              className="w-full bg-surface border border-borderClient rounded-full pl-4 pr-12 py-3 text-sm text-textMain focus:outline-none focus:border-accent focus:ring-1 focus:ring-accent"
+              className="w-full bg-surface border border-borderClient rounded-full pl-4 pr-12 py-3 text-sm text-textMain focus:outline-hidden focus:border-accent focus:ring-1 focus:ring-accent"
               disabled={isTyping}
             />
             <button

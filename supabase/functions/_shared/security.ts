@@ -1,117 +1,58 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.44.2";
-
-export interface UserAccess {
-  isFree: boolean;
-  isPremium: boolean;
-  isRealtor: boolean;
-}
-
+import { publishableKey, secretKey } from './keys.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.2';
+import { subscriptionState } from './subscriptionState.ts';
+import { visibleFields, type FieldRule, type UserAccess } from './fieldAccess.ts';
+export type { UserAccess, FieldRule } from './fieldAccess.ts';
 export const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Cache-Control': 'private, no-store',
 };
-
-export const getSupabaseClient = (authHeader: string | null) => {
-  const url = Deno.env.get("SUPABASE_URL") ?? "";
-  const key = Deno.env.get("SUPABASE_ANON_KEY") ?? "";
-  
-  if (authHeader) {
-    return createClient(url, key, { global: { headers: { Authorization: authHeader } } });
-  }
-  return createClient(url, key);
-};
-
-export const getUserAccess = async (req: Request): Promise<UserAccess> => {
-  // 1. Check Global Env Override for promotions ("Free Week")
-  if (Deno.env.get("UNLOCK_ALL_PREMIUM_FEATURES") === "true") {
-    return {
-      isFree: false,
-      isPremium: true,
-      isRealtor: Deno.env.get("UNLOCK_ALL_REALTOR_FEATURES") === "true"
-    };
-  }
-
-  const authHeader = req.headers.get("Authorization");
-  if (!authHeader) {
-    return { isFree: true, isPremium: false, isRealtor: false };
-  }
-
-  const supabase = getSupabaseClient(authHeader);
-  const { data: { user } } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { isFree: true, isPremium: false, isRealtor: false };
-  }
-
-  const { data: subscriptions } = await supabase
-    .from('user_subscriptions')
-    .select('plan_name, status')
-    .eq('user_id', user.id)
-    .in('status', ['active', 'trialing'])
-    .gt('ends_at', new Date().toISOString())
-    .order('ends_at', { ascending: false })
-    .limit(1);
-
-  if (!subscriptions || subscriptions.length === 0) {
-    return { isFree: true, isPremium: false, isRealtor: false };
-  }
-
-  const plan = subscriptions[0].plan_name?.toLowerCase().trim();
-  const isPlanActive = true; 
-
-  const premiumPlans = ['weekly', 'premium', 'realtor'];
-  const isPremium = premiumPlans.includes(plan) && isPlanActive;
-  const isRealtor = plan === 'realtor' && isPlanActive;
-
-  return {
-    isFree: !isPremium && !isRealtor,
-    isPremium,
-    isRealtor
-  };
-};
-
-// Global cache for fields configuration
-let fieldsConfigCache: any[] | null = null;
-let fieldsConfigCacheTime = 0;
-const FIELDS_CACHE_TTL = 3600 * 1000; // 1 hour
-
-export const getFieldsConfig = async () => {
-  if (fieldsConfigCache && Date.now() - fieldsConfigCacheTime < FIELDS_CACHE_TTL) {
-    return fieldsConfigCache;
-  }
-
-  const supabase = getSupabaseClient(null); // anonymous client
-  const { data: fields } = await supabase
-    .from('fields_config')
-    .select('field_code, parser_config')
-    .eq('is_active', true);
-  
-  fieldsConfigCache = fields || [];
-  fieldsConfigCacheTime = Date.now();
-  return fieldsConfigCache;
-};
-
-export const stripRestrictedFields = (dataObj: any, fieldsConfig: any[], access: UserAccess) => {
-  if (!dataObj || typeof dataObj !== 'object') return;
-
-  for (const field of fieldsConfig) {
-    const isPremiumField = field.parser_config?.isPremium || false;
-    const isRealtorOnly = field.parser_config?.isRealtorOnly || false;
-
-    let shouldStrip = false;
-    
-    if (access.isFree && isPremiumField) shouldStrip = true;
-    if (!access.isRealtor && isRealtorOnly) shouldStrip = true;
-
-    if (shouldStrip) {
-      // Remove the exact field
-      if (field.field_code in dataObj) {
-        delete dataObj[field.field_code];
-      }
-      // Often there is a _count or _rating associated
-      if (`${field.field_code}_count` in dataObj) {
-        delete dataObj[`${field.field_code}_count`];
-      }
+export const getSupabaseClient = (authHeader: string | null) => createClient(
+  Deno.env.get('SUPABASE_URL') ?? '', publishableKey(),
+  authHeader ? { global: { headers: { Authorization: authHeader } } } : {},
+);
+// Server-only data reads. Never forward a caller's Authorization to this client.
+// Callers must enforce ownership/availability and strip fields before returning data.
+export function getDistrictDataClient() {
+  const url = Deno.env.get('SUPABASE_URL');
+  const key = secretKey();
+  if (!url || !key) throw new Error('District data service unavailable');
+  return createClient(url, key, { auth: { persistSession: false, autoRefreshToken: false } });
+}
+const free: UserAccess = { isFree: true, isPremium: false, isRealtor: false };
+export async function getUserAccess(req: Request): Promise<UserAccess> {
+  const header = req.headers.get('Authorization');
+  if (!header) return { ...free };
+  const db = getSupabaseClient(header);
+  const { data: { user }, error: authError } = await db.auth.getUser();
+  if (authError || !user) return { ...free };
+  const { data, error } = await db.from('user_subscriptions')
+    .select('id, plan_name, status, payment_id, starts_at, ends_at, cancel_at')
+    .eq('user_id', user.id).in('status', ['active', 'trialing']).limit(501);
+  if (error || !data || data.length > 500) throw new Error('Subscription verification unavailable');
+  const { plan } = subscriptionState(data);
+  return { isFree: plan === 'free', isPremium: ['weekly', 'premium', 'realtor'].includes(plan), isRealtor: plan === 'realtor' };
+}
+// Read access rules per request so revoked fields do not remain public in a warm worker.
+export async function getFieldsConfig(): Promise<FieldRule[]> {
+  const { data, error } = await getSupabaseClient(null).from('fields_config')
+    .select('field_code, is_premium, is_realtor_only, is_active, ui_group, data_type, ui_component').limit(1001);
+  if (error || !data?.length || data.length > 1000) throw new Error('Field access configuration unavailable');
+  const seen = new Set<string>();
+  for (const field of data) {
+    if (typeof field.field_code !== 'string' || !/^[a-z][a-z0-9_]*$/.test(field.field_code)
+      || seen.has(field.field_code) || typeof field.is_premium !== 'boolean'
+      || typeof field.is_realtor_only !== 'boolean' || typeof field.is_active !== 'boolean') {
+      throw new Error('Invalid field access configuration');
     }
+    seen.add(field.field_code);
   }
-};
+  return data;
+}
+export function stripRestrictedFields(data: Record<string, unknown> | null, fields: FieldRule[], access: UserAccess) {
+  if (!data || typeof data !== 'object') return;
+  const allowed = visibleFields(data, fields, access);
+  for (const key of Object.keys(data)) if (!Object.hasOwn(allowed, key)) delete data[key];
+}

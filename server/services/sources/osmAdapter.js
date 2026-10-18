@@ -1,13 +1,14 @@
 import { processLocalOsmData } from '../osmProcessor.js';
 import { PARSER_CONFIG } from '../../config/parserConfig.js';
 import { LOGS } from '../../config/logTemplates.js';
-import axios from 'axios';
+import { parserHttp } from '../parserHttp.js';
 import { logger as globalLogger } from '../../utils/logger.js';
+import { resolvePbfFile } from '../pbfFiles.js';
 
 export const osmAdapter = {
     async fetchData(config, fields, logger) {
         if (!config.pbfFileName) return {};
-        const filePath = `${PARSER_CONFIG.PATHS.DATA_DIR}/${config.pbfFileName}`;
+        const filePath = await resolvePbfFile(PARSER_CONFIG.PATHS.DATA_DIR, config.pbfFileName);
         return await processLocalOsmData(filePath, config.districtsData, fields, (m) => logger.log(m));
     },
 
@@ -27,19 +28,19 @@ export const osmAdapter = {
                 const params = new URLSearchParams();
                 params.append('data', query);
 
-                const response = await axios.post(endpoint, params.toString(), { 
-                    headers: { 
+                const response = await parserHttp.post(endpoint, params.toString(), {
+                    headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',
                         'Accept': 'application/json',
                         'User-Agent': 'CityMapsParserBot/1.0 (Contact: admin@citymaps.com)'
                     },
-                    timeout: 15000 
+                    timeout: 15000
                 });
-                
+
                 const elements = response.data?.elements || [];
                 const officialDistricts = elements.filter(el => el.tags && el.tags.admin_level === "9");
                 let targetElements = officialDistricts.length > 0 ? officialDistricts : elements;
-                
+
                 const districts = targetElements
                     .map(el => el.tags?.name)
                     .filter(Boolean)
@@ -54,7 +55,7 @@ export const osmAdapter = {
                 const uniqueDistricts = [...new Set(districts)]
                     .map(name => ({ name }))
                     .sort((a, b) => a.name.localeCompare(b.name));
-                
+
                 globalLogger.info(`[OSM SCAN] ✅ Успішно знайдено ${uniqueDistricts.length} районів!`);
                 return uniqueDistricts;
             } catch (err) {

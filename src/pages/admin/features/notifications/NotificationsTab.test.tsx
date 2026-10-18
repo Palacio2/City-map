@@ -35,7 +35,8 @@ describe('NotificationsTab Access Control', () => {
       setNewMessage: vi.fn(),
       newType: 'info',
       setNewType: vi.fn(),
-      createNotification: mockCreateNotification,
+      handleCreate: mockCreateNotification,
+      creating: false,
       toggleStatus: mockToggleStatus,
       deleteNotification: mockDeleteNotification,
       refetch: vi.fn()
@@ -44,8 +45,9 @@ describe('NotificationsTab Access Control', () => {
 
   it('should render create notification form when having notifications.send permission', () => {
     vi.mocked(useActionGuard).mockReturnValue({
+      isSuperAdmin: false,
       canDo: (action: string) => action === 'notifications.send'
-    } as ReturnType<typeof useActionGuard>);
+    });
 
     render(<NotificationsTab />);
     
@@ -55,6 +57,7 @@ describe('NotificationsTab Access Control', () => {
 
   it('should not render create notification form when missing notifications.send permission', () => {
     vi.mocked(useActionGuard).mockReturnValue({
+      isSuperAdmin: false,
       canDo: () => false
     } as ReturnType<typeof useActionGuard>);
 
@@ -66,6 +69,7 @@ describe('NotificationsTab Access Control', () => {
 
   it('should disable toggle status button when missing notifications.send permission', () => {
     vi.mocked(useActionGuard).mockReturnValue({
+      isSuperAdmin: false,
       canDo: () => false
     } as ReturnType<typeof useActionGuard>);
 
@@ -78,6 +82,7 @@ describe('NotificationsTab Access Control', () => {
 
   it('should not render delete button when missing notifications.send permission', () => {
     vi.mocked(useActionGuard).mockReturnValue({
+      isSuperAdmin: false,
       canDo: () => false
     } as ReturnType<typeof useActionGuard>);
 

@@ -72,15 +72,15 @@ describe('useNotifications', () => {
     expect(result.current.newType).toBe('warning');
   });
 
-  it('calls create notification mutation when triggered', () => {
+  it('calls create notification mutation when triggered', async () => {
     const { result } = renderHook(() => useNotifications());
     
     act(() => {
       result.current.setNewMessage('Alert!');
     });
     
-    act(() => {
-      result.current.handleCreate({ preventDefault: vi.fn() } as unknown as React.FormEvent);
+    await act(async () => {
+      result.current.handleCreate();
     });
     
     expect(adminNotificationsApi.create).toHaveBeenCalled();
@@ -90,7 +90,7 @@ describe('useNotifications', () => {
     const { result } = renderHook(() => useNotifications());
     
     act(() => {
-      result.current.handleCreate({ preventDefault: vi.fn() } as unknown as React.FormEvent);
+      result.current.handleCreate();
     });
     
     expect(adminNotificationsApi.create).not.toHaveBeenCalled();

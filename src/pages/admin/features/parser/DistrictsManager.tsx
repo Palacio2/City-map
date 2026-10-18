@@ -4,12 +4,23 @@ import { SearchInput } from '@admin/core/ui/SearchInput';
 import { useTranslation } from 'react-i18next';
 import { FaSearch, FaPlus, FaTrash, FaCheckSquare, FaSquare, FaUpload } from 'react-icons/fa';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
-import { DistrictManagerProps } from './types';
+import { useParserContext } from './ParserContext';
 
-export default function DistrictsManager({
-    foundDistricts = [], dbDistricts = [], selectedIds = [],
-    onToggleSelect, onSelectAll, onScan, onCreate, onRemoveFromFound, onDeleteDbDistrict, onImportGeoJson, loading
-}: DistrictManagerProps) {
+export default function DistrictsManager() {
+    const {
+        logic: { foundDistrictsOSM: foundDistricts = [], dbDistricts = [], loading, scanOSM, createDistrictsInDb, setFoundDistrictsOSM, deleteDbDistrict, importBoundariesGeoJSON },
+        selectedDistrictIds: selectedIds = [],
+        toggleDistrictSelection: onToggleSelect,
+        toggleSelectAll: onSelectAll,
+        city
+    } = useParserContext();
+    
+    const onScan = () => scanOSM(city?.name || '');
+    const onCreate = (districtsToCreate: unknown[]) => createDistrictsInDb(districtsToCreate as {name: string}[], city!.id);
+    const onRemoveFromFound = (d: unknown) => setFoundDistrictsOSM((prev: {name: string}[]) => prev.filter(item => item !== d));
+    const onDeleteDbDistrict = (id: string) => deleteDbDistrict(id, city!.id);
+    const onImportGeoJson = (file: File) => importBoundariesGeoJSON(file, city!.id);
+
     const { t } = useTranslation('db');
     const { canDo } = useActionGuard();
     const [searchTermFound, setSearchTermFound] = useState('');
@@ -196,3 +207,4 @@ export default function DistrictsManager({
         </div>
     );
 }
+

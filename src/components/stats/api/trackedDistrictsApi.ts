@@ -1,11 +1,11 @@
-// @ts-nocheck
 import { supabase } from '@supabaseClient';
 import i18n from '../../../i18n/i18n';
-import { authenticatedApiRequest } from '@api/apiClient';
 import type { TrackedDistrictPayload, TrackedDistrict } from '../types';
 
 export const fetchTrackedDistrictsWithStats = async (): Promise<TrackedDistrict[]> => {
-  return await authenticatedApiRequest<TrackedDistrict[]>('/get-tracked-districts');
+  const { data, error } = await supabase.functions.invoke<TrackedDistrict[]>('get-tracked-districts');
+  if (error) throw new Error(error.message);
+  return data || [];
 };
 
 export const addTrackedDistrict = async (payload: TrackedDistrictPayload): Promise<TrackedDistrict> => {

@@ -7,6 +7,7 @@ import { useDBTranslations } from '@admin/core/hooks/useDBTranslations';
 import AdminSidebar from '@admin/AdminSidebar';
 import LoginTab from '@admin/features/login/LoginTab';
 import { FaBars, FaExclamationTriangle } from 'react-icons/fa';
+import { Loader } from '@admin/core/ui/Loader';
 
 const DashboardTab = lazy(() => import('@admin/features/dashboard/DashboardTab'));
 const MapTab = lazy(() => import('@admin/features/map/MapTab'));
@@ -86,10 +87,7 @@ function AdminPanelContent() {
     if (loadingAdmin) {
         return (
             <div className="h-screen w-screen flex flex-col items-center justify-center bg-main text-textMain gap-3 font-sans">
-                <div className="w-10 h-10 border-3 border-border border-t-primary rounded-full animate-spin" />
-                <span className="text-xs font-semibold uppercase tracking-wider text-textMuted animate-pulse">
-                    {t('common.loading')}
-                </span>
+                <Loader variant="pulse" size="xl" text={t('common.loading')} />
             </div>
         );
     }
@@ -194,7 +192,7 @@ function AdminPanelContent() {
                     }>
                         <Suspense fallback={
                             <div className="h-full flex items-center justify-center py-20">
-                                <div className="w-8 h-8 border-3 border-border border-t-primary rounded-full animate-spin" />
+                                <Loader variant="dots" size="lg" />
                             </div>
                         }>
                             <div className="w-full h-full flex flex-col">

@@ -1,10 +1,11 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 import { FaBullhorn, FaInfoCircle, FaExclamationTriangle, FaCheckCircle, FaTimesCircle, FaPlus, FaPowerOff, FaTrash, FaSyncAlt } from 'react-icons/fa';
 import DataTable from '@admin/core/ui/DataTable';
 import { Button } from '@admin/core/ui/Button';
 import { Input, FormGroup } from '@admin/core/ui/Input';
 import { CustomSelect, SelectOption } from '@admin/core/ui/CustomSelect';
 import { Badge } from '@admin/core/ui/Badge';
+import { Loader } from '@admin/core/ui/Loader';
 import { useTranslation } from 'react-i18next';
 import { useNotifications, NotificationItem } from '@admin/features/notifications/useNotifications';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
@@ -101,7 +102,7 @@ export default function NotificationsTab() {
     if (loading && notifications.length === 0) {
         return (
             <div className="py-16 text-xs text-textMuted flex flex-col items-center gap-2 bg-surface rounded-2xl border border-border">
-                <div className="w-8 h-8 border-3 border-border border-t-primary rounded-full animate-spin" />
+                <Loader variant="pulse" size="lg" />
                 <div>{t('admin_notifications.tab.loading')}</div>
             </div>
         );

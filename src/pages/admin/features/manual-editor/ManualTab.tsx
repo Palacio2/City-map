@@ -109,6 +109,7 @@ export default function ManualTab() {
             </div>
             <div className="flex-1 min-w-0 h-auto lg:h-full overflow-y-auto pr-1 pb-6 scrollbar-thin">
                 <ManualEditor
+                    key={selectedDistrict?.id || 'empty'}
                     selectedCountry={selectedCountry}
                     selectedCity={selectedCity}
                     selectedDistrict={selectedDistrict}

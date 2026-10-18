@@ -14,7 +14,7 @@ export const CustomCheckbox = ({ checked, onChange, label }: CustomCheckboxProps
             type="checkbox"
             checked={checked}
             onChange={onChange}
-            className="accent-primary w-3.5 h-3.5 rounded cursor-pointer"
+            className="accent-primary w-3.5 h-3.5 rounded-sm cursor-pointer"
         />
         <span className="truncate">{label}</span>
     </label>

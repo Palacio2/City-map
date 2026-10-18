@@ -26,7 +26,7 @@ export default function CookieBanner() {
         <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto mt-2 md:mt-0">
           <button
             type="button"
-            className="flex-1 md:flex-none bg-textMain text-surface font-heading font-bold text-sm md:text-xs uppercase tracking-widest px-8 py-3.5 md:py-3 rounded-xl md:rounded-full hover:bg-accent hover:text-white transition-all md:hover:-translate-y-0.5 shadow-sm cursor-pointer"
+            className="flex-1 md:flex-none bg-textMain text-surface font-heading font-bold text-sm md:text-xs uppercase tracking-widest px-8 py-3.5 md:py-3 rounded-xl md:rounded-full hover:bg-accent hover:text-white transition-all md:hover:-translate-y-0.5 shadow-xs cursor-pointer"
             onClick={acceptCookies}
           >
             {t('cookie.accept')}

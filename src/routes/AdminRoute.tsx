@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Navigate, useLocation } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 import { useAuth } from '@auth/context/AuthContext';
 import { supabase } from '@supabaseClient';
 
 export default function AdminRoute({ children }: { readonly children: ReactNode }) {
   const { user, isAuthenticated, isLoading: authLoading } = useAuth();
-  const location = useLocation();
+
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [isChecking, setIsChecking] = useState<boolean>(true);
 

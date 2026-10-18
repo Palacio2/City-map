@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import ManualSidebar from './ManualSidebar';
 
 // Mocks
@@ -36,7 +35,7 @@ vi.mock('@admin/core/ui/EntityModal', () => ({
 }));
 
 vi.mock('./CityMapModal', () => ({
-  default: () => <div data-testid="city-map-modal" />
+  default: () => <div data-testid="kvartal-modal" />
 }));
 
 vi.mock('@admin/core/ui/SearchInput', () => ({

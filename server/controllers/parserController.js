@@ -1,5 +1,5 @@
-import fs from "fs";
-import { logger } from "../utils/logger.js";
+import { listPbfFiles } from '../services/pbfFiles.js';
+import { createJobLogger } from "../utils/logger.js";
 import { LOGS } from "../config/logTemplates.js";
 import { PARSER_CONFIG } from "../config/parserConfig.js";
 import { runUniversalParser } from "../services/parserCore.js";
@@ -7,6 +7,9 @@ import { osmAdapter } from "../services/sources/osmAdapter.js";
 import { RunParserSchema } from "../schemas/parserSchema.js";
 import { queueService } from "../services/queueService.js";
 import { supabase } from "../utils/supabase.js";
+
+import { authorizeResults, authorizeParserConfig, scopeParserJobs } from '../services/parserAuthorization.js';
+const jobs = (req, columns) => scopeParserJobs(supabase.from('parser_jobs').select(columns), req.adminAccess, req.user.id);
 
 export const getStatus = async (req, res, next) => {
     try {
@@ -17,14 +20,13 @@ export const getStatus = async (req, res, next) => {
 
 export const getCurrentLog = async (req, res, next) => {
     try {
-        const { data } = await supabase
-            .from('parser_jobs')
-            .select('logs')
+        const { data, error } = await jobs(req, 'logs')
             .in('status', ['running', 'pending', 'completed', 'failed'])
             .order('created_at', { ascending: false })
             .limit(1)
             .maybeSingle();
 
+        if (error) throw error;
         if (data && data.logs && data.logs.length > 0) {
             const formattedLogs = data.logs.slice(-500).map(log => `[${log.timestamp}] [${log.status}] ${log.message}`).join('\n');
             res.send(formattedLogs);
@@ -36,14 +38,13 @@ export const getCurrentLog = async (req, res, next) => {
 
 export const downloadLog = async (req, res, next) => {
     try {
-        const { data } = await supabase
-            .from('parser_jobs')
-            .select('logs')
+        const { data, error } = await jobs(req, 'logs')
             .in('status', ['running', 'pending', 'completed', 'failed'])
             .order('created_at', { ascending: false })
             .limit(1)
             .maybeSingle();
 
+        if (error) throw error;
         if (data && data.logs && data.logs.length > 0) {
             const formattedLogs = data.logs.map(log => `[${log.timestamp}] [${log.status}] ${log.message}`).join('\n');
             res.setHeader('Content-disposition', 'attachment; filename=parser-combined.log');
@@ -55,18 +56,15 @@ export const downloadLog = async (req, res, next) => {
     } catch (err) { next(err); }
 };
 
-export const getPbfFiles = (req, res, next) => {
+export const getPbfFiles = async (req, res, next) => {
     try {
-        if (!fs.existsSync(PARSER_CONFIG.PATHS.DATA_DIR)) fs.mkdirSync(PARSER_CONFIG.PATHS.DATA_DIR, { recursive: true });
-        res.json(fs.readdirSync(PARSER_CONFIG.PATHS.DATA_DIR).filter(file => file.endsWith('.pbf')));
+        res.json(await listPbfFiles(PARSER_CONFIG.PATHS.DATA_DIR));
     } catch (err) { next(err); }
 };
 
 export const getPendingResults = async (req, res, next) => {
     try {
-        const { data, error } = await supabase
-            .from('parser_jobs')
-            .select('results')
+        const { data, error } = await jobs(req, 'results')
             .eq('status', 'completed')
             .not('results', 'is', null)
             .order('completed_at', { ascending: false })
@@ -76,15 +74,13 @@ export const getPendingResults = async (req, res, next) => {
         if (error) throw error;
         res.json(data?.results || []);
     } catch (err) {
-        res.json([]);
+        next(err);
     }
 };
 
 export const deletePendingResults = async (req, res, next) => {
     try {
-        const { data, error: selectErr } = await supabase
-            .from('parser_jobs')
-            .select('id')
+        const { data, error: selectErr } = await jobs(req, 'id')
             .eq('status', 'completed')
             .not('results', 'is', null)
             .order('completed_at', { ascending: false })
@@ -102,9 +98,10 @@ export const deletePendingResults = async (req, res, next) => {
 
 export const updatePendingResults = async (req, res, next) => {
     try {
-        const { data, error: selectErr } = await supabase
-            .from('parser_jobs')
-            .select('id')
+        if (!Array.isArray(req.body.newData) || req.body.newData.length > 0) {
+            await authorizeResults(supabase, req.adminAccess, req.body.newData);
+        }
+        const { data, error: selectErr } = await jobs(req, 'id')
             .eq('status', 'completed')
             .not('results', 'is', null)
             .order('completed_at', { ascending: false })
@@ -122,7 +119,7 @@ export const updatePendingResults = async (req, res, next) => {
 
 export const findDistricts = async (req, res, next) => {
     try {
-        const { cityName } = req.body;
+        const { cityName } = RunParserSchema.pick({ cityName: true }).parse(req.body);
         if (!cityName) return res.status(400).json({ error: "Missing cityName" });
 
         const uniqueDistricts = await osmAdapter.findDistrictsOnOverpass(cityName);
@@ -140,16 +137,19 @@ export const runOsmParser = async (req, res, next) => {
     }
     
     try {
-        const isParsingRunning = await queueService.isLocked();
-        if (isParsingRunning) return res.status(400).json({ error: "Parser busy" });
+        config = await authorizeParserConfig(supabase, req.adminAccess, req.user.id, config);
+        if (!await queueService.acquire(config)) return res.status(409).json({ error: "Parser busy" });
+        const logger = createJobLogger(config.jobId, config.leaseToken);
 
         res.status(202).json({ success: true });
 
         // Запуск парсера у фоні
         (async () => {
             const start = Date.now();
+            const heartbeat = setInterval(() => {
+                queueService.heartbeat(config).catch(error => logger.error('Parser heartbeat failed: ' + error.message));
+            }, 30_000);
             try {
-                await queueService.save({ ...config, status: 'running' });
                 logger.log(LOGS.START(config.cityName, config.districts?.length || 0));
                 
                 if (!config.enabledSources || config.enabledSources.length === 0) {
@@ -165,8 +165,13 @@ export const runOsmParser = async (req, res, next) => {
                 const time = ((Date.now() - start) / 1000).toFixed(1);
                 logger.log(LOGS.END(config.districts?.length || 0, time), 'SUCCESS');
             } catch (e) {
-                await queueService.save({ ...config, status: 'failed', error: e.message });
+                await queueService.save({ ...config, status: 'failed', error: e.message }).catch(error => logger.error(error.message));
                 logger.log(LOGS.ERR_CRITICAL(e.message), 'ERROR');
+            } finally {
+                clearInterval(heartbeat);
+                if (typeof logger.forceFlush === 'function') {
+                    await logger.forceFlush();
+                }
             }
         })();
     } catch (err) {

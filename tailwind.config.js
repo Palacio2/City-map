@@ -1,33 +1,38 @@
 export default {
-  darkMode: ['class', '[data-theme="dark"]'],
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
   theme: {
     extend: {
       colors: {
         primary: {
-          DEFAULT: 'var(--primary, #c5a47e)',
-          hover: 'var(--primary-hover, #d4b895)',
-          subtle: 'var(--primary-subtle, rgba(197, 164, 126, 0.1))',
+          DEFAULT: 'var(--primary)',
+          hover: 'var(--primary-hover)',
+          subtle: 'var(--primary-subtle)',
         },
+        accent: {
+          DEFAULT: 'var(--accent-color)',
+          hover: 'var(--accent-hover)',
+        },
+        body: 'var(--bg-body)',
         main: 'var(--bg-main)',
         surface: 'var(--bg-surface)',
         hover: 'var(--bg-hover)',
+        bgFooter: 'var(--bg-footer)',
         border: 'var(--border)',
+        borderClient: 'var(--border-color)',
+        borderAccent: 'var(--border-accent)',
         textMain: 'var(--text-main)',
         textMuted: 'var(--text-muted)',
+        textSecondary: 'var(--text-secondary)',
+        textInverse: 'var(--text-inverse)',
         danger: {
-          DEFAULT: '#ef4444',
+          DEFAULT: 'var(--danger)',
           subtle: 'rgba(239, 68, 68, 0.08)',
         },
         success: {
-          DEFAULT: '#10b981',
+          DEFAULT: 'var(--success)',
           subtle: 'rgba(16, 185, 129, 0.08)',
         },
         warning: {
-          DEFAULT: '#f59e0b',
+          DEFAULT: 'var(--warning)',
           subtle: 'rgba(245, 158, 11, 0.08)',
         },
       },

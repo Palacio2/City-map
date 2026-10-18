@@ -1,26 +1,24 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { verifyAdminUser, corsHeaders } from "../_shared/auth.ts";
+import { verifyAdminUser, corsHeaders as authHeaders } from "../_shared/auth.ts";
+import { requireAction, requireCity } from '../../../shared/authorization.js';
+import { signDistrictPhoto } from '../_shared/districtPhoto.ts';
+const corsHeaders = { ...authHeaders, 'Cache-Control': 'private, no-store' };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
     const { action, districtId, payload } = await req.json();
     if (!action || !districtId) throw new Error("Missing required fields");
 
-    const { supabaseAdmin, isSuperAdmin, user, hasTab, role, allowedTabs } = await verifyAdminUser(req);
+    const access = await verifyAdminUser(req);
+    const { supabaseAdmin } = access;
 
     const { data: districtCheck, error: districtCheckErr } = await supabaseAdmin.from('districts').select('city_id').eq('id', districtId).maybeSingle();
     
     if (districtCheckErr) throw districtCheckErr;
-    if (!districtCheck && action !== "save") throw new Error("Район не знайдено");
-
-    if (!isSuperAdmin && districtCheck) {
-        const { data: profile } = await supabaseAdmin.from("admin_profiles").select("assigned_cities").eq("user_id", user.id).maybeSingle();
-        if (!profile?.assigned_cities?.includes(districtCheck.city_id)) {
-           throw new Error("Немає доступу до міста цього району");
-        }
-    }
+    if (!districtCheck) throw new Error("Район не знайдено");
+    requireCity(access, districtCheck.city_id);
+    if (action === 'get' || action === 'get_photo') requireAction(access, 'manual', 'parser', 'map');
 
     if (action === "get") {
       const { data: dist, error: distErr } = await supabaseAdmin.from('districts').select('*').eq('id', districtId).maybeSingle();
@@ -42,58 +40,42 @@ serve(async (req) => {
         district_id: districtId,
         geojson: parsedGeojson,
         poi_data: parsedPoi,
-        photo_url: photoData?.photo_url || null
+        photo_url: photoData?.photo_url || null,
+        photo_preview_url: await signDistrictPhoto(supabaseAdmin, photoData?.photo_url, districtId, 900)
       };
 
       return new Response(JSON.stringify({ data: fullData }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
+    if (action === "get_photo") {
+      const { data: photoData } = await supabaseAdmin.from('district_photos').select('photo_url').eq('district_id', districtId).limit(1).maybeSingle();
+      return new Response(JSON.stringify({ data: await signDistrictPhoto(supabaseAdmin, photoData?.photo_url, districtId, 900) }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+
     if (action === "save") {
-        if (role !== "super_admin" && !allowedTabs.includes("manual.edit") && !allowedTabs.includes("parser.run_offline")) {
-            throw new Error("Forbidden: missing manual.edit or parser.run_offline permission");
-        }
+        requireAction(access, 'manual.save', 'parser.run_offline');
         
         const { 
-            name, is_available, geojson, poi_data, photo_url, 
+            name, is_available, geojson, poi_data, photo_url, photo_preview_url,
             id, district_id, city_id, created_at, updated_at, data_updated_at, last_updated, cities, 
             ...filterFields 
         } = payload;
 
-        if (name !== undefined || is_available !== undefined) {
-            await supabaseAdmin.from('districts').update({ 
-                ...(name !== undefined && {name}), 
-                ...(is_available !== undefined && {is_available}),
-                updated_at: new Date().toISOString()
-            }).eq('id', districtId);
-        }
+        if (geojson !== undefined || poi_data !== undefined) requireAction(access, 'manual.gis', 'parser.run_offline');
 
-        if (geojson !== undefined || poi_data !== undefined) {
-            const geoUpdate: any = { district_id: districtId };
-            if (geojson !== undefined) geoUpdate.geojson = geojson;
-            if (poi_data !== undefined) geoUpdate.poi_data = poi_data;
-            await supabaseAdmin.from('district_geo_data').upsert(geoUpdate, { onConflict: 'district_id' });
-        }
-
-        if (photo_url) {
-            await supabaseAdmin.from('district_photos').upsert({
-                district_id: districtId,
-                photo_url: photo_url,
-                is_main: true,
-                updated_at: new Date().toISOString()
-            }, { onConflict: 'district_id' });
-        }
-
-        if (Object.keys(filterFields).length > 0) {
-            filterFields.district_id = districtId;
-            filterFields.last_updated = new Date().toISOString();
-            await supabaseAdmin.from('district_filter_data').upsert(filterFields, { onConflict: 'district_id' });
-        }
+        const row: Record<string, unknown> = { district_id: districtId };
+        if (name !== undefined || is_available !== undefined) row.base = { ...(name !== undefined && {name}), ...(is_available !== undefined && {is_available}) };
+        if (geojson !== undefined || poi_data !== undefined) row.geo = { ...(geojson !== undefined && {geojson}), ...(poi_data !== undefined && {poi_data}) };
+        if (photo_url) row.photo = { photo_url };
+        if (Object.keys(filterFields).length) row.metrics = filterFields;
+        const { error } = await supabaseAdmin.rpc('save_district_bundle', { p_actor: access.user.id, p_rows: [row] });
+        if (error) throw error;
 
         return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
     }
 
     throw new Error("Invalid action");
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: err.message }), { status: err.status === 403 || String(err.message).startsWith('Forbidden:') ? 403 : 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });

@@ -1,6 +1,7 @@
 // src/pages/admin/core/hooks/useCrudManager.ts
 import { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAdminMutation } from './useAdminMutation';
 import { useModals } from '@admin/core/context/ModalContext';
 import { useActionLogger } from '@admin/core/context/useActionLogger';
 import { useTranslation } from 'react-i18next';
@@ -30,7 +31,7 @@ export function useCrudManager<T extends { id?: string | number }>(options: Crud
         queryFn: options.fetchFn,
     });
 
-    const saveMutation = useMutation({
+    const saveMutation = useAdminMutation({
         mutationFn: async (data: T) => {
             if (data.id && isEditing) {
                 return await withLogging(`update_${options.entityName}`, () => options.updateFn(data.id!, data), { id: data.id, data });
@@ -42,24 +43,16 @@ export function useCrudManager<T extends { id?: string | number }>(options: Crud
             queryClient.invalidateQueries({ queryKey: options.queryKey });
             setIsModalOpen(false);
             showAlert(t('common.success'), t('common.save_success'), 'success');
-        },
-        onError: (error: unknown) => {
-             const msg = error instanceof Error ? error.message : 'Error';
-            showAlert(t('common.error'), msg, 'error');
         }
     });
 
-    const deleteMutation = useMutation({
+    const deleteMutation = useAdminMutation({
         mutationFn: async (id: string | number) => {
             return await withLogging(`delete_${options.entityName}`, () => options.deleteFn(id), { id });
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: options.queryKey });
             showAlert(t('common.success'), t('common.success'), 'success');
-        },
-        onError: (error: unknown) => {
-            const msg = error instanceof Error ? error.message : 'Error';
-            showAlert(t('common.error'), msg, 'error');
         }
     });
 

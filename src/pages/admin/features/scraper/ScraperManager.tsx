@@ -148,7 +148,7 @@ export default function ScraperManager() {
                     </div>
 
                     <label className="flex items-center gap-2 cursor-pointer p-3 border border-[#d6ccbf] dark:border-[#4a3f37] rounded-xl hover:bg-main/30 transition-colors">
-                        <input type="checkbox" name="is_active" checked={logic.formData.is_active} onChange={logic.handleInputChange} className="w-4 h-4 rounded accent-primary cursor-pointer" />
+                        <input type="checkbox" name="is_active" checked={logic.formData.is_active} onChange={logic.handleInputChange} className="w-4 h-4 rounded-sm accent-primary cursor-pointer" />
                         <span className="text-xs font-bold text-textMain">{t('admin_scraper.modal.is_active')}</span>
                     </label>
                 </form>

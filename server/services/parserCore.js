@@ -2,13 +2,16 @@ import { getSourceAdapter } from './sources/index.js';
 import { evaluateField, castDataType } from './parserEngine.js';
 import { queueService } from './queueService.js';
 import { supabase } from '../utils/supabase.js';
+const canonicalSource = source => source === 'osm_pbf' ? 'osm' : source === 'otodom' ? 'scraper' : source;
 
 export const runUniversalParser = async (config, logger) => {
-    const { data: allFields } = await supabase.from('fields_config').select('*').eq('is_active', true);
+    const { data: allFields, error: fieldsError } = await supabase.from('fields_config').select('*').eq('is_active', true);
+    if (fieldsError || !allFields) throw fieldsError || new Error('Missing parser configuration');
     
-    const { data: geoData } = await supabase.from('district_geo_data')
+    const { data: geoData, error: geoError } = await supabase.from('district_geo_data')
         .select('district_id, geojson')
         .in('district_id', config.districts.map(d => d.id));
+    if (geoError) throw geoError;
 
     config.districtsData = config.districts.map(d => ({
         district_id: d.id,
@@ -17,18 +20,16 @@ export const runUniversalParser = async (config, logger) => {
     })).filter(d => d.geojson);
 
     const sourceResults = {};
-    const uniqueSources = [...new Set(allFields.map(f => {
-        const type = f.source_type;
-        return (type === 'osm_pbf' || type === 'osm') ? 'osm' : type;
-    }))];
+    const uniqueSources = [...new Set(allFields.map(f => canonicalSource(f.source_type)))];
+    const enabledSources = new Set(config.enabledSources.map(canonicalSource));
 
     for (const source of uniqueSources) {
-        if (!config.enabledSources.includes(source) && !config.enabledSources.includes(source === 'osm' ? 'osm_pbf' : '')) continue;
+        if (!enabledSources.has(source)) continue;
         
         const adapter = getSourceAdapter(source);
         if (adapter) {
             const fieldsForSource = allFields.filter(f => 
-                f.source_type === source || (source === 'osm' && f.source_type === 'osm_pbf')
+                canonicalSource(f.source_type) === source
             );
             sourceResults[source] = await adapter.fetchData(config, fieldsForSource, logger);
         }
@@ -49,12 +50,21 @@ export const runUniversalParser = async (config, logger) => {
             district_name: d.name, 
             is_available: d.is_available,
             // Забираємо координати міток прямо з результатів OSM
-            poi_data: districtSources.osm.poi_data || [] 
+            ...(sourceResults.osm?.[d.id]?.poi_data !== undefined ? { poi_data: sourceResults.osm[d.id].poi_data } : {})
         };
         
         allFields.forEach(field => {
+            const source = canonicalSource(field.source_type);
+            if (!Object.hasOwn(sourceResults, source) || sourceResults[source] == null) return;
+            if (source !== 'gus' && sourceResults[source][d.id] == null) return;
             const val = evaluateField(field, districtSources);
-            result[field.field_code] = castDataType(val, field.data_type);
+            if (val == null) return;
+            const converted = castDataType(val, field.data_type);
+            if (converted != null) {
+                // GUS reports the whole city, not a district allocation.
+                const key = source === 'gus' && field.field_code === 'population' ? 'city_population' : field.field_code;
+                result[key] = converted;
+            }
         });
         return result;
     });

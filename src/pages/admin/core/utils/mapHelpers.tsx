@@ -1,15 +1,15 @@
 /* eslint-disable react-refresh/only-export-components */
-import React, { useEffect } from 'react';
+import { useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { renderToString } from 'react-dom/server';
-import * as FaIcons from 'react-icons/fa';
+import { MAP_ICONS } from '@shared/ui/mapIconRegistry';
 import * as turf from '@turf/turf';
 import { GeoFeatureData, MapFitBoundsProps, NormalizedPoiPoint } from '@admin/core/types/geo.types';
 
 export type { GeoFeatureData, MapFitBoundsProps, NormalizedPoiPoint };
 
-export const COLORS: string[] = [
+const COLORS: string[] = [
     '#3b82f6', '#10b981', '#f43f5e', '#f59e0b', '#8b5cf6',
     '#06b6d4', '#84cc16', '#d946ef', '#ea580c', '#6366f1'
 ];
@@ -144,10 +144,7 @@ export const normalizePoiData = (rawPoi: unknown): NormalizedPoiPoint[] => {
             type = (p.type ?? p[2]) as string;
             source = (p.source ?? p[3] ?? 'parser') as string;
         }
-        if (isNaN(lat) || isNaN(lng) || !type) return null;
-        if (lat > 14 && lat < 40 && lng > 44 && lng < 55) {
-            const temp = lat; lat = lng; lng = temp;
-        }
+        if (!Number.isFinite(lat) || !Number.isFinite(lng) || Math.abs(lat) > 90 || Math.abs(lng) > 180 || !type) return null;
         return [lat, lng, type, source] as NormalizedPoiPoint;
     });
     
@@ -199,16 +196,22 @@ export const createEmojiIcon = (
     const borderColor = source === 'manual' ? '#3b82f6' : uniqueColor;
     const bgColor = source === 'manual' ? '#dbeafe' : '#ffffff';
     const fontSize = size > 28 ? 16 : 14;
-    let htmlContent = iconValue;
-    const faIconsRecord = FaIcons as unknown as Record<string, React.ElementType>;
-    
-    if (typeof iconValue === 'string' && iconValue.startsWith('Fa') && faIconsRecord[iconValue]) {
-        const IconComponent = faIconsRecord[iconValue];
-        htmlContent = renderToString(<IconComponent style={{ color: uniqueColor, width: '100%', height: '100%' }} />);
-    }
+    const IconComponent = Object.hasOwn(MAP_ICONS, iconValue) ? MAP_ICONS[iconValue] : null;
+    // Only bundled icon components produce markup. Configuration strings remain
+    // React text children, so Leaflet never interprets them as arbitrary HTML.
+    const html = renderToString(
+        <div style={{
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            width: size, height: size, borderRadius: '50%', border: `2px solid ${borderColor}`,
+            backgroundColor: bgColor, boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+            fontSize, zIndex: 1000, padding: IconComponent ? 4 : 0,
+        }}>
+            {IconComponent ? <IconComponent style={{ color: uniqueColor, width: '100%', height: '100%' }} /> : iconValue}
+        </div>
+    );
     
     return L.divIcon({
-        html: `<div style="display:flex;align-items:center;justify-content:center;width:${size}px;height:${size}px;border-radius:50%;border:2px solid${borderColor};background-color:${bgColor};box-shadow:0 2px 4px rgba(0,0,0,0.1);font-size:${fontSize}px; z-index: 1000; padding: ${iconValue.startsWith('Fa') ? '4px' : '0'};">${htmlContent}</div>`,
+        html,
         className: 'custom-emoji-marker',
         iconSize: [size, size],
         iconAnchor: [size / 2, size / 2],

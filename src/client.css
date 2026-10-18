@@ -1,11 +1,23 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss" source(none);
+@config "../tailwind.config.js";
+@source "./";
+@source "../index.html";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* Preserve the previous border and placeholder defaults. */
+@layer base {
+  *, ::before, ::after, ::backdrop, ::file-selector-button {
+    border-color: #e5e7eb;
+  }
+  input::placeholder, textarea::placeholder {
+    color: #9ca3af;
+  }
+}
 
 @layer base {
   .client-layout {
     font-family: var(--font-body);
-    /* Використовуємо твої змінні. Вони самі змінять колір при зміні теми! */
     background-color: var(--bg-body);
     color: var(--text-main);
     min-height: 100vh;
@@ -30,7 +42,7 @@
   /* Тінь для темної теми, щоб картка не зливалася з фоном */
   [data-theme='dark'] .ui-glass-panel {
     box-shadow: 0 10px 40px -10px rgba(0,0,0,0.4);
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: var(--border-color);
   }
 
   /* 2. Строга типографіка */
@@ -50,7 +62,7 @@
     font-family: var(--font-heading);
     @apply text-8xl sm:text-9xl font-black tracking-tighter mb-4 select-none;
     color: var(--text-main);
-    opacity: 0.06; /* Дуже ніжний водяний знак */
+    opacity: 0.06;
   }
 
   .ui-text-muted {

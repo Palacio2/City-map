@@ -20,12 +20,14 @@ export const useAvatarUpload = (uid: string | null, filePath: string | null, onU
       const fileExt = file.name.split('.').pop();
       const newFilePath = `${uid}/${Date.now()}.${fileExt}`;
       
-      if (filePath) {
-        await removeAvatarFile(filePath).catch(() => undefined);
-      }
-      
       await uploadAvatarFile(newFilePath, file);
-      await updateUserAvatarUrl(newFilePath);
+      try {
+        await updateUserAvatarUrl(newFilePath);
+      } catch (error) {
+        await removeAvatarFile(newFilePath).catch(() => undefined);
+        throw error;
+      }
+      if (filePath && filePath !== newFilePath) await removeAvatarFile(filePath).catch(() => undefined);
       return newFilePath;
     },
     onSuccess: (newPath) => {
@@ -33,7 +35,7 @@ export const useAvatarUpload = (uid: string | null, filePath: string | null, onU
     },
     onError: (error: unknown) => {
       const errorMessage = mapSupabaseError(error, t);
-      alert(errorMessage || t('profile.edit_page.errors.avatar_load_error'));
+      return errorMessage || t('profile.edit_page.errors.avatar_load_error');
     }
   });
 
@@ -47,6 +49,7 @@ export const useAvatarUpload = (uid: string | null, filePath: string | null, onU
   return {
     signedUrl,
     isProcessing: uploadMutation.isPending || isLoadingUrl,
+    error: uploadMutation.error ? (mapSupabaseError(uploadMutation.error, t) || t('profile.edit_page.errors.avatar_load_error')) : null,
     handleFileChange
   };
 };

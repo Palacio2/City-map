@@ -1,15 +1,15 @@
 import { useState, useEffect, useRef } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { api } from '@services/api';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { adminGeoApi } from '@admin/core/api/adminGeoApi';
 import EntityModal from '@admin/core/ui/EntityModal';
 import CityMapModal from '@admin/features/manual-editor/CityMapModal';
 import { SearchInput } from '@admin/core/ui/SearchInput';
 import { FaEyeSlash, FaPlus, FaTrash, FaMapMarkedAlt, FaFolderOpen } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import type { TFunction } from 'i18next';
-import { useAdmin } from '@admin/core/context/AdminContext';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
 import { useModals } from '@admin/core/context/ModalContext';
+import { useAdminMutation } from '@admin/core/hooks/useAdminMutation';
 import { Entity } from './types';
 
 const EMPTY_ARRAY: Entity[] = [];
@@ -110,9 +110,8 @@ interface ManualSidebarProps {
 
 export default function ManualSidebar({ selectedCountry, setSelectedCountry, selectedCity, setSelectedCity, selectedDistrict, setSelectedDistrict, initialCountryId, initialCityId, initialDistrictId }: ManualSidebarProps) {
     const { t } = useTranslation('db');
-    const { currentAdmin } = useAdmin();
-    const { canDo, isSuperAdmin } = useActionGuard();
-    const { showAlert, showConfirm } = useModals();
+    const { canDo } = useActionGuard();
+    const { showConfirm, showAlert } = useModals();
     const queryClient = useQueryClient();
     
     const canCreateCountry = canDo('manual.create.country');
@@ -121,34 +120,38 @@ export default function ManualSidebar({ selectedCountry, setSelectedCountry, sel
     const canDelete = canDo('manual.delete');
     const canGis = canDo('manual.gis');
     
-    const adminCityIds = currentAdmin?.cities || [];
-    
     const [searchCountry, setSearchCountry] = useState('');
     const [searchCity, setSearchCity] = useState('');
     const [searchDistrict, setSearchDistrict] = useState('');
     const [modal, setModal] = useState({ isOpen: false, type: '', title: '', placeholder: '' });
     const [mapModal, setMapModal] = useState({ isOpen: false, city: null as Entity | null });
 
-    const { data: countriesData = EMPTY_ARRAY } = useQuery({
+    const { data: countriesData = EMPTY_ARRAY, error: countriesError } = useQuery({
         queryKey: ['countries'],
-        queryFn: () => api.geo.getCountries()
+        queryFn: adminGeoApi.getCountries
     });
-    
-    const countries = isSuperAdmin ? countriesData : countriesData.filter((_c: Entity) => adminCityIds.some((cityId: string) => cityId));
+    const countries = countriesData;
 
-    const { data: citiesData = EMPTY_ARRAY } = useQuery({
+    const { data: citiesData = EMPTY_ARRAY, error: citiesError } = useQuery({
         queryKey: ['cities', selectedCountry?.id],
-        queryFn: () => api.geo.getCities(selectedCountry?.id || ''),
+        queryFn: () => adminGeoApi.getCities(selectedCountry?.id || ''),
         enabled: !!selectedCountry
     });
     
-    const cities = isSuperAdmin ? citiesData : citiesData.filter((c: Entity) => adminCityIds.includes(c.id));
+    const cities = citiesData;
 
-    const { data: districts = EMPTY_ARRAY } = useQuery({
+    const { data: districts = EMPTY_ARRAY, error: districtsError } = useQuery({
         queryKey: ['districts', selectedCity?.id],
-        queryFn: () => api.geo.getDistricts(selectedCity?.id || ''),
+        queryFn: () => adminGeoApi.getDistricts(selectedCity?.id || ''),
         enabled: !!selectedCity
     });
+
+    useEffect(() => {
+        const err = countriesError || citiesError || districtsError;
+        if (err) {
+            showAlert(t('common.error'), err instanceof Error ? err.message : 'Unknown error', 'error');
+        }
+    }, [countriesError, citiesError, districtsError, showAlert, t]);
 
     const initialCountryResolved = useRef(false);
     useEffect(() => {
@@ -183,32 +186,31 @@ export default function ManualSidebar({ selectedCountry, setSelectedCountry, sel
         }
     }, [districts, initialDistrictId, selectedDistrict, setSelectedDistrict]);
 
-    const createMutation = useMutation({
-        mutationFn: async ({ type, name }: { type: string; name: string }) => {
-            if (type === 'country') return api.geo.createCountry(name);
-            if (type === 'city') return api.geo.createCity(name, selectedCountry?.id as string);
-            if (type === 'district') return api.geo.createDistrict(name, selectedCity?.id as string);
+    const createMutation = useAdminMutation<Entity | undefined | void, Error, { type: string; name: string }>({
+        mutationFn: async ({ type, name }) => {
+            if (type === 'country') return adminGeoApi.createCountry(name);
+            if (type === 'city') return adminGeoApi.createCity(name, selectedCountry?.id as string);
+            if (type === 'district') return adminGeoApi.createDistrict(name, selectedCity?.id as string);
         },
         onSuccess: (data, { type }) => {
-            if (type === 'country') { queryClient.invalidateQueries({ queryKey: ['countries'] }); setSelectedCountry(data); }
+            if (type === 'country') { queryClient.invalidateQueries({ queryKey: ['countries'] }); setSelectedCountry((data as Entity) || null); }
             if (type === 'city') { 
                 queryClient.invalidateQueries({ queryKey: ['cities'] }); 
                 queryClient.invalidateQueries({ queryKey: ['adminProfile'] });
-                setSelectedCity(data); 
+                queryClient.invalidateQueries({ queryKey: ['availableCities'] });
+                setSelectedCity((data as Entity) || null); 
             }
-            if (type === 'district') { queryClient.invalidateQueries({ queryKey: ['districts'] }); setSelectedDistrict(data); }
+            if (type === 'district') { queryClient.invalidateQueries({ queryKey: ['districts'] }); setSelectedDistrict((data as Entity) || null); }
             setModal({ ...modal, isOpen: false });
         },
-        onError: (err: Error) => showAlert(t('common.error'), err.message, 'error')
     });
 
-    const deleteMutation = useMutation({
-        mutationFn: async ({ type, id }: { type: string; id: string }) => {
-            if (type === 'country') return api.geo.deleteCountry(id);
-            if (type === 'city') return api.geo.deleteCity(id);
-            if (type === 'district') return api.geo.deleteDistrict(id);
+    const deleteMutation = useAdminMutation<unknown, Error, { type: string; id: string }>({
+        mutationFn: async ({ type, id }) => {
+            if (type === 'country') return adminGeoApi.deleteCountry(id);
+            if (type === 'city') return adminGeoApi.deleteCity(id);
+            if (type === 'district') return adminGeoApi.deleteDistrict(id);
         },
-        onError: (err: Error) => showAlert(t('common.error'), err.message, 'error')
     });
 
     const filterList = (list: Entity[], search: string) => list.filter(item => item.name.toLowerCase().includes(search.toLowerCase()));
@@ -229,6 +231,7 @@ export default function ManualSidebar({ selectedCountry, setSelectedCountry, sel
                     }
                     if (type === 'city') { 
                         queryClient.invalidateQueries({ queryKey: ['cities'] }); 
+                        queryClient.invalidateQueries({ queryKey: ['availableCities'] });
                         if (selectedCity?.id === item.id) {
                             setSelectedCity(null);
                             setSelectedDistrict(null);

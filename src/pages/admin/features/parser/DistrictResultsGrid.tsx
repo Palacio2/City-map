@@ -1,23 +1,19 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from '@admin/core/ui/Button';
-import { FaSave, FaTrash, FaEdit } from 'react-icons/fa';
+import { FaSave, FaTrash } from 'react-icons/fa';
 import { ParsedDistrictRowItem } from './types';
+import { useParserContext } from './ParserContext';
 
-interface DistrictResultsGridProps {
-    data: ParsedDistrictRowItem[];
-    onSave: (rows: unknown[]) => Promise<void>;
-    onRemove: (districtId: string) => void;
-}
-
-export default function DistrictResultsGrid({ data, onSave, onRemove }: DistrictResultsGridProps) {
+export default function DistrictResultsGrid() {
+    const { processedParsedData: data = [], handleSave: onSave, logic: { removeParsedItem: onRemove } } = useParserContext();
     const { t } = useTranslation('db');
     const [saving, setSaving] = useState(false);
     const [editableData, setEditableData] = useState<ParsedDistrictRowItem[]>([]);
 
     // Sync state with props when data changes
     useEffect(() => {
-        setEditableData(data);
+        setEditableData(data as ParsedDistrictRowItem[]);
     }, [data]);
 
     const columns = Array.from(new Set(data.flatMap(row => Object.keys(row)))).filter(key => 
@@ -26,7 +22,7 @@ export default function DistrictResultsGrid({ data, onSave, onRemove }: District
 
     const handleSaveAll = async () => {
         setSaving(true);
-        await onSave(editableData);
+        await onSave(editableData as unknown as Record<string, unknown>[]);
         setSaving(false);
     };
 
@@ -41,7 +37,7 @@ export default function DistrictResultsGrid({ data, onSave, onRemove }: District
 
     return (
         <div className="flex flex-col gap-4 w-full animate-fadeIn">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-surface p-4 rounded-2xl border border-[#d6ccbf] dark:border-[#4a3f37] shadow-sm gap-4">
+            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-surface p-4 rounded-2xl border border-[#d6ccbf] dark:border-[#4a3f37] shadow-xs gap-4">
                 <div>
                     <h3 className="m-0 text-base font-bold text-textMain">{t('admin_parser.results.title')}</h3>
                     <p className="text-xs text-textMuted mt-1">{t('admin_parser.results.processed')}: {editableData.length}</p>
@@ -82,7 +78,7 @@ export default function DistrictResultsGrid({ data, onSave, onRemove }: District
                                                 type="text"
                                                 value={row[col] === null || row[col] === undefined ? '' : String(row[col])}
                                                 onChange={(e) => handleInputChange(row.district_id as string, col, e.target.value)}
-                                                className="w-[70px] bg-transparent border-none text-center hover:bg-main/10 focus:bg-surface focus:ring-1 focus:ring-main/50 py-1.5 outline-none transition-all text-[11px]"
+                                                className="w-[70px] bg-transparent border-none text-center hover:bg-main/10 focus:bg-surface focus:ring-1 focus:ring-main/50 py-1.5 outline-hidden transition-all text-[11px]"
                                                 placeholder="-"
                                             />
                                         )}

@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
+import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import LoginTab from './LoginTab';
 
@@ -59,7 +60,7 @@ describe('LoginTab', () => {
     expect(screen.getByText('admin_panel.login.title')).toBeInTheDocument();
     
     // Check for email and password inputs
-    expect(screen.getByPlaceholderText('admin@citymaps.com')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('admin@kvartals.com')).toBeInTheDocument();
     expect(screen.getByPlaceholderText('••••••••')).toBeInTheDocument();
   });
 
@@ -86,3 +87,5 @@ describe('LoginTab', () => {
     expect(screen.getByPlaceholderText('000 000')).toBeInTheDocument();
   });
 });
+
+

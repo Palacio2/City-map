@@ -1,20 +1,23 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.44.2';
-import { serve } from 'https://deno.land/std@0.178.0/http/server.ts';
+import { publishableKey } from '../_shared/keys.ts';
+import { mapTrackedDistrict } from './mapper.ts';
+import { getDistrictDataClient, getUserAccess, getFieldsConfig, stripRestrictedFields } from '../_shared/security.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Cache-Control': 'private, no-store',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY'); 
+
+    const supabaseKey = publishableKey();
     const authHeader = req.headers.get('Authorization');
 
     if (!supabaseUrl || !supabaseKey) {
@@ -28,60 +31,47 @@ serve(async (req) => {
     });
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    
+
     if (authError || !user) {
-      return new Response(JSON.stringify({ error: 'Unauthorized' }), { 
-        status: 401, 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        status: 401,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }
       });
     }
 
-    const { data: trackedData, error: dbError } = await supabase
+    const { data: trackedData, error: dbError } = await getDistrictDataClient()
       .from('user_tracked_districts')
       .select(`
         id, country, city, district, district_id, created_at,
-        districts (
-          updated_at,
+        districts!inner (
+          updated_at, is_available,
           district_filter_data ( average_rent_price, average_sale_price_sqm, average_property_price )
         )
       `)
-      
-      .eq('user_id', user.id) 
+
+      .eq('user_id', user.id)
+      .eq('districts.is_available', true)
       .order('created_at', { ascending: false });
 
     if (dbError) throw dbError;
 
-    const result = trackedData.map(item => {
-      const rawFilterData = item.districts?.district_filter_data;
-      let filterStats: any = {};
-      
-      if (Array.isArray(rawFilterData)) {
-         filterStats = rawFilterData[0] || {};
-      } else if (rawFilterData && typeof rawFilterData === 'object') {
-         filterStats = rawFilterData;
-      }
+    const access = await getUserAccess(req);
+    const fields = await getFieldsConfig();
+    const result = trackedData.map(item => mapTrackedDistrict(item, stats => {
+      const filtered = { ...stats };
+      stripRestrictedFields(filtered, fields, access);
+      return filtered;
+    }));
 
-      return {
-        id: item.id,
-        country: item.country,
-        city: item.city,
-        district: item.district,
-        district_id: item.district_id,
-        rental_price: filterStats.average_rent_price || 0,
-        sale_price: filterStats.average_sale_price_sqm || filterStats.average_property_price || 0,
-        updated_at: item.districts?.updated_at || item.created_at
-      };
-    });
-
-    return new Response(JSON.stringify(result), { 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    return new Response(JSON.stringify(result), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
 
   } catch (error: any) {
     console.error('API Error:', error.message);
-    return new Response(JSON.stringify({ error: error.message }), { 
-      status: 400, 
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 400,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }
 });

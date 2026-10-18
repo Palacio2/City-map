@@ -1,9 +1,9 @@
-﻿import React, { useMemo, useCallback, useState } from 'react';
+import React, { useMemo, useCallback } from 'react';
 import { FaBug, FaLightbulb, FaEnvelope, FaImage, FaExternalLinkAlt, FaExclamationTriangle, FaTrash, FaComments, FaSyncAlt } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import DataTable from '@admin/core/ui/DataTable';
-import { Pagination } from '@admin/core/ui/Pagination';
 import { Badge } from '@admin/core/ui/Badge';
+import { Loader } from '@admin/core/ui/Loader';
 import { CustomSelect, SelectOption } from '@admin/core/ui/CustomSelect';
 import { useFeedback } from '@admin/features/feedback/feedback/useFeedback';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
@@ -122,7 +122,7 @@ export default function FeedbackTab() {
                 <div className="flex justify-end">
                     <button
                         className="p-1.5 text-textMuted hover:text-rose-600 hover:bg-rose-500/10 rounded-lg transition-colors cursor-pointer"
-                        onClick={() => handleDelete(msg.id, msg.screenshot_url)}
+                        onClick={() => handleDelete(msg.id)}
                         title={t('admin_feedback.tab.delete_title')}
                     >
                         <FaTrash className="text-xs" />
@@ -139,24 +139,14 @@ export default function FeedbackTab() {
                 : 'text-textMuted hover:text-textMain hover:bg-surface'
         }`;
 
-    const ITEMS_PER_PAGE = 20;
-    const [currentPage, setCurrentPage] = useState(1);
-
-    const paginatedMessages = useMemo(() => {
-        const start = (currentPage - 1) * ITEMS_PER_PAGE;
-        return filteredMessages.slice(start, start + ITEMS_PER_PAGE);
-    }, [filteredMessages, currentPage]);
-
-    const totalPages = Math.ceil(filteredMessages.length / ITEMS_PER_PAGE);
-
     React.useEffect(() => {
-        setCurrentPage(1);
+        // setCurrentPage(1); was here
     }, [filter]);
 
     if (loading) {
         return (
             <div className="py-16 text-xs text-textMuted font-bold flex flex-col items-center gap-2 bg-surface rounded-2xl border border-border">
-                <div className="w-8 h-8 border-3 border-border border-t-primary rounded-full animate-spin" />
+                <Loader variant="pulse" size="lg" />
                 <div>{t('common.loading')}</div>
             </div>
         );
@@ -207,3 +197,5 @@ export default function FeedbackTab() {
         </div>
     );
 }
+
+

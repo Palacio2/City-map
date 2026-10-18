@@ -148,3 +148,6 @@ server/pending-results.json
 .eslintcache
 supabase/.temp/
 scratch/
+scratch-*
+*.key
+*.pem

@@ -13,7 +13,7 @@ export interface CountryConfig {
     };
 }
 
-export const COUNTRY_CONFIG: Record<string, CountryConfig> = {
+const COUNTRY_CONFIG: Record<string, CountryConfig> = {
     'poland': {
         id: 'pl',
         name: 'Poland',

@@ -1,7 +1,6 @@
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { verifyAdminUser, corsHeaders } from "../_shared/auth.ts";
 
-serve(async (req) => {
+Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders });
     }
@@ -49,6 +48,13 @@ serve(async (req) => {
             if (!hasTab('translations.edit')) throw new Error('Forbidden: Missing translations.edit permission');
             const { key, updates } = payload;
             const { error } = await supabaseAdmin.from('translations').update(updates).eq('translation_key', key);
+            if (error) throw error;
+            return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+        }
+        
+        if (action === 'save') {
+            if (!hasTab('translations.edit') && !hasTab('translations.add')) throw new Error('Forbidden: Missing translations permission');
+            const { error } = await supabaseAdmin.from('translations').upsert(payload, { onConflict: 'translation_key' });
             if (error) throw error;
             return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
         }

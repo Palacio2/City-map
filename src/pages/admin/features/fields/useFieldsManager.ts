@@ -1,4 +1,6 @@
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useEffect, useCallback } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { useModals } from '@admin/core/context/ModalContext';
 import { adminFieldsApi } from '@admin/features/fields/adminFieldsApi';
@@ -18,12 +20,15 @@ const initialForm = {
     is_visible_table: true,
     is_visible_form: true,
     sort_order: 0,
-    is_active: true
+    is_active: true,
+    is_premium: false,
+    is_realtor_only: false
 };
 
 export type FieldFormData = typeof initialForm & { id?: string | number };
 
 export function useFieldsManager() {
+    const queryClient = useQueryClient();
     const { t } = useTranslation('db');
     const { showConfirm, showAlert } = useModals();
     const { withLogging } = useActionLogger();
@@ -42,8 +47,8 @@ export function useFieldsManager() {
                 adminFieldsApi.getFields(),
                 adminFieldsApi.getGroups()
             ]);
-            setFields(fieldsData || []);
-            setGroups(groupsData || []);
+            setFields(fieldsData as unknown as FieldConfigItem[] || []);
+            setGroups(groupsData as unknown as FieldGroupItem[] || []);
         } catch (error: unknown) {
             console.error("Fetch error:", error);
         } finally {
@@ -91,6 +96,8 @@ export function useFieldsManager() {
             is_visible_form: item.is_visible_form,
             sort_order: item.sort_order,
             is_active: item.is_active,
+            is_premium: (item as any).is_premium || false,
+            is_realtor_only: (item as any).is_realtor_only || false,
             parser_config: parsedConfig
         });
         setIsEditing(true);
@@ -112,6 +119,7 @@ export function useFieldsManager() {
             async () => {
                 try {
                     await withLogging('delete_field', () => adminFieldsApi.deleteField(id), { id });
+                    await queryClient.invalidateQueries({ queryKey: ['filtersConfig'] });
                     fetchData();
                     showAlert(t('common.success'), t('admin_fields.field_deleted'), 'success');
                 } catch (error: unknown) {
@@ -139,6 +147,7 @@ export function useFieldsManager() {
                 await withLogging('insert_field', () => adminFieldsApi.insertField(payload), { payload });
             }
             setIsModalOpen(false);
+            await queryClient.invalidateQueries({ queryKey: ['filtersConfig'] });
             fetchData();
             showAlert(t('common.success'), t('common.save_success'), 'success');
         } catch (error: unknown) {

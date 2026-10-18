@@ -13,6 +13,7 @@ const Subscription = lazy(() => import('@subscription/Subscription'));
 const Login = lazy(() => import('@auth/Login'));
 const Register = lazy(() => import('@auth/Register'));
 const ForgotPassword = lazy(() => import('@auth/ForgotPassword'));
+const ResetPassword = lazy(() => import('@auth/ResetPassword'));
 const TermsOfService = lazy(() => import('@pages/terms/TermsOfService'));
 const About = lazy(() => import('@pages/about/About'));
 const Payment = lazy(() => import('@pages/payment/Payment'));
@@ -26,12 +27,9 @@ const StatsPage = lazy(() => import('@components/stats/StatsPage'));
 const Comparison = lazy(() => import('@components/stats/components/DistrictComparison/DistrictComparisonPage'));
 const AdminPanel = lazy(() => import('@pages/admin/AdminPanel'));
 const ProfilePage = lazy(() => import('@profile/ProfilePage'));
-const BillingHistoryPage = lazy(() => import('@profile/BillingHistoryPage'));
-const ProfileEditPage = lazy(() => import('@profile/ProfileEditPage'));
-const PasswordChangePage = lazy(() => import('@profile/PasswordChangePage'));
 
 export default function AppRoutes() {
-  useGoogleAnalytics('G-XXXXXXXXXX');
+  useGoogleAnalytics(import.meta.env.VITE_GA_ID);
 
   return (
     <Routes>
@@ -50,6 +48,8 @@ export default function AppRoutes() {
         <Route path="login" element={<Login />} />
         <Route path="register" element={<Register />} />
         <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="auth/reset-password" element={<ResetPassword />} />
+        <Route path="profile/password" element={<ResetPassword />} />
         <Route path="register-success" element={<RegisterSuccess />} />
         <Route path="auth/callback" element={<AuthCallback />} />
         <Route
@@ -86,9 +86,6 @@ export default function AppRoutes() {
         </Route>
         <Route path="profile">
           <Route index element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
-          <Route path="billing-history" element={<PrivateRoute><BillingHistoryPage /></PrivateRoute>} />
-          <Route path="edit" element={<PrivateRoute><ProfileEditPage /></PrivateRoute>} />
-          <Route path="password" element={<PrivateRoute><PasswordChangePage /></PrivateRoute>} />
         </Route>
         <Route path="payment" element={<PrivateRoute><Payment /></PrivateRoute>} />
         <Route path="payment-success" element={<PaymentSuccess />} />

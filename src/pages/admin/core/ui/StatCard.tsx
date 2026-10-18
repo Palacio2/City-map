@@ -41,7 +41,7 @@ export const StatCard: React.FC<StatCardProps> = ({
                         {title}
                     </span>
                     {badgeText && (
-                        <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded border ${colors}`}>
+                        <span className={`text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-sm border ${colors}`}>
                             {badgeText}
                         </span>
                     )}

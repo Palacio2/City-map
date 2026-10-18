@@ -1,13 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { useAdminMutation } from '@admin/core/hooks/useAdminMutation';
 import { supabase } from '@supabaseClient';
 import { useModals } from '@admin/core/context/ModalContext';
 import { adminUsersAPI } from '@admin/features/users/adminUsersAPI';
 import { useActionLogger } from '@admin/core/context/useActionLogger';
 import { AdminUser } from '@admin/core/types/admin.types';
+import { createGiftCommands } from './giftCommands';
 
 export function useUsersManager(_currentAdmin: AdminUser | null | undefined, t: (k: string, options?: Record<string, unknown>) => string) {
+    const giftCommand = useMemo(() => createGiftCommands(_currentAdmin?.id,
+        (action, payload) => adminUsersAPI.manageFinance(action, payload)), [_currentAdmin?.id]);
     const { showConfirm, showAlert } = useModals();
     const queryClient = useQueryClient();
     const { withLogging } = useActionLogger();
@@ -59,7 +64,7 @@ export function useUsersManager(_currentAdmin: AdminUser | null | undefined, t: 
         queryKey: ['adminUsersList'],
         queryFn: async () => {
             const data = await adminUsersAPI.getUsers();
-            return data.users || data || [];
+            return data || [];
         }
     });
 
@@ -67,7 +72,7 @@ export function useUsersManager(_currentAdmin: AdminUser | null | undefined, t: 
 
     const handleSort = (key: string) => setSortConfig(prev => ({ key, direction: prev.key === key && prev.direction === 'asc' ? 'desc' : 'asc' }));
 
-    const manageUserMutation = useMutation({
+    const manageUserMutation = useAdminMutation({
         mutationFn: async ({ action, targetUserId, payload }: { action: string; targetUserId: string; payload?: unknown }) => {
             const { data, error } = await withLogging(`users_manage_${action}`, () => supabase.functions.invoke('admin-users-manage', {
                 method: 'POST',
@@ -76,8 +81,11 @@ export function useUsersManager(_currentAdmin: AdminUser | null | undefined, t: 
             if (error || data?.error) throw new Error(error?.message || data?.error);
             return data;
         },
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['adminUsersList'] }),
-        onError: (err: unknown) => showAlert(t('common.error'), err instanceof Error ? err.message : 'Error', 'error'),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['adminUsersList'] });
+            queryClient.invalidateQueries({ queryKey: ['adminProfile'] });
+        },
+        
         onSettled: () => setProcessingId(null)
     });
 
@@ -160,23 +168,23 @@ export function useUsersManager(_currentAdmin: AdminUser | null | undefined, t: 
         setGiftModalOpen(true);
     };
 
-    const grantMutation = useMutation({
-        mutationFn: ({ userId, planName, days }: { userId: string; planName: string; days: number }) => adminUsersAPI.manageFinance('grant_subscription', { userId, plan_name: planName, days }),
+    const grantMutation = useAdminMutation({
+        mutationFn: ({ userId, planName, days }: { userId: string; planName: string; days: number }) => giftCommand('grant_subscription', userId, planName, days),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['adminUsersList'] });
             setGiftModalOpen(false);
             showAlert(t('common.success'), t('admin_users.confirm.grant_success'), 'success');
         },
-        onError: (err: unknown) => showAlert(t('common.error'), err instanceof Error ? err.message : 'Error', 'error')
+        
     });
 
-    const revokeMutation = useMutation({
-        mutationFn: (userId: string) => adminUsersAPI.manageFinance('revoke_subscription', { userId }),
+    const revokeMutation = useAdminMutation({
+        mutationFn: (userId: string) => giftCommand('revoke_gift', userId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['adminUsersList'] });
-            showAlert(t('common.success'), t('admin_users.confirm.revoke_success', 'Підписку успішно скасовано'), 'success');
+            showAlert(t('common.success'), t('admin_users.confirm.revoke_gift_success', { defaultValue: 'Подарунковий доступ відкликано. Оплачені підписки не змінено.' }), 'success');
         },
-        onError: (err: unknown) => showAlert(t('common.error'), err instanceof Error ? err.message : 'Error', 'error')
+        
     });
 
     const handleGrantSubscription = (userId: string, planName: string, days: number) => grantMutation.mutateAsync({ userId, planName, days });
@@ -245,3 +253,4 @@ export function useUsersManager(_currentAdmin: AdminUser | null | undefined, t: 
         openCityModal, openGiftModal, handleGrantSubscription, handleRevokeSubscription, fetchUsers
     };
 }
+

@@ -9,13 +9,14 @@ import * as Sentry from '@sentry/react';
 if (import.meta.env.MODE === 'production') {
   Sentry.init({
     dsn: import.meta.env.VITE_SENTRY_DSN || "",
-    integrations: [
-      Sentry.browserTracingIntegration(),
-      Sentry.replayIntegration(),
-    ],
-    tracesSampleRate: 1.0,
-    replaysSessionSampleRate: 0.1,
-    replaysOnErrorSampleRate: 1.0,
+    tracesSampleRate: 0,
+    sendDefaultPii: false,
+    beforeSend(event) {
+      delete event.user;
+      delete event.request;
+      event.breadcrumbs = [];
+      return event;
+    },
   });
 }
 

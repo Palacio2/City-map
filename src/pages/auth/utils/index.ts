@@ -4,12 +4,12 @@ const ALLOWED_KEYS = ['Backspace', 'Tab', 'Enter', 'Delete', 'ArrowLeft', 'Arrow
 
 export const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>, allowSpace: boolean = false): void => {
   if (ALLOWED_KEYS.includes(e.key) || e.ctrlKey || e.metaKey || e.altKey) return;
-  const isValid = allowSpace ? /^[a-zA-Z\- ]$/.test(e.key) : /^[\x21-\x7E]$/.test(e.key);
+  const isValid = allowSpace ? /^[a-zA-Z -]$/.test(e.key) : /^[\x21-\x7E]$/.test(e.key);
   if (e.key.length === 1 && !isValid) e.preventDefault();
 };
 
 export const sanitizeInput = (value: string, allowSpace: boolean = false): string => {
-  return allowSpace ? value.replace(/[^a-zA-Z \-]/g, '').replace(/ {2,}/g, ' ').replace(/^ /, '') : value.replace(/[^\x21-\x7E]/g, '');
+  return allowSpace ? value.replace(/[^a-zA-Z -]/g, '').replace(/ {2,}/g, ' ').replace(/^ /, '') : value.replace(/[^\x21-\x7E]/g, '');
 };
 
 export const calculatePasswordStrength = (pass: string): number => {

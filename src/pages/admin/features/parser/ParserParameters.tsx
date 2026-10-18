@@ -8,9 +8,27 @@ import { Input } from '@admin/core/ui/Input';
 import { FaExternalLinkAlt, FaPlay } from 'react-icons/fa';
 import { FormattedFieldItem } from '@admin/core/types/ui.types';
 import { CustomCheckbox } from './components/CustomCheckbox';
-import { DistrictItem, ParserParametersProps } from './types';
+import { DistrictItem } from './types';
+import { useParserContext } from './ParserContext';
+import { EntityItem } from './types';
 
-export default function ParserParameters({ onStart, selectedDistricts, country, city, region }: ParserParametersProps) {
+export default function ParserParameters() {
+    const {
+        country, city, region,
+        logic: { dbDistricts },
+        selectedDistrictIds,
+        setParserConfig,
+        handleStartParser,
+        setActiveStep
+    } = useParserContext();
+    const selectedDistricts = useMemo(() => dbDistricts.filter((d: EntityItem) => selectedDistrictIds.includes(d.id)), [dbDistricts, selectedDistrictIds]);
+    
+    const onStart = (config: Record<string, unknown>) => {
+        setParserConfig(config);
+        handleStartParser(config);
+        setActiveStep(4);
+    };
+
     const { t } = useTranslation('db');
     const { fieldsConfig = [] } = useDynamicFields();
     const countryConfig = useMemo(() => getCountryConfig(country?.name), [country]);

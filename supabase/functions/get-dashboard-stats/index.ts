@@ -1,35 +1,42 @@
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts"
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
+import { publishableKey } from '../_shared/keys.ts';
+import { createClient } from "npm:@supabase/supabase-js@2.112.2"
+import { RequestError } from '../_shared/request.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Cache-Control': 'private, no-store',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'GET' && req.method !== 'POST') return new Response(null, { status: 405, headers: { ...corsHeaders, Allow: 'GET, POST, OPTIONS' } });
 
   try {
+    const authorization = req.headers.get('Authorization');
+    if (!authorization || !/^Bearer\s+\S+$/i.test(authorization)) throw new RequestError('Unauthorized', 401);
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: req.headers.get('Authorization')! } } }
+      publishableKey(),
+      { global: { headers: { Authorization: authorization } } }
     );
 
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser();
-    if (userError || !user) throw new Error('Unauthorized');
+    if (userError || !user) throw new RequestError('Unauthorized', 401);
 
     const [statsResult, weeklyResult, popularResult] = await Promise.all([
-      supabaseClient.from('user_stats').select('*').eq('user_id', user.id).single(),
+      supabaseClient.from('user_stats').select('*').eq('user_id', user.id).maybeSingle(),
       supabaseClient.rpc('get_weekly_activity_stats', { uid: user.id }),
       supabaseClient.rpc('get_popular_districts_stats')
     ]);
 
+    if (statsResult.error || weeklyResult.error || popularResult.error) throw new RequestError('Statistics unavailable', 503);
     const dbStats = statsResult.data || {};
     
     return new Response(JSON.stringify({
       stats: {
-        searches: dbStats.search_count || 0,
+        searches: dbStats.viewed_districts_count || 0,
         viewed_districts_count: dbStats.viewed_districts_count || 0,
         savedDistricts: dbStats.saved_districts_count || 0,
         comparisons: dbStats.comparison_count || 0,
@@ -44,9 +51,9 @@ serve(async (req) => {
       status: 200,
     });
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ error: error instanceof RequestError ? error.message : 'Statistics unavailable' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 400,
+      status: error instanceof RequestError ? error.status : 503,
     });
   }
 });

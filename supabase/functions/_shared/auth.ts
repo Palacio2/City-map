@@ -1,14 +1,17 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
+import { secretKey, publishableKey } from './keys.ts';
+import { createClient } from "npm:@supabase/supabase-js@2.112.2";
+import { normalizeAdminProfile, requireVerifiedMfa } from '../../../shared/authorization.js';
 
 export const corsHeaders = {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, sentry-trace, baggage",
 };
 
-export const getAdminClient = () => {
+export const getAdminClient = (verifiedActor?: string) => {
     return createClient(
         Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
+        secretKey(),
+        verifiedActor ? { global: { headers: { 'x-citymaps-admin-actor': verifiedActor } } } : undefined
     );
 };
 
@@ -19,34 +22,31 @@ export const verifyAdminUser = async (req: Request) => {
     const token = authHeader.replace("Bearer ", "");
     const supabaseClient = createClient(
         Deno.env.get("SUPABASE_URL") ?? "",
-        Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+        publishableKey(),
         { global: { headers: { Authorization: authHeader } } }
     );
 
     const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
     if (userError || !user) throw new Error("Unauthorized");
+    requireVerifiedMfa(token);
 
     const supabaseAdmin = getAdminClient();
 
-    const { data: profile } = await supabaseAdmin
+    const { data: profile, error: profileError } = await supabaseAdmin
         .from("admin_profiles")
-        .select("role, allowed_tabs")
+        .select("role, allowed_tabs, assigned_cities")
         .eq("user_id", user.id)
         .maybeSingle();
 
-    const role = profile?.role || user.app_metadata?.role || "user";
-    const allowedTabs = profile?.allowed_tabs || [];
-
-    if (role !== "super_admin" && role !== "admin") {
-        throw new Error("Forbidden: Not an admin");
-    }
+    if (profileError) throw new Error('Unable to verify admin permissions');
+    const access = normalizeAdminProfile(profile);
 
     return {
         user,
-        role,
-        allowedTabs,
-        isSuperAdmin: role === "super_admin",
-        supabaseAdmin,
-        hasTab: (tab: string) => role === "super_admin" || allowedTabs.includes(tab)
+        ...access,
+        // Never copy this header from the incoming request. PostgREST accepts
+        // the actor context only on our server's service-role connection.
+        supabaseAdmin: getAdminClient(user.id),
+        hasTab: (tab: string) => access.isSuperAdmin || access.allowedTabs.includes(tab)
     };
 };

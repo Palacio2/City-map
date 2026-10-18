@@ -2,9 +2,24 @@ import { useEffect, useRef, useMemo } from 'react';
 import { Button } from '@admin/core/ui/Button';
 import { useTranslation } from 'react-i18next';
 import { FaPlay, FaDownload, FaTrashAlt, FaTerminal } from 'react-icons/fa';
-import { LogItem, ParserConsoleProps } from './types';
+import { LogItem } from './types';
+import { useParserContext } from './ParserContext';
+import { Loader } from '@admin/core/ui/Loader';
+import { useActionGuard } from '@admin/core/context/useActionGuard';
 
-export default function ParserConsole({ logs = [], loading, onClear, onDownload, onStartClick, isStartDisabled, selectedCount = 0 }: ParserConsoleProps) {
+export default function ParserConsole() {
+    const {
+        logic: { logs = [], isParsing, clearLogs, downloadLogs, loading },
+        handleStartParser, parserConfig, city, pbfFile, selectedDistrictIds
+    } = useParserContext();
+    const { canDo } = useActionGuard();
+
+    const onClear = clearLogs;
+    const onDownload = downloadLogs;
+    const onStartClick = () => handleStartParser(parserConfig);
+    const isStartDisabled = isParsing || loading || !city || selectedDistrictIds.length === 0 || !pbfFile || !canDo('parser.run_offline');
+    const selectedCount = selectedDistrictIds.length;
+
     const { t } = useTranslation('db');
     const consoleRef = useRef<HTMLDivElement>(null);
 
@@ -62,9 +77,9 @@ export default function ParserConsole({ logs = [], loading, onClear, onDownload,
                 ref={consoleRef}
                 className="flex-1 p-4 overflow-y-auto font-mono text-[11px] leading-relaxed scrollbar-thin bg-[#12100e]"
             >
-                {loading && (
+                {isParsing && (
                     <div className="flex items-center gap-2 text-emerald-400 mb-3 animate-pulse">
-                        <div className="w-3.5 h-3.5 border-2 border-emerald-400/30 border-t-emerald-400 rounded-full animate-spin" />
+                        <Loader variant="spinner" size="sm" colorClass="text-emerald-400" />
                         <span>{t('admin_parser.console.parsing_in_progress')}</span>
                     </div>
                 )}
@@ -75,7 +90,7 @@ export default function ParserConsole({ logs = [], loading, onClear, onDownload,
                 ) : (
                     <div className="flex flex-col gap-1">
                         {displayLogs.map((log: LogItem) => (
-                            <div key={log.id} className="flex gap-3 hover:bg-slate-800/40 px-1.5 py-0.5 rounded transition-colors break-words">
+                            <div key={log.id} className="flex gap-3 hover:bg-slate-800/40 px-1.5 py-0.5 rounded-sm transition-colors break-words">
                                 {log.time && <span className="text-slate-500 shrink-0 select-none">[{log.time}]</span>}
                                 <span className={
                                     log.type === 'error' ? 'text-rose-400 font-medium' :

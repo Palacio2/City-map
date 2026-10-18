@@ -26,7 +26,7 @@ export default function AuthCallback() {
     <div className="flex justify-center items-center min-h-[100dvh] bg-body p-5">
       <div className="flex flex-col items-center gap-5">
         <div className="w-12 h-12 border-[4px] border-accent/20 border-t-accent rounded-full animate-spin" />
-        <p className="text-textMain font-heading font-semibold text-lg tracking-wider animate-pulse m-0">
+        <p className="text-textMain font-heading font-bold text-lg tracking-widest uppercase animate-pulse m-0">
           {t('auth.callback.loading')}
         </p>
       </div>

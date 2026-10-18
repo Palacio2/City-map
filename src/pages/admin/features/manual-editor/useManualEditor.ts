@@ -1,6 +1,6 @@
 // src/pages/admin/features/manual-editor/useManualEditor.ts
 import { useState, useEffect } from 'react';
-import { api } from '@services/api';
+import { adminGeoApi } from '@admin/core/api/adminGeoApi';
 import { supabase } from '@supabaseClient';
 import imageCompression from 'browser-image-compression';
 import { useTranslation } from 'react-i18next';
@@ -8,6 +8,7 @@ import { useModals } from '@admin/core/context/ModalContext';
 import { useActionLogger } from '@admin/core/context/useActionLogger';
 import { Entity } from './types';
 import { NormalizedPoiPoint } from '@admin/core/types/geo.types';
+import { useActionGuard } from '@admin/core/context/useActionGuard';
 
 export const useManualEditor = (
     _selectedCountry: Entity | null, 
@@ -18,6 +19,7 @@ export const useManualEditor = (
     const { t } = useTranslation('db');
     const { showAlert } = useModals();
     const { withLogging } = useActionLogger();
+    const { canDo } = useActionGuard();
     
     const [formData, setFormData] = useState<Record<string, unknown>>({});
     const [photoFile, setPhotoFile] = useState<File | null>(null);
@@ -36,44 +38,61 @@ export const useManualEditor = (
     };
 
     useEffect(() => {
+        let active = true;
+        setFormData({});
+        setPhotoFile(null);
+        setPhotoPreview(null);
+        setIsMapEditorOpen(false);
         if (!selectedDistrict?.id) return;
+        setLoading(true);
 
         const loadData = async () => {
             try {
-                const res = await api.geo.getDistrictData(selectedDistrict.id);
-                if (res.data) {
+                const data = await adminGeoApi.getDistrictData(selectedDistrict.id);
+                if (!active) return;
+                if (data) {
                     const draft = localStorage.getItem(`draft_district_${selectedDistrict.id}`);
                     if (draft) {
                         try {
                             const parsedDraft = JSON.parse(draft);
-                            setFormData({ ...res.data, ...parsedDraft });
+                            setFormData({ ...data, ...parsedDraft });
                         } catch { 
-                            setFormData(res.data); 
+                            setFormData(data); 
                         }
                     } else {
-                        setFormData(res.data);
+                        setFormData(data);
                     }
-                    setPhotoPreview((res.data.photo_url as string) || null);
+                    setPhotoPreview((data.photo_preview_url as string) || null);
                 } else {
                     setSelectedDistrict(null);
                 }
             } catch (err: unknown) {
+                if (!active) return;
                 console.error(err);
-                if (err instanceof Error && (err.message.includes('Район не знайдено') || err.message.includes('Cannot coerce'))) {
+                const msg = err instanceof Error ? err.message : 'Unknown error';
+                if (msg.includes('Район не знайдено') || msg.includes('Cannot coerce')) {
                     setSelectedDistrict(null);
-                    showAlert(t('common.error'), 'Район не знайдено', 'error');
+                    showAlert(t('common.error'), 'Район не знайдено або немає доступу', 'error');
+                } else {
+                    setSelectedDistrict(null);
+                    showAlert(t('common.error'), msg, 'error');
                 }
-            }
+            } finally { if (active) setLoading(false); }
         };
         loadData();
+        return () => { active = false; };
     }, [selectedDistrict?.id, setSelectedDistrict, showAlert, t]);
+
+    useEffect(() => () => {
+        if (photoPreview?.startsWith('blob:')) URL.revokeObjectURL(photoPreview);
+    }, [photoPreview]);
 
     const handleFieldChange = (key: string, value: unknown) => {
         updateFormDataWithDraft({ [key]: value });
     };
 
     const handleSave = async () => {
-        if (!selectedDistrict) return;
+        if (!selectedDistrict || loading) return;
         setLoading(true);
         try {
             const payloadToSave = { ...formData };
@@ -82,6 +101,11 @@ export const useManualEditor = (
             delete payloadToSave.city_id;
             delete payloadToSave.created_at;
             delete payloadToSave.updated_at;
+            delete payloadToSave.photo_preview_url;
+            if (!canDo('manual.gis')) {
+                delete payloadToSave.geojson;
+                delete payloadToSave.poi_data;
+            }
 
             if (photoFile) {
                 const fileName = `${selectedDistrict.id}-${Date.now()}.webp`;

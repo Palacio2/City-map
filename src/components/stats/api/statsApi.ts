@@ -1,23 +1,31 @@
-// @ts-nocheck
+import type { Database } from '@shared/types/database.types';
+import type { TrackedDistrict } from '../types';
 import { supabase } from '@supabaseClient';
 import type { TransformedDistrict } from '@utils/dataTransformers';
 
-export const trackDistrictVisit = async (district: TransformedDistrict): Promise<void> => {
+const activityLocation = ({ id, city, country }: TransformedDistrict) => ({ id, city, country });
+
+async function recordActivity(action: string, write: () => PromiseLike<unknown>): Promise<void> {
   try {
     const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-    
-    await supabase.rpc('track_district_visit', {
-      district_data: {
-        id: district.id,
-        city: (district as Record<string, unknown>).city,
-        country: (district as Record<string, unknown>).country
-      }
-    });
-  } catch (err) { console.error('Error caught in empty catch block:', err); }
-};
+    if (session) await write();
+  } catch (err) { console.error(`Failed to ${action}:`, err); }
+}
 
-export const fetchDashboardData = async (): Promise<any> => {
+export const trackDistrictVisit = (district: TransformedDistrict): Promise<void> =>
+  recordActivity('track visit', () => supabase.rpc('track_district_visit', { district_data: activityLocation(district) }));
+
+export const registerComparisonEvent = (districts: TransformedDistrict[]): Promise<void> =>
+  recordActivity('register comparison', () => supabase.rpc('register_comparison_event', { districts_payload: districts.map(activityLocation) }));
+
+export interface DashboardData {
+  stats: Database['public']['Tables']['user_stats']['Row'] | null;
+  weeklyActivity: unknown[];
+  popularDistricts: unknown[];
+  trackedDistricts: TrackedDistrict[];
+}
+
+export const fetchDashboardData = async (): Promise<DashboardData> => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Unauthorized');
   
@@ -30,8 +38,9 @@ export const fetchDashboardData = async (): Promise<any> => {
     supabase.from('user_stats').select('*').eq('user_id', userId).maybeSingle()
   ]);
 
-  if (weeklyActivityRes.error) console.error('weeklyActivity error:', weeklyActivityRes.error);
-  if (popularDistrictsRes.error) console.error('popularDistricts error:', popularDistrictsRes.error);
+  for (const result of [weeklyActivityRes, popularDistrictsRes, trackedDistrictsRes, userStatsRes]) {
+    if (result.error) throw result.error;
+  }
 
   return {
     stats: userStatsRes.data,
@@ -42,12 +51,12 @@ export const fetchDashboardData = async (): Promise<any> => {
 };
 
 export const updateUserTime = async (timeSpentMs: number): Promise<void> => {
-  try {
-    const { data: { session } } = await supabase.auth.getSession();
-    if (!session) return;
-    
-    await supabase.rpc('update_user_time', { 
-      seconds: Math.floor(timeSpentMs / 1000) 
-    });
-  } catch (err) { console.error('Error caught in empty catch block:', err); }
+  if (!Number.isFinite(timeSpentMs) || timeSpentMs < 1000) return;
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session) return;
+  // A delayed browser timer must still respect the server's bounded interval.
+  const { error } = await supabase.rpc('update_user_time', {
+    seconds: Math.min(600, Math.floor(timeSpentMs / 1000))
+  });
+  if (error) throw error;
 };

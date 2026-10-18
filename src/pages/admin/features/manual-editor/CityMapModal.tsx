@@ -27,6 +27,8 @@ export default function CityMapModal({ isOpen, onClose, city }: CityMapModalProp
     }, [fieldsConfig]);
     
     useEffect(() => {
+        let active = true;
+        setMapData([]);
         if (!isOpen || !city) return;
         setActiveLayer('polygons');
         
@@ -36,14 +38,15 @@ export default function CityMapModal({ isOpen, onClose, city }: CityMapModalProp
                 const res = await adminGeoApi.getMapData(city.id) as { data?: GeoFeatureData[] } | GeoFeatureData[];
                 const dataArray = Array.isArray(res) ? res : (res?.data || []);
                 const validData = dataArray.map(parseAndFixGeoJSON).filter(Boolean) as GeoFeatureData[];
-                setMapData(assignColorsToFeatures(validData));
+                if (active) setMapData(assignColorsToFeatures(validData));
             } catch (error) {
                 console.error(error);
             } finally {
-                setLoading(false);
+                if (active) setLoading(false);
             }
         };
         loadData();
+        return () => { active = false; };
     }, [city, isOpen]);
     
     const allPois = useMemo(() => {

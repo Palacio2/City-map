@@ -47,14 +47,14 @@ export default function FavoritesPage() {
           </p>
         </div>
         {favorites.length > 0 && (
-          <div className="bg-surface border border-borderClient px-4 py-2 rounded-xl shadow-sm text-sm font-semibold text-textSecondary">
+          <div className="bg-surface border border-borderClient px-4 py-2 rounded-xl shadow-xs text-sm font-semibold text-textSecondary">
             {favorites.length} {t('stats.labels.selected_count')}
           </div>
         )}
       </header>
 
       {favorites.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-surface border border-borderClient rounded-3xl shadow-sm">
+        <div className="flex flex-col items-center justify-center py-20 px-4 text-center bg-surface border border-borderClient rounded-3xl shadow-xs">
           <span className="text-6xl mb-6 grayscale opacity-40">🏙️</span>
           <h2 className="font-heading text-2xl font-bold text-textMain mb-3">
             {t('favorites.status.empty_title')}
@@ -77,16 +77,17 @@ export default function FavoritesPage() {
             return (
               <div
                 key={virtualRow.index}
+                data-index={virtualRow.index}
+                ref={virtualizer.measureElement}
                 style={{
                   position: 'absolute',
                   top: 0,
                   left: 0,
                   width: '100%',
-                  height: `${virtualRow.size}px`,
                   transform: `translateY(${virtualRow.start}px)`,
                 }}
               >
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pb-6">
+                <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-6 pb-6">
                   {rowItems.map((district) => (
                     <FavoriteDistrictCard
                       key={district.id}
@@ -103,16 +104,14 @@ export default function FavoritesPage() {
         </div>
       )}
 
-      {selectedDistrict && (
-        <Suspense fallback={<Loader fullScreen />}>
-          <DistrictDetailsModal
-            isOpen={!!selectedDistrict}
-            onClose={closeModal}
-            district={selectedDistrict}
-            selectedCategory={selectedCategory}
-          />
-        </Suspense>
-      )}
+      <Suspense fallback={null}>
+        <DistrictDetailsModal
+          district={selectedDistrict}
+          selectedCategory={selectedCategory}
+          isOpen={!!selectedDistrict}
+          onClose={closeModal}
+        />
+      </Suspense>
     </div>
   );
 }

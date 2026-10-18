@@ -8,56 +8,26 @@ import {
     FaChartBar,
     FaEdit,
     FaExclamationTriangle,
-    FaFilter,
-    FaRocket
+    FaFilter
 } from 'react-icons/fa';
 import { useTranslation } from 'react-i18next';
 import DataTable from '@admin/core/ui/DataTable';
 import MiniStatsChart from '@admin/core/ui/MiniStatsChart';
 import { StatCard } from '@admin/core/ui/StatCard';
 import { Badge } from '@admin/core/ui/Badge';
-import { Button } from '@admin/core/ui/Button';
-import { supabase } from '@supabaseClient';
+import { Loader } from '@admin/core/ui/Loader';
 
 import { useActionGuard } from '@admin/core/context/useActionGuard';
-import { useModals } from '@admin/core/context/ModalContext';
 import { useDashboard } from '@admin/features/dashboard/useDashboard';
 import { DistrictRowData } from './types';
 
 export default function DashboardTab() {
     const { t } = useTranslation('db');
     const { canDo } = useActionGuard();
-    const { showAlert } = useModals();
     const { stats, chartData, loading, chartDays, setChartDays } = useDashboard();
     
     const [filterType, setFilterType] = useState<'all' | 'issues' | 'outdated'>('all');
-    const [isDeploying, setIsDeploying] = useState(false);
 
-    const handleDeploy = async () => {
-        setIsDeploying(true);
-        try {
-            const { data: { session } } = await supabase.auth.getSession();
-            if (!session) throw new Error('No session');
-
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-            const res = await fetch(`${apiUrl}/geo/deploy`, {
-                method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${session.access_token}`,
-                    'Content-Type': 'application/json'
-                }
-            });
-            if (!res.ok) {
-                const errData = await res.json().catch(() => ({}));
-                throw new Error(errData.error || `Deploy failed: ${res.status}`);
-            }
-            showAlert(t('common.success', 'Успіх'), t('admin_dashboard.deploy.success', 'Зміни успішно відправлені на публікацію! Сайт оновиться через декілька хвилин.'), 'success');
-        } catch (err) {
-            showAlert(t('common.error', 'Помилка'), err instanceof Error ? err.message : t('admin_dashboard.deploy.error', 'Помилка при спробі публікації.'), 'error');
-        } finally {
-            setIsDeploying(false);
-        }
-    };
 
     const handleEditDistrict = useCallback((district: DistrictRowData) => {
         localStorage.setItem('admin_active_tab', 'manual');
@@ -175,7 +145,7 @@ export default function DashboardTab() {
     if (loading) {
         return (
             <div className="py-20 text-xs text-textMuted font-mono font-bold flex flex-col items-center justify-center gap-3 bg-surface rounded-2xl sm:rounded-3xl border border-border shadow-2xs">
-                <div className="w-8 h-8 border-3 border-border border-t-primary rounded-full animate-spin" />
+                <Loader variant="pulse" size="lg" />
                 <div>{t('common.loading')}</div>
             </div>
         );
@@ -209,23 +179,6 @@ export default function DashboardTab() {
                             {t('admin_dashboard.tab.subtitle')}
                         </p>
                     </div>
-                </div>
-                
-                <div className="flex items-center gap-2">
-                    <Button 
-                        variant="primary" 
-                        size="sm" 
-                        onClick={handleDeploy}
-                        disabled={isDeploying}
-                        className={isDeploying ? 'opacity-70' : ''}
-                    >
-                        {isDeploying ? (
-                            <div className="w-3.5 h-3.5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                        ) : (
-                            <FaRocket className="text-xs" />
-                        )}
-                        {t('admin_dashboard.deploy.btn', 'Опублікувати зміни')}
-                    </Button>
                 </div>
             </div>
 

@@ -1,3 +1,4 @@
+import { Loader } from '@admin/core/ui/Loader';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaTrash, FaEye, FaEyeSlash, FaStar, FaUserCircle, FaComments, FaSyncAlt } from 'react-icons/fa';
@@ -21,6 +22,7 @@ export default function CommentsTab() {
     {
       header: t('admin_comments.tab.col_date'),
       render: (c: DistrictComment) => {
+        if (!c.created_at) return '—';
         const dateObj = new Date(c.created_at);
         return (
           <div className="flex flex-col">
@@ -42,7 +44,7 @@ export default function CommentsTab() {
         const name = c.full_name || authorDisplay.split('@')[0];
         return (
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-textMuted text-sm shrink-0 overflow-hidden shadow-sm">
+            <div className="w-8 h-8 rounded-full bg-surface border border-border flex items-center justify-center text-textMuted text-sm shrink-0 overflow-hidden shadow-xs">
               {c.avatar_url ? (
                 <img src={c.avatar_url} alt="Avatar" className="w-full h-full object-cover" />
               ) : (
@@ -115,7 +117,7 @@ export default function CommentsTab() {
   return (
     <div className="flex flex-col gap-6 w-full pb-4 flex-1 h-full">
       {/* Хедер та фільтри */}
-      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-surface p-4 sm:p-5 rounded-2xl border border-border shadow-sm">
+      <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 bg-surface p-4 sm:p-5 rounded-2xl border border-border shadow-xs">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center text-primary shadow-inner">
             <FaComments className="text-lg" />
@@ -175,11 +177,11 @@ export default function CommentsTab() {
       </div>
 
       {/* Таблиця */}
-      <div className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden flex flex-col flex-1">
+      <div className="bg-surface rounded-2xl border border-border shadow-xs overflow-hidden flex flex-col flex-1">
         {loading ? (
-          <div className="py-20 flex flex-col items-center justify-center gap-3">
-            <div className="w-8 h-8 border-3 border-primary/20 border-t-primary rounded-full animate-spin" />
-            <span className="text-textMuted text-xs font-bold tracking-wide uppercase">{t('admin_comments.tab.loading')}</span>
+          <div className="py-16 flex flex-col items-center gap-2 text-textMuted text-xs font-bold">
+            <Loader variant="pulse" size="lg" />
+            <div>{t('admin_comments.tab.loading')}</div>
           </div>
         ) : (
           <DataTable

@@ -37,7 +37,7 @@ export default function MfaVerifyForm({
         placeholder="000 000"
         maxLength={6}
         autoFocus
-        className="w-full p-2.5 bg-[#fbf9f5] border-2 border-[#e2d9cd] rounded-xl focus:border-[#c25e26] focus:bg-white text-center tracking-[8px] text-xl font-bold outline-none transition-all"
+        className="w-full p-2.5 bg-[#fbf9f5] border-2 border-[#e2d9cd] rounded-xl focus:border-[#c25e26] focus:bg-white text-center tracking-[8px] text-xl font-bold outline-hidden transition-all"
       />
 
       <div className="flex gap-2">
@@ -52,7 +52,7 @@ export default function MfaVerifyForm({
         <button
           type="submit"
           disabled={loading}
-          className="flex-[2] py-2 bg-[#c25e26] hover:bg-[#aa4e1a] text-white rounded-xl text-xs font-bold shadow cursor-pointer"
+          className="flex-[2] py-2 bg-[#c25e26] hover:bg-[#aa4e1a] text-white rounded-xl text-xs font-bold shadow-sm cursor-pointer"
         >
           {loading ? t('admin_panel.login.checking') : t('admin_panel.login.verify')}
         </button>

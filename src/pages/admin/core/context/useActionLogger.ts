@@ -1,5 +1,5 @@
 import { useAdmin } from '@admin/core/context/AdminContext';
-import { supabase } from '@supabaseClient';
+import { invokeAdminApi } from '@admin/core/api/adminApiClient';
 
 export function useActionLogger() {
     const { currentAdmin } = useAdmin();
@@ -7,6 +7,7 @@ export function useActionLogger() {
     const withLogging = async <T,>(actionName: string, actionFn: () => Promise<T>, details?: Record<string, unknown> | string): Promise<T> => {
         try {
             const result = await actionFn();
+            if (result && typeof result === 'object' && 'error' in result && result.error) throw result.error;
             
             // Log success
             if (currentAdmin?.id) {
@@ -15,10 +16,9 @@ export function useActionLogger() {
                     ...(details ? (typeof details === 'string' ? { message: details } : details) : {})
                 };
                 try {
-                    await supabase.from('audit_logs').insert({
-                        admin_id: currentAdmin.id,
-                        action: actionName,
-                        new_data: newDataObj
+                    await invokeAdminApi('admin-logs-manage', {
+                        action: 'insert_client_event',
+                        log: { action: actionName, details: newDataObj }
                     });
                 } catch (logError) {
                     console.error('Failed to write audit log for success:', logError);
@@ -35,10 +35,9 @@ export function useActionLogger() {
                     ...(typeof details === 'object' ? details : { message: details })
                 };
                 try {
-                    await supabase.from('audit_logs').insert({
-                        admin_id: currentAdmin.id,
-                        action: actionName,
-                        new_data: newDataObj
+                    await invokeAdminApi('admin-logs-manage', {
+                        action: 'insert_client_event',
+                        log: { action: actionName, details: newDataObj }
                     });
                 } catch (logError) {
                     console.error('Failed to write audit log for error:', logError);

@@ -1,17 +1,18 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.44.2';
-import { serve } from 'https://deno.land/std@0.178.0/http/server.ts';
+import { publishableKey } from '../_shared/keys.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  let stage = 'client';
   try {
-    const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_ANON_KEY')!);
-
+    const supabase = createClient(Deno.env.get('SUPABASE_URL')!, publishableKey());
+    stage = 'groups';
     const { data: groups, error: groupsError } = await supabase
       .from('field_groups')
       .select('*')
@@ -19,6 +20,7 @@ serve(async (req) => {
 
     if (groupsError) throw groupsError;
 
+    stage = 'fields';
     const { data: fields, error: fieldsError } = await supabase
       .from('fields_config')
       .select('*')
@@ -28,7 +30,11 @@ serve(async (req) => {
 
     if (fieldsError) throw fieldsError;
 
-    const dynamicCategories = {};
+    stage = 'mapping';
+    const dynamicCategories: Record<string, {
+      key: string; labelKey: string; icon: string; ratingDbKey: string; isPremium: boolean;
+      fields: { key: string; dbKey: string; type: string; icon: string; isPremiumField: boolean; isRealtorOnly: boolean }[];
+    }> = {};
 
     groups.forEach(group => {
       const groupFields = fields.filter(f => f.ui_group === group.id);
@@ -65,19 +71,23 @@ serve(async (req) => {
             dbKey: f.field_code, 
             type: fieldType,
             icon: f.icon,
-            isPremiumField: f.parser_config?.isPremium || false, 
-            isRealtorOnly: f.parser_config?.isRealtorOnly || false 
+            isPremiumField: f.is_premium === true,
+            isRealtorOnly: f.is_realtor_only === true,
           };
         })
       };
     });
 
     return new Response(JSON.stringify(dynamicCategories), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'public, max-age=3600' }
+      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'no-store' }
     });
 
   } catch (error) {
-    return new Response(JSON.stringify({ error: error.message }), { 
+    // Only a stage and allowlisted configuration name, never a credential or SQL detail.
+    const configuration = error instanceof Error && /^(Invalid|Missing) SUPABASE_[A-Z_]+$/.test(error.message)
+      ? error.message : 'unavailable';
+    console.error('Filter configuration failed', { stage, configuration });
+    return new Response(JSON.stringify({ error: 'Internal server error' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 
     });
   }

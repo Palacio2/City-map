@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSubscription } from '../contex/SubscriptionContext';
+import { useSubscription } from '../context/SubscriptionContext';
 
 export const useSubscriptionPage = () => {
   const { subscription, isLoading } = useSubscription();

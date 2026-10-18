@@ -1,4 +1,10 @@
 import { z } from "zod";
+import { isPbfFileName } from '../services/pbfFiles.js';
+import { isPropertyUrl } from '../services/outboundPolicy.js';
+
+const PropertyUrlSchema = z.string().max(4096).refine(value => value === '' || value === '#' || isPropertyUrl(value), {
+    message: 'Only HTTPS Otodom property URLs are supported',
+});
 
 const DistrictItemSchema = z.object({
     id: z.string().uuid(),
@@ -15,8 +21,10 @@ export const RunParserSchema = z.object({
     useGUS: z.boolean().optional().default(false),
     useOtodom: z.boolean().optional().default(false),
     enabledSources: z.array(z.string()).optional(),
-    propertyUrls: z.record(z.string(), z.string().url().or(z.literal('#')).or(z.literal(''))).optional(),
-    otodomUrls: z.record(z.string(), z.string().url().or(z.literal('#')).or(z.literal(''))).optional(),
+    propertyUrls: z.record(z.string(), PropertyUrlSchema).optional(),
+    otodomUrls: z.record(z.string(), PropertyUrlSchema).optional(),
     countryCode: z.string().min(2).max(5).optional(),
-    pbfFileName: z.string().optional(),
+    pbfFileName: z.string().refine(value => value === '' || isPbfFileName(value), {
+        message: 'pbfFileName must be a .pbf file name without a path',
+    }).optional(),
 }).passthrough();

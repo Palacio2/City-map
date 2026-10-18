@@ -5,13 +5,11 @@ import ParserConsole from '@admin/features/parser/ParserConsole';
 import DistrictResultsGrid from '@admin/features/parser/DistrictResultsGrid';
 import { Button } from '@admin/core/ui/Button';
 import { FaCogs, FaGlobe, FaMapMarkedAlt, FaPlay, FaCheckCircle } from 'react-icons/fa';
-import { useParserTab } from '@admin/features/parser/useParserTab';
-import { useActionGuard } from '@admin/core/context/useActionGuard';
-import { EntityItem, LogEntry, ParsedDistrictRowItem } from './types';
 
-export default function ParserTab() {
-    const tabLogic = useParserTab();
-    const { canDo } = useActionGuard();
+import { ParserProvider, useParserContext } from './ParserContext';
+
+function ParserTabContent() {
+    const tabLogic = useParserContext();
 
     const TABS = [
         { id: 1, label: tabLogic.t('admin_parser.tab.step1_title'), icon: <FaGlobe /> },
@@ -81,16 +79,7 @@ export default function ParserTab() {
                         <h3 className="m-0 text-base font-bold text-textMain mb-4 flex items-center gap-2">
                             <FaGlobe className="text-primary/70" /> {tabLogic.t('admin_parser.steps.location_selection')}
                         </h3>
-                        <ParserSettings
-                            country={tabLogic.country} setCountry={tabLogic.setCountry}
-                            city={tabLogic.city} setCity={tabLogic.setCity}
-                            region={tabLogic.region} setRegion={tabLogic.setRegion}
-                            countriesList={tabLogic.logic.countries as unknown as EntityItem[]}
-                            citiesList={tabLogic.allowedCities as unknown as EntityItem[]}
-                            onCountryChange={tabLogic.logic.loadCities}
-                            pbfFile={tabLogic.pbfFile} setPbfFile={tabLogic.setPbfFile}
-                            availableFiles={tabLogic.logic.availableFiles} loadAvailableFiles={tabLogic.logic.loadAvailableFiles}
-                        />
+                        <ParserSettings />
                         <div className="flex justify-end mt-6 pt-4 border-t border-[#d6ccbf]/50 dark:border-[#4a3f37]/50">
                             <Button variant="primary" onClick={() => tabLogic.setActiveStep(2)} disabled={isTabDisabled(2)}>
                                 Далі: Райони
@@ -104,20 +93,7 @@ export default function ParserTab() {
                         <h3 className="m-0 text-base font-bold text-textMain mb-4 flex items-center gap-2">
                             <FaMapMarkedAlt className="text-primary/70" /> {tabLogic.t('admin_parser.steps.districts_management')}
                         </h3>
-                        <DistrictsManager
-                            foundDistricts={tabLogic.logic.foundDistrictsOSM as (string | { name: string; [key: string]: unknown })[]}
-                            dbDistricts={tabLogic.logic.dbDistricts as EntityItem[]}
-                            selectedIds={tabLogic.selectedDistrictIds}
-                            onToggleSelect={tabLogic.toggleDistrictSelection}
-                            onSelectAll={tabLogic.toggleSelectAll}
-                            onScan={() => tabLogic.logic.scanOSM(tabLogic.city?.name)}
-                            onCreate={(districtsToCreate: unknown[]) => tabLogic.logic.createDistrictsInDb(districtsToCreate as Record<string, unknown>[], tabLogic.city.id)}
-                            onRemoveFromFound={(d: unknown) => tabLogic.logic.setFoundDistrictsOSM((prev: unknown[]) => prev.filter(item => item !== d))}
-                            onDeleteDbDistrict={(id: string) => tabLogic.logic.deleteDbDistrict(id, tabLogic.city.id)}
-                            onImportGeoJson={(file: File) => tabLogic.logic.importBoundariesGeoJSON(file, tabLogic.city.id)}
-                            loading={tabLogic.logic.loading}
-                            isSuperAdmin={tabLogic.isSuperAdmin}
-                        />
+                        <DistrictsManager />
                         <div className="flex justify-between mt-6 pt-4 border-t border-[#d6ccbf]/50 dark:border-[#4a3f37]/50">
                             <Button variant="cancel" onClick={() => tabLogic.setActiveStep(1)}>{tabLogic.t('common.back')}</Button>
                             <Button variant="primary" onClick={() => tabLogic.setActiveStep(3)} disabled={isTabDisabled(3)}>
@@ -132,15 +108,7 @@ export default function ParserTab() {
                         <h3 className="m-0 text-base font-bold text-textMain mb-4 flex items-center gap-2">
                             <FaCogs className="text-primary/70" /> {tabLogic.t('admin_parser.steps.source_settings')}
                         </h3>
-                        <ParserParameters
-                            onStart={(config: Record<string, unknown>) => {
-                                tabLogic.setParserConfig(config);
-                                tabLogic.handleStartParser(config);
-                                tabLogic.setActiveStep(4);
-                            }}
-                            country={tabLogic.country} city={tabLogic.city} region={tabLogic.region}
-                            selectedDistricts={(tabLogic.logic.dbDistricts as EntityItem[]).filter(d => tabLogic.selectedDistrictIds.includes(d.id))}
-                        />
+                        <ParserParameters />
                     </div>
                 )}
 
@@ -150,27 +118,23 @@ export default function ParserTab() {
                             <h3 className="m-0 text-base font-bold text-textMain mb-4 flex items-center gap-2">
                                 <FaPlay className="text-primary/70" /> {tabLogic.t('admin_parser.steps.execution')}
                             </h3>
-                            <ParserConsole
-                                logs={tabLogic.logic.logs as LogEntry[]}
-                                loading={tabLogic.logic.loading}
-                                onClear={tabLogic.logic.clearLogs}
-                                onDownload={tabLogic.logic.downloadLogs}
-                                onStartClick={() => tabLogic.handleStartParser(tabLogic.parserConfig)}
-                                isStartDisabled={tabLogic.logic.loading || !tabLogic.city || tabLogic.selectedDistrictIds.length === 0 || !tabLogic.pbfFile || !canDo('parser.run_offline')}
-                                selectedCount={tabLogic.selectedDistrictIds.length}
-                            />
+                            <ParserConsole />
                         </div>
 
                         {tabLogic.processedParsedData && tabLogic.processedParsedData.length > 0 && (
-                            <DistrictResultsGrid
-                                data={tabLogic.processedParsedData as ParsedDistrictRowItem[]}
-                                onSave={tabLogic.handleSave as unknown as (rows: unknown[]) => Promise<void>}
-                                onRemove={tabLogic.logic.removeParsedItem}
-                            />
+                            <DistrictResultsGrid />
                         )}
                     </div>
                 )}
             </div>
         </div>
+    );
+}
+
+export default function ParserTab() {
+    return (
+        <ParserProvider>
+            <ParserTabContent />
+        </ParserProvider>
     );
 }

@@ -1,21 +1,26 @@
 import { useQuery, UseQueryResult } from '@tanstack/react-query';
-import { fetchDistrictsWithFilters } from '@api/districtsApi';
+import { fetchDistrictSearch } from '@api/districtsApi';
 import { transformDistrictsForDisplay, TransformedDistrict } from '@utils/dataTransformers';
 import { useFiltersConfig } from '@hooks/useFiltersConfig';
-import { useSubscription } from '@/pages/subscription/contex/SubscriptionContext';
+import { useSubscription } from '@subscription/context/SubscriptionContext';
+import type { Filters } from '@filtersPanel/filterLogic';
 
-export const useDistrictsQuery = (country?: string, city?: string): UseQueryResult<TransformedDistrict[], Error> => {
+type DistrictSearch = { districts: TransformedDistrict[]; total: number; originalTotal: number };
+export const useDistrictsQuery = (country?: string, city?: string, filters: Filters = {}): UseQueryResult<DistrictSearch, Error> => {
   const { config } = useFiltersConfig();
   const { isFree, isRealtor } = useSubscription();
 
   return useQuery({
-    queryKey: ['districts', country, city, isFree, isRealtor], 
-    queryFn: async (): Promise<TransformedDistrict[]> => {
-      if (!country || !city || !config) return []; 
+    queryKey: ['districts', country, city, isFree, isRealtor, filters],
+    queryFn: async ({ signal }): Promise<DistrictSearch> => {
+      if (!country || !city || !config) return { districts: [], total: 0, originalTotal: 0 };
       
-      const data = await fetchDistrictsWithFilters(country, city);
+      const active = Object.fromEntries(Object.entries(filters).flatMap(([group, values]) =>
+        Object.entries(values).filter(([,value]) => value != null && value !== '' && value !== false && value !== 'any')
+          .map(([key,value]) => [config[group]?.fields.find(field => field.key === key)?.dbKey ?? key, value])));
+      const data = await fetchDistrictSearch(country, city, active, signal);
       
-      return transformDistrictsForDisplay(data, config, { isFree, isRealtor }); 
+      return { ...data, districts: transformDistrictsForDisplay(data.districts, config, { isFree, isRealtor }) };
     },
     enabled: !!country && !!city && !!config, 
     staleTime: 15 * 60 * 1000,

@@ -3,8 +3,9 @@ import { useLocation } from 'react-router-dom';
 import { supabase } from '@supabaseClient';
 import { userConsentApi } from '@api/userConsentApi';
 import { useAuth } from '@auth/context/AuthContext';
+import { STORAGE_KEYS } from '@config/constants';
 
-const SAFE_ROUTES = ['/terms', '/about', '/faq', '/contacts', '/payment-success', '/login'];
+const SAFE_ROUTES = ['/terms', '/about', '/faq', '/contacts', '/payment-success', '/login', '/forgot-password', '/auth/reset-password', '/profile/password', '/auth/callback'];
 
 export interface UseUserConsentReturn {
   showRodoModal: boolean;
@@ -19,7 +20,7 @@ export const useUserConsent = (): UseUserConsentReturn => {
   const { user, isAuthenticated, isLoading: authLoading, signOut } = useAuth();
   
   const [hasConsent, setHasConsent] = useState<boolean>(() => {
-    return localStorage.getItem('rodo_accepted') === 'true';
+    return localStorage.getItem(STORAGE_KEYS.RODO_ACCEPTED) === 'true';
   });
   
   const [authReady, setAuthReady] = useState<boolean>(false);
@@ -39,10 +40,10 @@ export const useUserConsent = (): UseUserConsentReturn => {
           if (mounted) {
             if (dbStatus) {
               setHasConsent(true);
-              localStorage.setItem('rodo_accepted', 'true');
+              localStorage.setItem(STORAGE_KEYS.RODO_ACCEPTED, 'true');
             } else {
               setHasConsent(false);
-              localStorage.removeItem('rodo_accepted');
+              localStorage.removeItem(STORAGE_KEYS.RODO_ACCEPTED);
               if (user.user_metadata?.rodo_accepted) {
                 await supabase.auth.updateUser({
                   data: { rodo_accepted: false }
@@ -52,10 +53,10 @@ export const useUserConsent = (): UseUserConsentReturn => {
           }
         } catch {
           const metaConsent = user.user_metadata?.rodo_accepted;
-          if (mounted) setHasConsent(!!metaConsent || localStorage.getItem('rodo_accepted') === 'true');
+          if (mounted) setHasConsent(!!metaConsent || localStorage.getItem(STORAGE_KEYS.RODO_ACCEPTED) === 'true');
         }
       } else {
-        const localConsent = localStorage.getItem('rodo_accepted');
+        const localConsent = localStorage.getItem(STORAGE_KEYS.RODO_ACCEPTED);
         if (mounted) setHasConsent(localConsent === 'true');
       }
       
@@ -71,7 +72,7 @@ export const useUserConsent = (): UseUserConsentReturn => {
   }, [isAuthenticated, user, authLoading]);
 
   const handleAcceptRodo = async () => {
-    localStorage.setItem('rodo_accepted', 'true');
+    localStorage.setItem(STORAGE_KEYS.RODO_ACCEPTED, 'true');
     setHasConsent(true);
     if (isAuthenticated && user) {
       try {
@@ -87,7 +88,7 @@ export const useUserConsent = (): UseUserConsentReturn => {
   };
 
   const handleDeclineRodo = async () => {
-    localStorage.removeItem('rodo_accepted');
+    localStorage.removeItem(STORAGE_KEYS.RODO_ACCEPTED);
     if (isAuthenticated) {
       await signOut();
     }

@@ -1,11 +1,10 @@
-// @ts-nocheck
 import { supabase } from '@supabaseClient';
 import type { ProcessedGeoData } from '../types/geo';
 
 export const geoApi = {
-  async getDistrictGeoData(districtId: string | number): Promise<ProcessedGeoData> {
+  async getDistrictGeoData(districtId: string | number, signal?: AbortSignal): Promise<ProcessedGeoData> {
     const { data, error } = await supabase.functions.invoke('get-district-geo', {
-      body: { districtId: String(districtId) }
+      body: { districtId: String(districtId) }, signal,
     });
 
     if (error) {

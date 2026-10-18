@@ -1,9 +1,7 @@
-// @ts-nocheck
-import React from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft } from 'react-icons/fa';
-import { useSubscription } from '@/pages/subscription/contex/SubscriptionContext';
+import { useSubscription } from '@/pages/subscription/context/SubscriptionContext';
 import Loader from '@components/loader/Loader';
 import StatsOverview from './StatsOverview';
 import { useStatsData } from './hooks/useStatsData';
@@ -45,20 +43,22 @@ export default function StatsPage() {
   }
 
   return (
-    <div className="min-h-[100dvh] bg-body text-textMain py-8 px-4 md:px-8 font-body">
-      <div className="max-w-[1200px] mx-auto mb-10 flex flex-col gap-4 animate-fadeIn">
+    <div className="min-h-[100dvh] py-10 px-4 sm:px-8 max-w-[1440px] mx-auto w-full animate-fadeIn">
+      <header className="mb-10 flex flex-col gap-6">
         <Link to="/profile" className="inline-flex items-center gap-2 text-textSecondary font-heading font-semibold text-[0.85rem] tracking-widest uppercase transition-all w-fit hover:text-accent hover:-translate-x-1 decoration-none">
           <FaArrowLeft /> {t('stats.actions.back_to_profile')}
         </Link>
-        <div className="mt-2">
-          <h1 className="font-heading text-3xl md:text-[2.5rem] font-bold text-accent mb-2 inline-block">
-            {t('stats.page_title')}
-          </h1>
-          <p className="text-textSecondary text-base max-w-[600px] leading-relaxed">
-            {t('stats.page_subtitle')}
-          </p>
+        <div className="text-center sm:text-left flex flex-col sm:flex-row justify-between items-center gap-4">
+          <div>
+            <h1 className="font-heading text-3xl sm:text-4xl font-bold text-textMain m-0 tracking-tight">
+              {t('stats.page_title')}
+            </h1>
+            <p className="text-textSecondary mt-2 m-0 text-base max-w-[600px]">
+              {t('stats.page_subtitle')}
+            </p>
+          </div>
         </div>
-      </div>
+      </header>
 
       {loading ? (
         <Loader fullScreen text={t('stats.status.loading')} />

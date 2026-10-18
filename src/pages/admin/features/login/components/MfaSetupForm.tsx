@@ -28,7 +28,7 @@ export default function MfaSetupForm({
         <div className="flex items-center justify-center gap-1.5 mb-2 text-[#c25e26] font-bold text-xs uppercase tracking-wider">
           <FaQrcode /> {t('admin_panel.login.scan_qr')}
         </div>
-        <div className="bg-white p-2 inline-block rounded-xl shadow-sm border border-[#e8e0d5]">
+        <div className="bg-white p-2 inline-block rounded-xl shadow-xs border border-[#e8e0d5]">
           {qrCodeUrl && <QRCodeSVG value={qrCodeUrl} size={130} />}
         </div>
         <p className="text-[11px] text-[#7d736a] mt-2 leading-tight">
@@ -47,7 +47,7 @@ export default function MfaSetupForm({
           required
           placeholder="000 000"
           maxLength={6}
-          className="w-full p-2.5 bg-[#fbf9f5] border-2 border-[#e2d9cd] rounded-xl focus:border-[#c25e26] focus:bg-white text-center tracking-[6px] text-lg font-bold outline-none transition-all"
+          className="w-full p-2.5 bg-[#fbf9f5] border-2 border-[#e2d9cd] rounded-xl focus:border-[#c25e26] focus:bg-white text-center tracking-[6px] text-lg font-bold outline-hidden transition-all"
         />
       </div>
 
@@ -63,7 +63,7 @@ export default function MfaSetupForm({
         <button
           type="submit"
           disabled={loading}
-          className="flex-[2] py-2 bg-[#c25e26] hover:bg-[#aa4e1a] text-white rounded-xl text-xs font-bold shadow cursor-pointer"
+          className="flex-[2] py-2 bg-[#c25e26] hover:bg-[#aa4e1a] text-white rounded-xl text-xs font-bold shadow-sm cursor-pointer"
         >
           {loading ? t('admin_panel.login.verifying') : t('admin_panel.login.confirm')}
         </button>

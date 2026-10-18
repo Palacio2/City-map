@@ -1,8 +1,4 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-// @ts-nocheck
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { supabase } from '@supabaseClient';
+﻿import { supabase } from '@supabaseClient';
 import i18n from '../../../i18n/i18n';
 
 export interface DistrictComment {
@@ -12,20 +8,19 @@ export interface DistrictComment {
   content: string;
   rating: number | null;
   is_hidden: boolean | null;
-  created_at: string;
+  created_at: string | null;
   full_name?: string | null;
   avatar_url?: string | null;
 }
 
 export const fetchComments = async (districtId: string): Promise<DistrictComment[]> => {
-  const { data, error } = await supabase
-    .rpc('get_district_comments_with_users', { p_district_id: districtId });
+  const { data, error } = await supabase.functions.invoke('get-district-comments', { body: { districtId } });
   
-  if (error) throw new Error(error.message);
+  if (error || data?.error) throw new Error(error?.message || data?.error);
   
   // Always filter out hidden comments on the client side 
   // in case the RPC doesn't do it automatically
-  return data ? data.filter((c: DistrictComment) => !c.is_hidden) : [];
+  return data?.data ? data.data.filter((c: DistrictComment) => !c.is_hidden) : [];
 };
 
 export const addComment = async (districtId: string, content: string, rating: number): Promise<DistrictComment> => {

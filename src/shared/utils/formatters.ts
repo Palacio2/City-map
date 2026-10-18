@@ -1,46 +1,80 @@
+const POLISH_IDENTIFIERS = ['pl', 'poland', 'polska', 'польща'];
+const EUROPEAN_IDENTIFIERS = ['eu', 'eur', 'de', 'fr', 'es', 'it', 'germany', 'france'];
+const ANGLO_IDENTIFIERS = ['us', 'usa', 'uk', 'gb', 'сша'];
+const UK_IDENTIFIERS = ['uk', 'gb'];
+
+const numberFormatCache = new Map<string, Intl.NumberFormat>();
+const getNumberFormatter = (locale: string, options?: Intl.NumberFormatOptions) => {
+  const cacheKey = `${locale}-${JSON.stringify(options || {})}`;
+  if (!numberFormatCache.has(cacheKey)) {
+    numberFormatCache.set(cacheKey, new Intl.NumberFormat(locale, options));
+  }
+  return numberFormatCache.get(cacheKey)!;
+};
+
 export interface CurrencyInfo {
   code: string;
   locale: string;
   symbol: string;
 }
 
-export const getValue = (obj: any, path: string): any => {
+export const getValue = (obj: Record<string, unknown> | null | undefined, path: string): unknown => {
   if (!obj || !path) return undefined;
-  return path.split('.').reduce((acc, part) => acc && acc[part], obj);
+  return path.split('.').reduce<unknown>((acc, part) => {
+    if (acc && typeof acc === 'object' && part in acc) return (acc as Record<string, unknown>)[part];
+    return undefined;
+  }, obj);
 };
 
 export const getCurrencyInfo = (countryName?: string | null): CurrencyInfo => {
   if (!countryName) return { code: 'PLN', locale: 'pl-PL', symbol: 'zł' };
   const normalized = countryName.toLowerCase().trim();
   
-  if (['pl', 'poland', 'polska', 'польща'].some(k => normalized.includes(k))) {
+  if (['ua', 'uah', 'ukraine', 'ukraina', 'україна'].includes(normalized)) return { code: 'UAH', locale: 'uk-UA', symbol: '₴' };
+  if (POLISH_IDENTIFIERS.includes(normalized) || normalized === 'pln') {
     return { code: 'PLN', locale: 'pl-PL', symbol: 'zł' };
   }
-  if (['de', 'fr', 'es', 'it', 'germany', 'france'].some(k => normalized.includes(k))) {
+  if (EUROPEAN_IDENTIFIERS.includes(normalized)) {
     return { code: 'EUR', locale: 'de-DE', symbol: '€' };
   }
-  if (['us', 'usa', 'uk', 'gb', 'сша'].some(k => normalized.includes(k))) {
-    if (['uk', 'gb'].some(k => normalized.includes(k))) return { code: 'GBP', locale: 'en-GB', symbol: '£' };
+  if (ANGLO_IDENTIFIERS.includes(normalized) || ['usd', 'gbp', 'united kingdom', 'united states'].includes(normalized)) {
+    if (UK_IDENTIFIERS.includes(normalized) || ['gbp', 'united kingdom'].includes(normalized)) return { code: 'GBP', locale: 'en-GB', symbol: '£' };
     return { code: 'USD', locale: 'en-US', symbol: '$' };
   }
   return { code: 'USD', locale: 'en-US', symbol: '$' };
 };
 
-export const formatNumber = (value: any): string => {
-  const num = Number.parseFloat(String(value));
+export const formatNumber = (value: unknown, locale: string = 'pl-PL'): string => {
+  if (typeof value !== 'number' && typeof value !== 'string') return '';
+  const num = Number(value);
+  if (!Number.isFinite(num) || String(value).trim() === '') return '';
   if (Number.isNaN(num)) return String(value || '');
-  return new Intl.NumberFormat('pl-PL').format(num);
+  return getNumberFormatter(locale).format(num);
 };
 
-export const formatPrice = (value: any, info?: CurrencyInfo): string => {
-  const num = Number.parseFloat(String(value));
+export const formatPrice = (value: unknown, info?: CurrencyInfo): string => {
+  if (typeof value !== 'number' && typeof value !== 'string') return '';
+  const num = Number(value);
+  if (!Number.isFinite(num) || String(value).trim() === '') return '';
   if (Number.isNaN(num)) return String(value || '');
   const currency = info || { code: 'PLN', locale: 'pl-PL', symbol: 'zł' };
-  return new Intl.NumberFormat(currency.locale, {
+  return getNumberFormatter(currency.locale, {
     style: 'currency',
     currency: currency.code,
     maximumFractionDigits: 0
   }).format(num);
+};
+
+export const formatDate = (
+  value: unknown,
+  locale: string = 'uk-UA',
+  options?: Intl.DateTimeFormatOptions
+): string => {
+  if (!value) return '';
+  if (typeof value !== 'string' && typeof value !== 'number' && !(value instanceof Date)) return '';
+  const date = value instanceof Date ? value : new Date(value);
+  if (Number.isNaN(date.getTime())) return '';
+  return date.toLocaleDateString(locale, options);
 };
 
 export const getCrimeLevelText = (value: number): string => {
@@ -51,8 +85,10 @@ export const getCrimeLevelText = (value: number): string => {
   return 'common.enums.very_high';
 };
 
-export const formatAirQuality = (value: any, t: (key: string) => string): string => {
-  const numValue = Number.parseFloat(String(value));
+export const formatAirQuality = (value: unknown, t: (key: string) => string): string => {
+  if (typeof value !== 'number' && typeof value !== 'string') return '';
+  const numValue = Number(value);
+  if (!Number.isFinite(numValue) || String(value).trim() === '') return '';
   if (Number.isNaN(numValue)) return String(value);
   let aqiEnum = 'medium';
   if (numValue <= 50) aqiEnum = 'good';
@@ -60,27 +96,10 @@ export const formatAirQuality = (value: any, t: (key: string) => string): string
   return t(`common.enums.${aqiEnum}`);
 };
 
-export const formatTranslatedText = (value: any, t: (key: string) => string): string => {
+export const formatTranslatedText = (value: unknown, t: (key: string) => string): string => {
+  if (!['string', 'number', 'boolean'].includes(typeof value)) return '';
   const stringVal = String(value);
   const key = `common.enums.${stringVal.toLowerCase()}`;
   const translated = t(key);
   return translated === key ? stringVal : translated;
-};
-
-export const formatNumericField = (value: any, fieldKey: string, t: (key: string) => string): string => {
-  const formatted = formatNumber(value);
-  const units: Record<string, string[]> = {
-    sqm: ['avgParkSize', 'propertyPricePerSqm', 'costPerSqm', 'average_park_size_sqm', 'average_sale_price_sqm', 'utilities_cost_per_sqm'],
-    m: ['transportAvgDistance', 'transport_average_distance_m'],
-    km: ['bikeLanes', 'bike_lanes_km'],
-    percent: ['greenSpaces', 'unemploymentRate', 'green_spaces_percent', 'unemployment_rate']
-  };
-
-  for (const [unit, keys] of Object.entries(units)) {
-    if (keys.includes(fieldKey)) {
-      return `${formatted} ${t(`common.units.${unit}`)}`;
-    }
-  }
-
-  return formatted;
 };

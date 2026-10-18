@@ -17,7 +17,7 @@ const REGIONS: Record<string, string[]> = {
 /**
  * Універсальний slugify для польських та українських назв
  */
-export const slugify = (text?: string | null): string => {
+const slugify = (text?: string | null): string => {
     if (!text) return '';
     
     const charMap: Record<string, string> = {

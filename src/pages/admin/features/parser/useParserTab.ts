@@ -3,7 +3,8 @@ import { useParserLogic } from '@admin/features/parser/useParserLogic';
 import { useDynamicFields } from '@admin/core/hooks/useDynamicFields';
 import { useAdmin } from '@admin/core/context/AdminContext';
 import { useModals } from '@admin/core/context/ModalContext';
-import { api } from '@services/api';
+import { adminGeoApi } from '@admin/core/api/adminGeoApi';
+import { adminParserApi } from './adminParserApi';
 import { useTranslation } from 'react-i18next';
 import { useLocalStorage } from '@admin/core/hooks/useLocalStorage';
 import { EntityItem, ParsedDistrictRowItem } from './types';
@@ -125,12 +126,12 @@ export function useParserTab() {
                 });
                 
                 if (row.is_available !== undefined) {
-                    statusPromises.push(api.geo.updateDistrictStatus(row.district_id as string, !!row.is_available));
+                    statusPromises.push(adminGeoApi.updateDistrictStatus(row.district_id as string, !!row.is_available));
                 }
                 payloadsToSave.push(payload);
             }
             
-            await Promise.all([...statusPromises, api.geo.saveParsedResults(payloadsToSave)]);
+            await Promise.all([...statusPromises, adminParserApi.saveParsedResults(payloadsToSave)]);
             
             if (rows.length > 1 || parsedData.length <= 1) clearResultsSilent();
             showAlert(t('common.success'), t('admin_parser.tab.save_success'), 'success');

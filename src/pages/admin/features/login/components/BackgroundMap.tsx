@@ -17,7 +17,7 @@ const createCityIcon = (name: string, isActive: boolean) => {
           ${isActive ? '<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#c25e26] opacity-75"></span>' : ''}
           <span class="relative inline-flex rounded-full h-3.5 w-3.5 bg-[#c25e26] border-2 border-white shadow-md"></span>
         </span>
-        <span class="absolute left-5 bg-[#2a2421]/90 dark:bg-black/80 backdrop-blur-sm text-[#faf7f2] text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md shadow-md border border-[#e8e0d5]/30 whitespace-nowrap uppercase">
+        <span class="absolute left-5 bg-[#2a2421]/90 dark:bg-black/80 backdrop-blur-xs text-[#faf7f2] text-[10px] font-bold tracking-wider px-2 py-0.5 rounded-md shadow-md border border-[#e8e0d5]/30 whitespace-nowrap uppercase">
           ${name}
         </span>
       </div>
@@ -144,14 +144,14 @@ export default function BackgroundMap() {
             <button
               type="button"
               onClick={handlePrevCity}
-              className="p-1 rounded text-[#8c827a] hover:text-[#c25e26] hover:bg-[#ebdcd0] dark:hover:bg-[#2b2520] transition-colors cursor-pointer"
+              className="p-1 rounded-sm text-[#8c827a] hover:text-[#c25e26] hover:bg-[#ebdcd0] dark:hover:bg-[#2b2520] transition-colors cursor-pointer"
             >
               <FaChevronLeft className="text-[9px]" />
             </button>
             <button
               type="button"
               onClick={handleNextCity}
-              className="p-1 rounded text-[#8c827a] hover:text-[#c25e26] hover:bg-[#ebdcd0] dark:hover:bg-[#2b2520] transition-colors cursor-pointer"
+              className="p-1 rounded-sm text-[#8c827a] hover:text-[#c25e26] hover:bg-[#ebdcd0] dark:hover:bg-[#2b2520] transition-colors cursor-pointer"
             >
               <FaChevronRight className="text-[9px]" />
             </button>

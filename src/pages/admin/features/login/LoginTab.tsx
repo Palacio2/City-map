@@ -37,7 +37,7 @@ export default function LoginTab() {
 
       {/* Мобільний Drawer для перегляду інформації сайдбару */}
       {mobileInfoOpen && (
-        <div className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex justify-start animate-fadeIn">
+        <div className="md:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex justify-start animate-fadeIn">
           <div className="w-[85%] max-w-[360px] h-full shadow-2xl">
             <AdminSidebarInfo onCloseMobile={() => setMobileInfoOpen(false)} />
           </div>

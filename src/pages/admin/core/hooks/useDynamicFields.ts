@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { api } from '@services/api';
+import { publicConfigApi } from '@admin/core/api/publicConfigApi';
 import { FormattedFieldItem } from '@admin/core/types/ui.types';
 
 interface RawFieldItem {
@@ -30,20 +30,22 @@ interface RawGroupItem {
     sort_order?: number;
 }
 
-const EMPTY_ARRAY: any[] = [];
+import { adminQueryKeys } from '@admin/core/api/adminQueryKeys';
+
+const EMPTY_ARRAY: Record<string, unknown>[] = [];
 
 export const useDynamicFields = () => {
     const { t } = useTranslation();
     const { data: groupsData = EMPTY_ARRAY, isLoading: isGroupsLoading } = useQuery({
-        queryKey: ['fieldGroups'],
-        queryFn: api.config.getGroups,
+        queryKey: adminQueryKeys.publicConfigGroups,
+        queryFn: publicConfigApi.getGroups,
         staleTime: 5 * 60 * 1000,
         refetchOnWindowFocus: false
     });
 
     const { data: fieldsData = EMPTY_ARRAY, isLoading: isFieldsLoading } = useQuery({
-        queryKey: ['fieldsConfig'],
-        queryFn: api.config.getFields,
+        queryKey: adminQueryKeys.publicConfigFields,
+        queryFn: publicConfigApi.getFields,
         staleTime: 5 * 60 * 1000,
         refetchOnWindowFocus: false
     });
@@ -51,7 +53,7 @@ export const useDynamicFields = () => {
     const isLoading = isGroupsLoading || isFieldsLoading;
 
     const { metricGroups, fieldsConfig } = useMemo(() => {
-        if (!groupsData.length || !fieldsData.length) {
+        if (!groupsData?.length || !fieldsData?.length) {
             return { metricGroups: [], fieldsConfig: [] };
         }
 

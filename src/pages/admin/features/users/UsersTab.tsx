@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { adminUsersAPI } from '@admin/features/users/adminUsersAPI';
 import { 
     FaUsers, FaSyncAlt, FaTag
@@ -6,9 +6,9 @@ import {
 import { useTranslation } from 'react-i18next';
 import React from 'react';
 import DataTable from '@admin/core/ui/DataTable';
-import { Pagination } from '@admin/core/ui/Pagination';
 import { Button } from '@admin/core/ui/Button';
 import { SearchInput } from '@admin/core/ui/SearchInput';
+import { Loader } from '@admin/core/ui/Loader';
 import { useAdmin } from '@admin/core/context/AdminContext';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
 import { useUsersManager } from '@admin/features/users/useUsersManager';
@@ -16,11 +16,8 @@ import CityAssignmentModal from '@admin/features/users/CityAssignmentModal';
 import GiftSubscriptionModal from '@admin/features/users/GiftSubscriptionModal';
 import PromoCodesModal from '@admin/features/users/PromoCodesModal';
 import AdminTabsModal from '@admin/features/users/AdminTabsModal';
-import { AdminUser } from '@admin/core/types/admin.types';
 import { UserRow } from './types';
 import { useUsersColumns } from './useUsersColumns';
-
-const BADGE_BASE = "inline-flex items-center justify-center gap-1.5 h-7.5 px-3 py-1 rounded-xl text-xs font-mono font-bold border shadow-2xs select-none transition-all";
 
 export default function UsersTab() {
     const { t } = useTranslation('db');
@@ -48,21 +45,6 @@ export default function UsersTab() {
     ];
 
     const columns = useUsersColumns({ logic, currentAdmin, canDo, copiedId, handleCopyId });
-
-    const ITEMS_PER_PAGE = 20;
-    const [currentPage, setCurrentPage] = React.useState(1);
-
-    const safeUsers = logic.filteredUsers || [];
-    const paginatedUsers = React.useMemo(() => {
-        const start = (currentPage - 1) * ITEMS_PER_PAGE;
-        return safeUsers.slice(start, start + ITEMS_PER_PAGE);
-    }, [safeUsers, currentPage]);
-
-    const totalPages = Math.ceil(safeUsers.length / ITEMS_PER_PAGE);
-
-    React.useEffect(() => {
-        setCurrentPage(1);
-    }, [logic.searchQuery, logic.filterTab]);
 
     return (
         <div className="flex flex-col gap-4 sm:gap-6 w-full pb-8 flex-1 h-full animate-fadeIn">
@@ -154,7 +136,7 @@ export default function UsersTab() {
             <div className="bg-surface rounded-2xl sm:rounded-3xl border border-border shadow-2xs overflow-hidden overflow-x-auto">
                 {logic.loading ? (
                     <div className="py-20 flex flex-col items-center justify-center gap-3 text-textMuted text-xs font-semibold">
-                        <div className="w-8 h-8 border-3 border-border border-t-primary rounded-full animate-spin" />
+                        <Loader variant="pulse" size="lg" />
                         <span>{t('common.loading')}</span>
                     </div>
                 ) : (

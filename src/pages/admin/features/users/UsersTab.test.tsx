@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import UsersTab from './UsersTab';
 import { BrowserRouter } from 'react-router-dom';
 
@@ -28,6 +27,7 @@ vi.mock('@admin/core/context/ModalContext', () => ({
 
 vi.mock('@tanstack/react-query', () => ({
   useQuery: () => ({ data: [], isLoading: false, error: null }),
+  useInfiniteQuery: () => ({ data: { pages: [] }, isLoading: false, isError: false, hasNextPage: false }),
   useMutation: () => ({ mutate: vi.fn(), mutateAsync: vi.fn(), isPending: false }),
   useQueryClient: () => ({ invalidateQueries: vi.fn() })
 }));

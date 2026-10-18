@@ -1,19 +1,11 @@
+import { parseFavoriteDistrict } from '../utils/statsData';
+import type { WeeklyActivityData } from '../types';
+export type { DashboardStats, WeeklyActivityData } from '../types';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { fetchDashboardData } from '../api/statsApi';
 
-export interface WeeklyActivityData {
-  date: string;
-  searches: number;
-  comparisons?: number;
-  dayLabel?: string;
-}
 
-export interface DashboardStats {
-  lastActive?: string;
-  favoriteDistrict?: string;
-  [key: string]: any;
-}
 
 export function useStatsData(isPremium: boolean, isRealtor: boolean) {
   const { t } = useTranslation('db'); // Змінено на 'db'
@@ -24,15 +16,18 @@ export function useStatsData(isPremium: boolean, isRealtor: boolean) {
     enabled: isPremium,
     staleTime: 1000 * 60 * 5, 
     select: (result) => {
-      const dbStats = result?.stats as any;
+      const dbStats = result.stats;
       const mappedStats = dbStats ? {
-        ...dbStats,
         lastActive: dbStats.last_active,
-        favoriteDistrict: dbStats.favorite_district
+        favoriteDistrict: parseFavoriteDistrict(dbStats.favorite_district),
+        viewedDistricts: dbStats.viewed_districts_count ?? 0,
+        totalTime: dbStats.total_time_seconds ?? 0,
+        savedDistricts: dbStats.saved_districts_count ?? 0,
+        comparisons: dbStats.comparison_count ?? 0
       } : null;
 
       return {
-        stats: mappedStats as DashboardStats | null,
+        stats: mappedStats,
         weeklyActivity: (Array.isArray(result?.weeklyActivity) ? result.weeklyActivity : []) as WeeklyActivityData[],
         popularDistricts: Array.isArray(result?.popularDistricts) ? result.popularDistricts : [],
         trackedDistricts: (isRealtor && Array.isArray(result?.trackedDistricts)) ? result.trackedDistricts : []
@@ -50,3 +45,4 @@ export function useStatsData(isPremium: boolean, isRealtor: boolean) {
     reload: refetch
   };
 }
+

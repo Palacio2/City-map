@@ -1,5 +1,5 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts'
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { publishableKey } from '../_shared/keys.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.2'
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -7,7 +7,7 @@ const corsHeaders = {
   'Access-Control-Allow-Methods': 'POST, OPTIONS'
 }
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders, status: 204 }) 
   }
@@ -18,7 +18,7 @@ serve(async (req) => {
 
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      publishableKey(),
       { global: { headers: { Authorization: authHeader } } }
     )
 
@@ -79,8 +79,8 @@ serve(async (req) => {
     throw new Error('Invalid action')
 
   } catch (error) {
-    const status = error.message === 'Unauthorized' ? 401 : 400
-    return new Response(JSON.stringify({ error: error.message }), {
+    const status = error instanceof Error && error.message === 'Unauthorized' ? 401 : 400
+    return new Response(JSON.stringify({ error: status === 401 ? 'Unauthorized' : 'Bad Request' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: status
     })

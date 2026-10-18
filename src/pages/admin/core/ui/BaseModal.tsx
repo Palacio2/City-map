@@ -68,7 +68,7 @@ const BaseModal: React.FC<BaseModalProps> = ({
     return createPortal(
         <div className="fixed inset-0 z-[9999] flex p-3 sm:p-6 overflow-y-auto text-textMain items-end sm:items-center justify-center">
             <div
-                className={`fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity duration-150 ease-out ${
+                className={`fixed inset-0 bg-black/60 backdrop-blur-xs transition-opacity duration-150 ease-out ${
                     isVisible ? 'opacity-100' : 'opacity-0'
                 }`}
                 onClick={!disableEscClose ? onClose : undefined}

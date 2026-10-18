@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { FaTag, FaPlus, FaTrash, FaPercent } from 'react-icons/fa';
 import BaseModal from '@admin/core/ui/BaseModal';
 import DataTable from '@admin/core/ui/DataTable';
@@ -7,6 +7,7 @@ import { Button } from '@admin/core/ui/Button';
 import { Input } from '@admin/core/ui/Input';
 import { CustomSelect, SelectOption } from '@admin/core/ui/CustomSelect';
 import { useModals } from '@admin/core/context/ModalContext';
+import { useAdminMutation } from '@admin/core/hooks/useAdminMutation';
 import { AdminUsersAPI } from './types';
 
 interface PromoCodesModalProps {
@@ -22,6 +23,8 @@ const PromoCodesModal = ({ isOpen, onClose, adminUsersAPI, t }: PromoCodesModalP
     const [newCode, setNewCode] = useState('');
     const [percentOff, setPercentOff] = useState(20);
     const [duration, setDuration] = useState('once');
+    const [requestId, setRequestId] = useState(() => crypto.randomUUID());
+    const validCode = /^[A-Z0-9]{1,64}$/.test(newCode) && Number.isInteger(percentOff) && percentOff >= 1 && percentOff <= 100;
 
     const durationOptions: SelectOption[] = [
         { value: 'once', label: t('admin_users.promo_modal.once') },
@@ -29,40 +32,44 @@ const PromoCodesModal = ({ isOpen, onClose, adminUsersAPI, t }: PromoCodesModalP
         { value: 'forever', label: t('admin_users.promo_modal.forever') }
     ];
 
-    const { data: codes = [], isLoading: loading } = useQuery({
+    const { data, isLoading: loading, isError, fetchNextPage, hasNextPage, isFetchingNextPage, refetch } = useInfiniteQuery({
         queryKey: ['promoCodes'],
-        queryFn: async () => {
-            const res = await adminUsersAPI.manageFinance('list_promos') as { codes?: { id: string; code: string; [key: string]: unknown }[] };
-            return res.codes || [];
+        initialPageParam: undefined as string | undefined,
+        queryFn: async ({ pageParam }) => {
+            return await adminUsersAPI.manageFinance('list_promos', pageParam ? { cursor: pageParam } : {}) as {
+                codes: { id: string; code: string; [key: string]: unknown }[]; nextCursor: string | null;
+            };
         },
+        getNextPageParam: page => page.nextCursor ?? undefined,
         enabled: isOpen
     });
+    const codes = data?.pages.flatMap(page => page.codes) ?? [];
 
-    const createMutation = useMutation({
+    const createMutation = useAdminMutation({
         mutationFn: () => adminUsersAPI.manageFinance('create_promo', {
             code: newCode.toUpperCase(),
             percentOff: Number(percentOff),
-            duration: duration
+            duration: duration,
+            requestId,
         }),
         onSuccess: () => {
             setNewCode('');
+            setRequestId(crypto.randomUUID());
             queryClient.invalidateQueries({ queryKey: ['promoCodes'] });
             showAlert(t('common.success'), t('admin_users.promo_modal.created'), 'success');
-        },
-        onError: (err: Error) => showAlert(t('common.error'), err.message, 'error')
+        }
     });
 
-    const deleteMutation = useMutation({
+    const deleteMutation = useAdminMutation({
         mutationFn: (promoId: string) => adminUsersAPI.manageFinance('delete_promo', { id: promoId }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['promoCodes'] });
             showAlert(t('common.success'), t('admin_users.promo_modal.deleted'), 'success');
-        },
-        onError: (err: Error) => showAlert(t('common.error'), err.message, 'error')
+        }
     });
 
     const handleCreate = () => {
-        if (!newCode || percentOff < 1) return;
+        if (!validCode) return;
         createMutation.mutate();
     };
 
@@ -155,7 +162,7 @@ const PromoCodesModal = ({ isOpen, onClose, adminUsersAPI, t }: PromoCodesModalP
                                 type="text"
                                 placeholder={t('admin_users.promo.placeholder')}
                                 value={newCode}
-                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewCode(e.target.value.toUpperCase())}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setNewCode(e.target.value.toUpperCase()); setRequestId(crypto.randomUUID()); }}
                                 className="uppercase font-mono font-bold h-10 text-xs sm:text-sm bg-surface"
                                 disabled={createMutation.isPending}
                             />
@@ -169,7 +176,7 @@ const PromoCodesModal = ({ isOpen, onClose, adminUsersAPI, t }: PromoCodesModalP
                                     min="1" 
                                     max="100" 
                                     value={percentOff}
-                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => setPercentOff(Number(e.target.value))}
+                                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => { setPercentOff(Number(e.target.value)); setRequestId(crypto.randomUUID()); }}
                                     className="font-mono font-bold h-10 text-xs sm:text-sm bg-surface pl-8"
                                     disabled={createMutation.isPending}
                                 />
@@ -182,7 +189,7 @@ const PromoCodesModal = ({ isOpen, onClose, adminUsersAPI, t }: PromoCodesModalP
                             <CustomSelect
                                 options={durationOptions}
                                 value={duration}
-                                onChange={(val) => setDuration(String(val))}
+                                onChange={(val) => { setDuration(String(val)); setRequestId(crypto.randomUUID()); }}
                                 disabled={createMutation.isPending}
                                 size="md"
                             />
@@ -193,8 +200,8 @@ const PromoCodesModal = ({ isOpen, onClose, adminUsersAPI, t }: PromoCodesModalP
                         variant="primary"
                         size="md"
                         onClick={handleCreate}
-                        disabled={createMutation.isPending || !newCode}
-                        className="w-full h-10 shadow-sm rounded-xl text-sm font-bold mt-1"
+                        disabled={createMutation.isPending || !validCode}
+                        className="w-full h-10 shadow-xs rounded-xl text-sm font-bold mt-1"
                     >
                         {createMutation.isPending ? t('common.creating') : t('admin_users.promo.create_btn')}
                     </Button>
@@ -213,7 +220,12 @@ const PromoCodesModal = ({ isOpen, onClose, adminUsersAPI, t }: PromoCodesModalP
                     </div>
                     
                     <div className="max-h-64 overflow-y-auto rounded-2xl sm:rounded-3xl border border-border shadow-2xs bg-surface scrollbar-thin">
-                        {loading ? (
+                        {isError ? (
+                            <div role="alert" className="p-4 text-danger">
+                                {t('admin_users.promo_modal.load_error')}
+                                <Button onClick={() => void refetch()}>{t('admin_users.promo_modal.retry')}</Button>
+                            </div>
+                        ) : loading ? (
                             <div className="flex flex-col items-center justify-center p-10 gap-3 text-textMuted">
                                 <div className="w-6 h-6 border-2 border-border border-t-emerald-500 rounded-full animate-spin" />
                                 <span className="text-[11px] font-bold uppercase tracking-wider">{t('common.loading')}</span>
@@ -226,6 +238,9 @@ const PromoCodesModal = ({ isOpen, onClose, adminUsersAPI, t }: PromoCodesModalP
                             />
                         )}
                     </div>
+                    {hasNextPage && <Button disabled={isFetchingNextPage} onClick={() => void fetchNextPage()}>
+                        {t('admin_users.promo_modal.load_more')}
+                    </Button>}
                 </div>
             </div>
         </BaseModal>

@@ -62,7 +62,7 @@ export const HeaderSection = ({
       : null;
   }, [updatedAt, district, i18n.language]);
 
-  const currencyInfo = useMemo(() => getCurrencyInfo('EU'), [getCurrencyInfo]);
+  const currencyInfo = useMemo(() => getCurrencyInfo(district?.country), [getCurrencyInfo, district?.country]);
 
   const quickStatsConfig: Array<{ key: keyof GeneralStats; label: string; formatter: (val: unknown) => unknown }> = useMemo(() => [
     { key: 'population', label: 'common.fields.population', formatter: (val) => formatNumber(val as number) },
@@ -83,7 +83,7 @@ export const HeaderSection = ({
 
   return (
     <>
-      <div className="relative h-[260px] md:h-[420px] bg-black shrink-0 overflow-hidden flex flex-col rounded-t-3xl md:rounded-t-[var(--radius-lg)]">
+      <div className="relative h-[180px] sm:h-[260px] md:h-[420px] bg-black shrink-0 overflow-hidden flex flex-col rounded-t-3xl md:rounded-t-[var(--ui-radius-lg)]">
          {photo_url && (
            <div className="absolute inset-0 z-0">
               <img src={photo_url} alt={name || ''} className="w-full h-full object-cover animate-slowZoom" />
@@ -92,7 +92,7 @@ export const HeaderSection = ({
          )}
         <div className="relative z-10 flex-1 p-4 pt-4 md:p-8 md:pt-[max(2rem,env(safe-area-inset-top))] flex flex-col text-white justify-between">
           <div className="flex justify-between items-start w-full">
-            <div className="hidden md:inline-flex items-center gap-2 bg-black/50 backdrop-blur-md px-3.5 py-1.5 rounded-full font-body text-[0.75rem] font-medium text-white/90 border border-white/20 shadow-sm">
+            <div className="hidden md:inline-flex items-center gap-2 bg-black/50 backdrop-blur-md px-3.5 py-1.5 rounded-full font-body text-[0.75rem] font-medium text-white/90 border border-white/20 shadow-xs">
               <span className="w-1.5 h-1.5 bg-success rounded-full shadow-[0_0_8px_var(--success-color)]" />
               {t('district.status.updated_label')}: {formattedDate}
             </div>
@@ -100,7 +100,7 @@ export const HeaderSection = ({
             <div className="flex gap-2 flex-nowrap">
               <button
                 type="button"
-                className="bg-black/30 backdrop-blur-[var(--glass-blur)] border border-white/20 w-8 h-8 md:w-[44px] md:h-[44px] rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 ease-out shrink-0 p-0 shadow-sm hover:bg-black/50 hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-md [&>svg]:w-4 [&>svg]:h-4 md:[&>svg]:w-5 md:[&>svg]:h-5 [&>svg]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                className="bg-black/30 backdrop-blur-[var(--glass-blur)] border border-white/20 w-8 h-8 md:w-[44px] md:h-[44px] rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 ease-out shrink-0 p-0 shadow-xs hover:bg-black/50 hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-md [&>svg]:w-4 [&>svg]:h-4 md:[&>svg]:w-5 md:[&>svg]:h-5 [&>svg]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                 onClick={onOpenMap}
                 title={t('district.actions.view_map')}
               >
@@ -110,7 +110,7 @@ export const HeaderSection = ({
                 <>
                   <button
                     type="button"
-                    className="bg-black/30 backdrop-blur-[var(--glass-blur)] border border-white/20 w-8 h-8 md:w-[44px] md:h-[44px] rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 ease-out shrink-0 p-0 shadow-sm hover:bg-black/50 hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-md [&>svg]:w-4 [&>svg]:h-4 md:[&>svg]:w-5 md:[&>svg]:h-5 [&>svg]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
+                    className="bg-black/30 backdrop-blur-[var(--glass-blur)] border border-white/20 w-8 h-8 md:w-[44px] md:h-[44px] rounded-full flex items-center justify-center text-white cursor-pointer transition-all duration-300 ease-out shrink-0 p-0 shadow-xs hover:bg-black/50 hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-md [&>svg]:w-4 [&>svg]:h-4 md:[&>svg]:w-5 md:[&>svg]:h-5 [&>svg]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]"
                     onClick={onDownloadPdf}
                     disabled={isDownloading}
                     title={t('district.actions.download_pdf')}
@@ -179,7 +179,7 @@ export const HeaderSection = ({
 export const ModalFooter = ({ onClose }: { readonly onClose: () => void }) => {
   const { t } = useTranslation('db');
   return (
-    <div className="p-4 md:p-6 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-[var(--border-color)] bg-[var(--bg-surface)] flex justify-end rounded-b-3xl md:rounded-b-[var(--radius-lg)]">
+    <div className="p-4 md:p-6 pb-[max(1rem,env(safe-area-inset-bottom))] border-t border-borderClient bg-surface flex justify-end rounded-b-none sm:rounded-b-3xl md:rounded-b-[var(--ui-radius-lg)]">
       <Button variant="outlineDanger" onClick={onClose} className="w-full md:w-auto px-8 transition-all duration-300">
         {t('district.actions.close')}
       </Button>

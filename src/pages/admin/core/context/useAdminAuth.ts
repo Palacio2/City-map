@@ -55,7 +55,7 @@ export function useAdminAuth() {
 
         const { data: enrollData, error: enrollError } = await supabase.auth.mfa.enroll({
           factorType: 'totp',
-          issuer: 'CityMaps',
+          issuer: 'Kvartals',
           friendlyName: safeFriendlyName
         });
         if (enrollError) throw enrollError;

@@ -1,9 +1,11 @@
-﻿import { createClient } from '@supabase/supabase-js';
+import { resolveSupabaseKey } from '../shared/supabaseKeys.js';
+
+import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const supabase = createClient(process.env.VITE_SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+const supabase = createClient(process.env.VITE_SUPABASE_URL, resolveSupabaseKey(name => process.env[name], 'secret'));
 
 async function pull() {
   console.log('⬇️ Завантаження перекладів з БД...');
@@ -28,8 +30,17 @@ async function pull() {
   });
 
   if (!fs.existsSync('./public/locales')) fs.mkdirSync('./public/locales', { recursive: true });
+  
+  // Write to individual language files
+  fs.writeFileSync('./public/locales/uk.json', JSON.stringify(bundles.uk, null, 2));
+  fs.writeFileSync('./public/locales/en.json', JSON.stringify(bundles.en, null, 2));
+  fs.writeFileSync('./public/locales/pl.json', JSON.stringify(bundles.pl, null, 2));
+  
+  // Also keep translations.json if anything else depends on it
   fs.writeFileSync('./public/locales/translations.json', JSON.stringify(bundles, null, 2));
-  console.log('✅ Переклади збережено в public/locales/translations.json');
+  
+  console.log('✅ Переклади збережено в public/locales (uk.json, en.json, pl.json)');
 }
 
 pull();
+

@@ -1,16 +1,16 @@
-// src/pages/admin/features/feedback/comments/useComments.ts
 import { useState, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { fetchAllComments, hideComment, deleteComment, DistrictComment } from '@/components/stats/api/commentsApi';
 import { useModals } from '@admin/core/context/ModalContext';
-import { api } from '@services/api';
+import { adminGeoApi } from '@admin/core/api/adminGeoApi';
 import { adminUsersAPI } from '@admin/features/users/adminUsersAPI';
 import { useActionLogger } from '@admin/core/context/useActionLogger';
 
 import { useActionGuard } from '@admin/core/context/useActionGuard';
 
 import { useAdmin } from '@admin/core/context/AdminContext';
+import { useAdminMutation } from '@admin/core/hooks/useAdminMutation';
 
 export const useComments = () => {
     const { t } = useTranslation('db');
@@ -26,7 +26,10 @@ export const useComments = () => {
 
     const { data: citiesData = [] } = useQuery<{id: string, name: string}[]>({
         queryKey: ['citiesList'],
-        queryFn: () => api.geo.getAllCities()
+        queryFn: async () => {
+            const data = await adminGeoApi.getCitiesList();
+            return data.cities || [];
+        }
     });
 
     const cities = useMemo(() => {
@@ -36,7 +39,7 @@ export const useComments = () => {
 
     const { data: districts = [], isLoading: districtsLoading } = useQuery<{id: string, name: string}[]>({
         queryKey: ['districtsList', selectedCity],
-        queryFn: () => api.geo.getDistricts(selectedCity),
+        queryFn: () => adminGeoApi.getDistricts(selectedCity) as Promise<{id: string, name: string}[]>,
         enabled: !!selectedCity
     });
 
@@ -61,20 +64,18 @@ export const useComments = () => {
     const comments = commentsData?.comments;
     const usersMap = commentsData?.usersMap || {};
 
-    const toggleMutation = useMutation({
+    const toggleMutation = useAdminMutation({
         mutationFn: ({ id, hidden }: { id: string, hidden: boolean }) =>
             withLogging('toggle_comment_visibility', () => hideComment(id, hidden), { id, hidden }),
-        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['allComments'] }),
-        onError: (err: unknown) => showAlert(t('common.error'), err instanceof Error ? err.message : 'Error', 'error')
+        onSuccess: () => queryClient.invalidateQueries({ queryKey: ['allComments'] })
     });
 
-    const deleteMutation = useMutation({
+    const deleteMutation = useAdminMutation({
         mutationFn: (id: string) => withLogging('delete_comment', () => deleteComment(id), { id }),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['allComments'] });
             showAlert(t('common.success'), t('admin_comments.tab.delete_success'), 'success');
-        },
-        onError: (err: unknown) => showAlert(t('common.error'), err instanceof Error ? err.message : 'Error', 'error')
+        }
     });
 
     const handleToggleHide = (id: string, currentHidden: boolean) => {

@@ -40,7 +40,6 @@ export function useSystemStatus() {
         const [citiesRes, districtsRes, usersCountRes] = await Promise.all([
           supabase.from('cities').select('id', { count: 'exact', head: true }),
           supabase.from('districts').select('id', { count: 'exact', head: true }),
-          // @ts-expect-error - Supabase generated types don't include this custom RPC yet
           supabase.rpc('get_total_users')
         ]);
         

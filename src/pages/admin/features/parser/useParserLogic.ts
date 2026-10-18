@@ -1,9 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { adminGeoApi } from '@admin/core/api/adminGeoApi';
 
-import { api } from '@services/api';
+import { adminParserApi } from './adminParserApi';
 import { useTranslation } from 'react-i18next';
 import { useModals } from '@admin/core/context/ModalContext';
 import { useActionLogger } from '@admin/core/context/useActionLogger';
@@ -14,6 +14,7 @@ export const useParserLogic = () => {
     const { showConfirm, showAlert } = useModals();
     const { withLogging } = useActionLogger();
     const [loading, setLoading] = useState(false);
+    const [isParsing, setIsParsing] = useState(false);
     const [logs, setLogs] = useState<LogEntry[]>([]);
     const [cities, setCities] = useState<EntityItem[]>([]);
     const [dbDistricts, setDbDistricts] = useState<EntityItem[]>([]);
@@ -31,45 +32,63 @@ export const useParserLogic = () => {
 
     const { data: availableFiles = [], refetch: loadAvailableFiles } = useQuery({
         queryKey: ['pbfFiles'],
-        queryFn: () => api.parser.getPbfFiles()
+        queryFn: () => adminParserApi.getPbfFiles()
     });
 
-    useQuery({
+    const { data: pollData } = useQuery({
         queryKey: ['parserStatusPoll'],
         queryFn: async () => {
-            const text = await api.parser.getCurrentLog().catch(() => "");
-            if (text && text !== prevLogContentRef.current) {
-                prevLogContentRef.current = text;
-                const parsedLogs = text.split('\n').filter(Boolean).map((line: string, i: number): LogEntry => {
-                    const match = line.match(/^\[(.*?)\] (.*)/);
-                    return match ? { id: i, time: match[1], msg: match[2], type: 'info' } : { id: i, time: '', msg: line, type: 'info' };
-                });
-                setLogs(parsedLogs.reverse());
+            const [text, status] = await Promise.all([
+                adminParserApi.getCurrentLog().catch(() => ""),
+                adminParserApi.getStatus().catch(() => ({ isParsing: false }))
+            ]);
+            let newResults = null;
+            // Fetch results ONLY if we were parsing and now it finished
+            if (!status.isParsing && isParsing) {
+                newResults = await adminParserApi.getPendingResults().catch(() => null);
             }
-            const status = await api.parser.getStatus();
-            if (!status.isParsing && loading) {
-                setLoading(false);
-                const results = await api.parser.getPendingResults();
-                if (results && results.length > 0) {
-                    setParsedData(results);
-                    setShowResults(true);
-                }
-            } else if (status.isParsing && !loading) {
-                setLoading(true);
-            }
-            return status;
+            return { text, status, newResults };
         },
-        refetchInterval: loading ? 2000 : false,
+        refetchInterval: isParsing ? 2000 : 10000, // Poll every 2s when parsing, otherwise every 10s to stay synced
         refetchIntervalInBackground: true,
         refetchOnWindowFocus: true
     });
 
+    // Synchronize React state with query data cleanly
+    useEffect(() => {
+        if (!pollData) return;
+        const { text, status, newResults } = pollData;
+
+        if (text && text !== prevLogContentRef.current) {
+            prevLogContentRef.current = text;
+            const parsedLogs = text.split('\n').filter(Boolean).map((line: string, i: number): LogEntry => {
+                const match = line.match(/^\[(.*?)\] (.*)/);
+                return match ? { id: i, time: match[1], msg: match[2], type: 'info' } : { id: i, time: '', msg: line, type: 'info' };
+            });
+            setLogs(parsedLogs.reverse());
+        }
+
+        setIsParsing((prevIsParsing) => {
+            if (!status.isParsing && prevIsParsing) {
+                if (newResults && newResults.length > 0) {
+                    setParsedData(newResults);
+                    setShowResults(true);
+                }
+                return false;
+            } else if (status.isParsing && !prevIsParsing) {
+                return true;
+            }
+            return prevIsParsing;
+        });
+    }, [pollData]);
+
     useEffect(() => {
         const init = async () => {
-            const status = await api.parser.getStatus();
-            if (status.isParsing) setLoading(true);
-            else {
-                const results = await api.parser.getPendingResults();
+            const status = await adminParserApi.getStatus();
+            if (status.isParsing) {
+                setIsParsing(true);
+            } else {
+                const results = await adminParserApi.getPendingResults();
                 if (results && results.length > 0) {
                     setParsedData(results);
                     setShowResults(true);
@@ -101,7 +120,7 @@ export const useParserLogic = () => {
     const scanOSM = useCallback(async (cityName: string) => {
         setLoading(true);
         try {
-            const res = await api.parser.findDistrictsOSM(cityName);
+            const res = await adminParserApi.findDistrictsOSM(cityName);
             setFoundDistrictsOSM(res.districts || []);
         } catch {
             showAlert(t('common.error'), t('admin_parser.errors.scan_osm'), 'error');
@@ -146,13 +165,15 @@ export const useParserLogic = () => {
         setShowResults(false);
         clearLogs();
         try {
-            await api.parser.deletePendingResults();
-            await api.parser.runOfflineParser(config);
+            await adminParserApi.deletePendingResults();
+            await adminParserApi.runOfflineParser(config);
+            setIsParsing(true);
         } catch (e: unknown) {
-            setLoading(false);
             const msg = e instanceof Error ? e.message : 'Unknown error';
             setLogs([{ id: Date.now(), msg: `${t('admin_parser.errors.start_parser')}: ${msg}`, type: 'error' }]);
             showAlert(t('common.error'), t('admin_parser.errors.start_parser'), 'error');
+        } finally {
+            setLoading(false);
         }
     }, [clearLogs, showAlert, t]);
 
@@ -166,7 +187,7 @@ export const useParserLogic = () => {
                 .filter((f: { properties?: { name?: string } }) => f.properties?.name)
                 .map((f: { properties?: { name?: string } }) => ({ name: f.properties?.name, geojson: f }));
             
-            const result = await withLogging('import_geojson_boundaries', () => adminGeoApi.importGeoJson(cityId, features), { cityId, count: features.length });
+            const result = await withLogging('import_geojson_boundaries', () => adminGeoApi.importGeoJson(cityId, features), { cityId, count: features.length }) as { count: number };
             
             setLogs([{
                 id: Date.now(),
@@ -186,7 +207,7 @@ export const useParserLogic = () => {
     const removeParsedItem = useCallback((districtId: string) => {
         setParsedData(prev => {
             const newData = prev.filter(item => item.district_id !== districtId);
-            api.parser.updatePending(newData).catch(() => {});
+            adminParserApi.updatePending(newData).catch(() => {});
             if (newData.length === 0) setShowResults(false);
             return newData;
         });
@@ -197,19 +218,19 @@ export const useParserLogic = () => {
             setParsedData([]);
             setShowResults(false);
             clearLogs();
-            await api.parser.deletePendingResults().catch(() => {});
+            await adminParserApi.deletePendingResults().catch(() => {});
         });
     }, [clearLogs, showConfirm, t]);
 
     const clearResultsSilent = useCallback(async () => {
         setParsedData([]);
         setShowResults(false);
-        await api.parser.deletePendingResults().catch(() => {});
+        await adminParserApi.deletePendingResults().catch(() => {});
     }, []);
 
     const downloadLogs = useCallback(async () => {
         try {
-            const text = await api.parser.getCurrentLog();
+            const text = await adminParserApi.getCurrentLog();
             const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -225,7 +246,7 @@ export const useParserLogic = () => {
     }, [showAlert, t]);
 
     return {
-        loading, logs, availableFiles, countries, cities, dbDistricts, foundDistrictsOSM, parsedData, showResults,
+        loading, isParsing, logs, availableFiles, countries, cities, dbDistricts, foundDistrictsOSM, parsedData, showResults,
         loadCities, fetchDbDistricts, deleteDbDistrict, scanOSM, createDistrictsInDb, runOfflineOsmParser, importBoundariesGeoJSON,
         removeParsedItem, clearAllData, clearLogs, downloadLogs, setParsedData, setFoundDistrictsOSM, loadAvailableFiles,
         clearResultsSilent

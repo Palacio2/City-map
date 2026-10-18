@@ -5,17 +5,18 @@ import { FormGroup, Input } from '@admin/core/ui/Input';
 import { CustomSelect, SelectOption } from '@admin/core/ui/CustomSelect';
 import { Button } from '@admin/core/ui/Button';
 import { FaSyncAlt, FaFileCode, FaGlobe, FaCity, FaMapMarkedAlt } from 'react-icons/fa';
-import { EntityItem, ParserSettingsProps } from './types';
+import { EntityItem } from './types';
+import { useParserContext } from './ParserContext';
 
-export default function ParserSettings({
-    country, setCountry,
-    city, setCity,
-    region, setRegion,
-    countriesList, citiesList,
-    onCountryChange,
-    pbfFile, setPbfFile,
-    availableFiles, loadAvailableFiles
-}: ParserSettingsProps) {
+export default function ParserSettings() {
+    const {
+        country, setCountry,
+        city, setCity,
+        region, setRegion,
+        logic: { countries: countriesList, loadCities, availableFiles, loadAvailableFiles },
+        allowedCities: citiesList,
+        pbfFile, setPbfFile
+    } = useParserContext();
     const { t } = useTranslation('db');
     const availableRegions = getRegionsForCountry(country?.name);
 
@@ -62,7 +63,7 @@ export default function ParserSettings({
                         setCountry(c || null);
                         setCity(null);
                         setRegion('');
-                        if (val) onCountryChange(String(val));
+                        if (val) loadCities(String(val));
                     }}
                 />
             </FormGroup>
@@ -114,7 +115,7 @@ export default function ParserSettings({
                             />
                         )}
                     </div>
-                    <Button variant="cancel" size="md" onClick={loadAvailableFiles} className="shrink-0 h-9 w-9 p-0 flex justify-center items-center rounded-xl" title={t('admin_parser.tab.refresh')}>
+                    <Button variant="cancel" size="md" onClick={() => { void loadAvailableFiles(); }} className="shrink-0 h-9 w-9 p-0 flex justify-center items-center rounded-xl" title={t('admin_parser.tab.refresh')}>
                         <FaSyncAlt className="text-xs text-textMuted" />
                     </Button>
                 </div>

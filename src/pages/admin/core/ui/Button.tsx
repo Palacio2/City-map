@@ -1,7 +1,7 @@
 import React from 'react';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-    variant?: 'primary' | 'cancel' | 'danger' | 'success';
+    variant?: 'primary' | 'cancel' | 'danger' | 'success' | 'warning';
     size?: 'sm' | 'md' | 'lg';
 }
 
@@ -14,7 +14,7 @@ export const Button: React.FC<ButtonProps> = ({
     type = 'button',
     ...props
 }) => {
-    const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold cursor-pointer transition-all duration-200 border disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-none';
+    const baseStyles = 'inline-flex items-center justify-center gap-2 font-semibold cursor-pointer transition-all duration-200 border disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98] focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:outline-hidden';
 
     const sizes = {
         sm: 'px-3 py-1.5 text-xs rounded-xl',

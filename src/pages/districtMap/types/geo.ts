@@ -1,4 +1,4 @@
-import type { TransformedCategory } from '@utils/dataTransformers';
+
 
 export interface PoiData {
   type: string;
@@ -26,16 +26,4 @@ export interface DistrictGeoMapModalProps {
   readonly onClose: () => void;
   readonly districtId?: string | number;
   readonly districtName?: string;
-}
-
-export interface StatRowProps {
-  readonly label: string;
-  readonly value: string | number;
-  readonly highlight?: boolean;
-}
-
-export interface SectionProps {
-  readonly categoryConfig: { readonly key: string; readonly icon?: string };
-  readonly data: TransformedCategory;
-  readonly formatValue: (value: unknown, type: string, fieldKey: string) => string | number;
 }

@@ -1,28 +1,20 @@
-import { useState, useCallback } from 'react';
+import { useCallback } from 'react';
 import type { AiPreferences } from '../types';
+import { useStorageState } from '@/shared/hooks/useStorageState';
+import { STORAGE_KEYS } from '@config/constants';
 
-const PREFS_KEY = 'geo_analyzer_ai_prefs';
+const PREFS_KEY = STORAGE_KEYS.AI_PREFS;
 
 export const useAiPreferences = () => {
-  const [preferences, setPreferences] = useState<AiPreferences | null>(() => {
-    const stored = localStorage.getItem(PREFS_KEY);
-    if (!stored) return null;
-    try {
-      return JSON.parse(stored) as AiPreferences;
-    } catch {
-      return null;
-    }
-  });
+  const [preferences, setPreferences] = useStorageState<AiPreferences | null>(PREFS_KEY, null, 'localStorage');
 
   const savePreferences = useCallback((newPrefs: AiPreferences) => {
-    localStorage.setItem(PREFS_KEY, JSON.stringify(newPrefs));
     setPreferences(newPrefs);
-  }, []);
+  }, [setPreferences]);
 
   const clearPreferences = useCallback(() => {
-    localStorage.removeItem(PREFS_KEY);
     setPreferences(null);
-  }, []);
+  }, [setPreferences]);
 
   return { preferences, savePreferences, clearPreferences };
 };

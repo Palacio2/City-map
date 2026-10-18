@@ -135,7 +135,7 @@ const CityAssignmentModal = ({
                                                             : 'bg-main/40 border-[#d6ccbf] dark:border-[#4a3f37] hover:bg-hover text-textMuted hover:text-textMain'
                                                     }`}
                                                 >
-                                                    <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center text-[8px] shrink-0 transition-colors ${
+                                                    <div className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center text-[8px] shrink-0 transition-colors ${
                                                         isActive ? 'bg-primary border-primary text-white' : 'bg-surface border-[#d6ccbf] dark:border-[#4a3f37] text-transparent'
                                                     }`}>
                                                         <FaCheck />

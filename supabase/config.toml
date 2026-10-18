@@ -4,6 +4,26 @@
 # working directory name when running `supabase init`.
 project_id = "supabase"
 
+# Stripe authenticates the raw body with its webhook signature, not a Supabase JWT.
+[functions.stripe-webhook-City-map]
+verify_jwt = false
+
+[functions.process-payment]
+verify_jwt = true
+
+# Public reference data: the handlers use an anonymous, RLS-scoped client.
+# Publishable API keys are not user JWTs and cannot pass the JWT gateway.
+[functions.cityCountrySelect]
+verify_jwt = false
+
+[functions.get-filters-config]
+verify_jwt = false
+
+# Guests may submit feedback. The handler validates any supplied user token
+# itself and never trusts a user_id from the request body.
+[functions.submit-contact-form]
+verify_jwt = false
+
 [api]
 enabled = true
 # Port to use for the API URL.
@@ -423,6 +443,21 @@ entrypoint = "./functions/admin-feedback-manage/index.ts"
 # Specifies static files to be bundled with the function. Supports glob patterns.
 # For example, if you want to serve static HTML pages in your function:
 # static_files = [ "./functions/admin-feedback-manage/*.html" ]
+
+# Public map reads: handlers validate optional user sessions and strip paid data.
+# These must be deployed with _shared/security.ts and _shared/fieldAccess.ts.
+[functions.get-districts]
+verify_jwt = false
+
+[functions.get-district-geo]
+verify_jwt = false
+
+# Public comments; server signs only each visible author's own avatar.
+[functions.get-district-comments]
+verify_jwt = false
+
+[functions.get-district-photo]
+verify_jwt = false
 
 [functions.admin-scraper-manage]
 enabled = true

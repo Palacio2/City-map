@@ -1,10 +1,9 @@
-// @ts-nocheck
-import React from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { FaSearch, FaMap, FaChartLine, FaClock } from 'react-icons/fa';
-import { DashboardStats } from '../hooks/useStatsData';
+import { DashboardStats } from '@stats/hooks/useStatsData';
 
-const formatDuration = (seconds: number | undefined, t: any) => {
+const formatDuration = (seconds: number | undefined, t: TFunction) => {
   if (!seconds) return `0 ${t('stats.labels.hours')} 0 ${t('stats.labels.minutes')}`;
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.floor((seconds % 3600) / 60);
@@ -25,9 +24,9 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
   const cards = [
     { 
       icon: FaSearch, 
-      colorClass: 'bg-[#4299e1]/10 text-[#4299e1] border-[#4299e1]/20', 
+      colorClass: 'bg-primary/10 text-primary border-primary/20', 
       label: t('stats.cards.searches'), 
-      value: stats?.viewed_districts_count || stats?.viewedDistricts || 0,
+      value: stats?.viewedDistricts || 0,
       onClick: onSearchesClick,
       hidden: false
     },
@@ -41,7 +40,7 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
     },
     { 
       icon: FaChartLine, 
-      colorClass: 'bg-[#9f7aea]/10 text-[#9f7aea] border-[#9f7aea]/20', 
+      colorClass: 'bg-accent/10 text-accent border-accent/20', 
       label: t('stats.cards.comparisons'),
       value: stats?.comparisons || 0,
       onClick: onCompareClick,
@@ -51,7 +50,7 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
       icon: FaClock, 
       colorClass: 'bg-warning/10 text-warning border-warning/20', 
       label: t('stats.cards.time'), 
-      value: formatDuration(stats?.total_time_seconds || stats?.totalTime || 0, t),
+      value: formatDuration(stats?.totalTime || 0, t),
       onClick: undefined,
       hidden: false
     },
@@ -64,14 +63,14 @@ export default function StatsCards({ stats, onSearchesClick, onSavedClick, onCom
       {visibleCards.map((item) => (
         <div 
           key={item.label}
-          className={`bg-surface p-3.5 sm:p-5 md:p-6 rounded-xl md:rounded-2xl shadow-sm md:shadow-card border border-borderClient flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 md:gap-5 transition-all overflow-hidden relative ${item.onClick ? 'cursor-pointer hover:-translate-y-1 hover:shadow-hover hover:border-accent group' : ''}`}
+          className={`bg-surface rounded-2xl p-4 sm:p-5 md:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4 md:gap-5 border border-borderClient transition-all shadow-xs hover:shadow-md dark:bg-white/5 dark:border-white/10 overflow-hidden relative ${item.onClick ? 'cursor-pointer hover:-translate-y-1 hover:border-accent dark:hover:bg-white/10 dark:hover:border-accent dark:hover:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)] group' : ''}`}
           onClick={item.onClick}
         >
-          <div className={`w-9 h-9 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-full flex items-center justify-center text-base sm:text-xl md:text-2xl shrink-0 transition-transform duration-300 border ${item.colorClass} ${item.onClick ? 'group-hover:scale-110' : ''}`}>
+          <div className={`w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center text-lg sm:text-xl md:text-2xl shrink-0 transition-transform duration-300 border ${item.colorClass} ${item.onClick ? 'group-hover:scale-110' : ''}`}>
             <item.icon />
           </div>
           <div className="flex flex-col gap-0.5 md:gap-1 mt-1 sm:mt-0">
-            <span className="font-heading text-lg sm:text-2xl md:text-[1.5rem] font-bold text-textMain leading-none md:leading-tight">{item.value}</span>
+            <span className="font-heading text-xl sm:text-2xl md:text-3xl font-bold text-textMain leading-none md:leading-tight">{item.value}</span>
             <span className="text-[0.65rem] sm:text-xs md:text-[0.85rem] text-textSecondary font-semibold uppercase tracking-wider md:tracking-widest">{item.label}</span>
           </div>
         </div>

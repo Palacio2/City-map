@@ -6,6 +6,7 @@ import { Button } from '@admin/core/ui/Button';
 import { Input, FormGroup } from '@admin/core/ui/Input';
 import { CustomSelect } from '@admin/core/ui/CustomSelect';
 import { Badge } from '@admin/core/ui/Badge';
+import { Loader } from '@admin/core/ui/Loader';
 import { useFieldsManager } from '@admin/features/fields/useFieldsManager';
 import { useActionGuard } from '@admin/core/context/useActionGuard';
 import { FieldConfigItem } from '@admin/core/types/schemas.types';
@@ -90,7 +91,7 @@ export default function FieldsManager() {
             <div className="bg-surface rounded-2xl border border-[#d6ccbf] dark:border-[#4a3f37] shadow-xs overflow-hidden">
                 {logic.isLoading && logic.fields.length === 0 ? (
                     <div className="py-16 flex flex-col items-center gap-2 text-textMuted text-xs font-bold">
-                        <div className="w-8 h-8 border-3 border-border border-t-primary rounded-full animate-spin" />
+                        <Loader variant="pulse" size="lg" />
                         <div>{t('common.loading')}</div>
                     </div>
                 ) : (
@@ -149,16 +150,24 @@ export default function FieldsManager() {
 
                     <div className="flex flex-wrap gap-4 p-3 bg-main/50 rounded-xl border border-[#d6ccbf] dark:border-[#4a3f37] text-xs">
                         <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="is_active" checked={logic.formData.is_active} onChange={logic.handleInputChange} className="accent-primary w-4 h-4 rounded cursor-pointer" />
+                            <input type="checkbox" name="is_active" checked={logic.formData.is_active} onChange={logic.handleInputChange} className="accent-primary w-4 h-4 rounded-sm cursor-pointer" />
                             <span className="font-bold text-textMain">{t('admin_fields.modal.is_active')}</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="is_visible_table" checked={logic.formData.is_visible_table} onChange={logic.handleInputChange} className="accent-primary w-4 h-4 rounded cursor-pointer" />
+                            <input type="checkbox" name="is_visible_table" checked={logic.formData.is_visible_table} onChange={logic.handleInputChange} className="accent-primary w-4 h-4 rounded-sm cursor-pointer" />
                             <span className="font-bold text-textMain">{t('admin_fields.modal.visible_table')}</span>
                         </label>
                         <label className="flex items-center gap-2 cursor-pointer">
-                            <input type="checkbox" name="is_visible_form" checked={logic.formData.is_visible_form} onChange={logic.handleInputChange} className="accent-primary w-4 h-4 rounded cursor-pointer" />
+                            <input type="checkbox" name="is_visible_form" checked={logic.formData.is_visible_form} onChange={logic.handleInputChange} className="accent-primary w-4 h-4 rounded-sm cursor-pointer" />
                             <span className="font-bold text-textMain">{t('admin_fields.modal.visible_form')}</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer text-amber-600 dark:text-amber-500">
+                            <input type="checkbox" name="is_premium" checked={logic.formData.is_premium} onChange={logic.handleInputChange} className="accent-amber-500 w-4 h-4 rounded-sm cursor-pointer" />
+                            <span className="font-bold">Premium Field</span>
+                        </label>
+                        <label className="flex items-center gap-2 cursor-pointer text-rose-600 dark:text-rose-500">
+                            <input type="checkbox" name="is_realtor_only" checked={logic.formData.is_realtor_only} onChange={logic.handleInputChange} className="accent-rose-500 w-4 h-4 rounded-sm cursor-pointer" />
+                            <span className="font-bold">Realtor Only</span>
                         </label>
                     </div>
 
@@ -179,7 +188,7 @@ export default function FieldsManager() {
                             value={logic.formData.parser_config}
                             onChange={logic.handleInputChange}
                             rows={6}
-                            className={`w-full border rounded-xl p-3 font-mono text-xs outline-none bg-main/40 dark:bg-main/60 text-textMain focus:bg-surface focus:border-primary transition-colors shadow-2xs ${logic.jsonError ? 'border-rose-500' : 'border-[#d6ccbf] dark:border-[#4a3f37]'}`}
+                            className={`w-full border rounded-xl p-3 font-mono text-xs outline-hidden bg-main/40 dark:bg-main/60 text-textMain focus:bg-surface focus:border-primary transition-colors shadow-2xs ${logic.jsonError ? 'border-rose-500' : 'border-[#d6ccbf] dark:border-[#4a3f37]'}`}
                             spellCheck="false"
                         />
                     </FormGroup>

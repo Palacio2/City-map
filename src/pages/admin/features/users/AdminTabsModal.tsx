@@ -115,7 +115,7 @@ export default function AdminTabsModal({
                                                                 }}
                                                                 className="flex items-center gap-2 text-left group cursor-pointer"
                                                             >
-                                                                <div className={`w-3.5 h-3.5 rounded border flex items-center justify-center text-[7px] shrink-0 transition-colors ${
+                                                                <div className={`w-3.5 h-3.5 rounded-sm border flex items-center justify-center text-[7px] shrink-0 transition-colors ${
                                                                     isActionSelected ? 'bg-primary border-primary text-white' : 'bg-surface border-[#d6ccbf] dark:border-[#4a3f37] text-transparent group-hover:border-primary/50'
                                                                 }`}>
                                                                     <FaCheck />

@@ -3,20 +3,16 @@ import cors from 'cors';
 import geoRoutes from './routes/router.js';
 import 'dotenv/config';
 import { logger } from './utils/logger.js';
-import { queueService } from './services/queueService.js';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(express.json({ limit: '50mb' }));
-app.use(express.urlencoded({ limit: '50mb', extended: true }));
-
 app.use(helmet());
 
 const allowedOrigins = process.env.ALLOWED_ORIGINS
-    ? process.env.ALLOWED_ORIGINS.split(',')
+    ? process.env.ALLOWED_ORIGINS.split(',').map(origin => origin.trim()).filter(Boolean)
     : ['http://localhost:5173', 'http://localhost:3000'];
 
 app.use(cors({
@@ -39,6 +35,9 @@ app.use(rateLimit({
     message: { error: 'Too many requests, please try again later.' }
 }));
 
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
+
 // Додай цей блок спеціально для Ngrok
 app.use((req, res, next) => {
     res.setHeader('ngrok-skip-browser-warning', 'true');
@@ -59,10 +58,8 @@ app.use((err, req, res, next) => {
     });
 });
 
-const server = app.listen(PORT, '0.0.0.0', async () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
     logger.info(`🚀 Backend API Parser Server running on port ${PORT}`);
-    await queueService.clear();
-    logger.info('🧹 Cleared pending/running parser jobs');
 });
 
 const gracefulShutdown = async (signal) => {

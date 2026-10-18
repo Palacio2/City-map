@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FaUserShield, FaCrown, FaUserPlus, FaMapMarkerAlt, FaGift, FaTag, FaSyncAlt, FaPowerOff, FaTrash, FaCopy, FaCheck, FaSlidersH, FaUserMinus, FaGem, FaBuilding, FaUser } from 'react-icons/fa';
+import { FaUserShield, FaCrown, FaUserPlus, FaMapMarkerAlt, FaGift, FaPowerOff, FaTrash, FaCopy, FaCheck, FaSlidersH, FaUserMinus, FaGem, FaBuilding, FaUser } from 'react-icons/fa';
 import { AdminUser } from '@admin/core/types/admin.types';
 import { UserRow } from './types';
 
@@ -246,3 +247,5 @@ export function useUsersColumns({ logic, currentAdmin, canDo, copiedId, handleCo
 
     return columns;
 }
+
+

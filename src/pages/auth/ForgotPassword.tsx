@@ -14,32 +14,32 @@ export default function ForgotPassword() {
   if (isSubmitted) {
     return (
       <div className="flex justify-center items-center min-h-[100dvh] bg-body p-4 sm:p-5">
-        <div className="bg-surface rounded-2xl p-6 sm:p-10 w-full max-w-[450px] shadow-card border border-borderClient transition-all duration-300 flex flex-col items-center">
-          <div className="text-center py-4 flex flex-col items-center">
-            <FaCheckCircle className="w-16 h-16 text-success mb-6" />
-            <h1 className="text-[1.75rem] font-bold text-textMain m-0 font-heading leading-tight mb-2">
+        <div className="bg-surface rounded-3xl p-8 px-6 sm:p-12 w-full max-w-[480px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-borderClient transition-all duration-300 flex flex-col items-center animate-slideUp">
+          <div className="text-center py-4 flex flex-col items-center w-full">
+            <FaCheckCircle className="w-20 h-20 text-[var(--success-color,#10b981)] mb-8" />
+            <h1 className="text-[1.75rem] font-bold text-textMain m-0 font-heading leading-tight mb-3">
               {t('auth.forgot_password.success_title')}
             </h1>
-            <p className="text-[0.95rem] text-textSecondary m-0 leading-relaxed">
+            <p className="text-[0.95rem] text-textSecondary m-0 leading-relaxed max-w-[300px]">
               {t('auth.forgot_password.success_text')}
             </p>
-            <div className="bg-body p-3 sm:p-4 rounded-md my-6 w-full font-semibold text-textMain border border-borderClient break-all text-[0.9rem] sm:text-base">
+            <div className="bg-body p-4 rounded-xl my-8 w-full font-bold text-textMain border border-borderClient break-all text-center">
               {form.getValues('email')}
             </div>
-            <div className="mt-4 w-full">
+            <div className="w-full flex flex-col gap-6">
               <button 
                 type="button"
                 onClick={handleBack} 
-                className="inline-flex items-center justify-center w-full sm:w-auto gap-2 py-3 px-8 bg-textMain text-surface border-none rounded-md font-semibold cursor-pointer transition-all mb-6 font-heading tracking-widest uppercase hover:bg-accent hover:-translate-y-0.5 hover:shadow-md"
+                className="w-full py-4 bg-textMain text-surface rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-accent hover:shadow-lg hover:-translate-y-0.5 transition-all text-[14px] uppercase tracking-widest font-heading"
               >
                 <FaArrowLeft /> {t('auth.forgot_password.back')}
               </button>
-              <p className="text-textSecondary text-[0.9rem] m-0">
-                {t('auth.forgot_password.spam_note')} {t('auth.common.or')}{' '}
+              <p className="text-textSecondary text-[0.9rem] m-0 border-t border-borderClient/50 pt-6">
+                {t('auth.forgot_password.spam_note')} <span className="mx-2 opacity-50">|</span>
                 <button 
                   type="button"
                   onClick={() => setIsSubmitted(false)} 
-                  className="text-accent bg-transparent border-none font-semibold cursor-pointer p-0 transition-colors hover:text-accent-hover hover:underline"
+                  className="text-accent bg-transparent border-none font-bold cursor-pointer p-0 transition-colors hover:opacity-80 ml-1"
                 >
                   {t('auth.forgot_password.resend')}
                 </button>
@@ -53,20 +53,20 @@ export default function ForgotPassword() {
 
   return (
     <div className="flex justify-center items-center min-h-[100dvh] bg-body p-4 sm:p-5">
-      <div className="bg-surface rounded-[24px] sm:rounded-2xl p-6 sm:p-10 w-full max-w-[450px] shadow-[0_-4px_20px_rgba(0,0,0,0.05)] sm:shadow-card border border-borderClient transition-all duration-300 h-auto flex flex-col">
-        <div className="grid grid-cols-[36px_1fr_36px] sm:grid-cols-[40px_1fr_40px] items-center mb-8 gap-2">
+      <div className="bg-surface rounded-3xl p-8 px-6 sm:p-12 w-full max-w-[480px] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-borderClient transition-all duration-300 flex flex-col animate-slideUp">
+        <div className="grid grid-cols-[40px_1fr_40px] items-center mb-10 gap-2">
           <button 
             type="button"
             onClick={handleBack} 
-            className="bg-transparent border border-borderClient text-textSecondary cursor-pointer w-9 h-9 sm:w-10 sm:h-10 p-0 rounded-full flex items-center justify-center transition-all hover:text-textMain hover:bg-hover hover:border-accent"
+            className="bg-body border border-borderClient text-textSecondary cursor-pointer w-11 h-11 p-0 rounded-full flex items-center justify-center transition-all hover:text-textMain hover:border-accent hover:shadow-md"
           >
             <FaArrowLeft />
           </button>
           <div className="col-start-2 text-center">
-            <h1 className="text-[1.5rem] sm:text-[1.75rem] font-bold text-textMain m-0 mb-1 font-heading leading-tight">
+            <h1 className="text-[1.75rem] font-bold text-textMain m-0 mb-2 font-heading leading-tight">
               {t('auth.forgot_password.title')}
             </h1>
-            <p className="text-[0.9rem] sm:text-[0.95rem] text-textSecondary m-0 leading-relaxed">
+            <p className="text-[0.95rem] text-textSecondary m-0 leading-relaxed">
               {t('auth.forgot_password.subtitle')}
             </p>
           </div>
@@ -84,11 +84,11 @@ export default function ForgotPassword() {
             error={form.formState.errors.email?.message} 
             {...form.register('email')} 
           />
-          {globalError && <span className="text-danger text-[0.85rem] mt-[-10px]">{globalError}</span>}
+          {globalError && <span className="text-danger text-[0.85rem] mt-[-10px] font-medium">{globalError}</span>}
           
           <button 
             type="submit" 
-            className="w-full p-4 bg-textMain text-surface border border-textMain rounded-md text-base font-semibold cursor-pointer transition-all flex items-center justify-center uppercase tracking-widest font-heading shadow-sm hover:not(:disabled):bg-accent hover:not(:disabled):border-accent hover:not(:disabled):text-white hover:not(:disabled):-translate-y-0.5 hover:not(:disabled):shadow-md disabled:opacity-70 disabled:cursor-not-allowed" 
+            className="w-full mt-2 py-4 bg-textMain text-surface rounded-2xl font-bold flex items-center justify-center uppercase tracking-widest font-heading transition-all shadow-md hover:not-disabled:bg-accent hover:not-disabled:shadow-lg hover:not-disabled:-translate-y-0.5 disabled:opacity-70 disabled:cursor-not-allowed text-[14px]" 
             disabled={isLoading}
           >
             {isLoading 
@@ -98,10 +98,10 @@ export default function ForgotPassword() {
           </button>
         </form>
         
-        <div className="text-center text-textSecondary text-[0.9rem] mt-8 pt-0">
+        <div className="text-center text-textSecondary text-[0.95rem] mt-8 pt-6 border-t border-borderClient/50">
           <p className="m-0">
             {t('auth.login.subtitle')}?{' '}
-            <Link to="/login" className="text-accent no-underline font-semibold transition-colors hover:text-accent-hover hover:underline ml-1">
+            <Link to="/login" className="text-accent no-underline font-bold transition-opacity hover:opacity-80 ml-1">
               {t('auth.login.submit')}
             </Link>
           </p>

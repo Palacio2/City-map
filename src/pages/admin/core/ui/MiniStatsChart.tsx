@@ -26,7 +26,7 @@ const MiniStatsChart: React.FC<MiniStatsChartProps> = ({ data, title, currentFil
     const currentLabel = filterOptions.find(opt => opt.value === currentFilter)?.label || t('admin.ui.mini_stats_chart.filter');
 
     return (
-        <div className="bg-surface p-5 sm:p-6 rounded-2xl sm:rounded-3xl flex flex-col gap-4 shadow-sm">
+        <div className="bg-surface p-5 sm:p-6 rounded-2xl sm:rounded-3xl flex flex-col gap-4 shadow-xs">
             <div className="flex items-center justify-between">
                 <h3 className="m-0 text-sm sm:text-base font-semibold text-textMain tracking-tight">
                     {title}

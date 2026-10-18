@@ -8,6 +8,10 @@ export interface PlanConfig {
 }
 
 export interface SubscriptionData {
+  billingUnavailable?: boolean;
+  id?: string | null;
+  source?: 'paid' | 'gift' | null;
+  paidSubscriptions?: PaidSubscription[];
   plan: string;
   isExpired?: boolean;
   expiresAt?: string | null;
@@ -15,6 +19,14 @@ export interface SubscriptionData {
   status?: string;
   features?: string[];
   [key: string]: unknown;
+}
+
+export interface PaidSubscription {
+  id: string;
+  plan: string;
+  status: string;
+  expiresAt: string | null;
+  cancel_at: string | null;
 }
 
 export interface SubscriptionContextType {

@@ -17,7 +17,7 @@ export const Input = React.forwardRef<HTMLInputElement, React.InputHTMLAttribute
     return (
         <input
             ref={ref}
-            className={`px-3.5 py-2 rounded-xl border border-[#d6ccbf] dark:border-[#4a3f37] shadow-xs outline-none bg-surface text-textMain w-full transition-all text-xs sm:text-sm font-medium hover:border-[#b8aa99] dark:hover:border-[#63544a] focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-textMuted/60 ${className}`}
+            className={`px-3.5 py-2 rounded-xl border border-[#d6ccbf] dark:border-[#4a3f37] shadow-xs outline-hidden bg-surface text-textMain w-full transition-all text-xs sm:text-sm font-medium hover:border-[#b8aa99] dark:hover:border-[#63544a] focus:border-primary focus:ring-2 focus:ring-primary/20 placeholder:text-textMuted/60 ${className}`}
             {...props}
         />
     );

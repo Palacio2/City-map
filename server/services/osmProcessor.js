@@ -3,6 +3,8 @@ import OsmPbfParser from "osm-pbf-parser";
 import through from "through2";
 import * as turf from "@turf/turf";
 import RBush from "rbush";
+import { pipeline } from 'node:stream/promises';
+import { createParserScratch } from './parserScratch.js';
 import { LOGS } from "../config/logTemplates.js";
 import { PARSER_CONFIG } from "../config/parserConfig.js";
 
@@ -62,16 +64,18 @@ export async function processLocalOsmData(filePath, districtsData, fieldsConfig,
         };
     });
 
-    const amenityWays = [];
-    const buildingWays = [];
-    const neededNodeIds = new Set();
+    const scratch = createParserScratch();
+    try {
+    const amenityWays = scratch.array();
+    const buildingWays = scratch.array();
+    const neededNodeIds = scratch.map();
 
     let t0 = Date.now();
-    await new Promise((resolve, reject) => {
+    await (async () => {
         const parser = new OsmPbfParser();
-        fs.createReadStream(filePath)
-            .pipe(parser)
-            .pipe(through.obj(function (items, enc, next) {
+        await pipeline(fs.createReadStream(filePath), parser,
+            through.obj(function (items, enc, next) {
+                try {
                 for (const item of items) {
                     if (item.type === 'way' && item.tags) {
                         const isBuilding = item.tags.building === 'residential' || item.tags.building === 'apartments';
@@ -90,21 +94,20 @@ export async function processLocalOsmData(filePath, districtsData, fieldsConfig,
                     }
                 }
                 next();
-            }))
-            .on('finish', resolve)
-            .on('error', reject);
-    });
+                } catch (error) { next(error); }
+            }));
+    })();
     logger(LOGS.OSM_PASS_1(amenityWays.length, Date.now() - t0), 'INFO');
 
-    const finalPois = [];
-    const nodeCoords = new Map();
+    const finalPois = scratch.array();
+    const nodeCoords = scratch.map();
 
     t0 = Date.now();
-    await new Promise((resolve, reject) => {
+    await (async () => {
         const parser = new OsmPbfParser();
-        fs.createReadStream(filePath)
-            .pipe(parser)
-            .pipe(through.obj(function (items, enc, next) {
+        await pipeline(fs.createReadStream(filePath), parser,
+            through.obj(function (items, enc, next) {
+                try {
                 for (const item of items) {
                     if (item.type === 'node') {
                         const nId = String(item.id);
@@ -116,10 +119,9 @@ export async function processLocalOsmData(filePath, districtsData, fieldsConfig,
                     }
                 }
                 next();
-            }))
-            .on('finish', resolve)
-            .on('error', reject);
-    });
+                } catch (error) { next(error); }
+            }));
+    })();
     logger(LOGS.OSM_PASS_2(nodeCoords.size, Date.now() - t0), 'INFO');
 
     for (const way of amenityWays) {
@@ -135,7 +137,7 @@ export async function processLocalOsmData(filePath, districtsData, fieldsConfig,
         if (valid > 0) finalPois.push({ coord: [lonSum / valid, latSum / valid], matchedMetrics: way.matchedMetrics });
     }
 
-    const residentialAreas = [];
+    const residentialAreas = scratch.array();
     for (const way of buildingWays) {
         const coords = [];
         for (const ref of way.refs) {
@@ -228,4 +230,5 @@ export async function processLocalOsmData(filePath, districtsData, fieldsConfig,
     });
 
     return results;
+    } finally { scratch.close(); }
 }

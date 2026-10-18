@@ -50,7 +50,7 @@ export default function AdminSidebar({
     const { currentAdmin } = useAdmin();
     const { canDo, isSuperAdmin } = useActionGuard();
 
-    const email = currentAdmin?.email || 'admin@citymaps.com';
+    const email = currentAdmin?.email || 'admin@kvartals.com';
     const roleName = isSuperAdmin ? 'Super Admin' : (currentAdmin?.role || 'Admin');
     const userInitials = email.substring(0, 2).toUpperCase();
 
@@ -107,7 +107,7 @@ export default function AdminSidebar({
                         </div>
                         <div className="flex flex-col min-w-0">
                             <span className="font-serif font-bold text-lg text-textMain tracking-tight leading-none truncate">
-                                CityMaps
+                                Kvartals
                             </span>
                             <span className="text-[10px] font-mono font-bold text-primary uppercase tracking-widest mt-1.5">
                                 ADMIN CENTER

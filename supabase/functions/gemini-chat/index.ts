@@ -1,19 +1,25 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.44.2";
-import { GoogleGenerativeAI } from "https://esm.sh/@google/generative-ai@0.21.0";
+import { publishableKey } from '../_shared/keys.ts';
+import { getDistrictDataClient, getFieldsConfig, getUserAccess } from '../_shared/security.ts';
+import { districtToolFilters, districtToolData } from './districtTool.ts';
+import { AI_LIMITS, parseAiRequest } from '../../../shared/aiContract.ts';
+import { readJsonObject, RequestError } from '../_shared/request.ts';
+import { createClient } from "npm:@supabase/supabase-js@2.112.2";
+import { GoogleGenerativeAI, SchemaType, type FunctionDeclaration } from "npm:@google/generative-ai@0.21.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
+  'Cache-Control': 'private, no-store',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
+  if (req.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: corsHeaders });
 
   try {
     const authHeader = req.headers.get('Authorization');
     const supabaseUrl = Deno.env.get('SUPABASE_URL') ?? '';
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY') ?? '';
+    const supabaseKey = publishableKey();
     const geminiKey = Deno.env.get('GEMINI_API_KEY') ?? '';
 
     const supabase = createClient(supabaseUrl, supabaseKey, {
@@ -21,16 +27,19 @@ serve(async (req) => {
     });
 
     const { data: { user }, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) throw new Error('Unauthorized');
+    if (authError || !user) throw new RequestError('Unauthorized', 401);
+    const access = await getUserAccess(req);
+    if (!access.isRealtor) throw new RequestError('Realtor subscription required', 403);
 
-    const supabaseAdmin = createClient(supabaseUrl, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '');
-    const { data: latestSysLog } = await supabaseAdmin
+    const supabaseAdmin = getDistrictDataClient();
+    const { data: latestSysLog, error: settingsError } = await supabaseAdmin
       .from('ai_system_logs')
       .select('system_action')
       .eq('log_type', 'system')
       .order('created_at', { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
+    if (settingsError) throw new Error('AI settings unavailable');
 
     if (latestSysLog?.system_action === 'disabled_ai') {
       return new Response(JSON.stringify({ text: "Вибачте, адміністратор тимчасово вимкнув AI Assistant на сервері." }), {
@@ -38,38 +47,46 @@ serve(async (req) => {
       });
     }
 
-    const { message, context, history, language = 'uk' } = await req.json();
+    const raw = await readJsonObject(req, 96_000);
+    let input;
+    try { input = parseAiRequest(raw); } catch { throw new RequestError('Invalid AI request'); }
+    const { message, context, history, language } = input;
+    const { data: quota, error: quotaError } = await supabaseAdmin.rpc('claim_ai_request', {
+      p_user_id: user.id, p_hourly_limit: AI_LIMITS.hourlyRequests, p_daily_limit: AI_LIMITS.dailyRequests,
+    });
+    if (quotaError) throw new Error('AI quota unavailable');
+    if (quota !== true) throw new RequestError('AI request limit reached', 429);
     const genAI = new GoogleGenerativeAI(geminiKey);
 
-    const analyzeDistrictsTool = {
+    const analyzeDistrictsTool: FunctionDeclaration = {
       name: "analyze_districts",
-      description: "Пошук та аналіз районів у базі даних GeoAnalyzer за розширеними критеріями.",
+      description: "Пошук та аналіз районів у базі даних Kvartal за розширеними критеріями.",
       parameters: {
-        type: "OBJECT",
+        type: SchemaType.OBJECT,
         properties: {
-          city: { type: "STRING", description: "Назва міста (обов'язково)" },
-          max_rent: { type: "NUMBER", description: "Максимальна ціна оренди" },
-          max_sale_sqm: { type: "NUMBER", description: "Максимальна ціна за м2 при купівлі" },
-          min_safety: { type: "NUMBER", description: "Мінімальний рейтинг безпеки (0-10)" },
-          min_transport: { type: "NUMBER", description: "Мінімальний рейтинг транспорту (0-10)" },
-          min_ecology: { type: "NUMBER", description: "Мінімальний рейтинг екології/соціуму (0-10)" },
-          needs_metro: { type: "BOOLEAN", description: "Чи потрібне метро" },
-          needs_parks: { type: "BOOLEAN", description: "Чи потрібні парки" },
-          limit: { type: "NUMBER", description: "Кількість результатів (за замовчуванням 5)" }
+          city: { type: SchemaType.STRING, description: "Назва міста (обов'язково)" },
+          max_rent: { type: SchemaType.NUMBER, description: "Максимальна ціна оренди" },
+          max_sale_sqm: { type: SchemaType.NUMBER, description: "Максимальна ціна за м2 при купівлі" },
+          min_safety: { type: SchemaType.NUMBER, description: "Мінімальний рейтинг безпеки (0-10)" },
+          min_transport: { type: SchemaType.NUMBER, description: "Мінімальний рейтинг транспорту (0-10)" },
+          min_ecology: { type: SchemaType.NUMBER, description: "Мінімальний рейтинг екології/соціуму (0-10)" },
+          needs_metro: { type: SchemaType.BOOLEAN, description: "Чи потрібне метро" },
+          needs_parks: { type: SchemaType.BOOLEAN, description: "Чи потрібні парки" },
+          limit: { type: SchemaType.NUMBER, description: "Кількість результатів (за замовчуванням 5)" }
         },
         required: ["city"]
       }
     };
 
 const systemInstruction = `
-Ти — професійний AI-аналітик нерухомості платформи GeoAnalyzer. 
+Ти — професійний AI-аналітик нерухомості платформи Kvartal.
 
 ТВОЯ МЕТА:
 Допомагати користувачам підбирати найкращі райони для життя, оренди або інвестицій на основі їхніх побажань та об'єктивних даних.
 
 ПРАВИЛА ТА ОБМЕЖЕННЯ (CRITICAL):
 1. Тематика: Відповідай ТІЛЬКИ на питання, пов'язані з нерухомістю, районами, інфраструктурою, екологією та життям у місті. Якщо запит не по темі — ввічливо відмовся і нагадай свою роль.
-2. Достовірність: НІКОЛИ не вигадуй ціни, статистику чи рейтинги районів. Якщо у тебе немає точних даних, використовуй наданий інструмент [analyze_districts]. 
+2. Достовірність: НІКОЛИ не вигадуй ціни, статистику чи рейтинги районів. Якщо у тебе немає точних даних, використовуй наданий інструмент [analyze_districts].
 3. Локалізація: ОБОВ'ЯЗКОВО адаптуй свою відповідь під мову користувача. Користувач використовує інтерфейс мовою: "${language}".
 4. Зрозуміла мова: НІКОЛИ не виводь користувачу технічні назви полів з бази даних (наприклад, social_rating, average_rent_price тощо). Перекладай їх у звичайні, зрозумілі людям терміни (наприклад, "Рейтинг екології", "Середня ціна оренди").
 
@@ -85,49 +102,49 @@ const systemInstruction = `
 
     const model = genAI.getGenerativeModel({
       model: "gemini-2.5-flash",
+      generationConfig: { maxOutputTokens: AI_LIMITS.outputTokens },
       tools: [{ functionDeclarations: [analyzeDistrictsTool] }],
       systemInstruction: systemInstruction
     });
 
-    const chatHistory = (history || []).map((msg: any) => ({
-      role: msg.sender === 'user' ? 'user' : 'model',
-      parts: [{ text: msg.text }]
+    const chatHistory = history.map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.content }]
     }));
 
     const chat = model.startChat({ history: chatHistory });
     const result = await chat.sendMessage(message);
     const response = result.response;
     const functionCall = response.functionCalls()?.[0];
-    
+
     let finalOutput = "";
 
     if (functionCall && functionCall.name === "analyze_districts") {
       const args = functionCall.args as any;
-      let query = supabase
+      const fields = await getFieldsConfig();
+      const criteria = districtToolFilters(args, fields, access);
+      let query = supabaseAdmin
         .from('districts')
         .select(`
-          name, 
-          cities!inner(name), 
+          name,
+          cities!inner(name),
           district_filter_data!inner(
-            average_rent_price, average_sale_price_sqm, 
+            average_rent_price, average_sale_price_sqm,
             safety_rating, transport_rating, social_rating, education_rating,
             parks_count, metro_stations_count, crime_level, air_quality
           )
         `)
-        .ilike('cities.name', `%${args.city}%`)
+        .eq('cities.name', criteria.city)
         .eq('is_available', true);
 
-      if (args.max_rent) query = query.lte('district_filter_data.average_rent_price', args.max_rent).gt('district_filter_data.average_rent_price', 0);
-      if (args.max_sale_sqm) query = query.lte('district_filter_data.average_sale_price_sqm', args.max_sale_sqm).gt('district_filter_data.average_sale_price_sqm', 0);
-      if (args.min_safety) query = query.gte('district_filter_data.safety_rating', args.min_safety);
-      if (args.min_transport) query = query.gte('district_filter_data.transport_rating', args.min_transport);
-      if (args.min_ecology) query = query.gte('district_filter_data.social_rating', args.min_ecology);
-      if (args.needs_metro) query = query.gt('district_filter_data.metro_stations_count', 0);
-      if (args.needs_parks) query = query.gt('district_filter_data.parks_count', 0);
-      
-      const { data: dbData, error } = await query.limit(args.limit || 5);
+      for (const filter of criteria.filters) {
+        query = query[filter.operator]('district_filter_data.' + filter.column, filter.value);
+        if (filter.operator === 'lte') query = query.gt('district_filter_data.' + filter.column, 0);
+      }
+      const { data: rawData, error } = await query.limit(criteria.limit);
       if (error) throw error;
 
+      const dbData = districtToolData(rawData ?? [], fields, access);
       const toolResult = await chat.sendMessage([{
         functionResponse: {
           name: "analyze_districts",
@@ -139,21 +156,15 @@ const systemInstruction = `
       finalOutput = response.text();
     }
 
-    await supabaseAdmin.from('ai_system_logs').insert({
-      user_id: user.id,
-      user_email: user.email,
-      log_type: 'chat',
-      prompt: message,
-      response: finalOutput
-    });
+    if (finalOutput.length > AI_LIMITS.responseChars) throw new Error('AI output too large');
 
     return new Response(JSON.stringify({ text: finalOutput }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
 
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 500,
+  } catch (error: unknown) {
+    return new Response(JSON.stringify({ error: error instanceof RequestError ? error.message : 'AI service unavailable' }), {
+      status: error instanceof RequestError ? error.status : 503,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' }
     });
   }

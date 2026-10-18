@@ -1,7 +1,16 @@
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
 import { verifyAdminUser, corsHeaders } from "../_shared/auth.ts";
 
-serve(async (req) => {
+function validateField(value: unknown, creating: boolean) {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Invalid field');
+    const field = value as Record<string, unknown>;
+    if ((creating || 'field_code' in field) && (typeof field.field_code !== 'string' || !/^[a-z][a-z0-9_]*$/.test(field.field_code))) throw new Error('Invalid field code');
+    for (const key of ['is_active', 'is_premium', 'is_realtor_only', 'is_visible_form', 'is_visible_table']) {
+        if (key in field && typeof field[key] !== 'boolean') throw new Error('Invalid field flag');
+    }
+    if ('data_type' in field && !['integer', 'number', 'numeric', 'float', 'boolean', 'text'].includes(String(field.data_type))) throw new Error('Invalid field type');
+}
+
+Deno.serve(async (req) => {
     if (req.method === 'OPTIONS') {
         return new Response('ok', { headers: corsHeaders });
     }
@@ -26,6 +35,7 @@ serve(async (req) => {
 
         if (action === 'create_field') {
             if (!hasTab('fields.add')) throw new Error('Forbidden: Missing fields.add permission');
+            validateField(payload, true);
             const { error } = await supabaseAdmin.from('fields_config').insert([payload]);
             if (error) throw error;
             return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -34,6 +44,7 @@ serve(async (req) => {
         if (action === 'update_field') {
             if (!hasTab('fields.edit')) throw new Error('Forbidden: Missing fields.edit permission');
             const { id, updates } = payload;
+            validateField(updates, false);
             const { error } = await supabaseAdmin.from('fields_config').update(updates).eq('id', id);
             if (error) throw error;
             return new Response(JSON.stringify({ success: true }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });

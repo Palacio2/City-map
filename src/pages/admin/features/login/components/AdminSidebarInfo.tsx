@@ -56,7 +56,7 @@ export default function AdminSidebarInfo({ onCloseMobile }: AdminSidebarInfoProp
         {/* Заголовок */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white dark:bg-[#2b2420] border border-[#e2d9cd] dark:border-[#423932] shadow-sm flex items-center justify-center text-[#c25e26]">
+            <div className="w-10 h-10 sm:w-11 sm:h-11 rounded-2xl bg-white dark:bg-[#2b2420] border border-[#e2d9cd] dark:border-[#423932] shadow-xs flex items-center justify-center text-[#c25e26]">
               <FaShieldAlt className="text-lg sm:text-xl" />
             </div>
             <div>
@@ -115,7 +115,7 @@ export default function AdminSidebarInfo({ onCloseMobile }: AdminSidebarInfoProp
         </div>
 
         {/* Quick Tips */}
-        <div className="bg-white/90 dark:bg-[#2b2420]/80 backdrop-blur-xs border border-[#e8e0d5] dark:border-[#3d332c] rounded-2xl p-3.5 sm:p-4 shadow-sm">
+        <div className="bg-white/90 dark:bg-[#2b2420]/80 backdrop-blur-xs border border-[#e8e0d5] dark:border-[#3d332c] rounded-2xl p-3.5 sm:p-4 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a7f76]">
               {t('admin_panel.tips.header')} ({currentTipIndex + 1}/{ADMIN_TIPS.length})
@@ -154,7 +154,7 @@ export default function AdminSidebarInfo({ onCloseMobile }: AdminSidebarInfoProp
         </div>
 
         {/* GitHub Updates */}
-        <div className="bg-white/70 dark:bg-[#2b2420]/60 backdrop-blur-xs border border-[#e8e0d5] dark:border-[#3d332c] rounded-2xl p-3.5 sm:p-4 shadow-sm">
+        <div className="bg-white/70 dark:bg-[#2b2420]/60 backdrop-blur-xs border border-[#e8e0d5] dark:border-[#3d332c] rounded-2xl p-3.5 sm:p-4 shadow-xs">
           <div className="flex items-center justify-between mb-2">
             <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a7f76] flex items-center gap-1.5 truncate">
               <FaGithub className="text-xs shrink-0" /> {t('admin_panel.updates.header')} ({GITHUB_CONFIG.owner}/{GITHUB_CONFIG.repo})
@@ -175,7 +175,7 @@ export default function AdminSidebarInfo({ onCloseMobile }: AdminSidebarInfoProp
                     <button
                       type="button"
                       onClick={(e) => handleCopySha(commit.sha, e)}
-                      className="inline-flex items-center gap-1 text-[9px] font-mono text-[#8a7f76] hover:text-[#c25e26] bg-[#faf7f2] dark:bg-[#1a1614] px-1 py-0.5 rounded border border-[#e8e0d5] dark:border-[#38312c] transition-colors"
+                      className="inline-flex items-center gap-1 text-[9px] font-mono text-[#8a7f76] hover:text-[#c25e26] bg-[#faf7f2] dark:bg-[#1a1614] px-1 py-0.5 rounded-sm border border-[#e8e0d5] dark:border-[#38312c] transition-colors"
                       title="Copy SHA"
                     >
                       <span>{commit.sha}</span>
@@ -202,7 +202,7 @@ export default function AdminSidebarInfo({ onCloseMobile }: AdminSidebarInfoProp
         </div>
 
         {/* Useful Links */}
-        <div className="bg-white/70 dark:bg-[#2b2420]/60 backdrop-blur-xs border border-[#e8e0d5] dark:border-[#3d332c] rounded-2xl p-3 shadow-sm">
+        <div className="bg-white/70 dark:bg-[#2b2420]/60 backdrop-blur-xs border border-[#e8e0d5] dark:border-[#3d332c] rounded-2xl p-3 shadow-xs">
           <p className="text-[10px] font-bold uppercase tracking-wider text-[#8a7f76] mb-1">
             {t('admin_panel.links.header')}
           </p>
@@ -215,7 +215,7 @@ export default function AdminSidebarInfo({ onCloseMobile }: AdminSidebarInfoProp
       </div>
 
       <div className="relative z-10 mt-4 pt-3 border-t border-[#e8e0d5] dark:border-[#38312c] text-[10px] text-[#9c9187] text-center sm:text-left">
-        © {new Date().getFullYear()} CityMaps Inc. {t('admin_panel.footer.rights')}
+        © {new Date().getFullYear()} Kvartals Inc. {t('admin_panel.footer.rights')}
       </div>
     </div>
   );

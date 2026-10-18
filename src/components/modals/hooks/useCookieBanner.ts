@@ -1,10 +1,12 @@
 import { useState, useEffect, useCallback } from 'react';
+import { ANALYTICS_CONSENT_KEY, setAnalyticsConsent } from '@shared/utils/analyticsConsent';
 
 export const useCookieBanner = () => {
   const [isVisible, setIsVisible] = useState<boolean>(false);
 
   useEffect(() => {
-    const consent = localStorage.getItem('cookie_consent');
+    let consent: string | null = null;
+    try { consent = localStorage.getItem(ANALYTICS_CONSENT_KEY); } catch { /* Show the choice when storage is unavailable. */ }
     if (!consent) {
       const timer = setTimeout(() => setIsVisible(true), 1000);
       return () => clearTimeout(timer);
@@ -12,11 +14,12 @@ export const useCookieBanner = () => {
   }, []);
 
   const acceptCookies = useCallback(() => {
-    localStorage.setItem('cookie_consent', 'true');
+    setAnalyticsConsent(true);
     setIsVisible(false);
   }, []);
 
   const closeBanner = useCallback(() => {
+    setAnalyticsConsent(false);
     setIsVisible(false);
   }, []);
 

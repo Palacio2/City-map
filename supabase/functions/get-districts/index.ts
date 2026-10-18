@@ -1,31 +1,33 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.44.2';
-import { serve } from 'https://deno.land/std@0.178.0/http/server.ts';
-import { getUserAccess, getFieldsConfig, stripRestrictedFields, corsHeaders } from '../_shared/security.ts';
+import { getDistrictDataClient, getUserAccess, getFieldsConfig, stripRestrictedFields, corsHeaders } from '../_shared/security.ts';
+import { collectPages } from '../_shared/pagination.ts';
+import { districtPhotoUrl } from '../_shared/districtPhoto.ts';
+import { prepareDistrictFilters, matchesDistrictFilters } from '../_shared/districtSearch.ts';
+import { RequestError } from '../_shared/request.ts';
 
-const CACHE_TTL = 300; 
 
-const districtCache = new Map();
 
-serve(async (req) => {
+
+
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
+  if (!['GET', 'POST'].includes(req.method)) {
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405, headers: { ...corsHeaders, 'Content-Type': 'application/json', Allow: 'GET, POST, OPTIONS' },
+    });
+  }
+
   try {
-    const supabaseUrl = Deno.env.get('SUPABASE_URL');
-    const supabaseKey = Deno.env.get('SUPABASE_ANON_KEY');
-
-    if (!supabaseUrl || !supabaseKey) {
-      throw new Error('Missing SUPABASE_URL or SUPABASE_ANON_KEY');
-    }
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabase = getDistrictDataClient();
 
     const url = new URL(req.url);
-    let countryName = decodeURIComponent(url.searchParams.get('country') || '');
-    let cityName = decodeURIComponent(url.searchParams.get('city') || '');
-    let idsParam = url.searchParams.get('ids'); 
+    let countryName = url.searchParams.get('country') || '';
+    let cityName = url.searchParams.get('city') || '';
+    let idsParam = url.searchParams.get('ids');
     let filtersParam = url.searchParams.get('filters');
+    let includeTotals = false;
 
     if (req.method === 'POST') {
       try {
@@ -34,6 +36,7 @@ serve(async (req) => {
         if (body.city) cityName = body.city;
         if (body.ids) idsParam = body.ids;
         if (body.filters) filtersParam = body.filters;
+        includeTotals = body.includeTotals === true;
       } catch (e) {
         // body might be empty
       }
@@ -41,7 +44,6 @@ serve(async (req) => {
 
     // SECURITY: Get user access level
     const access = await getUserAccess(req);
-    const accessLevel = access.isRealtor ? 'realtor' : (access.isPremium ? 'premium' : 'free');
 
     let orderedIds: string[] = [];
 
@@ -53,37 +55,30 @@ serve(async (req) => {
 
         if (!rpcError && popularIds && popularIds.length > 0) {
             orderedIds = popularIds.map((item: any) => item.id);
-            
-            idsParam = orderedIds.join(',');
+
+            // Popular IDs determine ordering only, never the city membership.
         }
     } else if (idsParam) {
         orderedIds = idsParam.split(',');
     }
 
-    const withFilters = filtersParam === 'true' || !!idsParam;
-
-    if (!idsParam && (!countryName || !cityName)) {
-      return new Response(JSON.stringify({ error: 'Params required: ids OR (country, city)' }), { 
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, 
-        status: 400 
-      });
+    let filtersObj: any = {};
+    if (filtersParam) {
+      try {
+        filtersObj = typeof filtersParam === 'string' ? JSON.parse(filtersParam) : filtersParam;
+      } catch { throw new RequestError('Invalid search filters'); }
     }
 
-    const cacheKey = idsParam 
-        ? `ids:${idsParam}:${accessLevel}`
-        : `${countryName}|${cityName}|${withFilters}:${accessLevel}`;
+    const withFilters = filtersObj === true || Object.keys(filtersObj ?? {}).length > 0 || !!idsParam || !!(countryName && cityName);
+    if (filtersObj === true) filtersObj = {};
+    const fieldsConfig = await getFieldsConfig();
+    const searchFilters = prepareDistrictFilters(filtersObj, fieldsConfig, access);
 
-    if (CACHE_TTL > 0) {
-        const cached = districtCache.get(cacheKey);
-        if (cached && (Date.now() - cached.timestamp < CACHE_TTL * 1000)) {
-          return new Response(JSON.stringify(cached.data), { 
-            headers: { 
-                ...corsHeaders, 
-                'Content-Type': 'application/json',
-                'Cache-Control': `public, max-age=${CACHE_TTL}` 
-            } 
-          });
-        }
+    if (!idsParam && (!countryName || !cityName)) {
+      return new Response(JSON.stringify({ error: 'Params required: ids OR (country, city)' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        status: 400
+      });
     }
 
     let selectQuery = `
@@ -91,7 +86,7 @@ serve(async (req) => {
       district_photos(photo_url, is_main, description),
       cities!inner(name, countries!inner(name))
     `;
-    
+
     if (withFilters) {
       selectQuery += `, district_filter_data(*)`;
     }
@@ -109,13 +104,14 @@ serve(async (req) => {
           .eq('cities.name', cityName)
           .eq('cities.countries.name', countryName);
     }
-      
-    const { data: districts, error } = await query;
 
-    if (error) throw error;
+    const districts = await collectPages<any>(async (offset, size) => {
+      const { data, error } = await query.order('id').range(offset, offset + size - 1);
+      if (error) throw error;
+      return data ?? [];
+    });
 
     // Get fields configuration to know what to strip
-    const fieldsConfig = await getFieldsConfig();
 
     let result = districts.map((d: any) => {
       let mainPhoto = null;
@@ -127,8 +123,9 @@ serve(async (req) => {
 
       let f = null;
       if (withFilters && d.district_filter_data) {
-        f = Array.isArray(d.district_filter_data) ? d.district_filter_data[0] : d.district_filter_data;
-        
+        const raw = Array.isArray(d.district_filter_data) ? d.district_filter_data[0] : d.district_filter_data;
+        f = raw ? { ...raw } : null;
+
         // SECURITY: Strip restricted fields
         stripRestrictedFields(f, fieldsConfig, access);
       }
@@ -141,9 +138,9 @@ serve(async (req) => {
         city: d.cities?.name,
         country: d.cities?.countries?.name,
         available: d.is_available,
-        photo_url: mainPhoto?.photo_url || null,
+        photo_url: mainPhoto?.photo_url ? districtPhotoUrl(d.id) : null,
         photo_description: mainPhoto?.description || d.name,
-        updated_at: bestDate, 
+        updated_at: bestDate,
       };
 
       if (f) {
@@ -151,7 +148,7 @@ serve(async (req) => {
       }
 
       return item;
-    });
+    }).filter((item: any) => matchesDistrictFilters(item.filterData, searchFilters));
 
     if (orderedIds.length > 0) {
         result.sort((a: any, b: any) => {
@@ -164,27 +161,25 @@ serve(async (req) => {
             return valA - valB;
         });
     } else {
-        
+
         result.sort((a: any, b: any) => a.name.localeCompare(b.name));
     }
 
-    if (CACHE_TTL > 0) {
-        districtCache.set(cacheKey, { timestamp: Date.now(), data: result });
-    }
 
-    return new Response(JSON.stringify(result), { 
-      headers: { 
-          ...corsHeaders, 
+
+    const visibleResults = access.isFree ? result.slice(0, 5) : result;
+    return new Response(JSON.stringify(includeTotals ? { districts: visibleResults, total: result.length, originalTotal: districts.length } : visibleResults), {
+      headers: {
+          ...corsHeaders,
           'Content-Type': 'application/json',
-          'Cache-Control': 'no-cache' 
-      } 
+          'Cache-Control': 'private, no-store'
+      }
     });
 
   } catch (error: any) {
-    console.error('API Error:', error);
-    return new Response(JSON.stringify({ error: error.message }), { 
+    return new Response(JSON.stringify({ error: error instanceof RequestError ? error.message : 'District search unavailable' }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      status: 500 
+      status: error instanceof RequestError ? error.status : 503
     });
   }
 });
