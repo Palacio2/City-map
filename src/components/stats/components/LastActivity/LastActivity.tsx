@@ -1,5 +1,4 @@
-// @ts-nocheck
-import React from 'react';
+import type { FavoriteDistrictData } from '../../types';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { FaExternalLinkAlt, FaMapMarkerAlt } from 'react-icons/fa';
@@ -13,16 +12,15 @@ const formatDate = (dateString?: string | null, lang: string = 'uk-UA') => {
 
 interface LastActivityProps {
   lastActive?: string | null;
-  favoriteDistrict?: any;
+  favoriteDistrict?: FavoriteDistrictData;
 }
 
 export default function LastActivity({ lastActive, favoriteDistrict }: LastActivityProps) {
   const { t, i18n } = useTranslation('db');
   const navigate = useNavigate();
-
   const districtName = favoriteDistrict?.name || favoriteDistrict?.district;
-  const districtCity = favoriteDistrict?.city || favoriteDistrict?.cities?.name;
-  const districtCountry = favoriteDistrict?.country || favoriteDistrict?.cities?.countries?.name;
+  const districtCity = favoriteDistrict?.city;
+  const districtCountry = favoriteDistrict?.country;
 
   const handleDistrictNavigate = () => {
     if (districtName && districtCity && districtCountry) {
@@ -34,7 +32,7 @@ export default function LastActivity({ lastActive, favoriteDistrict }: LastActiv
   const hasValidDistrict = !!(districtName && districtCity && districtCountry);
 
   return (
-    <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 bg-surface p-4 md:p-6 rounded-xl md:rounded-2xl border border-borderClient shadow-sm">
+    <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 md:gap-8 w-full p-2">
       <div className="flex flex-col gap-1 md:gap-1.5 min-w-0">
         <span className="text-[0.7rem] md:text-xs uppercase tracking-widest text-textSecondary font-semibold">
           {t('stats.last_activity.last_visit')}
@@ -44,15 +42,15 @@ export default function LastActivity({ lastActive, favoriteDistrict }: LastActiv
         </span>
       </div>
 
-      <div className="hidden md:block w-px h-10 bg-borderClient shrink-0" />
+      <div className="hidden md:block w-px h-10 bg-borderClient dark:bg-white/10 shrink-0" />
 
-      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-t sm:border-none border-borderClient pt-3 sm:pt-0">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 border-t sm:border-none border-borderClient dark:border-white/10 pt-3 sm:pt-0">
         <span className="text-[0.9rem] text-textSecondary font-medium shrink-0">
           {t('stats.last_activity.fav_district')}
         </span>
         {hasValidDistrict ? (
           <button 
-            className="inline-flex items-center gap-2 px-4 py-2 bg-body border border-borderClient rounded-full cursor-pointer transition-all duration-200 text-textMain hover:border-accent hover:bg-surface hover:-translate-y-[1px] hover:shadow-sm group" 
+            className="inline-flex items-center gap-2 px-4 py-2 bg-body dark:bg-white/5 border border-borderClient dark:border-white/10 rounded-full cursor-pointer transition-all duration-200 text-textMain hover:border-accent hover:bg-surface dark:hover:bg-white/10 hover:-translate-y-[1px] hover:shadow-xs group" 
             onClick={handleDistrictNavigate}
           >
             <FaMapMarkerAlt className="text-accent text-[0.9rem] shrink-0" />

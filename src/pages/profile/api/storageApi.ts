@@ -1,6 +1,11 @@
 import { supabase } from '@supabaseClient';
 
 export const getSignedAvatarUrl = async (path: string, expiresIn: number = 3600): Promise<string> => {
+  if (/^https:\/\//i.test(path)) {
+    const url = new URL(path);
+    if (url.username || url.password) throw new Error('Invalid avatar URL');
+    return url.href;
+  }
   const { data, error } = await supabase.storage.from('avatars').createSignedUrl(path, expiresIn);
   if (error) throw new Error(error.message);
   return data.signedUrl;

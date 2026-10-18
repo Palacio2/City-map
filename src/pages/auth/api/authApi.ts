@@ -24,7 +24,7 @@ export const registerUser = async (data: RegisterFormValues) => {
 };
 
 export const resetPassword = async (email: string) => {
-  const redirectUrl = `${globalThis.location.origin}/profile/password`;
+  const redirectUrl = `${globalThis.location.origin}/auth/reset-password`;
   const { error } = await supabase.auth.resetPasswordForEmail(email, {
     redirectTo: redirectUrl,
   });

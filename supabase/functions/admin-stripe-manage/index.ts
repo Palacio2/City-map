@@ -1,145 +1,87 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import Stripe from 'npm:stripe@^14.21.0';
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, sentry-trace, baggage',
-};
+import { manageGift, GiftError } from './gifts.ts';
+import { readJsonObject, RequestError } from '../_shared/request.ts';
+import Stripe from 'npm:stripe@22.6.0';
+import { managePromo } from './promos.ts';
+import { reconcilePromoOperations } from './reconcile.ts';
+import { promoProducts, PromoError } from '../_shared/promotionScope.ts';
+import { verifyAdminUser, corsHeaders } from '../_shared/auth.ts';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY')!, {
-  apiVersion: '2023-10-16',
+  apiVersion: '2026-08-26.dahlia',
   httpClient: Stripe.createFetchHttpClient(),
+  timeout: 20_000,
+  maxNetworkRetries: 1,
 });
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
 
+  if (req.method !== 'POST') return new Response('Method not allowed', { status: 405, headers: corsHeaders });
+
   try {
-    const authHeader = req.headers.get('Authorization');
-    if (!authHeader) throw new Error('No authorization header');
+    const access = await verifyAdminUser(req);
+    const { user, supabaseAdmin, isSuperAdmin, hasTab } = access;
 
-    const supabaseUserClient = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
-      { global: { headers: { Authorization: authHeader } } }
-    );
+    const { action, payload: rawPayload } = await readJsonObject(req);
+    if (typeof action !== 'string' || !action || !rawPayload || typeof rawPayload !== 'object' || Array.isArray(rawPayload)) throw new PromoError('Invalid request');
+    const payload = rawPayload as Record<string, unknown>;
+    if (action === 'revoke_subscription') throw new GiftError('Use revoke_gift for gifts; paid billing must be canceled through Stripe', 410);
 
-    const { data: { user }, error: userError } = await supabaseUserClient.auth.getUser();
-    if (userError || !user) throw new Error('Unauthorized');
-
-    const supabaseAdmin = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    const { data: profile } = await supabaseAdmin
-      .from('admin_profiles')
-      .select('role')
-      .eq('user_id', user.id)
-      .single();
-
-    const isSuperAdmin = profile?.role === 'super_admin' || user.app_metadata?.role === 'super_admin';
-    if (!isSuperAdmin) throw new Error('Forbidden: Super Admins only');
-
-    const { action, payload } = await req.json();
-    if (!action) throw new Error('Missing action');
+    if (action === 'grant_subscription' || action === 'revoke_gift') {
+      if (!hasTab('users.gift_sub')) {
+        throw new GiftError('Forbidden: Required gift_sub permission', 403);
+      }
+    } else if (['create_promo', 'list_promos', 'delete_promo'].includes(action)) {
+      if (!hasTab('users.promo_codes')) {
+        throw new PromoError('Forbidden: Required promo_codes permission', 403);
+      }
+    } else if (!isSuperAdmin) {
+      throw new Error('Forbidden: Super Admins only');
+    }
 
     let result = {};
 
-    if (action === 'grant_subscription') {
-      const targetUserId = payload.targetUserId || payload.userId || payload.user_id;
-      const planName = payload.planName || payload.plan_name;
-      const days = payload.days;
-
-      if (!targetUserId) throw new Error('Missing target user ID');
-      
-      await supabaseAdmin
-        .from('user_subscriptions')
-        .update({ status: 'canceled', cancelled_at: new Date().toISOString() })
-        .eq('user_id', targetUserId)
-        .eq('status', 'active')
-        .like('payment_id', 'GIFT_%');
-
-      const endsAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString();
-      const mockPaymentId = `GIFT_MANUAL_${targetUserId}`;
-
-      const { error } = await supabaseAdmin
-        .from('user_subscriptions')
-        .upsert({
-          user_id: targetUserId,
-          payment_id: mockPaymentId,
-          plan_name: planName,
-          status: 'active',
-          starts_at: new Date().toISOString(),
-          ends_at: endsAt,
-          amount: 0,
-          cancelled_at: null
-        }, { onConflict: 'payment_id' });
-
-      if (error) throw error;
-      
-      await supabaseAdmin.auth.admin.updateUserById(targetUserId, {
-        user_metadata: { plan: planName }
-      });
-      
-      await supabaseAdmin.from('audit_logs').insert({
-        admin_id: user.id,
-        action: 'GRANT_SUBSCRIPTION',
-        target_table: 'user_subscriptions',
-        record_id: targetUserId,
-        new_data: { plan: planName, days: days }
-      });
-
-      result = { success: true, message: `Granted ${planName} for ${days} days` };
+    if (action === 'grant_subscription' || action === 'revoke_gift') {
+      result = await manageGift(action, payload, access);
     }
-    else if (action === 'create_promo') {
-      const { code, percentOff, duration, maxRedemptions } = payload;
-      
-      const coupon = await stripe.coupons.create({
-        percent_off: percentOff,
-        duration: duration,
-        duration_in_months: duration === 'repeating' ? 1 : undefined,
-      });
-
-      const promoCode = await stripe.promotionCodes.create({
-        coupon: coupon.id,
-        code: code,
-        max_redemptions: maxRedemptions || undefined,
-      });
-
-      await supabaseAdmin.from('audit_logs').insert({
-        admin_id: user.id,
-        action: 'CREATE_PROMO_CODE',
-        target_table: 'stripe',
-        new_data: { code: promoCode.code, percent_off: percentOff }
-      });
-
-      result = { success: true, promoCode: promoCode };
-    }
-    else if (action === 'list_promos') {
-      const codes = await stripe.promotionCodes.list({ limit: 50, active: true });
-      result = { success: true, codes: codes.data };
-    }
-    else if (action === 'delete_promo') {
-      const { id } = payload;
-      await stripe.promotionCodes.update(id, { active: false });
-      result = { success: true };
+    else if (['create_promo', 'list_promos', 'delete_promo'].includes(action)) {
+      const products = promoProducts(Deno.env.get('STRIPE_CITY_MAP_PRODUCT_IDS'));
+      const complete = async (key: string, result: Record<string, unknown>) => {
+        const {error} = await supabaseAdmin.rpc('complete_promo_operation', {p_actor:user.id,p_key:key,p_result:result});
+        if(error) throw new PromoError('Promotion changed, but audit confirmation is pending; retry the same request',503);
+      };
+      result = await managePromo(stripe, action, payload,
+        products, {
+          begin: async (key, operation, payload) => {
+            const {data,error} = await supabaseAdmin.rpc('prepare_promo_operation', {
+              p_actor:user.id,p_key:key,p_action:operation,p_payload:payload,
+            });
+            if(error) throw new PromoError(error.code === 'CM409' ? 'Promotion request conflict or reconciliation required' : 'Unable to record promotion request', error.code === 'CM409' ? 409 : 503);
+            return data;
+          },
+          complete,
+        });
+      if (action === 'list_promos') {
+        try {
+          const {data: pending,error} = await supabaseAdmin.rpc('pending_promo_operations',{p_actor:user.id});
+          if (!error && Array.isArray(pending)) await reconcilePromoOperations(stripe,products,pending,complete);
+        } catch { /* Deferred reconciliation must not hide the promotion list. */ }
+      }
     }
     else {
-      throw new Error('Invalid action');
+      throw new PromoError('Invalid action');
     }
 
     return new Response(JSON.stringify(result), {
       status: 200,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'private, no-store' },
     });
 
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message }), {
-      status: 400,
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+  } catch (error: unknown) {
+    return new Response(JSON.stringify({ error: error instanceof GiftError || error instanceof PromoError || error instanceof RequestError
+      ? error.message : 'Promotion service unavailable' }), {
+      status: error instanceof GiftError || error instanceof PromoError || error instanceof RequestError ? error.status : 503,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json', 'Cache-Control': 'private, no-store' },
     });
   }
 });

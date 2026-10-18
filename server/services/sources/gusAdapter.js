@@ -11,7 +11,7 @@ export const gusAdapter = {
             return stats;
         } catch (e) {
             logger.log(`GUS API Error: ${e.message}`, 'ERROR');
-            return { salary: 0, density: 0 };
+            return {};
         }
     }
 };

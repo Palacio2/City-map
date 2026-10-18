@@ -5,8 +5,7 @@ import type { TransformedDistrict } from '@utils/dataTransformers';
 const getColumnsCount = (width: number): number => {
   if (width >= 1280) return 4;
   if (width >= 1024) return 3;
-  if (width >= 640) return 2;
-  return 1;
+  return 2;
 };
 
 export const useFavoritesPage = () => {

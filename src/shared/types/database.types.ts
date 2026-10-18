@@ -12,35 +12,44 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "13.0.4"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
+      activity_event_limits: {
+        Row: {
+          activity_day: string
+          day_count: number
+          event_kind: string
+          last_accepted_at: string | null
+          last_signature: string | null
+          minute_count: number
+          minute_started_at: string
+          user_id: string
+        }
+        Insert: {
+          activity_day: string
+          day_count?: number
+          event_kind: string
+          last_accepted_at?: string | null
+          last_signature?: string | null
+          minute_count?: number
+          minute_started_at: string
+          user_id: string
+        }
+        Update: {
+          activity_day?: string
+          day_count?: number
+          event_kind?: string
+          last_accepted_at?: string | null
+          last_signature?: string | null
+          minute_count?: number
+          minute_started_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       admin_profiles: {
         Row: {
+          allowed_tabs: string[] | null
           assigned_cities: string[] | null
           created_at: string | null
           role: string
@@ -48,6 +57,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          allowed_tabs?: string[] | null
           assigned_cities?: string[] | null
           created_at?: string | null
           role?: string
@@ -55,11 +65,87 @@ export type Database = {
           user_id: string
         }
         Update: {
+          allowed_tabs?: string[] | null
           assigned_cities?: string[] | null
           created_at?: string | null
           role?: string
           updated_at?: string | null
           user_id?: string
+        }
+        Relationships: []
+      }
+      admin_promo_operations: {
+        Row: {
+          action: string
+          actor_id: string
+          completed_at: string | null
+          created_at: string
+          last_checked_at: string | null
+          operation_key: string
+          payload: Json
+          result: Json | null
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          completed_at?: string | null
+          created_at?: string
+          last_checked_at?: string | null
+          operation_key: string
+          payload: Json
+          result?: Json | null
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          completed_at?: string | null
+          created_at?: string
+          last_checked_at?: string | null
+          operation_key?: string
+          payload?: Json
+          result?: Json | null
+        }
+        Relationships: []
+      }
+      admin_user_deletions: {
+        Row: {
+          completed_at: string | null
+          requested_at: string
+          requested_by: string
+          target_user_id: string
+        }
+        Insert: {
+          completed_at?: string | null
+          requested_at?: string
+          requested_by: string
+          target_user_id: string
+        }
+        Update: {
+          completed_at?: string | null
+          requested_at?: string
+          requested_by?: string
+          target_user_id?: string
+        }
+        Relationships: []
+      }
+      ai_request_usage: {
+        Row: {
+          request_count: number
+          user_id: string
+          window_seconds: number
+          window_start: string
+        }
+        Insert: {
+          request_count?: number
+          user_id: string
+          window_seconds: number
+          window_start: string
+        }
+        Update: {
+          request_count?: number
+          user_id?: string
+          window_seconds?: number
+          window_start?: string
         }
         Relationships: []
       }
@@ -129,6 +215,75 @@ export type Database = {
         }
         Relationships: []
       }
+      billing_account_deletions: {
+        Row: {
+          cancellation_recorded_at: string | null
+          cancellation_result: Json | null
+          checkout_snapshot: Json | null
+          requested_at: string
+          requested_by: string
+          subscription_snapshot: Json
+          user_id: string
+        }
+        Insert: {
+          cancellation_recorded_at?: string | null
+          cancellation_result?: Json | null
+          checkout_snapshot?: Json | null
+          requested_at?: string
+          requested_by: string
+          subscription_snapshot: Json
+          user_id: string
+        }
+        Update: {
+          cancellation_recorded_at?: string | null
+          cancellation_result?: Json | null
+          checkout_snapshot?: Json | null
+          requested_at?: string
+          requested_by?: string
+          subscription_snapshot?: Json
+          user_id?: string
+        }
+        Relationships: []
+      }
+      billing_checkout_state: {
+        Row: {
+          attempt_created_at: string
+          attempt_id: string
+          customer_id: string | null
+          lease_token: string | null
+          lease_until: string | null
+          plan_key: string
+          price_id: string
+          promotion_id: string | null
+          session_id: string | null
+          user_id: string
+        }
+        Insert: {
+          attempt_created_at?: string
+          attempt_id?: string
+          customer_id?: string | null
+          lease_token?: string | null
+          lease_until?: string | null
+          plan_key: string
+          price_id: string
+          promotion_id?: string | null
+          session_id?: string | null
+          user_id: string
+        }
+        Update: {
+          attempt_created_at?: string
+          attempt_id?: string
+          customer_id?: string | null
+          lease_token?: string | null
+          lease_until?: string | null
+          plan_key?: string
+          price_id?: string
+          promotion_id?: string | null
+          session_id?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       cities: {
         Row: {
           country_id: string
@@ -161,37 +316,59 @@ export type Database = {
           },
         ]
       }
-      CITY: {
+      city_population_totals: {
         Row: {
-          country_id: string
-          created_at: string
-          id: string
-          is_available: boolean
-          name: string
+          city_id: string
+          population: number
+          updated_at: string
         }
         Insert: {
-          country_id: string
-          created_at?: string
-          id?: string
-          is_available?: boolean
-          name: string
+          city_id: string
+          population: number
+          updated_at?: string
         }
         Update: {
-          country_id?: string
-          created_at?: string
-          id?: string
-          is_available?: boolean
-          name?: string
+          city_id?: string
+          population?: number
+          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "CITY_country_id_fkey"
-            columns: ["country_id"]
-            isOneToOne: false
-            referencedRelation: "COUNTRY"
+            foreignKeyName: "city_population_totals_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: true
+            referencedRelation: "cities"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "city_population_totals_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: true
+            referencedRelation: "popular_cities_view"
+            referencedColumns: ["city_id"]
+          },
         ]
+      }
+      contact_request_limits: {
+        Row: {
+          created_at: string
+          email_hash: string
+          id: number
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          email_hash: string
+          id?: never
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          email_hash?: string
+          id?: never
+          user_id?: string | null
+        }
+        Relationships: []
       }
       contacts_messages: {
         Row: {
@@ -262,288 +439,64 @@ export type Database = {
         }
         Relationships: []
       }
-      COUNTRY: {
+      deleted_billing_subscriptions: {
         Row: {
-          created_at: string
-          id: string
-          is_available: boolean
-          name: string
+          latest_record: Json | null
+          subscription_id: string
+          updated_at: string
+          user_id: string
         }
         Insert: {
-          created_at?: string
-          id?: string
-          is_available?: boolean
-          name: string
+          latest_record?: Json | null
+          subscription_id: string
+          updated_at?: string
+          user_id: string
         }
         Update: {
-          created_at?: string
-          id?: string
-          is_available?: boolean
-          name?: string
+          latest_record?: Json | null
+          subscription_id?: string
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
-      DISTRICT: {
+      district_comments: {
         Row: {
-          city_id: string
-          created_at: string
+          content: string
+          created_at: string | null
+          district_id: string
           id: string
-          is_available: boolean
-          name: string
-          updated_at: string
+          is_hidden: boolean | null
+          rating: number
+          updated_at: string | null
+          user_id: string
         }
         Insert: {
-          city_id: string
-          created_at?: string
+          content: string
+          created_at?: string | null
+          district_id: string
           id?: string
-          is_available?: boolean
-          name: string
-          updated_at?: string
+          is_hidden?: boolean | null
+          rating?: number
+          updated_at?: string | null
+          user_id: string
         }
         Update: {
-          city_id?: string
-          created_at?: string
-          id?: string
-          is_available?: boolean
-          name?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "DISTRICT_city_id_fkey"
-            columns: ["city_id"]
-            isOneToOne: false
-            referencedRelation: "CITY"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      DISTRICT_DATA: {
-        Row: {
-          air_quality: string | null
-          average_park_size_sqm: number | null
-          average_property_price: number | null
-          average_rent_price: number | null
-          average_salary: number | null
-          average_sale_price_sqm: number | null
-          banks_atms_count: number | null
-          beauty_salons_count: number | null
-          bike_lanes_km: number | null
-          bike_rental_stations_count: number | null
-          bus_stops_count: number | null
-          cafes_restaurants_count: number | null
-          cctv_count: number | null
-          churches_count: number | null
-          cinemas_count: number | null
-          clinics_count: number | null
-          commerce_rating: number | null
-          coworking_spaces_count: number | null
-          created_at: string
-          crime_level: number | null
-          data_source: string | null
-          data_updated_at: string | null
-          district_id: string
-          education_rating: number | null
-          ev_charging_stations_count: number | null
-          green_spaces_percent: number | null
-          grocery_stores_count: number | null
-          gyms_count: number | null
-          has_electricity: boolean | null
-          has_gas_supply: boolean | null
-          has_heating: boolean | null
-          has_waste_removal: boolean | null
-          has_water_supply: boolean | null
-          hospitals_count: number | null
-          id: string
-          is_active: boolean
-          kindergartens_count: number | null
-          last_updated: string
-          libraries_count: number | null
-          markets_count: number | null
-          medicine_rating: number | null
-          metro_stations_count: number | null
-          museums_count: number | null
-          outdoor_gyms_count: number | null
-          parcel_lockers_count: number | null
-          parking_spots_count: number | null
-          parks_count: number | null
-          pet_stores_count: number | null
-          pharmacies_count: number | null
-          playgrounds_count: number | null
-          police_stations_count: number | null
-          population: number | null
-          population_density: number | null
-          post_offices_count: number | null
-          safety_rating: number | null
-          schools_count: number | null
-          shopping_malls_count: number | null
-          social_rating: number | null
-          sports_facilities_count: number | null
-          street_lighting_rating: number | null
-          swimming_pools_count: number | null
-          theaters_count: number | null
-          tram_stops_count: number | null
-          transport_average_distance_m: number | null
-          transport_frequency: string | null
-          transport_rating: number | null
-          unemployment_rate: number | null
-          universities_count: number | null
-          utilities_cost_per_sqm: number | null
-          utilities_quality_rating: number | null
-          vet_clinics_count: number | null
-        }
-        Insert: {
-          air_quality?: string | null
-          average_park_size_sqm?: number | null
-          average_property_price?: number | null
-          average_rent_price?: number | null
-          average_salary?: number | null
-          average_sale_price_sqm?: number | null
-          banks_atms_count?: number | null
-          beauty_salons_count?: number | null
-          bike_lanes_km?: number | null
-          bike_rental_stations_count?: number | null
-          bus_stops_count?: number | null
-          cafes_restaurants_count?: number | null
-          cctv_count?: number | null
-          churches_count?: number | null
-          cinemas_count?: number | null
-          clinics_count?: number | null
-          commerce_rating?: number | null
-          coworking_spaces_count?: number | null
-          created_at?: string
-          crime_level?: number | null
-          data_source?: string | null
-          data_updated_at?: string | null
-          district_id: string
-          education_rating?: number | null
-          ev_charging_stations_count?: number | null
-          green_spaces_percent?: number | null
-          grocery_stores_count?: number | null
-          gyms_count?: number | null
-          has_electricity?: boolean | null
-          has_gas_supply?: boolean | null
-          has_heating?: boolean | null
-          has_waste_removal?: boolean | null
-          has_water_supply?: boolean | null
-          hospitals_count?: number | null
-          id?: string
-          is_active?: boolean
-          kindergartens_count?: number | null
-          last_updated?: string
-          libraries_count?: number | null
-          markets_count?: number | null
-          medicine_rating?: number | null
-          metro_stations_count?: number | null
-          museums_count?: number | null
-          outdoor_gyms_count?: number | null
-          parcel_lockers_count?: number | null
-          parking_spots_count?: number | null
-          parks_count?: number | null
-          pet_stores_count?: number | null
-          pharmacies_count?: number | null
-          playgrounds_count?: number | null
-          police_stations_count?: number | null
-          population?: number | null
-          population_density?: number | null
-          post_offices_count?: number | null
-          safety_rating?: number | null
-          schools_count?: number | null
-          shopping_malls_count?: number | null
-          social_rating?: number | null
-          sports_facilities_count?: number | null
-          street_lighting_rating?: number | null
-          swimming_pools_count?: number | null
-          theaters_count?: number | null
-          tram_stops_count?: number | null
-          transport_average_distance_m?: number | null
-          transport_frequency?: string | null
-          transport_rating?: number | null
-          unemployment_rate?: number | null
-          universities_count?: number | null
-          utilities_cost_per_sqm?: number | null
-          utilities_quality_rating?: number | null
-          vet_clinics_count?: number | null
-        }
-        Update: {
-          air_quality?: string | null
-          average_park_size_sqm?: number | null
-          average_property_price?: number | null
-          average_rent_price?: number | null
-          average_salary?: number | null
-          average_sale_price_sqm?: number | null
-          banks_atms_count?: number | null
-          beauty_salons_count?: number | null
-          bike_lanes_km?: number | null
-          bike_rental_stations_count?: number | null
-          bus_stops_count?: number | null
-          cafes_restaurants_count?: number | null
-          cctv_count?: number | null
-          churches_count?: number | null
-          cinemas_count?: number | null
-          clinics_count?: number | null
-          commerce_rating?: number | null
-          coworking_spaces_count?: number | null
-          created_at?: string
-          crime_level?: number | null
-          data_source?: string | null
-          data_updated_at?: string | null
+          content?: string
+          created_at?: string | null
           district_id?: string
-          education_rating?: number | null
-          ev_charging_stations_count?: number | null
-          green_spaces_percent?: number | null
-          grocery_stores_count?: number | null
-          gyms_count?: number | null
-          has_electricity?: boolean | null
-          has_gas_supply?: boolean | null
-          has_heating?: boolean | null
-          has_waste_removal?: boolean | null
-          has_water_supply?: boolean | null
-          hospitals_count?: number | null
           id?: string
-          is_active?: boolean
-          kindergartens_count?: number | null
-          last_updated?: string
-          libraries_count?: number | null
-          markets_count?: number | null
-          medicine_rating?: number | null
-          metro_stations_count?: number | null
-          museums_count?: number | null
-          outdoor_gyms_count?: number | null
-          parcel_lockers_count?: number | null
-          parking_spots_count?: number | null
-          parks_count?: number | null
-          pet_stores_count?: number | null
-          pharmacies_count?: number | null
-          playgrounds_count?: number | null
-          police_stations_count?: number | null
-          population?: number | null
-          population_density?: number | null
-          post_offices_count?: number | null
-          safety_rating?: number | null
-          schools_count?: number | null
-          shopping_malls_count?: number | null
-          social_rating?: number | null
-          sports_facilities_count?: number | null
-          street_lighting_rating?: number | null
-          swimming_pools_count?: number | null
-          theaters_count?: number | null
-          tram_stops_count?: number | null
-          transport_average_distance_m?: number | null
-          transport_frequency?: string | null
-          transport_rating?: number | null
-          unemployment_rate?: number | null
-          universities_count?: number | null
-          utilities_cost_per_sqm?: number | null
-          utilities_quality_rating?: number | null
-          vet_clinics_count?: number | null
+          is_hidden?: boolean | null
+          rating?: number
+          updated_at?: string | null
+          user_id?: string
         }
         Relationships: [
           {
-            foreignKeyName: "DISTRICT_DATA_district_id_fkey"
+            foreignKeyName: "district_comments_district_id_fkey"
             columns: ["district_id"]
-            isOneToOne: true
-            referencedRelation: "DISTRICT"
+            isOneToOne: false
+            referencedRelation: "districts"
             referencedColumns: ["id"]
           },
         ]
@@ -565,6 +518,7 @@ export type Database = {
           cctv_count: number | null
           churches_count: number | null
           cinemas_count: number | null
+          city_population: number | null
           clinics_count: number | null
           commerce_rating: number | null
           coworking_spaces_count: number | null
@@ -573,6 +527,7 @@ export type Database = {
           culture_leisure_rating: number | null
           data_source: string | null
           data_updated_at: string | null
+          district_area_sqm: number | null
           district_id: string
           economics_rating: number | null
           education_rating: number | null
@@ -607,6 +562,7 @@ export type Database = {
           population: number | null
           population_density: number | null
           post_offices_count: number | null
+          residential_area_sqm: number | null
           safety_rating: number | null
           schools_count: number | null
           security_rating: number | null
@@ -643,6 +599,7 @@ export type Database = {
           cctv_count?: number | null
           churches_count?: number | null
           cinemas_count?: number | null
+          city_population?: number | null
           clinics_count?: number | null
           commerce_rating?: number | null
           coworking_spaces_count?: number | null
@@ -651,6 +608,7 @@ export type Database = {
           culture_leisure_rating?: number | null
           data_source?: string | null
           data_updated_at?: string | null
+          district_area_sqm?: number | null
           district_id: string
           economics_rating?: number | null
           education_rating?: number | null
@@ -685,6 +643,7 @@ export type Database = {
           population?: number | null
           population_density?: number | null
           post_offices_count?: number | null
+          residential_area_sqm?: number | null
           safety_rating?: number | null
           schools_count?: number | null
           security_rating?: number | null
@@ -721,6 +680,7 @@ export type Database = {
           cctv_count?: number | null
           churches_count?: number | null
           cinemas_count?: number | null
+          city_population?: number | null
           clinics_count?: number | null
           commerce_rating?: number | null
           coworking_spaces_count?: number | null
@@ -729,6 +689,7 @@ export type Database = {
           culture_leisure_rating?: number | null
           data_source?: string | null
           data_updated_at?: string | null
+          district_area_sqm?: number | null
           district_id?: string
           economics_rating?: number | null
           education_rating?: number | null
@@ -763,6 +724,7 @@ export type Database = {
           population?: number | null
           population_density?: number | null
           post_offices_count?: number | null
+          residential_area_sqm?: number | null
           safety_rating?: number | null
           schools_count?: number | null
           security_rating?: number | null
@@ -789,44 +751,6 @@ export type Database = {
             columns: ["district_id"]
             isOneToOne: true
             referencedRelation: "districts"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      DISTRICT_FOTO: {
-        Row: {
-          created_at: string
-          description: string | null
-          district_id: string
-          id: string
-          is_main: boolean
-          photo_url: string
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          description?: string | null
-          district_id: string
-          id?: string
-          is_main?: boolean
-          photo_url: string
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          description?: string | null
-          district_id?: string
-          id?: string
-          is_main?: boolean
-          photo_url?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "DISTRICT_FOTO_district_id_fkey"
-            columns: ["district_id"]
-            isOneToOne: false
-            referencedRelation: "DISTRICT"
             referencedColumns: ["id"]
           },
         ]
@@ -937,6 +861,13 @@ export type Database = {
             referencedRelation: "cities"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "districts_city_id_fkey"
+            columns: ["city_id"]
+            isOneToOne: false
+            referencedRelation: "popular_cities_view"
+            referencedColumns: ["city_id"]
+          },
         ]
       }
       favorite_districts: {
@@ -967,6 +898,27 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      feedback_deletion_jobs: {
+        Row: {
+          created_at: string
+          last_attempt_at: string | null
+          message_id: string
+          screenshot_url: string
+        }
+        Insert: {
+          created_at?: string
+          last_attempt_at?: string | null
+          message_id: string
+          screenshot_url: string
+        }
+        Update: {
+          created_at?: string
+          last_attempt_at?: string | null
+          message_id?: string
+          screenshot_url?: string
+        }
+        Relationships: []
       }
       field_groups: {
         Row: {
@@ -1001,6 +953,8 @@ export type Database = {
           icon: string | null
           id: string
           is_active: boolean | null
+          is_premium: boolean | null
+          is_realtor_only: boolean | null
           is_visible_form: boolean | null
           is_visible_table: boolean | null
           osm_key: string | null
@@ -1019,6 +973,8 @@ export type Database = {
           icon?: string | null
           id?: string
           is_active?: boolean | null
+          is_premium?: boolean | null
+          is_realtor_only?: boolean | null
           is_visible_form?: boolean | null
           is_visible_table?: boolean | null
           osm_key?: string | null
@@ -1037,6 +993,8 @@ export type Database = {
           icon?: string | null
           id?: string
           is_active?: boolean | null
+          is_premium?: boolean | null
+          is_realtor_only?: boolean | null
           is_visible_form?: boolean | null
           is_visible_table?: boolean | null
           osm_key?: string | null
@@ -1073,6 +1031,87 @@ export type Database = {
           is_active?: boolean | null
           message?: string
           type?: string | null
+        }
+        Relationships: []
+      }
+      manual_gift_operations: {
+        Row: {
+          action: string
+          actor_id: string
+          created_at: string
+          days: number | null
+          plan: string | null
+          request_id: string
+          result: Json
+          target_id: string
+        }
+        Insert: {
+          action: string
+          actor_id: string
+          created_at?: string
+          days?: number | null
+          plan?: string | null
+          request_id: string
+          result: Json
+          target_id: string
+        }
+        Update: {
+          action?: string
+          actor_id?: string
+          created_at?: string
+          days?: number | null
+          plan?: string | null
+          request_id?: string
+          result?: Json
+          target_id?: string
+        }
+        Relationships: []
+      }
+      parser_jobs: {
+        Row: {
+          city_name: string
+          completed_at: string | null
+          config: Json | null
+          created_at: string | null
+          error_message: string | null
+          id: string
+          lease_token: string | null
+          lease_until: string | null
+          logs: Json | null
+          progress: number | null
+          results: Json | null
+          started_at: string | null
+          status: string
+        }
+        Insert: {
+          city_name: string
+          completed_at?: string | null
+          config?: Json | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          lease_token?: string | null
+          lease_until?: string | null
+          logs?: Json | null
+          progress?: number | null
+          results?: Json | null
+          started_at?: string | null
+          status?: string
+        }
+        Update: {
+          city_name?: string
+          completed_at?: string | null
+          config?: Json | null
+          created_at?: string | null
+          error_message?: string | null
+          id?: string
+          lease_token?: string | null
+          lease_until?: string | null
+          logs?: Json | null
+          progress?: number | null
+          results?: Json | null
+          started_at?: string | null
+          status?: string
         }
         Relationships: []
       }
@@ -1121,6 +1160,45 @@ export type Database = {
           price_regex?: string
           sqm_regex?: string | null
           type?: string
+        }
+        Relationships: []
+      }
+      stripe_subscription_locks: {
+        Row: {
+          lease_token: string | null
+          lease_until: string | null
+          subscription_id: string
+        }
+        Insert: {
+          lease_token?: string | null
+          lease_until?: string | null
+          subscription_id: string
+        }
+        Update: {
+          lease_token?: string | null
+          lease_until?: string | null
+          subscription_id?: string
+        }
+        Relationships: []
+      }
+      stripe_webhook_receipts: {
+        Row: {
+          event_id: string
+          event_type: string
+          processed_at: string
+          subscription_id: string
+        }
+        Insert: {
+          event_id: string
+          event_type: string
+          processed_at?: string
+          subscription_id: string
+        }
+        Update: {
+          event_id?: string
+          event_type?: string
+          processed_at?: string
+          subscription_id?: string
         }
         Relationships: []
       }
@@ -1315,6 +1393,21 @@ export type Database = {
         }
         Relationships: []
       }
+      user_time_receipts: {
+        Row: {
+          last_recorded_at: string
+          user_id: string
+        }
+        Insert: {
+          last_recorded_at: string
+          user_id: string
+        }
+        Update: {
+          last_recorded_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_tracked_districts: {
         Row: {
           city: string
@@ -1355,7 +1448,17 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      popular_cities_view: {
+        Row: {
+          city_id: string | null
+          city_name: string | null
+          country_name: string | null
+          districts_count: number | null
+          is_available: boolean | null
+          total_visits: number | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       activate_license: { Args: { lookup_code: string }; Returns: Json }
@@ -1363,11 +1466,121 @@ export type Database = {
         Args: { col_name: string; col_type: string }
         Returns: undefined
       }
+      admin_geography_action: {
+        Args: { p_action: string; p_actor: string; p_payload: Json }
+        Returns: Json
+      }
+      admin_terminate_user_sessions: {
+        Args: { p_actor: string; p_target: string }
+        Returns: undefined
+      }
+      append_parser_logs: {
+        Args: { p_entries: Json; p_id: string; p_token: string }
+        Returns: undefined
+      }
+      begin_billing_account_deletion: {
+        Args: { p_actor: string; p_target: string }
+        Returns: Json
+      }
+      billing_deletion_ready: { Args: { p_target: string }; Returns: boolean }
+      billing_subscription_owner: {
+        Args: { p_subscription_id: string }
+        Returns: string
+      }
       calculate_stats_safely: { Args: never; Returns: undefined }
+      can_upload_district_photo: {
+        Args: { object_name: string }
+        Returns: boolean
+      }
       check_license_date: { Args: { lookup_code: string }; Returns: string }
+      claim_activity_event: {
+        Args: { event_kind: string; event_signature: string }
+        Returns: boolean
+      }
+      claim_ai_request: {
+        Args: {
+          p_daily_limit: number
+          p_hourly_limit: number
+          p_user_id: string
+        }
+        Returns: boolean
+      }
+      claim_billing_checkout: {
+        Args: {
+          p_plan: string
+          p_price: string
+          p_promotion?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      claim_billing_checkout_unfrozen: {
+        Args: {
+          p_plan: string
+          p_price: string
+          p_promotion?: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      claim_contact_request: {
+        Args: { p_email: string; p_user: string }
+        Returns: boolean
+      }
+      claim_parser_job: { Args: { p_config: Json }; Returns: Json }
+      claim_stripe_webhook: {
+        Args: { p_event_id: string; p_subscription_id: string }
+        Returns: Json
+      }
+      complete_promo_operation: {
+        Args: { p_actor: string; p_key: string; p_result: Json }
+        Returns: undefined
+      }
+      delete_feedback_message: {
+        Args: { p_actor: string; p_message: string }
+        Returns: Json
+      }
+      finish_feedback_deletion: {
+        Args: { p_actor: string; p_message: string }
+        Returns: undefined
+      }
+      finish_stripe_webhook: {
+        Args: {
+          p_event_id: string
+          p_event_type: string
+          p_record: Json
+          p_subscription_id: string
+          p_token: string
+        }
+        Returns: undefined
+      }
+      finish_stripe_webhook_live_user: {
+        Args: {
+          p_event_id: string
+          p_event_type: string
+          p_record: Json
+          p_subscription_id: string
+          p_token: string
+        }
+        Returns: undefined
+      }
       force_logout_user: {
         Args: { target_user_id: string }
         Returns: undefined
+      }
+      get_district_comments_with_users: {
+        Args: { p_district_id: string }
+        Returns: {
+          avatar_url: string
+          content: string
+          created_at: string
+          district_id: string
+          full_name: string
+          id: string
+          is_hidden: boolean
+          rating: number
+          user_id: string
+        }[]
       }
       get_popular_district_ids: {
         Args: { city_name: string; country_name: string }
@@ -1394,6 +1607,7 @@ export type Database = {
           name: string
         }[]
       }
+      get_total_users: { Args: never; Returns: number }
       get_weekly_activity_stats: {
         Args: { uid: string }
         Returns: {
@@ -1404,8 +1618,102 @@ export type Database = {
       }
       increment_user_time: { Args: { seconds_add: number }; Returns: undefined }
       is_super_admin: { Args: never; Returns: boolean }
+      manage_manual_gift:
+        | {
+            Args: {
+              p_action: string
+              p_actor: string
+              p_days?: number
+              p_plan?: string
+              p_target: string
+            }
+            Returns: Json
+          }
+        | {
+            Args: {
+              p_action: string
+              p_actor: string
+              p_days: number
+              p_plan: string
+              p_request_id: string
+              p_target: string
+            }
+            Returns: Json
+          }
+      pending_promo_operations: {
+        Args: { p_actor: string }
+        Returns: {
+          action: string
+          actor_id: string
+          completed_at: string | null
+          created_at: string
+          last_checked_at: string | null
+          operation_key: string
+          payload: Json
+          result: Json | null
+        }[]
+        SetofOptions: {
+          from: "*"
+          to: "admin_promo_operations"
+          isOneToOne: false
+          isSetofReturn: true
+        }
+      }
+      prepare_admin_user_deletion: {
+        Args: { p_actor: string; p_target: string }
+        Returns: boolean
+      }
+      prepare_promo_operation: {
+        Args: {
+          p_action: string
+          p_actor: string
+          p_key: string
+          p_payload: Json
+        }
+        Returns: Json
+      }
+      reconcile_city_population: {
+        Args: { p_city: string }
+        Returns: undefined
+      }
+      record_billing_account_cancellation: {
+        Args: { p_actor: string; p_result: Json; p_target: string }
+        Returns: boolean
+      }
       register_comparison_event: {
         Args: { districts_payload: Json }
+        Returns: undefined
+      }
+      release_billing_checkout: {
+        Args: { p_token: string; p_user_id: string }
+        Returns: undefined
+      }
+      release_stripe_webhook: {
+        Args: { p_subscription_id: string; p_token: string }
+        Returns: undefined
+      }
+      save_billing_checkout: {
+        Args: {
+          p_customer?: string
+          p_reset_plan?: string
+          p_reset_price?: string
+          p_reset_promotion?: string
+          p_session?: string
+          p_token: string
+          p_user_id: string
+        }
+        Returns: Json
+      }
+      save_district_bundle: {
+        Args: { p_actor: string; p_rows: Json }
+        Returns: undefined
+      }
+      save_global_notification: {
+        Args: { p_action: string; p_actor: string; p_payload: Json }
+        Returns: string
+      }
+      set_admin_role: {
+        Args: { p_actor: string; p_role: string; p_target: string }
         Returns: undefined
       }
       show_limit: { Args: never; Returns: number }
@@ -1418,7 +1726,15 @@ export type Database = {
         Args: { activity_type: string }
         Returns: undefined
       }
+      update_parser_job: {
+        Args: { p_config: Json; p_id: string; p_token: string }
+        Returns: undefined
+      }
       update_user_time: { Args: { seconds: number }; Returns: undefined }
+      write_district_record: {
+        Args: { p_data: Json; p_table: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never
@@ -1437,12 +1753,12 @@ export type Tables<
   DefaultSchemaTableNameOrOptions extends
     | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
         DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1466,11 +1782,11 @@ export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1491,11 +1807,11 @@ export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
     | keyof DefaultSchema["Tables"]
     | { schema: keyof DatabaseWithoutInternals },
-  TableName extends DefaultSchemaTableNameOrOptions extends {
+  TableName extends (DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1516,11 +1832,11 @@ export type Enums<
   DefaultSchemaEnumNameOrOptions extends
     | keyof DefaultSchema["Enums"]
     | { schema: keyof DatabaseWithoutInternals },
-  EnumName extends DefaultSchemaEnumNameOrOptions extends {
+  EnumName extends (DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-    : never = never,
+    : never) = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1533,11 +1849,11 @@ export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
     | keyof DefaultSchema["CompositeTypes"]
     | { schema: keyof DatabaseWithoutInternals },
-  CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
+  CompositeTypeName extends (PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
     ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-    : never = never,
+    : never) = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
@@ -1547,9 +1863,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {},
   },

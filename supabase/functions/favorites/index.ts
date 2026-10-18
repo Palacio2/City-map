@@ -1,13 +1,16 @@
-import { serve } from "https://deno.land/std@0.177.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.0";
+import { publishableKey } from '../_shared/keys.ts';
+import { districtPhotoUrl } from '../_shared/districtPhoto.ts';
+import { createClient } from "npm:@supabase/supabase-js@2.112.2";
+import { getDistrictDataClient, getUserAccess, getFieldsConfig, stripRestrictedFields, type UserAccess } from '../_shared/security.ts';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Cache-Control": "private, no-store",
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
@@ -21,7 +24,7 @@ serve(async (req) => {
 
     const supabaseClient = createClient(
       Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_ANON_KEY") ?? "",
+      publishableKey(),
       {
         global: { headers: { Authorization: `Bearer ${token}` } },
       }
@@ -34,7 +37,7 @@ serve(async (req) => {
     const action = url.pathname.split("/").pop();
     const userId = user.id;
 
-    if (action === "get") return await getFavorites(supabaseClient, userId);
+    if (action === "get") return await getFavorites(getDistrictDataClient(), userId, await getUserAccess(req));
     if (action === "add") return await addFavorite(supabaseClient, userId, req);
     if (action === "remove") return await removeFavorite(supabaseClient, userId, req);
 
@@ -49,25 +52,27 @@ serve(async (req) => {
   }
 });
 
-async function getFavorites(supabaseClient: any, userId: string) {
+async function getFavorites(supabaseClient: any, userId: string, access: UserAccess) {
+  const fields = await getFieldsConfig();
   const { data, error } = await supabaseClient
     .from("favorite_districts")
     .select(`
       created_at,
-      districts (
-        id, name,
+      districts!inner (
+        id, name, is_available,
         cities (name, countries (name)),
         district_photos (photo_url, description, is_main),
         district_filter_data (*)
       )
     `)
     .eq("user_id", userId)
+    .eq("districts.is_available", true)
     .order("created_at", { ascending: false });
 
   if (error) throw error;
 
   const favorites = data.map((fav: any) => {
-    const d = fav.districts;
+    const d = Array.isArray(fav.districts) ? fav.districts[0] : fav.districts;
     if (!d) return null;
 
     let mainPhoto = null;
@@ -80,21 +85,23 @@ async function getFavorites(supabaseClient: any, userId: string) {
     const rawFilterData = Array.isArray(d.district_filter_data)
       ? d.district_filter_data[0]
       : d.district_filter_data;
+    const filterData = rawFilterData ? { ...rawFilterData } : null;
+    stripRestrictedFields(filterData, fields, access);
 
     return {
       id: d.id,
       name: d.name,
       country: d.cities?.countries?.name || "",
       city: d.cities?.name || "",
-      photo_url: mainPhoto?.photo_url || null,
+      photo_url: mainPhoto?.photo_url ? districtPhotoUrl(d.id) : null,
       photo_description: mainPhoto?.description || d.name,
-      filterData: rawFilterData || null,
+      filterData,
       addedAt: fav.created_at
     };
   }).filter(Boolean);
 
-  return new Response(JSON.stringify({ favorites }), { 
-    headers: { ...corsHeaders, "Content-Type": "application/json" } 
+  return new Response(JSON.stringify({ favorites }), {
+    headers: { ...corsHeaders, "Content-Type": "application/json" }
   });
 }
 
@@ -107,9 +114,9 @@ async function addFavorite(supabaseClient: any, userId: string, req: Request) {
     .insert({ user_id: userId, district_id: districtId });
 
   if (error) {
-    if (error.code === '23505') { 
+    if (error.code === '23505') {
       return new Response(
-        JSON.stringify({ success: true, message: "Вже додано" }), 
+        JSON.stringify({ success: true, message: "Вже додано" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
@@ -117,7 +124,7 @@ async function addFavorite(supabaseClient: any, userId: string, req: Request) {
   }
 
   return new Response(
-    JSON.stringify({ success: true, message: "Додано" }), 
+    JSON.stringify({ success: true, message: "Додано" }),
     { headers: { ...corsHeaders, "Content-Type": "application/json" } }
   );
 }
@@ -135,7 +142,7 @@ async function removeFavorite(supabaseClient: any, userId: string, req: Request)
   if (error) throw error;
 
   return new Response(
-    JSON.stringify({ success: true, message: "Видалено" }), 
+    JSON.stringify({ success: true, message: "Видалено" }),
     { headers: { ...corsHeaders, "Content-Type": "application/json" } }
   );
 }

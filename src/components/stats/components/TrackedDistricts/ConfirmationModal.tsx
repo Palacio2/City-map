@@ -1,5 +1,3 @@
-// @ts-nocheck
-import React from 'react';
 import ReactDOM from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { FaExclamationTriangle } from 'react-icons/fa';
@@ -17,7 +15,7 @@ export default function ConfirmationModal({ isOpen, onClose, onConfirm, title, m
   if (!isOpen) return null;
 
   const modalContent = (
-    <div className="fixed inset-0 bg-slate-900/75 flex items-center justify-center z-[9999] backdrop-blur-sm p-4 animate-fadeIn" onClick={onClose}>
+    <div className="fixed inset-0 bg-slate-900/75 flex items-center justify-center z-[9999] backdrop-blur-xs p-4 animate-fadeIn" onClick={onClose}>
       <div className="bg-surface p-8 rounded-2xl w-full max-w-[400px] text-center shadow-modal border border-borderClient flex flex-col items-center animate-popIn" onClick={(e) => e.stopPropagation()}>
         <div className="w-16 h-16 bg-danger/10 rounded-full flex items-center justify-center mb-5 border border-danger/20">
           <FaExclamationTriangle className="text-danger text-3xl" />

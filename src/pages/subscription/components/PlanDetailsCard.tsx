@@ -22,43 +22,49 @@ export const PlanDetailsCard = memo(({
   const IconComponent = currentPlanConfig.icon;
 
   return (
-    <div className="w-full max-w-[600px] bg-surface border border-borderClient rounded-lg p-8 sm:px-10 sm:py-12 shadow-card transition-all hover:border-accent hover:shadow-hover animate-fadeIn mx-auto">
-      <div className="text-center mb-10 pb-8 border-b border-borderClient">
-        <div className="w-[72px] h-[72px] bg-accent/10 border border-accent/20 rounded-full flex items-center justify-center mx-auto mb-6 text-accent text-[32px]">
+    <div className="ui-glass-panel w-full max-w-2xl p-6 sm:p-10 md:p-14 relative overflow-hidden group transition-all duration-500 hover:shadow-hover hover:border-accent/50">
+      <div className="absolute inset-0 bg-gradient-to-br from-accent/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+      
+      <div className="text-center mb-8 sm:mb-12 pb-8 border-b border-borderClient relative z-10">
+        <div className="w-[72px] h-[72px] sm:w-[90px] sm:h-[90px] bg-accent/10 border border-accent/20 rounded-full flex items-center justify-center mx-auto mb-6 text-accent text-3xl sm:text-4xl shadow-xs">
           <IconComponent />
         </div>
-        <h2 className="font-heading text-3xl text-textMain mb-2 font-bold">
+        <h2 className="ui-heading-1 !text-3xl sm:!text-4xl !mb-3">
           {t(`subscription.plans.${selectedPlan}.name`)}
         </h2>
-        <div className="font-body text-2xl font-bold text-accent">
+        <div className="font-body text-2xl sm:text-3xl font-black text-accent">
           {isThisPlanActive ? t('subscription.actions.active') : t(`subscription.plans.${selectedPlan}.price`)}
         </div>
       </div>
       
-      <div className="mb-8">
-        <h3 className="font-heading text-textMain mb-4 text-[1.1rem] text-center font-semibold uppercase tracking-wide">
+      <div className="mb-8 relative z-10">
+        <h3 className="ui-heading-2 !text-lg text-center uppercase tracking-widest text-textSecondary opacity-80 !mb-6">
           {t('subscription.labels.included')}
         </h3>
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-4 sm:gap-5">
           {currentPlanConfig.features.map((featureKey) => (
-            <div key={featureKey} className="flex items-start gap-3 text-textMain text-[0.95rem] leading-relaxed">
-              <FaCheck className="text-success min-w-[16px] mt-1" />
-              <span>{t(`subscription.features.${featureKey}`)}</span>
+            <div key={featureKey} className="flex items-start gap-4">
+              <div className="mt-1 shrink-0 w-6 h-6 rounded-full bg-success/15 flex items-center justify-center">
+                <FaCheck className="text-success text-[12px]" />
+              </div>
+              <span className="ui-text-body !mb-0">{t(`subscription.features.${featureKey}`)}</span>
             </div>
           ))}
         </div>
       </div>
       
       {(currentPlanConfig.disabledFeatures?.length ?? 0) > 0 && (
-        <div className="opacity-60 pt-6 border-t border-dashed border-borderClient mb-8">
-          <h3 className="font-heading text-textMain mb-4 text-[1.1rem] text-center font-semibold uppercase tracking-wide">
+        <div className="pt-8 border-t border-dashed border-borderClient mb-10 relative z-10 opacity-70">
+          <h3 className="ui-heading-2 !text-lg text-center uppercase tracking-widest text-textSecondary !mb-6">
             {t('subscription.labels.disabled')}
           </h3>
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-4 sm:gap-5">
             {currentPlanConfig.disabledFeatures.map((featureKey) => (
-              <div key={featureKey} className="flex items-start gap-3 text-textSecondary text-[0.9rem]">
-                <FaTimes className="text-danger min-w-[16px] mt-1" />
-                <span>{t(`subscription.features.${featureKey}`)}</span>
+              <div key={featureKey} className="flex items-start gap-4">
+                <div className="mt-1 shrink-0 w-6 h-6 rounded-full bg-danger/10 flex items-center justify-center">
+                  <FaTimes className="text-danger text-[12px]" />
+                </div>
+                <span className="ui-text-body !mb-0 line-through opacity-80">{t(`subscription.features.${featureKey}`)}</span>
               </div>
             ))}
           </div>
@@ -67,7 +73,7 @@ export const PlanDetailsCard = memo(({
       
       <button
         type="button"
-        className="w-full p-5 bg-accent text-white border border-transparent rounded-md font-heading text-base font-semibold tracking-wide uppercase cursor-pointer transition-all mt-4 shadow-sm hover:not(:disabled):-translate-y-0.5 hover:not(:disabled):shadow-hover hover:not(:disabled):brightness-110 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none"
+        className="ui-button-primary w-full shadow-md hover:shadow-lg relative z-10 !py-4 sm:!py-5"
         onClick={onPlanSelection}
         disabled={hasActivePaidSubscription || (selectedPlan === 'free' && !isThisPlanActive)}
       >
@@ -81,7 +87,7 @@ export const PlanDetailsCard = memo(({
       </button>
       
       {hasActivePaidSubscription && !isThisPlanActive && (
-        <p className="mt-6 text-warning text-[0.9rem] flex items-center justify-center gap-2 p-3 bg-warning/10 rounded-md">
+        <p className="mt-6 text-warning text-sm sm:text-base flex items-center justify-center gap-2 p-4 bg-warning/10 border border-warning/20 rounded-xl relative z-10">
           <FaLock /> {t('subscription.status.wait_expire')}
         </p>
       )}

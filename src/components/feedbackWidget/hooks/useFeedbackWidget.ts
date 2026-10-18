@@ -32,17 +32,14 @@ export const useFeedbackWidget = () => {
     mutationFn: async () => {
       let uploadedScreenshotUrl = null;
       if (screenshotFile) {
-        const fileName = `feedback_${Date.now()}.jpg`;
+        if (!session?.user.id) throw new Error('Sign in to attach a screenshot');
+        const fileName = `${session.user.id}/${crypto.randomUUID()}.jpg`;
         const { error: uploadError } = await supabase.storage
           .from('feedback_images')
           .upload(fileName, screenshotFile);
 
-        if (!uploadError) {
-          const { data: publicUrlData } = supabase.storage
-            .from('feedback_images')
-            .getPublicUrl(fileName);
-          uploadedScreenshotUrl = publicUrlData.publicUrl;
-        }
+        if (uploadError) throw uploadError;
+        uploadedScreenshotUrl = fileName;
       }
 
       const payload: FeedbackPayload = {
@@ -50,7 +47,7 @@ export const useFeedbackWidget = () => {
         message: formData.message,
         type: formData.type,
         user_id: session?.user?.id,
-        page_url: globalThis.location.href,
+        page_url: globalThis.location.origin + globalThis.location.pathname,
         screenshot_url: uploadedScreenshotUrl,
         screen_size: `${globalThis.innerWidth}x${globalThis.innerHeight}`,
         browser_info: navigator.userAgent
@@ -94,7 +91,7 @@ export const useFeedbackWidget = () => {
       setIsClosing(false);
       setShowHint(false);
       setErrorMsg('');
-    }, 250);
+    }, 400);
   };
 
   const toggleModal = () => {

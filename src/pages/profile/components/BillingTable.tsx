@@ -1,104 +1,85 @@
 import { useTranslation } from 'react-i18next';
-import { FaCheckCircle, FaTimesCircle, FaChevronDown, FaFileInvoiceDollar } from 'react-icons/fa';
-import { useFormat } from '@hooks/useFormat';
-import type { BillingItem } from '../types';
+import { FaCheckCircle, FaTimesCircle } from 'react-icons/fa';
+import { formatBillingAmount } from '../utils/billingAmount';
+import type { BillingTableProps } from '../types';
 
-interface BillingTableProps {
-  readonly history: BillingItem[];
-  readonly expandedItems: Record<string, boolean>;
-  readonly onToggleRow: (id: string) => void;
-}
-
-export const BillingTable = ({ history, expandedItems, onToggleRow }: BillingTableProps) => {
-  const { t } = useTranslation('db');
-  const { formatPrice, getCurrencyInfo } = useFormat();
-  
-  const currencyInfo = getCurrencyInfo('EU');
+export const BillingTable = ({ history }: BillingTableProps) => {
+  const { t, i18n } = useTranslation('db');
 
   if (!history || history.length === 0) {
     return <div className="p-16 text-center text-textSecondary text-base font-medium">{t('billing.no_history')}</div>;
   }
 
   return (
-    <div className="flex flex-col sm:gap-0 gap-4 p-4 sm:p-0">
+    <div className="flex flex-col sm:gap-0 gap-3 p-2 sm:p-0">
       {history.map((item) => {
-        const planKey = item.plan_name === 'pro' ? 'premium' : (item.plan_name || 'free');
-        const planName = t(`billing.plans.${planKey}.name`);
+        const planKey = item.plan_name === 'pro' ? 'premium' : item.plan_name;
+        const planName = planKey ? t(`billing.plans.${planKey}.name`) : (item.invoice_number || item.id);
         const isScheduledForCancel = item.cancel_at && new Date(item.cancel_at) > new Date();
         const dateStr = new Date(item.created_at).toLocaleDateString();
-        const amountStr = formatPrice(item.amount, currencyInfo);
-        const invoiceId = item.payment_id ? item.payment_id.replace(/^(TX_|SUB_)/, '').slice(-8).toUpperCase() : '---';
+        const amountStr = formatBillingAmount(item.amount_minor, item.currency, i18n.resolvedLanguage);
         const safeStatus = item.status || 'unknown';
         const statusLower = safeStatus.toLowerCase();
         
         let statusClass = 'text-textSecondary bg-hover border border-borderClient';
-        let rowBorderClass = 'border-l-4 border-l-textSecondary';
         let StatusIcon = FaCheckCircle;
         
-        if (statusLower === 'active') {
+        if (['paid', 'active'].includes(statusLower)) {
           statusClass = 'text-success bg-success/10 border border-success/20';
-          rowBorderClass = 'border-l-4 border-l-success';
         } else if (['cancelled', 'canceled', 'incomplete_expired', 'incomplete', 'unpaid', 'past_due'].includes(statusLower)) {
           statusClass = 'text-danger bg-danger/10 border border-danger/20';
           StatusIcon = FaTimesCircle;
-          rowBorderClass = 'border-l-4 border-l-danger';
         }
         
-        const statusText = isScheduledForCancel
+        const statusText = statusLower === 'paid' ? t('payment.success.status_ok') : isScheduledForCancel
           ? t('billing.ending_soon')
           : t(`billing.status_map.${statusLower}`);
           
-        const isExpanded = Boolean(expandedItems[item.id]);
 
         return (
           <div
             key={item.id}
-            className={`sm:grid sm:grid-cols-[1.2fr_1.5fr_0.8fr_1.2fr_1fr] sm:px-6 sm:py-5 sm:items-center sm:border-b sm:border-borderClient sm:bg-surface sm:hover:bg-hover sm:cursor-default sm:border-l-0 sm:shadow-none sm:rounded-none sm:last:border-b-0 flex flex-wrap p-5 rounded-xl border border-borderClient bg-surface shadow-sm relative cursor-pointer overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md active:-translate-y-0.5 active:shadow-md ${rowBorderClass} ${isExpanded ? 'shadow-md -translate-y-0.5' : ''}`}
-            onClick={() => {
-              if (window.innerWidth <= 640) onToggleRow(item.id);
-            }}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && window.innerWidth <= 640) onToggleRow(item.id);
-            }}
-            tabIndex={0}
-            role="button"
+            className="flex flex-col sm:grid sm:grid-cols-[1fr_1fr_1fr_1fr] p-3 sm:px-5 sm:py-3 sm:items-center sm:border-b sm:border-borderClient sm:bg-transparent sm:hover:bg-black/[0.02] sm:dark:hover:bg-white/[0.02] sm:rounded-none sm:border-x-0 sm:border-t-0 sm:shadow-none sm:last:border-b-0 rounded-2xl border border-black/5 dark:border-white/10 bg-surface shadow-subtle relative transition-all duration-300"
           >
-            <div className="w-[60%] sm:w-auto text-base sm:text-[0.95rem] font-semibold text-textMain font-mono flex items-center gap-3 sm:gap-0 order-1 sm:order-none mb-1 sm:mb-0">
-              <span className="sm:hidden text-xs text-textSecondary font-bold uppercase tracking-widest font-sans">{t('billing.table.date')}</span>
-              <span>{dateStr}</span>
+            {/* MOBILE LAYOUT (hidden on sm) */}
+            <div className="flex flex-col gap-2 sm:hidden">
+              <div className="flex justify-between items-center pb-2 border-b border-black/5 dark:border-white/5">
+                <span className="text-[0.85rem] font-bold text-textMain">{planName}</span>
+                <span className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[0.6rem] font-bold uppercase tracking-widest ${statusClass}`}>
+                  <StatusIcon size={10} />
+                  {statusText}
+                </span>
+              </div>
+              
+              <div className="flex justify-between items-center pt-1">
+                <div className="flex flex-col">
+                  <span className="text-[0.6rem] text-textSecondary font-bold uppercase tracking-widest mb-0.5">{t('billing.table.date')}</span>
+                  <span className="text-[0.8rem] font-medium text-textMain">{dateStr}</span>
+                </div>
+                <div className="flex flex-col items-end">
+                  <span className="text-[0.6rem] text-textSecondary font-bold uppercase tracking-widest mb-0.5">{t('billing.table.amount')}</span>
+                  <span className="text-[0.9rem] font-bold text-textMain">{amountStr}</span>
+                </div>
+              </div>
             </div>
-            
-            <div className={`text-textSecondary font-semibold ${isExpanded ? 'flex justify-between items-center w-full py-3 mt-3 border-t border-dashed border-borderClient order-3' : 'hidden sm:block'} sm:order-none`}>
-              <span className="sm:hidden text-[0.8rem] text-textSecondary font-bold uppercase tracking-widest">{t('billing.table.plan')}</span>
-              <span className="text-textMain font-bold sm:font-semibold">{planName}</span>
-            </div>
-            
-            <div className="w-[40%] sm:w-auto flex justify-end sm:justify-start items-center gap-2.5 font-bold text-textMain font-heading tracking-tight order-2 sm:order-none mb-1 sm:mb-0">
-              <span className="sm:hidden text-[0.8rem] text-textSecondary font-bold uppercase tracking-widest font-sans">{t('billing.table.amount')}</span>
-              <span className="text-lg sm:text-[0.95rem]">{amountStr}</span>
-              <span className={`sm:hidden inline-flex text-accent text-[0.9rem] transition-transform duration-300 ${isExpanded ? 'rotate-180' : ''}`}>
-                <FaChevronDown />
-              </span>
-            </div>
-            
-            <div className={`flex items-center ${isExpanded ? 'flex justify-between w-full py-3 border-t border-dashed border-borderClient order-4' : 'hidden sm:flex'} sm:order-none`}>
-              <span className="sm:hidden text-[0.8rem] text-textSecondary font-bold uppercase tracking-widest">{t('billing.table.status')}</span>
-              <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.75rem] font-bold uppercase whitespace-nowrap tracking-widest ${statusClass}`}>
-                <StatusIcon size={12} />
-                {statusText}
-              </span>
-            </div>
-            
-            <div className={`flex justify-end ${isExpanded ? 'flex justify-center w-full mt-2 pt-2 border-none order-5' : 'hidden sm:flex'} sm:order-none`}>
-              <button
-                type="button"
-                className="font-mono text-[0.8rem] text-textSecondary bg-transparent px-3 py-1.5 sm:px-3 sm:py-1.5 rounded-md border border-borderClient flex items-center justify-center gap-2 font-bold cursor-pointer transition-all hover:border-accent hover:text-textMain hover:bg-hover hover:-translate-y-[1px] w-full sm:w-auto"
-                title={t('billing.download_invoice')}
-                onClick={(e) => e.stopPropagation()}
-              >
-                <FaFileInvoiceDollar className="text-sm" />
-                <span>{invoiceId}</span>
-              </button>
+
+            {/* DESKTOP LAYOUT (hidden below sm) */}
+            <div className="hidden sm:contents">
+              <div className="text-[0.8rem] font-medium text-textSecondary font-sans">
+                {dateStr}
+              </div>
+              <div className="text-[0.85rem] font-bold text-textMain font-sans flex items-center gap-2">
+                <div className={`w-1.5 h-1.5 rounded-full ${['paid', 'active'].includes(statusLower) ? 'bg-success' : 'bg-danger'}`} />
+                {planName}
+              </div>
+              <div className="font-bold text-textMain font-sans text-[0.85rem]">
+                {amountStr}
+              </div>
+              <div className="font-sans flex justify-end">
+                <span className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-[0.65rem] font-bold uppercase tracking-widest ${statusClass}`}>
+                  {statusText}
+                </span>
+              </div>
             </div>
           </div>
         );

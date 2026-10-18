@@ -1,14 +1,19 @@
 import { z } from 'zod';
-import type { DistrictFieldType, DynamicDistrictConfig } from '@config/districtFields';
+import type { DynamicDistrictConfig } from '@config/districtFields';
 import { UserAccess, getVisibleConfig } from './accessPolicy';
+import type {
+  FieldValue, GeneralStats, TransformedFieldData,
+  TransformedCategory, TransformedFilterData,
+  DistrictData, TransformedDistrict
+} from '@/shared/types/district.types';
 
-export const RawDistrictDataSchema = z.object({
+const RawDistrictDataSchema = z.object({
   district_filter_data: z.union([
-    z.array(z.record(z.string(), z.unknown())), 
+    z.array(z.record(z.string(), z.unknown())),
     z.record(z.string(), z.unknown())
   ]).optional().nullable(),
   district_data: z.union([
-    z.array(z.record(z.string(), z.unknown())), 
+    z.array(z.record(z.string(), z.unknown())),
     z.record(z.string(), z.unknown())
   ]).optional().nullable(),
   filterData: z.record(z.string(), z.object({
@@ -18,51 +23,7 @@ export const RawDistrictDataSchema = z.object({
   }).passthrough()).optional().nullable(),
 }).passthrough();
 
-export type FieldValue = string | number | boolean | null;
-
-export interface GeneralStats {
-  propertyPrice: number | null;
-  populationDensity: number | null;
-  greenSpaces: number | null;
-  population: number | null;
-  averageSalary: number | null;
-  unemploymentRate: number | null;
-  average_rent_price: number | null;
-}
-
-export interface TransformedFieldData {
-  key: string;
-  value: FieldValue;
-  type: DistrictFieldType;
-}
-
-export interface TransformedCategory {
-  key: string;
-  rating: number;
-  icon: string;
-  fields: Record<string, TransformedFieldData>;
-}
-
-export type TransformedFilterData = {
-  general: GeneralStats;
-} & Record<string, TransformedCategory | GeneralStats>;
-
-export interface DistrictData {
-  id?: string | number;
-  name?: string;
-  photo_url?: string;
-  updated_at?: string | null;
-  filterData?: Record<string, unknown> | Record<string, unknown>[];
-  district_data?: Record<string, unknown> | Record<string, unknown>[];
-  population?: number;
-  average_salary?: number;
-  [key: string]: unknown;
-}
-
-export interface TransformedDistrict extends DistrictData {
-  filterData: TransformedFilterData;
-  updated_at: string | null;
-}
+export type { FieldValue, GeneralStats, TransformedFieldData, TransformedCategory, TransformedFilterData, DistrictData, TransformedDistrict };
 
 const safeParseFloat = (value: unknown): number | null =>
   (value !== null && value !== undefined) && !Number.isNaN(Number.parseFloat(String(value))) ? Number.parseFloat(String(value)) : null;
@@ -71,7 +32,7 @@ const safeParseInt = (value: unknown): number | null =>
   (value !== null && value !== undefined) && !Number.isNaN(Number.parseInt(String(value))) ? Number.parseInt(String(value)) : null;
 
 const PARSERS: Record<string, (v: unknown) => FieldValue> = {
-  number: safeParseInt,
+  number: safeParseFloat,
   price: safeParseFloat,
   crimeLevel: safeParseFloat,
   rating_10: safeParseFloat,
@@ -87,7 +48,7 @@ const PARSERS: Record<string, (v: unknown) => FieldValue> = {
   text: (v: unknown) => (typeof v === 'string' ? v : String(v || '') || null),
 };
 
-export const transformDistrictForDisplay = (
+const transformDistrictForDisplay = (
   district: DistrictData | null,
   rawConfig: DynamicDistrictConfig | null,
   access: UserAccess
@@ -99,12 +60,12 @@ export const transformDistrictForDisplay = (
   else if (district.filterData && typeof district.filterData === 'object') rawData = district.filterData as Record<string, unknown>;
   else if (district.district_data) rawData = Array.isArray(district.district_data) ? district.district_data[0] as Record<string, unknown> : district.district_data as Record<string, unknown>;
   else if (district.population !== undefined || district.average_salary !== undefined) rawData = district as Record<string, unknown>;
-  
+
   const filterData = rawData || {};
   const transformedFilterData: TransformedFilterData = {
     general: {
       propertyPrice: safeParseFloat(filterData.average_sale_price_sqm),
-      populationDensity: safeParseInt(filterData.population_density),
+      populationDensity: safeParseFloat(filterData.population_density),
       greenSpaces: safeParseFloat(filterData.green_spaces_percent),
       population: safeParseInt(filterData.population),
       averageSalary: safeParseFloat(filterData.average_salary),
@@ -129,7 +90,10 @@ export const transformDistrictForDisplay = (
         type: field.type
       };
     });
-    transformedFilterData[category.key] = transformedCategory;
+    // Keep the summary contract while retaining the dynamic general fields.
+    transformedFilterData[category.key] = category.key === 'general'
+      ? { ...transformedCategory, ...transformedFilterData.general }
+      : transformedCategory;
   });
 
   return {
@@ -150,36 +114,31 @@ export const transformDistrictsForDisplay = (
     .filter((d): d is TransformedDistrict => d !== null);
 };
 
-export const getFlatFilterData = (district: TransformedDistrict | null): TransformedFilterData | null => district?.filterData ?? null;
-
-export const getRawDB = (d: unknown): Record<string, unknown> => {
-  const parsed = RawDistrictDataSchema.safeParse(d);
-  if (!parsed.success) return {};
-  const obj = parsed.data;
-  if (Array.isArray(obj.district_filter_data)) return obj.district_filter_data[0] || {};
-  if (obj.district_filter_data) return obj.district_filter_data;
-  if (Array.isArray(obj.district_data)) return obj.district_data[0] || {};
-  if (obj.district_data) return obj.district_data;
-  return obj;
-};
-
 export const extractBaseVal = (d: unknown, key: string): number | null => {
   if (!d) return null;
-  const raw = getRawDB(d);
+  const parsed = RawDistrictDataSchema.safeParse(d);
+  if (!parsed.success) return null;
+  const obj = parsed.data;
+
+  let raw: Record<string, unknown> = obj;
+  if (Array.isArray(obj.district_filter_data)) raw = obj.district_filter_data[0] || {};
+  else if (obj.district_filter_data) raw = obj.district_filter_data;
+  else if (Array.isArray(obj.district_data)) raw = obj.district_data[0] || {};
+  else if (obj.district_data) raw = obj.district_data;
+
   const altKeys: Record<string, string[]> = {
     'average_sale_price_sqm': ['average_property_price', 'propertyPrice', 'average_sale_price'],
     'average_rent_price': ['rentPrice', 'average_rent'],
     'population': ['pop']
   };
-  
+
   if (raw[key] !== undefined && raw[key] !== null) return Number(raw[key]);
   for (const alt of (altKeys[key] || [])) {
     if (raw[alt] !== undefined && raw[alt] !== null) return Number(raw[alt]);
   }
-  
-  const parsed = RawDistrictDataSchema.safeParse(d);
-  if (parsed.success && parsed.data.filterData) {
-    const filterDataObj = parsed.data.filterData;
+
+  if (obj.filterData) {
+    const filterDataObj = obj.filterData;
     for (const catKey of Object.keys(filterDataObj)) {
       const fields = filterDataObj[catKey]?.fields;
       if (fields) {
@@ -195,16 +154,24 @@ export const extractBaseVal = (d: unknown, key: string): number | null => {
 
 export const extractRating = (d: unknown, catKey: string): number | null => {
   if (!d) return null;
-  const raw = getRawDB(d);
+  const parsed = RawDistrictDataSchema.safeParse(d);
+  if (!parsed.success) return null;
+  const obj = parsed.data;
+
+  let raw: Record<string, unknown> = obj;
+  if (Array.isArray(obj.district_filter_data)) raw = obj.district_filter_data[0] || {};
+  else if (obj.district_filter_data) raw = obj.district_filter_data;
+  else if (Array.isArray(obj.district_data)) raw = obj.district_data[0] || {};
+  else if (obj.district_data) raw = obj.district_data;
+
   const ratingKeys = [`${catKey}_rating`, `${catKey}Rating`, 'rating', 'qualityRating'];
-  
+
   for (const rk of ratingKeys) {
     if (raw[rk] !== undefined && raw[rk] !== null && Number(raw[rk]) > 0) return Number(raw[rk]);
   }
-  
-  const parsed = RawDistrictDataSchema.safeParse(d);
-  if (parsed.success && parsed.data.filterData) {
-    const cat = parsed.data.filterData[catKey];
+
+  if (obj.filterData) {
+    const cat = obj.filterData[catKey];
     if (cat) {
       if (cat.rating !== undefined && cat.rating !== null && Number(cat.rating) > 0) return Number(cat.rating);
       if (cat.qualityRating !== undefined && cat.qualityRating !== null && Number(cat.qualityRating) > 0) return Number(cat.qualityRating);

@@ -39,7 +39,7 @@ export const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>(
               if (blockType) handleKeyDown(e, blockType === 'name');
               onKeyDown?.(e);
             }}
-            className={`w-full py-[0.85rem] px-4 border border-borderClient rounded-md text-[16px] sm:text-base bg-body text-textMain transition-all font-body focus:border-accent focus:shadow-[0_0_0_3px_rgba(197,164,126,0.15)] focus:outline-none ${error ? '!border-danger !shadow-[0_0_0_3px_rgba(239,68,68,0.1)]' : ''}`}
+            className={`w-full py-4 px-5 border-none ring-1 ring-borderClient rounded-2xl text-[16px] sm:text-base bg-body text-textMain transition-all font-body focus:ring-2 focus:outline-hidden ${error ? 'ring-danger focus:ring-danger' : 'focus:ring-accent'}`}
             {...props}
           />
           {isPassword && (

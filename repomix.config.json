@@ -1,15 +1,19 @@
 {
   "output": {
-    "filePath": "city-maps-context.xml",
+    "filePath": "kvartals-context.xml",
     "style": "xml",
-    "headerText": "Project context for city-maps-client (Vite + React 18 + TanStack Query v5 + Leaflet + Supabase)",
+    "headerText": "Project context for kvartals-client (Vite + React 18 + TanStack Query v5 + Leaflet + Supabase)",
     "topFilesFirst": true,
     "showLineNumbers": false,
     "removeComments": true,
     "removeEmptyLines": true
   },
-  "include": [
-    "src/pages/admin/**/*",
+"include": [
+    "src/pages/districtMap/**/*",
+    "src/App.tsx",
+    "src/client.css",
+    "src/index.css",
+    "src/main.tsx",
     "eslint.config.js",
     "index.html",
     "jsconfig.json",
@@ -26,6 +30,9 @@
   "ignore": {
     "customPatterns": [
       "src/components/stats/**",
+              "src/pages/admin/**/*",
+              "server/**/*",
+
       "**/node_modules/**",
       "**/dist/**",
       "**/build/**",
@@ -48,7 +55,7 @@
       "**/*.spec.tsx",
       "**/*.test.tsx",
       "**/vite-env.d.ts",
-      "city-maps-context.xml",
+      "kvartals-context.xml",
       "repomix-output.xml"
     ]
   }

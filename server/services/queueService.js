@@ -1,21 +1,36 @@
-import fs from "fs";
-import { PARSER_CONFIG } from "../config/parserConfig.js";
+import { supabase } from '../utils/supabase.js';
 
+const rpc = async (name, args) => {
+    const { data, error } = await supabase.rpc(name, args);
+    if (error) throw error;
+    return data;
+};
 export const queueService = {
-    save: (data) => {
-        fs.writeFileSync(PARSER_CONFIG.PATHS.QUEUE_FILE, JSON.stringify(data, null, 2));
+    async acquire(config) {
+        const job = await rpc('claim_parser_job', { p_config: config });
+        if (!job) return false;
+        config.jobId = job.id;
+        config.leaseToken = job.lease_token;
+        config.status = 'running';
+        return true;
     },
-    get: () => {
-        if (!fs.existsSync(PARSER_CONFIG.PATHS.QUEUE_FILE)) return null;
-        try {
-            return JSON.parse(fs.readFileSync(PARSER_CONFIG.PATHS.QUEUE_FILE, 'utf8'));
-        } catch { return null; }
+    async save(config) {
+        if (!config.jobId || !config.leaseToken) throw new Error('Parser lease required');
+        await rpc('update_parser_job', { p_id: config.jobId, p_token: config.leaseToken, p_config: config });
     },
-    clear: () => {
-        if (fs.existsSync(PARSER_CONFIG.PATHS.QUEUE_FILE)) fs.unlinkSync(PARSER_CONFIG.PATHS.QUEUE_FILE);
+    async heartbeat(config) {
+        await rpc('update_parser_job', { p_id: config.jobId, p_token: config.leaseToken, p_config: null });
     },
-    isLocked: () => {
-        const q = queueService.get();
-        return q && q.status === 'processing';
-    }
+    async addLogsBatch(entries, jobId, token) {
+        if (!jobId || !token) throw new Error('Log job lease required');
+        await rpc('append_parser_logs', { p_id: jobId, p_token: token, p_entries: entries });
+    },
+    async get() {
+        const { data, error } = await supabase.from('parser_jobs').select('*')
+            .in('status', ['pending', 'running']).gt('lease_until', new Date().toISOString())
+            .order('created_at', { ascending: false }).limit(1).maybeSingle();
+        if (error) throw error;
+        return data;
+    },
+    async isLocked() { return !!(await queueService.get()); },
 };

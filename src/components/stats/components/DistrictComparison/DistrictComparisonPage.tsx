@@ -1,9 +1,9 @@
-// @ts-nocheck
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaArrowLeft, FaFilePdf, FaTimes } from 'react-icons/fa';
 import { fetchDistrictsByIds } from '@api/districtsApi'; 
+import { registerComparisonEvent } from '../../api/statsApi';
 import LocationSelectorModal, { DistrictSelection } from '../PopularDistricts/LocationSelectorModal';
 import ComparisonTable from './ComparisonTable';
 import PdfReportTemplate from './PdfReportTemplate';
@@ -12,10 +12,11 @@ import Loader from '@components/loader/Loader';
 import { transformDistrictsForDisplay, TransformedDistrict } from '@utils/dataTransformers';
 import { usePdfExport } from '@hooks/usePdfExport';
 import { useFiltersConfig } from '@hooks/useFiltersConfig';
-import { useSubscription } from '@/pages/subscription/contex/SubscriptionContext';
+import { useSubscription } from '@/pages/subscription/context/SubscriptionContext';
+import { STORAGE_KEYS, BUSINESS_CONSTANTS } from '@config/constants';
 
-const MAX_SELECTION = 4;
-const STORAGE_KEY = 'comparison_selected_districts';
+const MAX_SELECTION = BUSINESS_CONSTANTS.MAX_COMPARISON_SELECTION;
+const STORAGE_KEY = STORAGE_KEYS.COMPARISON_DISTRICTS;
 
 export default function DistrictComparisonPage() {
   const { t } = useTranslation('db');
@@ -42,27 +43,35 @@ export default function DistrictComparisonPage() {
   }, [selectedDistricts]);
 
   useEffect(() => {
+    let active = true;
     if (!config || selectedDistricts.length === 0) {
       setDisplayDistricts([]);
+      setIsLoadingData(false);
       return;
     }
 
     const loadDistricts = async () => {
       setIsLoadingData(true);
       try {
-        const ids = selectedDistricts.map(d => d.id);
+        const ids = selectedDistricts.map(d => d.id).filter((id): id is string | number => id !== undefined);
         const rawData = await fetchDistrictsByIds(ids);
+        if (!active) return;
         const transformed = transformDistrictsForDisplay(rawData, config, { isFree, isRealtor });
         const sorted = selectedDistricts.map(sd => transformed.find(td => td.id === sd.id)).filter(Boolean) as TransformedDistrict[];
         setDisplayDistricts(sorted);
+
+        if (sorted.length > 1) {
+          registerComparisonEvent(sorted).catch(console.error);
+        }
       } catch (error) {
         console.error(error);
       } finally {
-        setIsLoadingData(false);
+        if (active) setIsLoadingData(false);
       }
     };
 
     loadDistricts();
+    return () => { active = false; };
   }, [selectedDistricts, config, isFree, isRealtor]);
 
   const handleAddDistricts = (selections: DistrictSelection[]) => {
@@ -82,12 +91,17 @@ export default function DistrictComparisonPage() {
     setSelectedDistricts([]);
   };
 
+  const navigate = useNavigate();
+
   return (
     <div className="flex flex-col w-full max-w-[1440px] mx-auto px-4 md:px-6 xl:px-8 py-6 md:py-8 box-border min-h-[calc(100vh-var(--header-height))] animate-fadeIn">
       <div className="mb-6 flex items-center justify-between">
-         <Link to="/profile/stats/" className="flex items-center gap-2 text-textSecondary hover:text-accent transition-colors font-semibold text-[0.95rem] no-underline">
-            <FaArrowLeft /> {t('stats.actions.back')}
-         </Link>
+        <button 
+          onClick={() => navigate(-1)} 
+          className="flex items-center gap-2 text-textSecondary hover:text-accent transition-colors font-semibold text-[0.95rem] bg-transparent border-none cursor-pointer p-0 m-0"
+        >
+          <FaArrowLeft /> {t('stats.actions.back')}
+        </button>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
@@ -123,7 +137,7 @@ export default function DistrictComparisonPage() {
       </div>
       
       {selectedDistricts.length === 0 ? (
-        <div className="flex flex-col items-center justify-center p-16 bg-surface rounded-xl border border-borderClient border-dashed text-textSecondary text-center">
+        <div className="flex flex-col items-center justify-center p-16 bg-surface dark:bg-white/5 rounded-xl border border-borderClient dark:border-white/10 border-dashed text-textSecondary text-center">
           <div className="text-5xl mb-4 opacity-50 grayscale">⚖️</div>
           <h3 className="m-0 font-heading text-xl font-bold text-textMain">{t('stats.comparison.empty_title')}</h3>
           <p className="mt-2 mb-6 text-[0.95rem] max-w-[400px]">{t('stats.comparison.empty_text')}</p>

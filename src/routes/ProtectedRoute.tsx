@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import type { ReactNode } from 'react';
-import { useSubscription } from '@subscription/contex/SubscriptionContext';
+import { useSubscription } from '@subscription/context/SubscriptionContext';
 
 interface ProtectedRouteProps {
   readonly children: ReactNode;

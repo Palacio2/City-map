@@ -1,33 +1,26 @@
-import React, { useState, useCallback, ReactNode } from 'react';
+import React, { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FaChevronDown, FaChartBar, FaMapMarkerAlt, FaHistory, FaBookmark, FaCalculator } from 'react-icons/fa';
-import { useSubscription } from '@/pages/subscription/contex/SubscriptionContext';
+import { useSubscription } from '@/pages/subscription/context/SubscriptionContext';
+import { FEATURES_CONFIG } from '@/config/features';
 import StatsCards from './components/StatsCards/StatsCards';
 import { RequireSubscription } from '@/shared/components/guards';
 import WeeklyChart from './components/WeeklyChart/WeeklyChart';
 import PopularDistricts from './components/PopularDistricts/PopularDistricts';
 import TrackedDistricts from './components/TrackedDistricts/TrackedDistricts';
 import LastActivity from './components/LastActivity/LastActivity';
-import InvestmentCalculator from './components/InvestmentCalculato/InvestmentCalculator';
-import { DashboardStats, WeeklyActivityData } from './hooks/useStatsData';
+import InvestmentCalculator from './components/InvestmentCalculator/InvestmentCalculator';
+import { CollapsibleSectionProps, StatsOverviewProps } from './types';
+import { useCollapsibleSections } from '@/shared/hooks/useCollapsibleSections';
 
 const STORAGE_KEY = 'stats_page_sections_state';
 
-interface CollapsibleSectionProps {
-  id: string;
-  title: string;
-  icon?: React.ElementType;
-  children: ReactNode;
-  isOpen: boolean;
-  onToggle: (id: string) => void;
-}
-
 const CollapsibleSection = React.memo(({ id, title, icon: Icon, children, isOpen, onToggle }: CollapsibleSectionProps) => {
   return (
-    <div className={`w-full bg-surface rounded-2xl shadow-sm border overflow-hidden transition-all duration-300 ${isOpen ? 'shadow-md border-accent' : 'border-borderClient'}`}>
+    <div className={`w-full bg-surface rounded-2xl shadow-xs border overflow-hidden transition-all duration-300 dark:bg-white/5 ${isOpen ? 'shadow-md border-accent dark:border-accent dark:shadow-[0_10px_30px_-10px_rgba(0,0,0,0.5)]' : 'border-borderClient dark:border-white/10'}`}>
       <button 
-        className="w-full flex items-center justify-between p-5 md:p-6 bg-surface border-none cursor-pointer transition-colors hover:bg-hover text-left" 
+        className="w-full flex items-center justify-between p-5 md:p-6 bg-surface dark:bg-transparent border-none cursor-pointer transition-colors hover:bg-hover dark:hover:bg-white/5 text-left" 
         onClick={() => onToggle(id)}
         aria-expanded={isOpen}
       >
@@ -39,11 +32,11 @@ const CollapsibleSection = React.memo(({ id, title, icon: Icon, children, isOpen
       </button>
       
       <div 
-        className={`grid transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'grid-rows-[1fr] opacity-100 visible border-t border-borderClient' : 'grid-rows-[0fr] opacity-0 invisible border-t-transparent'}`}
+        className={`grid transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'grid-rows-[1fr] opacity-100 visible border-t border-borderClient dark:border-white/10' : 'grid-rows-[0fr] opacity-0 invisible border-t-transparent'}`}
         aria-hidden={!isOpen}
       >
         <div className="overflow-hidden">
-          <div className={`transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'translate-y-0 p-4 md:p-8' : '-translate-y-2 p-0'}`}>
+          <div className={`p-4 md:p-8 transition-transform duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] ${isOpen ? 'translate-y-0' : '-translate-y-2'}`}>
             {children}
           </div>
         </div>
@@ -54,39 +47,12 @@ const CollapsibleSection = React.memo(({ id, title, icon: Icon, children, isOpen
 
 CollapsibleSection.displayName = 'CollapsibleSection';
 
-interface StatsOverviewProps {
-  stats: DashboardStats | null;
-  weeklyActivity: WeeklyActivityData[];
-  trackedDistricts: any[];
-}
-
 export default function StatsOverview({ stats, weeklyActivity, trackedDistricts }: StatsOverviewProps) {
   const { t } = useTranslation('db');
   const navigate = useNavigate();
   const { isRealtor } = useSubscription();
 
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>(() => {
-    try {
-      const saved = sessionStorage.getItem(STORAGE_KEY);
-      return saved ? JSON.parse(saved) : {
-        weekly_activity: true,
-        investment_calculator: false,
-        saved_districts: false,
-        popular_districts: false,
-        last_activity: false
-      };
-    } catch {
-      return { investment_calculator: false };
-    }
-  });
-
-  const toggleSection = useCallback((sectionId: string) => {
-    setOpenSections(prev => {
-      const newState = { ...prev, [sectionId]: !prev[sectionId] };
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(newState));
-      return newState;
-    });
-  }, []);
+  const { isOpen, toggle: toggleSection } = useCollapsibleSections(STORAGE_KEY, ['weekly_activity']);
 
   const handleNavigateToSearches = useCallback(() => navigate('/'), [navigate]);
   const handleNavigateToSaved = useCallback(() => navigate('/favorites'), [navigate]);
@@ -94,7 +60,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
   const handleNavigateToCompare = useCallback(() => {
     if (isRealtor) {
       navigate('/profile/stats/compare');
-    } else {
+    } else if (FEATURES_CONFIG.ENABLE_SUBSCRIPTIONS_PAGE) {
       navigate('/subscription');
     }
   }, [isRealtor, navigate]);
@@ -116,7 +82,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
           id="investment_calculator"
           title={t('stats.sections.investment_calculator')}
           icon={FaCalculator}
-          isOpen={!!openSections['investment_calculator']}
+          isOpen={isOpen('investment_calculator')}
           onToggle={toggleSection}
         >
           <InvestmentCalculator />
@@ -128,7 +94,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
           id="saved_districts"
           title={t('stats.sections.saved_districts')} 
           icon={FaBookmark}
-          isOpen={!!openSections['saved_districts']}
+          isOpen={isOpen('saved_districts')}
           onToggle={toggleSection}
         >
           <TrackedDistricts districts={trackedDistricts || []} />
@@ -139,7 +105,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
         id="weekly_activity"
         title={t('stats.sections.weekly_activity')} 
         icon={FaChartBar}
-        isOpen={!!openSections['weekly_activity']}
+        isOpen={isOpen('weekly_activity')}
         onToggle={toggleSection}
       >
         <WeeklyChart data={weeklyActivity || []} />
@@ -150,7 +116,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
           id="popular_districts"
           title={t('stats.sections.popular_districts')} 
           icon={FaMapMarkerAlt}
-          isOpen={!!openSections['popular_districts']}
+          isOpen={isOpen('popular_districts')}
           onToggle={toggleSection}
         >
           <PopularDistricts /> 
@@ -161,7 +127,7 @@ export default function StatsOverview({ stats, weeklyActivity, trackedDistricts 
         id="last_activity"
         title={t('stats.sections.last_activity')} 
         icon={FaHistory}
-        isOpen={!!openSections['last_activity']}
+        isOpen={isOpen('last_activity')}
         onToggle={toggleSection}
       >
         <LastActivity 

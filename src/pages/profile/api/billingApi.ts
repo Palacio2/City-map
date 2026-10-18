@@ -1,12 +1,13 @@
 import { supabase } from '@supabaseClient';
 import type { BillingHistoryResponse } from '../types';
 
-export const fetchUserBillingHistory = async (page: number, limit: number): Promise<BillingHistoryResponse> => {
+export const fetchUserBillingHistory = async (page: number, limit: number, signal?: AbortSignal): Promise<BillingHistoryResponse> => {
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Unauthorized');
 
   const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-billing-history`, {
     method: 'POST',
+    signal,
     headers: {
       'Authorization': `Bearer ${session.access_token}`,
       'Content-Type': 'application/json'
@@ -24,13 +25,13 @@ export const cancelUserSubscription = async (subscriptionId: string): Promise<vo
   const { data: { session } } = await supabase.auth.getSession();
   if (!session) throw new Error('Unauthorized');
 
-  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/cancel-subscription`, {
+  const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/process-payment`, {
     method: 'POST',
     headers: {
       'Authorization': `Bearer ${session.access_token}`,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ subscriptionId })
+    body: JSON.stringify({ action: 'cancel', subscriptionId })
   });
 
   const data = await response.json();

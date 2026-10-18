@@ -29,7 +29,7 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }: AiAssis
   };
 
   const modalContent = (
-    <div className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fadeIn">
+    <div className="fixed inset-0 z-[3000] flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-fadeIn">
       <div className="bg-surface w-full max-w-[500px] rounded-3xl shadow-modal flex flex-col overflow-hidden border border-borderClient animate-slideUpModal">
         <header className="p-6 border-b border-borderClient flex justify-between items-center bg-body/50">
           <div className="flex items-center gap-3">
@@ -57,7 +57,7 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }: AiAssis
               value={prefs.city}
               onChange={e => setPrefs(prev => ({ ...prev, city: e.target.value }))}
               placeholder={t('ia.assistant.modal.city_placeholder')}
-              className="w-full px-4 py-3 rounded-xl border border-borderClient bg-body text-textMain focus:outline-none focus:border-accent"
+              className="w-full px-4 py-3 rounded-xl border border-borderClient bg-body text-textMain focus:outline-hidden focus:border-accent"
               required
             />
           </div>
@@ -67,7 +67,7 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }: AiAssis
             <select
               value={prefs.purpose}
               onChange={e => setPrefs(prev => ({ ...prev, purpose: e.target.value }))}
-              className="w-full px-4 py-3 rounded-xl border border-borderClient bg-body text-textMain focus:outline-none focus:border-accent cursor-pointer"
+              className="w-full px-4 py-3 rounded-xl border border-borderClient bg-body text-textMain focus:outline-hidden focus:border-accent cursor-pointer"
               required
             >
               <option value="living">{t('ia.assistant.modal.purpose_living')}</option>
@@ -83,7 +83,7 @@ export default function AiAssistantModal({ isOpen, onClose, onSuccess }: AiAssis
               value={prefs.budget}
               onChange={e => setPrefs(prev => ({ ...prev, budget: e.target.value }))}
               placeholder={t('ia.assistant.modal.budget_placeholder')}
-              className="w-full px-4 py-3 rounded-xl border border-borderClient bg-body text-textMain focus:outline-none focus:border-accent"
+              className="w-full px-4 py-3 rounded-xl border border-borderClient bg-body text-textMain focus:outline-hidden focus:border-accent"
             />
           </div>
 

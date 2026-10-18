@@ -18,9 +18,35 @@ export const GeoMapSidebar = ({
   const allSelected = activeFilters.length === availableTypes.length;
 
   return (
-    <div className={`absolute top-0 left-0 w-full h-full md:relative md:w-[320px] bg-surface border-r border-borderClient flex flex-col shrink-0 z-[var(--z-modal)] md:z-[var(--z-sidebar)] transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] ${isMobileFilterOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}`}>
-      <div className="p-5 border-b border-borderClient flex justify-between items-center bg-surface">
-        <h4 className="m-0 font-heading text-textMain text-[1.1rem] font-bold">
+    <>
+      {/* Mobile Backdrop */}
+      {isMobileFilterOpen && (
+        <div 
+          className="md:hidden absolute inset-0 bg-black/50 backdrop-blur-[2px] z-[40] animate-fadeIn"
+          onClick={() => setIsMobileFilterOpen(false)}
+        />
+      )}
+
+      <div 
+        className={`
+          absolute md:relative
+          bottom-0 left-0
+          w-full md:w-[320px]
+          h-[85%] md:h-full
+          bg-surface
+          rounded-t-[2rem] md:rounded-none
+          border-t md:border-t-0 md:border-r border-borderClient
+          flex flex-col shrink-0
+          z-[50] md:z-[var(--z-sidebar)]
+          transition-transform duration-400 ease-[cubic-bezier(0.32,0.72,0,1)]
+          ${isMobileFilterOpen ? 'translate-y-0' : 'translate-y-full md:translate-y-0'}
+        `}
+      >
+        {/* Mobile Drag Handle */}
+        <div className="md:hidden w-12 h-1.5 bg-borderClient rounded-full mx-auto mt-4 mb-1 shrink-0" />
+
+        <div className="p-4 md:p-5 border-b border-borderClient flex justify-between items-center bg-surface shrink-0">
+          <h4 className="m-0 font-heading text-textMain text-[1.1rem] font-bold">
           {t('district.map.filters_title')}
         </h4>
         <button 
@@ -66,7 +92,7 @@ export const GeoMapSidebar = ({
             <button
               key={type}
               type="button"
-              className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors border w-full text-left outline-none hover:bg-hover ${isActive ? 'bg-hover border-borderClient shadow-sm' : 'bg-transparent border-transparent'}`}
+              className={`flex items-center p-3 rounded-lg cursor-pointer transition-colors border w-full text-left outline-hidden hover:bg-hover ${isActive ? 'bg-hover border-borderClient shadow-xs' : 'bg-transparent border-transparent'}`}
               onClick={() => toggleFilter(type)}
             >
               <div className={`w-5 h-5 rounded-md border-2 mr-3 flex items-center justify-center transition-colors ${isActive ? 'bg-accent border-accent text-white' : 'bg-transparent border-borderClient'}`}>
@@ -80,5 +106,6 @@ export const GeoMapSidebar = ({
         })}
       </div>
     </div>
+    </>
   );
 };

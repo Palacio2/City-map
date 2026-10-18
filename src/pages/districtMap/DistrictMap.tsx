@@ -1,6 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import CountrySelect from '@cityCountrySelect/CountrySelect';
-import CitySelect from '@cityCountrySelect/CitySelect';
+import LocationSelect from '@cityCountrySelect/LocationSelect';
 import FiltersPanel from '@filtersPanel/FiltersPanel';
 import DistrictDetailsModal from './components/DistrictDetailsModal';
 import { Button } from '@ui/Button';
@@ -47,13 +46,12 @@ export default function DistrictMap() {
     handleCloseModal
   } = useDistrictMap();
 
-  if (!country) return <CountrySelect />;
-  if (!city) return <CitySelect country={country} />;
+  if (!country || !city) return <LocationSelect />;
 
   return (
     <div className="flex flex-col w-full box-border overflow-x-hidden">
-      <SeoMeta title={t('seo.map.title', 'Інтерактивна карта районів')} description={t('seo.map.desc', 'Аналіз та порівняння районів на карті')} />
-      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full max-w-[1440px] mx-auto px-4 md:px-6 xl:px-8 box-border relative items-start">
+      <SeoMeta title={t('seo.map.title')} description={t('seo.map.desc')} />
+      <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 w-full max-w-[1440px] mx-auto px-0 sm:px-4 md:px-6 xl:px-8 box-border relative items-start">
         <FiltersPanel
           onFiltersChange={handleFiltersChange}
           selectedFilters={selectedFilters}

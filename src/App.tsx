@@ -1,12 +1,13 @@
-import { Suspense, useState, useEffect } from 'react';
+import { Suspense } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { HelmetProvider } from 'react-helmet-async';
 import AppRoutes from './routes/Routes';
 import { AuthProvider } from '@auth/context/AuthContext';
-import { SubscriptionProvider } from '@subscription/contex/SubscriptionContext';
+import { SubscriptionProvider } from '@subscription/context/SubscriptionContext';
 import { FavoritesProvider } from '@pages/favorites/context/FavoritesContext';
-import { dbTranslationsPromise } from './i18n/i18n';
+import { GlobalErrorBoundary } from './shared/components/GlobalErrorBoundary';
+import './i18n/i18n';
 import './client.css';
 
 const queryClient = new QueryClient({
@@ -20,48 +21,32 @@ const queryClient = new QueryClient({
 });
 
 const PageLoader = () => (
-  <div className="min-h-screen flex items-center justify-center bg-[var(--bg-body)]">
-    <div className="w-12 h-12 border-4 border-t-[var(--accent-color)] border-[var(--border-color)] rounded-full animate-spin" />
+  <div className="min-h-screen flex items-center justify-center bg-body">
+    <div className="w-12 h-12 border-4 border-t-accent border-borderClient rounded-full animate-spin" />
   </div>
 );
 
 export default function App() {
-  const [translationsLoaded, setTranslationsLoaded] = useState<boolean>(false);
-
-  useEffect(() => {
-    let isMounted = true;
-    
-    dbTranslationsPromise.then(() => {
-      if (isMounted) {
-        setTranslationsLoaded(true);
-      }
-    });
-    
-    return () => {
-      isMounted = false;
-    };
-  }, []);
-
-  if (!translationsLoaded) {
-    return <PageLoader />;
-  }
-
   return (
     <QueryClientProvider client={queryClient}>
       <HelmetProvider>
-        <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-          <AuthProvider>
-            <SubscriptionProvider>
-              <FavoritesProvider>
-                <div className="client-layout">
-                  <Suspense fallback={<PageLoader />}>
-                    <AppRoutes />
-                  </Suspense>
-                </div>
-              </FavoritesProvider>
-            </SubscriptionProvider>
-          </AuthProvider>
-        </BrowserRouter>
+        <Suspense fallback={<PageLoader />}>
+          <BrowserRouter>
+            <AuthProvider>
+              <SubscriptionProvider>
+                <FavoritesProvider>
+                  <div className="client-layout">
+                    <GlobalErrorBoundary>
+                      <Suspense fallback={<PageLoader />}>
+                        <AppRoutes />
+                      </Suspense>
+                    </GlobalErrorBoundary>
+                  </div>
+                </FavoritesProvider>
+              </SubscriptionProvider>
+            </AuthProvider>
+          </BrowserRouter>
+        </Suspense>
       </HelmetProvider>
     </QueryClientProvider>
   );

@@ -1,130 +1,70 @@
-import { useState, useEffect, useCallback, ChangeEvent } from 'react';
+import { useState, useCallback, ChangeEvent, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
-export interface CalculatorValues {
-  propertyPrice: number;
-  downPayment: number;
-  interestRate: number;
-  loanTerm: number;
-  rentalIncome: number;
-  expenses: number;
-}
-
-export interface CalculatorResults {
-  monthlyPayment: number;
-  cashFlow: number;
-  capRate: number;
-  grossYield: number;
-  totalInterest: number;
-  totalPayment: number;
-  cashOnCash: number;
-}
-
-export interface Currency {
-  code: string;
-  symbol: string;
-  label: string;
-}
-
-const INITIAL_STATE: CalculatorValues = {
-  propertyPrice: 100000,
-  downPayment: 20000,
-  interestRate: 5,
-  loanTerm: 30,
-  rentalIncome: 1000,
-  expenses: 0
+const INITIAL_STATE = {
+  propertyPrice: '100000', downPayment: '20000', interestRate: '5',
+  loanTerm: '30', rentalIncome: '1000', expenses: '0'
 };
+export type CalculatorValues = typeof INITIAL_STATE;
+export type CalculatorField = keyof CalculatorValues;
+export interface Currency { code: string; symbol: string; label: string }
+
+export function calculatorConstraints(values: CalculatorValues, field: CalculatorField) {
+  const price = Number(values.propertyPrice);
+  if (field === 'propertyPrice') return { min: 0.01, max: 1e12, step: 'any' };
+  if (field === 'downPayment') return { min: 0, max: Number.isFinite(price) && price >= 0 ? price : 1e12, step: 'any' };
+  if (field === 'interestRate') return { min: 0, max: 100, step: 'any' };
+  if (field === 'loanTerm') return { min: price > Number(values.downPayment) ? 1 : 0, max: 100, step: '1' };
+  return { min: 0, max: 1e12, step: 'any' };
+}
+
+export function calculateInvestment(values: CalculatorValues) {
+  for (const field of Object.keys(INITIAL_STATE) as CalculatorField[]) {
+    const value = Number(values[field]);
+    const { min, max, step } = calculatorConstraints(values, field);
+    if (!values[field].trim() || !Number.isFinite(value) || value < min || value > max || (step === '1' && !Number.isInteger(value))) return null;
+  }
+  const propertyPrice = Number(values.propertyPrice);
+  const downPayment = Number(values.downPayment);
+  const principal = propertyPrice - downPayment;
+  const monthlyRate = Number(values.interestRate) / 1200;
+  const payments = Number(values.loanTerm) * 12;
+  // Stable for tiny rates, without the overflow of a positive power.
+  const monthlyPayment = principal === 0 ? 0 : monthlyRate === 0 ? principal / payments
+    : principal * monthlyRate / -Math.expm1(-payments * Math.log1p(monthlyRate));
+  const totalPayment = monthlyPayment * payments;
+  const monthlyNOI = Number(values.rentalIncome) - Number(values.expenses);
+  const cashFlow = monthlyNOI - monthlyPayment;
+  const results = {
+    monthlyPayment, cashFlow, totalPayment,
+    capRate: monthlyNOI * 12 / propertyPrice * 100,
+    grossYield: Number(values.rentalIncome) * 12 / propertyPrice * 100,
+    totalInterest: Math.max(0, totalPayment - principal),
+    cashOnCash: downPayment === 0 ? null : cashFlow * 12 / downPayment * 100
+  };
+  return Object.values(results).every(value => value === null || Number.isFinite(value)) ? results : null;
+}
 
 export function useInvestmentCalculator() {
   const { t } = useTranslation('db');
-
-  const currencies: Currency[] = [
+  const currencies = useMemo<Currency[]>(() => [
     { code: 'USD', symbol: '$', label: t('stats.calculator.currencies.usd') },
     { code: 'EUR', symbol: '€', label: t('stats.calculator.currencies.eur') },
     { code: 'PLN', symbol: 'zł', label: t('stats.calculator.currencies.pln') },
     { code: 'UAH', symbol: '₴', label: t('stats.calculator.currencies.uah') },
     { code: 'GBP', symbol: '£', label: t('stats.calculator.currencies.gbp') }
-  ];
-
+  ], [t]);
   const [values, setValues] = useState<CalculatorValues>(INITIAL_STATE);
-  const [currency, setCurrency] = useState<Currency>(currencies[0]); 
-  
-  const [results, setResults] = useState<CalculatorResults>({
-    monthlyPayment: 0,
-    cashFlow: 0,
-    capRate: 0,
-    grossYield: 0,
-    totalInterest: 0,
-    totalPayment: 0,
-    cashOnCash: 0
-  });
-
+  const [currencyCode, setCurrencyCode] = useState('USD');
+  const currency = currencies.find(item => item.code === currencyCode) ?? currencies[0];
+  const results = useMemo(() => calculateInvestment(values), [values]);
   const handleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setValues(prev => ({
-      ...prev,
-      [name]: parseFloat(value) || 0
-    }));
+    if (Object.hasOwn(INITIAL_STATE, name)) setValues(prev => ({ ...prev, [name]: value }));
   }, []);
-
   const handleCurrencyChange = useCallback((e: ChangeEvent<HTMLSelectElement>) => {
-    const selectedCode = e.target.value;
-    const selected = currencies.find(c => c.code === selectedCode) || currencies[0];
-    setCurrency(selected);
+    if (currencies.some(item => item.code === e.target.value)) setCurrencyCode(e.target.value);
   }, [currencies]);
-
-  const handleReset = useCallback(() => {
-    setValues(INITIAL_STATE);
-  }, []);
-
-  useEffect(() => {
-    const { propertyPrice, downPayment, interestRate, loanTerm, rentalIncome, expenses } = values;
-    
-    const principal = propertyPrice - downPayment;
-    const monthlyRate = interestRate / 100 / 12;
-    const numberOfPayments = loanTerm * 12;
-    let monthlyMortgage = 0;
-    let totalPayment = 0;
-
-    if (principal > 0) {
-      if (interestRate > 0) {
-        monthlyMortgage = principal * (monthlyRate * Math.pow(1 + monthlyRate, numberOfPayments)) / 
-          (Math.pow(1 + monthlyRate, numberOfPayments) - 1);
-      } else {
-        monthlyMortgage = principal / numberOfPayments;
-      }
-      totalPayment = monthlyMortgage * numberOfPayments;
-    }
-
-    const totalInterest = totalPayment - principal;
-    const monthlyNOI = rentalIncome - expenses;
-    const annualNOI = monthlyNOI * 12;
-    const cashFlow = monthlyNOI - monthlyMortgage;
-    const annualCashFlow = cashFlow * 12;
-    const annualGrossIncome = rentalIncome * 12;
-
-    const grossYield = propertyPrice > 0 ? (annualGrossIncome / propertyPrice) * 100 : 0;
-    const capRate = propertyPrice > 0 ? (annualNOI / propertyPrice) * 100 : 0;
-    const cashOnCash = downPayment > 0 ? (annualCashFlow / downPayment) * 100 : 0;
-
-    setResults({
-      monthlyPayment: monthlyMortgage,
-      cashFlow,
-      capRate,
-      grossYield,
-      totalInterest: totalInterest > 0 ? totalInterest : 0,
-      totalPayment,
-      cashOnCash
-    });
-  }, [values]);
-
-  return {
-    values,
-    currency,
-    results,
-    handleChange,
-    handleCurrencyChange,
-    handleReset,
-    currencies
-  };
+  const handleReset = useCallback(() => setValues({ ...INITIAL_STATE }), []);
+  return { values, currency, results, handleChange, handleCurrencyChange, handleReset, currencies };
 }

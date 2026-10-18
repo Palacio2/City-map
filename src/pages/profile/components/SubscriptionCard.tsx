@@ -1,99 +1,56 @@
 import { useTranslation } from 'react-i18next';
-import { FaExclamationTriangle, FaArrowUp, FaTimes } from 'react-icons/fa';
-import type { SubscriptionData } from '@subscription/types';
+import type { SubscriptionCardProps } from '../types';
 
-interface SubscriptionCardProps {
-  readonly subscription: SubscriptionData | null;
-  readonly onManage: () => void;
-  readonly isCancelling: boolean;
-  readonly error?: string | null;
-}
-
-export const SubscriptionCard = ({ subscription, onManage, isCancelling, error }: SubscriptionCardProps) => {
+export const SubscriptionCard = ({ subscription, onManage, onCancel, isCancelling, error }: SubscriptionCardProps) => {
   const { t } = useTranslation('db');
-
   if (!subscription) return null;
-
-  const actualPlanKey = (subscription.isExpired || !subscription.plan) ? 'free' : subscription.plan;
-  const isActive = subscription.status === 'active' && actualPlanKey !== 'free';
-  const planName = t(`billing.plans.${actualPlanKey}.name`);
-  const amount = t(`billing.plans.${actualPlanKey}.price`);
-  
-  const expiresAt = (isActive && subscription.expiresAt)
-    ? new Date(subscription.expiresAt).toLocaleDateString()
-    : null;
+  const plan = subscription.isExpired ? 'free' : subscription.plan || 'free';
+  const active = ['active', 'trialing'].includes(subscription.status ?? '') && plan !== 'free';
+  const paid = subscription.paidSubscriptions ?? [];
+  const displayDate = (value: string) => new Date(value).toLocaleDateString();
 
   return (
-    <section className="bg-surface border border-borderClient rounded-2xl p-6 md:p-8 shadow-card flex flex-col gap-6 lg:sticky lg:top-[calc(var(--header-height)+20px)]">
-      <div className="flex justify-between items-center border-b border-borderClient pb-4">
-        <h3 className="font-heading text-xl m-0 text-textMain font-bold">
-          {t('billing.current_sub')}
-        </h3>
-        <span className={`text-[0.7rem] font-bold uppercase tracking-widest px-3 py-1.5 rounded-full ${isActive ? 'bg-success/10 text-success border border-success/20' : 'bg-hover text-textSecondary border border-borderClient'}`}>
-          {isActive ? t('billing.status_map.active') : t('billing.plans.free.name')}
-        </span>
+    <section className="bg-surface rounded-2xl p-5 md:p-8 shadow-xs flex flex-col gap-5">
+      <h2 className="text-xl text-textMain font-bold">{t('billing.current_sub')}</h2>
+      {subscription.billingUnavailable && <p role="alert" className="text-danger">{t('billing.status_unavailable')}</p>}
+      <div className="flex justify-between gap-3">
+        <span className="text-textSecondary">{t('billing.plan_label')}</span>
+        <strong>{t(`billing.plans.${plan}.name`)}</strong>
       </div>
-
-      <div className="flex flex-col gap-4">
-        <div className="flex justify-between items-baseline border-b border-dashed border-borderClient/30 pb-2">
-          <span className="text-textSecondary text-[0.9rem] font-medium">{t('billing.plan_label')}</span>
-          <span className="text-textMain font-semibold font-heading text-[1.1rem]">{planName}</span>
-        </div>
-        
-        <div className="flex justify-between items-baseline border-b border-dashed border-borderClient/30 pb-2">
-          <span className="text-textSecondary text-[0.9rem] font-medium">{t('billing.price_label')}</span>
-          <span className="text-accent font-bold font-heading text-[1.1rem]">{amount}</span>
-        </div>
-        
-        {isActive && expiresAt && (
-          <div className="flex justify-between items-baseline border-b border-dashed border-borderClient/30 pb-2">
-            <span className="text-textSecondary text-[0.9rem] font-medium">{t('billing.next_payment')}</span>
-            <span className="text-textMain font-semibold font-heading text-[1.1rem]">{expiresAt}</span>
-          </div>
-        )}
-      </div>
-
-      {error && (
-        <div className="text-[0.85rem] text-danger bg-danger/10 p-3 rounded-lg flex items-center gap-2 border border-danger/20">
-          <FaExclamationTriangle className="shrink-0" />
-          <span>{error}</span>
+      {active && subscription.source === 'gift' && <p className="text-textSecondary text-sm">{t('billing.gift_access')}</p>}
+      {active && subscription.expiresAt && (
+        <div className="flex justify-between gap-3">
+          <span className="text-textSecondary">{t('billing.access_until')}</span>
+          <span>{displayDate(subscription.expiresAt)}</span>
         </div>
       )}
-
-      <button
-        type="button"
-        className={`w-full p-4 rounded-xl font-heading font-bold uppercase tracking-widest cursor-pointer transition-all duration-300 mt-2 flex items-center justify-center gap-2.5 disabled:opacity-50 disabled:cursor-not-allowed ${
-          isActive
-            ? 'bg-danger/5 border border-danger/40 text-danger shadow-sm hover:bg-danger hover:text-white hover:border-danger hover:-translate-y-1 hover:shadow-md disabled:hover:bg-danger/5 disabled:hover:text-danger disabled:hover:border-danger/40 disabled:hover:-translate-y-0 disabled:hover:shadow-sm'
-            : 'bg-gradient-to-br from-accent to-accent-hover text-white shadow-md border border-transparent hover:-translate-y-1 hover:shadow-lg hover:brightness-110 disabled:hover:-translate-y-0 disabled:hover:shadow-md disabled:hover:brightness-100 custom-pulse-shadow'
-        }`}
-        onClick={onManage}
-        disabled={isCancelling}
-      >
-        {isCancelling ? (
-          <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
-        ) : (
-          isActive ? (
-            <><FaTimes className="text-lg" /> {t('billing.cancel_sub')}</>
-          ) : (
-            <><FaArrowUp className="text-lg" /> {t('billing.update_plan')}</>
-          )
-        )}
+      {paid.length > 0 && (
+        <div className="flex flex-col gap-4 border-t border-borderClient pt-4">
+          <h3 className="font-bold text-textMain">{t('billing.paid_subscriptions')}</h3>
+          {paid.map(item => (
+            <div key={item.id} className="flex flex-col gap-2">
+              <strong>{t(`billing.plans.${item.plan}.name`)}</strong>
+              <span className="text-sm text-textSecondary">{t(`billing.status_map.${item.status}`, { defaultValue: item.status })}</span>
+              {item.cancel_at ? (
+                <p className="text-sm text-textSecondary">{t('billing.cancellation_scheduled', { date: displayDate(item.cancel_at) })}</p>
+              ) : item.expiresAt ? (
+                <p className="text-sm text-textSecondary">{t('billing.period_end', { date: displayDate(item.expiresAt) })}</p>
+              ) : null}
+              {onCancel && !item.cancel_at && (
+                <button type="button" onClick={() => onCancel(item.id)} disabled={isCancelling}
+                  className="p-3 rounded-xl bg-danger text-white font-bold disabled:opacity-50">
+                  {t('billing.cancel_sub')}
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+      {error && <p role="alert" className="text-danger">{error}</p>}
+      <button type="button" onClick={onManage} disabled={isCancelling}
+        className="p-4 rounded-xl bg-accent text-white font-bold disabled:opacity-50">
+        {t(paid.length && !onCancel ? 'billing.manage_billing' : 'billing.update_plan')}
       </button>
-
-      <style>{`
-        @keyframes pulse-shadow-anim {
-          0% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0.6); }
-          70% { box-shadow: 0 0 0 12px rgba(197, 164, 126, 0); }
-          100% { box-shadow: 0 0 0 0 rgba(197, 164, 126, 0); }
-        }
-        .custom-pulse-shadow:not(:disabled) {
-          animation: pulse-shadow-anim 2s infinite;
-        }
-        .custom-pulse-shadow:hover {
-          animation: none;
-        }
-      `}</style>
     </section>
   );
 };

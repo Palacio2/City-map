@@ -1,12 +1,7 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.39.0";
+import { verifyAdminUser, corsHeaders } from "../_shared/auth.ts";
+import { requireAction, requireCity } from '../../../shared/authorization.js';
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, sentry-trace, baggage",
-};
-
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: corsHeaders });
 
   try {
@@ -16,20 +11,10 @@ serve(async (req) => {
     const { cityId } = await req.json();
     if (!cityId) throw new Error("Missing cityId");
 
-    const token = authHeader.replace("Bearer ", "");
-    const supabaseClient = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_ANON_KEY") ?? "");
-    const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
-    if (userError || !user) throw new Error("Unauthorized");
-
-    const supabaseAdmin = createClient(Deno.env.get("SUPABASE_URL") ?? "", Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "");
-
-    const { data: profile } = await supabaseAdmin.from("admin_profiles").select("role, assigned_cities").eq("user_id", user.id).maybeSingle();
-    const role = profile?.role || user.app_metadata?.role || "user";
-    
-    if (role !== "super_admin" && role !== "admin") throw new Error("Forbidden");
-    if (role === "admin" && profile?.assigned_cities && !profile.assigned_cities.includes(cityId)) {
-        throw new Error("Немає доступу до цього міста");
-    }
+    const access = await verifyAdminUser(req);
+    const { supabaseAdmin } = access;
+    requireAction(access, 'map', 'manual', 'parser');
+    requireCity(access, cityId);
 
     const { data, error } = await supabaseAdmin
       .from('districts')
@@ -52,6 +37,6 @@ serve(async (req) => {
 
     return new Response(JSON.stringify({ data: mapData }), { headers: { ...corsHeaders, "Content-Type": "application/json" }, status: 200 });
   } catch (err: any) {
-    return new Response(JSON.stringify({ error: err.message }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ error: err.message }), { status: err.status === 403 ? 403 : 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
 });

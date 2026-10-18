@@ -1,25 +1,33 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { publishableKey } from '../_shared/keys.ts';
+import { subscriptionState } from '../_shared/subscriptionState.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.2';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-  'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS'
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Cache-Control': 'private, no-store'
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
 
   try {
+    const authorization = req.headers.get('Authorization');
+    if (!authorization) {
+      return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 401
+      });
+    }
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      publishableKey(),
       {
         global: {
           headers: {
-            Authorization: req.headers.get('Authorization')
+            Authorization: authorization
           }
         }
       }
@@ -35,38 +43,20 @@ serve(async (req) => {
 
     const { data: subscriptions, error } = await supabaseClient
       .from('user_subscriptions')
-      .select('id, plan_name, ends_at, status')
+      .select('id, plan_name, starts_at, ends_at, status, payment_id, cancel_at')
       .eq('user_id', user.id)
-      .in('status', ['active', 'trialing'])
-      .gt('ends_at', new Date().toISOString())
-      .order('ends_at', { ascending: false })
-      .limit(1);
+      .in('status', ['active', 'trialing', 'past_due', 'unpaid', 'paused', 'incomplete'])
+      .limit(501);
 
     if (error) throw error;
 
-    if (!subscriptions || subscriptions.length === 0) {
-      return new Response(
-        JSON.stringify({ plan: 'free', expiresAt: null, id: null, status: 'active' }),
-        { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-      );
-    }
-
-    const subscription = subscriptions[0];
-
-    let planName = subscription.plan_name ? subscription.plan_name.toLowerCase().trim() : 'free';
-
-    return new Response(
-      JSON.stringify({
-        id: subscription.id,
-        plan: planName, 
-        expiresAt: subscription.ends_at,
-        status: subscription.status
-      }),
-      { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200 }
-    );
+    if (!subscriptions || subscriptions.length > 500) throw new Error('Subscription reconciliation required');
+    return new Response(JSON.stringify(subscriptionState(subscriptions)), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 200
+    });
   } catch (error) {
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: 'Internal server error' }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' }, status: 500 }
     );
   }

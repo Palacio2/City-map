@@ -1,88 +1,46 @@
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
+import { publishableKey, secretKey, isAnonymousAuthorization } from '../_shared/keys.ts';
+import { createClient } from 'npm:@supabase/supabase-js@2.112.2';
+import { readJsonObject, RequestError } from '../_shared/request.ts';
+import { contactRecord } from './validation.ts';
+import { verifyContactCaptcha } from './captcha.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Cache-Control': 'private, no-store',
 };
+const send = (data: unknown, status = 200) => Response.json(data, { status, headers: corsHeaders });
 
-const sendRes = (data: any, status: number) => new Response(JSON.stringify(data), {
-  status,
-  headers: { ...corsHeaders, 'Content-Type': 'application/json' }
-});
-
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: corsHeaders });
-
+  if (req.method !== 'POST') return send({ error: 'Method not allowed' }, 405);
   try {
-    let authUserId = null;
-    const authHeader = req.headers.get("Authorization");
-    
-    if (authHeader) {
-      const token = authHeader.replace("Bearer ", "");
-      const supabaseAuthClient = createClient(
-        Deno.env.get("SUPABASE_URL") ?? "", 
-        Deno.env.get("SUPABASE_ANON_KEY") ?? ""
-      );
-      const { data: { user } } = await supabaseAuthClient.auth.getUser(token);
-      if (user) {
-        authUserId = user.id;
-      }
+    const url = Deno.env.get('SUPABASE_URL') ?? '';
+    const anon = publishableKey();
+    const header = req.headers.get('Authorization');
+    let userId: string | null = null;
+    if (header && !isAnonymousAuthorization(header)) {
+      if (!header.startsWith('Bearer ')) throw new RequestError('Unauthorized', 401);
+      const auth = createClient(url, anon);
+      const { data: { user }, error } = await auth.auth.getUser(header.slice(7));
+      if (error || !user) throw new RequestError('Unauthorized', 401);
+      userId = user.id;
     }
-
-    const { 
-      name, email, message, type = 'contact', 
-      user_id, page_url, screenshot_url, browser_info, screen_size,
-      consent_accepted
-    } = body;
-
-    const finalUserId = authUserId || user_id;
-
-    if (!email) return sendRes({ error: 'Вкажіть Email' }, 400);
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return sendRes({ error: 'Невірний Email' }, 400);
-
-    if (type === 'contact') {
-      if (!message || message.length < 10) return sendRes({ error: 'Повідомлення занадто коротке' }, 400);
-      if (!name || name.length < 2) return sendRes({ error: "Ім'я занадто коротке" }, 400);
-      
-      if (consent_accepted !== true) return sendRes({ error: 'Необхідна згода на обробку даних' }, 400);
-    } else {
-      if ((!message || message.trim() === '') && !screenshot_url) {
-        return sendRes({ error: 'Додайте опис або скріншот' }, 400);
-      }
-    }
-
-    const finalMessage = message && message.trim().length > 0 ? message.trim() : '[Без опису]';
-
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    );
-
-    const { data, error } = await supabase
-      .from('contacts_messages')
-      .insert([{
-        name: name ? name.trim() : null,
-        email: email.trim(),
-        message: finalMessage,
-        type,
-        user_id: finalUserId || null,
-        page_url: page_url || null,
-        screenshot_url: screenshot_url || null,
-        browser_info: browser_info || null,
-        screen_size: screen_size || null,
-        status: 'new',
-        consent_accepted: type === 'contact' ? consent_accepted : null
-      }])
-      .select('id')
-      .single();
-
+    const body = await readJsonObject(req);
+    const record = contactRecord(body, userId, url);
+    // The public contact form always requires a challenge. The in-app feedback
+    // widget requires a verified account and retains its durable user quota.
+    if (!userId || record.type === 'contact') await verifyContactCaptcha(body.captcha_token);
+    const db = createClient(url, secretKey());
+    const { data: allowed, error: quotaError } = await db.rpc('claim_contact_request', { p_email: record.email, p_user: userId });
+    if (quotaError) throw quotaError;
+    if (allowed !== true) throw new RequestError('Too many contact requests. Please try again later.', 429);
+    const { data, error } = await db.from('contacts_messages').insert(record).select('id').single();
     if (error) throw error;
-
-    return sendRes({ success: true, id: data.id }, 200);
-
+    return send({ success: true, id: data.id });
   } catch (error) {
-    return sendRes({ error: error.message }, 500);
+    return send({ error: error instanceof RequestError ? error.message : 'Contact service unavailable' },
+      error instanceof RequestError ? error.status : 503);
   }
 });

@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next';
 import { FiHeart, FiX, FiMessageCircle } from 'react-icons/fi';
 import { AiFillHeart, AiOutlineLoading3Quarters } from 'react-icons/ai';
 
-const baseButtonClasses = "bg-black/30 backdrop-blur-[var(--glass-blur)] border border-white/20 rounded-full flex items-center justify-center p-0 cursor-pointer transition-all duration-300 ease-out shrink-0 z-20 shadow-sm outline-none text-white relative after:content-[''] after:absolute after:-inset-2 hover:bg-black/50 hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-md active:scale-95 active:bg-black/60 [&>svg]:block [&>svg]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] [&>svg]:stroke-[2.5px] [&>svg]:transition-all [&>svg]:duration-300 [&>svg]:ease-out";
+const baseButtonClasses = "bg-black/30 backdrop-blur-[var(--glass-blur)] border border-white/20 rounded-full flex items-center justify-center p-0 cursor-pointer transition-all duration-300 ease-out shrink-0 z-20 shadow-xs outline-hidden text-white relative after:content-[''] after:absolute after:-inset-2 hover:bg-black/50 hover:border-accent hover:text-accent hover:-translate-y-0.5 hover:shadow-md active:scale-95 active:bg-black/60 [&>svg]:block [&>svg]:drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)] [&>svg]:stroke-[2.5px] [&>svg]:transition-all [&>svg]:duration-300 [&>svg]:ease-out";
 const defaultSizeClasses = "w-8 h-8 md:w-[44px] md:h-[44px] [&>svg]:w-4 [&>svg]:h-4 md:[&>svg]:w-5 md:[&>svg]:h-5";
 
 interface CloseButtonProps {
@@ -79,7 +79,7 @@ export const CommentButton = ({ onClick, count, className = '' }: CommentButtonP
     >
       <FiMessageCircle />
       {count !== undefined && count > 0 && (
-        <span className="absolute -top-1 -right-1 bg-accent text-white text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full min-w-[16px] text-center shadow-sm">
+        <span className="absolute -top-1 -right-1 bg-accent text-white text-[0.6rem] font-bold px-1.5 py-0.5 rounded-full min-w-[16px] text-center shadow-xs">
           {count > 99 ? '99+' : count}
         </span>
       )}

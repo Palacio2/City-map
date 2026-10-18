@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useTranslation } from 'react-i18next';
@@ -12,7 +12,6 @@ import { useSocialLogin } from './useSocialLogin';
 export const useLoginForm = () => {
   const { t } = useTranslation('db');
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [globalError, setGlobalError] = useState('');
 
   const { socialLogin, isSocialLoading } = useSocialLogin(setGlobalError);
@@ -20,7 +19,7 @@ export const useLoginForm = () => {
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(getLoginSchema(t)),
     defaultValues: {
-      email: localStorage.getItem('userEmail') || '',
+      email: '',
       rememberMe: localStorage.getItem('rememberMe') === 'true'
     }
   });
@@ -28,12 +27,9 @@ export const useLoginForm = () => {
   const mutation = useMutation({
     mutationFn: loginUser,
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['authUser'] });
       if (variables.rememberMe) {
-        localStorage.setItem('userEmail', variables.email);
         localStorage.setItem('rememberMe', 'true');
       } else {
-        localStorage.removeItem('userEmail');
         localStorage.removeItem('rememberMe');
       }
       navigate('/', { replace: true });

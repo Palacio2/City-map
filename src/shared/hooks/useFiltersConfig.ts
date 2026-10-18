@@ -1,41 +1,26 @@
-// hooks/useFiltersConfig.ts
-import { useState, useEffect } from 'react';
-import { DynamicDistrictConfig } from '@config/districtFields';
+import { useQuery } from '@tanstack/react-query';
+import type { DynamicDistrictConfig } from '@config/districtFields';
+import { supabase } from '@supabaseClient';
 
-// Простий in-memory кеш, щоб не смикати API при кожному рендері компонента
-let cachedConfig: DynamicDistrictConfig | null = null;
+const fetchFiltersConfig = async (signal: AbortSignal): Promise<DynamicDistrictConfig> => {
+  const { data, error } = await supabase.functions.invoke<DynamicDistrictConfig>('get-filters-config', {
+    method: 'GET', signal,
+  });
+  if (error) throw error;
+  if (!data || typeof data !== 'object' || Array.isArray(data)
+    || Object.values(data).some(category => !category || !Array.isArray(category.fields)
+      || category.fields.some(field => !field || typeof field.dbKey !== 'string'
+        || typeof field.isPremiumField !== 'boolean' || typeof field.isRealtorOnly !== 'boolean'))) {
+    throw new Error('Invalid filters configuration');
+  }
+  return data;
+};
 
 export const useFiltersConfig = () => {
-  const [config, setConfig] = useState<DynamicDistrictConfig | null>(cachedConfig);
-  const [isLoading, setIsLoading] = useState(!cachedConfig);
-  const [error, setError] = useState<Error | null>(null);
-
-  useEffect(() => {
-    if (cachedConfig) return;
-
-    const fetchConfig = async () => {
-      try {
-        // Змініть URL на ваш реальний шлях до Supabase Edge Function
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/get-filters-config`, {
-            headers: {
-                'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`
-            }
-        });
-        
-        if (!response.ok) throw new Error('Failed to fetch filters config');
-        
-        const data = await response.json();
-        cachedConfig = data;
-        setConfig(data);
-      } catch (err) {
-        setError(err instanceof Error ? err : new Error('Unknown error'));
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchConfig();
-  }, []);
-
+  const { data: config = null, isLoading, error } = useQuery<DynamicDistrictConfig, Error>({
+    queryKey: ['filtersConfig'],
+    queryFn: ({ signal }) => fetchFiltersConfig(signal),
+    staleTime: 60_000,
+  });
   return { config, isLoading, error };
 };

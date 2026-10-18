@@ -4,34 +4,36 @@ export const useImageToBase64 = (url?: string | null) => {
   const [base64, setBase64] = useState<string | ArrayBuffer | null>(null);
 
   useEffect(() => {
+    setBase64(null);
     if (!url) {
       setBase64(null);
       return;
     }
 
-    let isMounted = true;
+    const controller = new AbortController();
+    const signal = controller.signal;
     
     const loadBase64Image = async () => {
       try {
-        const response = await fetch(url, { mode: 'cors' }).catch(() => null);
+        const response = await fetch(url, { mode: 'cors', signal }).catch(() => null);
         if (response?.ok) {
           const blob = await response.blob();
           const reader = new FileReader();
           reader.onloadend = () => {
-            if (isMounted) setBase64(reader.result);
+            if (!signal.aborted) setBase64(reader.result);
           };
           reader.readAsDataURL(blob);
-        } else if (isMounted) {
+        } else if (!signal.aborted) {
           setBase64('error');
         }
       } catch {
-        if (isMounted) setBase64('error');
+        if (!signal.aborted) setBase64('error');
       }
     };
 
     loadBase64Image();
 
-    return () => { isMounted = false; };
+    return () => { controller.abort(); };
   }, [url]);
 
   return base64;

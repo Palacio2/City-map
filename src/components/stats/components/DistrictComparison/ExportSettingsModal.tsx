@@ -1,8 +1,7 @@
-// @ts-nocheck
-import React, { useState, useEffect, FormEvent, ChangeEvent } from 'react';
+import { useState, useEffect, FormEvent, ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FaTimes, FaFilePdf, FaCloudUploadAlt } from 'react-icons/fa';
-import { supabase } from '@supabaseClient';
+import { useExportSettingsData } from '../../hooks/useExportSettingsData';
 import Loader from '@components/loader/Loader';
 
 const STORAGE_KEY = 'geo_analyzer_export_settings';
@@ -24,7 +23,6 @@ interface ExportSettingsModalProps {
 export default function ExportSettingsModal({ isOpen, onClose, onConfirm }: ExportSettingsModalProps) {
   const { t } = useTranslation('db');
   
-  const [isLoadingProfile, setIsLoadingProfile] = useState(false);
   const [formData, setFormData] = useState<ExportCustomData>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -34,36 +32,18 @@ export default function ExportSettingsModal({ isOpen, onClose, onConfirm }: Expo
     }
   });
 
-  useEffect(() => {
-    if (isOpen) {
-      setFormData(prev => ({ ...prev, comments: '' }));
-      const fetchUserData = async () => {
-        setIsLoadingProfile(true);
-        try {
-          const { data: { user } } = await supabase.auth.getUser();
-          const meta = user?.user_metadata || {};
-          const updateStateWithData = (logoData: string | null) => {
-            setFormData(prev => ({
-              ...prev,
-              agencyName: prev.agencyName || meta.full_name || '',
-              phone: prev.phone || meta.phone || '',
-              logo: prev.logo || logoData || null
-            }));
-          };
+  const { data: profileData, isLoading: isLoadingProfile } = useExportSettingsData(isOpen);
 
-          if (meta.avatar_url && !formData.logo) {
-            const { data } = await supabase.storage.from('avatars').createSignedUrl(meta.avatar_url, 3600);
-            updateStateWithData(data?.signedUrl || null);
-          } else {
-            updateStateWithData(null);
-          }
-        } catch { /* ignore */ } finally {
-          setIsLoadingProfile(false);
-        }
-      };
-      fetchUserData();
+  useEffect(() => {
+    if (profileData) {
+      setFormData(prev => ({
+        ...prev,
+        agencyName: prev.agencyName || profileData.agencyName || '',
+        phone: prev.phone || profileData.phone || '',
+        logo: prev.logo || profileData.logoUrl || null
+      }));
     }
-  }, [isOpen]);
+  }, [profileData]);
 
   const handleLogoUpload = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -86,7 +66,7 @@ export default function ExportSettingsModal({ isOpen, onClose, onConfirm }: Expo
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-[9999] backdrop-blur-sm p-4 animate-fadeIn" onClick={onClose}>
+    <div className="fixed inset-0 bg-black/75 flex items-center justify-center z-[9999] backdrop-blur-xs p-4 animate-fadeIn" onClick={onClose}>
       <div className="bg-body rounded-2xl w-full max-w-[600px] flex flex-col relative shadow-modal border border-borderClient animate-popIn max-h-[90vh]" onClick={e => e.stopPropagation()}>
         
         <div className="flex justify-between items-center p-6 border-b border-borderClient bg-surface shrink-0 rounded-t-2xl">
@@ -130,11 +110,11 @@ export default function ExportSettingsModal({ isOpen, onClose, onConfirm }: Expo
                 <div className="flex-1 flex flex-col gap-4 w-full">
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[0.85rem] font-semibold text-textMain">{t('stats.export.agency_name')}</label>
-                    <input type="text" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full py-3 px-4 bg-black/5 border border-borderClient rounded-lg text-textMain font-body text-[0.95rem] transition-all outline-none hover:border-accent/50 focus:bg-surface focus:border-accent focus:ring-[4px] focus:ring-accent/15" placeholder="NextHome Real Estate" />
+                    <input type="text" value={formData.agencyName} onChange={e => setFormData({...formData, agencyName: e.target.value})} className="w-full py-3 px-4 bg-black/5 border border-borderClient rounded-lg text-textMain font-body text-[0.95rem] transition-all outline-hidden hover:border-accent/50 focus:bg-surface focus:border-accent focus:ring-[4px] focus:ring-accent/15" placeholder="NextHome Real Estate" />
                   </div>
                   <div className="flex flex-col gap-1.5">
                     <label className="text-[0.85rem] font-semibold text-textMain">{t('stats.labels.phone')}</label>
-                    <input type="text" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full py-3 px-4 bg-black/5 border border-borderClient rounded-lg text-textMain font-body text-[0.95rem] transition-all outline-none hover:border-accent/50 focus:bg-surface focus:border-accent focus:ring-[4px] focus:ring-accent/15" placeholder="+380 50 123 4567" />
+                    <input type="text" value={formData.phone} onChange={e => setFormData({...formData, phone: e.target.value})} className="w-full py-3 px-4 bg-black/5 border border-borderClient rounded-lg text-textMain font-body text-[0.95rem] transition-all outline-hidden hover:border-accent/50 focus:bg-surface focus:border-accent focus:ring-[4px] focus:ring-accent/15" placeholder="+380 50 123 4567" />
                   </div>
                 </div>
               </div>
@@ -143,11 +123,11 @@ export default function ExportSettingsModal({ isOpen, onClose, onConfirm }: Expo
             <div className="flex flex-col gap-4">
               <div className="flex flex-col gap-1.5">
                 <label className="text-[0.85rem] font-semibold text-textMain">{t('stats.export.website')}</label>
-                <input type="text" value={formData.website} onChange={e => setFormData({...formData, website: e.target.value})} className="w-full py-3 px-4 bg-black/5 border border-borderClient rounded-lg text-textMain font-body text-[0.95rem] transition-all outline-none hover:border-accent/50 focus:bg-surface focus:border-accent focus:ring-[4px] focus:ring-accent/15" placeholder="www.agency.com" />
+                <input type="text" value={formData.website} onChange={e => setFormData({...formData, website: e.target.value})} className="w-full py-3 px-4 bg-black/5 border border-borderClient rounded-lg text-textMain font-body text-[0.95rem] transition-all outline-hidden hover:border-accent/50 focus:bg-surface focus:border-accent focus:ring-[4px] focus:ring-accent/15" placeholder="www.agency.com" />
               </div>
               <div className="flex flex-col gap-1.5">
                 <label className="text-[0.85rem] font-semibold text-textMain">{t('stats.export.comments')} <span className="text-textSecondary font-normal">({t('stats.labels.optional')})</span></label>
-                <textarea rows={3} placeholder={t('stats.placeholders.comments')} value={formData.comments} onChange={e => setFormData({...formData, comments: e.target.value})} className="w-full py-3 px-4 bg-black/5 border border-borderClient rounded-lg text-textMain font-body text-[0.95rem] transition-all outline-none resize-none hover:border-accent/50 focus:bg-surface focus:border-accent focus:ring-[4px] focus:ring-accent/15" />
+                <textarea rows={3} placeholder={t('stats.placeholders.comments')} value={formData.comments} onChange={e => setFormData({...formData, comments: e.target.value})} className="w-full py-3 px-4 bg-black/5 border border-borderClient rounded-lg text-textMain font-body text-[0.95rem] transition-all outline-hidden resize-none hover:border-accent/50 focus:bg-surface focus:border-accent focus:ring-[4px] focus:ring-accent/15" />
               </div>
             </div>
 
@@ -155,7 +135,7 @@ export default function ExportSettingsModal({ isOpen, onClose, onConfirm }: Expo
               <button type="button" className="order-2 sm:order-none p-3.5 rounded-lg bg-transparent text-textMain border border-borderClient font-semibold font-heading cursor-pointer transition-all text-[0.9rem] hover:bg-black/5 hover:border-textSecondary" onClick={onClose}>
                 {t('stats.actions.cancel')}
               </button>
-              <button type="submit" className="order-1 sm:order-none p-3.5 rounded-lg bg-gradient-to-br from-accent to-accent-hover text-white border-none font-semibold font-heading cursor-pointer transition-all flex items-center justify-center gap-2 text-[0.9rem] shadow-[0_4px_12px_rgba(197,164,126,0.25)] hover:not(:disabled):-translate-y-0.5 active:translate-y-0">
+              <button type="submit" className="order-1 sm:order-none p-3.5 rounded-lg bg-gradient-to-br from-accent to-accent-hover text-white border-none font-semibold font-heading cursor-pointer transition-all flex items-center justify-center gap-2 text-[0.9rem] shadow-[0_4px_12px_rgba(197,164,126,0.25)] hover:not-disabled:-translate-y-0.5 active:translate-y-0">
                 <FaFilePdf /> {t('stats.actions.generate_pdf')}
               </button>
             </div>

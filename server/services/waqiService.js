@@ -1,5 +1,5 @@
 // server/services/waqiService.js
-import axios from 'axios';
+import { parserHttp } from './parserHttp.js';
 import 'dotenv/config';
 import { PARSER_CONFIG } from '../config/parserConfig.js';
 
@@ -9,7 +9,7 @@ export const getAirQualityWAQI = async (lat, lon) => {
 
     try {
         const url = PARSER_CONFIG.API.WAQI_URL(lat, lon, token);
-        const response = await axios.get(url, {
+        const response = await parserHttp.get(url, {
             timeout: PARSER_CONFIG.TIMEOUTS.WAQI_API 
         });
 

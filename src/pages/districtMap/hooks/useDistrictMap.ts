@@ -1,14 +1,16 @@
-import { useState, useCallback, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
-import { useSubscription } from '@subscription/contex/SubscriptionContext';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
+import { useSubscription } from '@subscription/context/SubscriptionContext';
 import { useFiltersConfig } from '@hooks/useFiltersConfig';
 import { useDistrictsQuery } from '../hooks/useDistrictsQuery';
-import { filterDistrictsByCriteria } from '@filtersPanel/filterLogic';
+import { FEATURES_CONFIG } from '@config/features';
+import { STORAGE_KEYS } from '@config/constants';
 import type { TransformedDistrict } from '@utils/dataTransformers';
 import type { DistrictMapFilters } from '../types';
 
 export const useDistrictMap = () => {
   const { country, city } = useParams<{ country: string; city: string }>();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { isFree } = useSubscription();
   const { config } = useFiltersConfig();
 
@@ -16,8 +18,41 @@ export const useDistrictMap = () => {
   const [selectedDistrict, setSelectedDistrict] = useState<TransformedDistrict | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const modalTimerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const { data: allDistricts = [], isLoading, error, refetch } = useDistrictsQuery(country, city);
+  useEffect(() => {
+    return () => {
+      if (modalTimerRef.current) clearTimeout(modalTimerRef.current);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (country && city) {
+      try {
+        localStorage.setItem(STORAGE_KEYS.SELECTED_LOCATION, JSON.stringify({ country, city }));
+      } catch {
+        // Ignore quota/private browsing errors
+      }
+    }
+  }, [country, city]);
+
+  const { data: search, isLoading, error, refetch } = useDistrictsQuery(country, city, selectedFilters);
+  const allDistricts = useMemo(() => search?.districts ?? [], [search]);
+
+  useEffect(() => {
+    const districtFromUrl = searchParams.get('district');
+    if (districtFromUrl && allDistricts.length > 0) {
+      const found = allDistricts.find(d => d.name === districtFromUrl);
+      if (found) {
+        setSelectedDistrict(found);
+        setIsModalOpen(true);
+        // Clear param so it doesn't reopen if modal is manually closed
+        const newParams = new URLSearchParams(searchParams);
+        newParams.delete('district');
+        setSearchParams(newParams, { replace: true });
+      }
+    }
+  }, [searchParams, allDistricts, setSearchParams]);
 
   const allowedCategories = useMemo(() => {
     if (!isFree || !config) return null;
@@ -26,16 +61,14 @@ export const useDistrictMap = () => {
       .map(cat => cat.key);
   }, [isFree, config]);
 
-  const allFilteredDistricts = useMemo(() => {
-    return filterDistrictsByCriteria(allDistricts, selectedFilters, config);
-  }, [allDistricts, selectedFilters, config]);
+  const allFilteredDistricts = allDistricts;
 
-  const totalCount = allFilteredDistricts.length;
-  const originalTotal = allDistricts.length;
+  const totalCount = search?.total ?? 0;
+  const originalTotal = search?.originalTotal ?? 0;
 
   const districtsToDisplay = useMemo(() => {
     if (isFree) {
-      return allFilteredDistricts.slice(0, 5);
+      return allFilteredDistricts.slice(0, FEATURES_CONFIG.FREE_DISTRICTS_LIMIT);
     }
     return allFilteredDistricts;
   }, [allFilteredDistricts, isFree]);
@@ -56,7 +89,7 @@ export const useDistrictMap = () => {
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
-    setTimeout(() => {
+    modalTimerRef.current = setTimeout(() => {
       setSelectedDistrict(null);
       setSelectedCategory(null);
     }, 300);

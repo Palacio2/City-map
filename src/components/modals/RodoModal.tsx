@@ -10,7 +10,7 @@ export default function RodoModal({ onAccept, onDecline }: RodoModalProps) {
   const { isProcessing, handleAccept } = useRodoModal(onAccept);
 
   const modalContent = (
-    <div className="fixed inset-0 bg-black/75 backdrop-blur-sm z-[9999] flex items-center justify-center p-4 animate-fadeIn overscroll-contain">
+    <div className="fixed inset-0 bg-black/75 backdrop-blur-xs z-[9999] flex items-center justify-center p-4 animate-fadeIn overscroll-contain">
       <div className="ui-glass-panel max-w-[480px] w-full p-6 md:p-10 text-center shadow-2xl rounded-3xl md:rounded-[2.5rem] flex flex-col max-h-[85dvh] md:max-h-[90dvh] overflow-y-auto relative border-borderClient custom-scrollbar">
         <div className="w-14 h-14 md:w-16 md:h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6 border border-accent/20">
           <FaShieldAlt className="text-accent text-2xl md:text-3xl" />

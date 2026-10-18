@@ -11,7 +11,7 @@ import { getProfileEditSchema } from '../validation';
 import type { ProfileEditFormValues } from '../validation';
 import type { StatusMessage } from '../types';
 
-export const useProfileEdit = () => {
+export const useProfileEdit = (onSuccessClose?: () => void) => {
   const { t } = useTranslation('db');
   const navigate = useNavigate();
   const queryClient = useQueryClient();
@@ -51,14 +51,19 @@ export const useProfileEdit = () => {
     },
     onSuccess: (result, variables) => {
       queryClient.invalidateQueries({ queryKey: ['userProfile'] });
-      queryClient.invalidateQueries({ queryKey: ['authUser'] });
       
       if (result === 'email_updated') {
         setStatusMessage({ type: 'success', text: t('profile.edit_page.email_update_sent') });
         setOriginalEmail(variables.email.trim());
       } else {
         setStatusMessage({ type: 'success', text: t('profile.edit_page.success') });
-        setTimeout(() => navigate('/profile'), 1500);
+        setTimeout(() => {
+          if (onSuccessClose) {
+            onSuccessClose();
+          } else {
+            navigate('/profile');
+          }
+        }, 1500);
       }
     },
     onError: (error: unknown) => {

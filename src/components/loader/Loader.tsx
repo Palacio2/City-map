@@ -12,7 +12,7 @@ export default function Loader({
   className = ''
 }: LoaderProps) {
   const containerBase = fullScreen
-    ? "fixed inset-0 bg-black/40 backdrop-blur-sm z-[9999] flex flex-col items-center justify-center gap-5 animate-fadeIn"
+    ? "fixed inset-0 bg-black/40 backdrop-blur-xs z-[9999] flex flex-col items-center justify-center gap-5 animate-fadeIn"
     : "flex flex-col items-center justify-center gap-4 p-8 w-full h-full";
 
   const dimensions = {

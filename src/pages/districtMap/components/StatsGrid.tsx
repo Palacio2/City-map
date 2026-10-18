@@ -21,11 +21,12 @@ const getCrimeStyle = (value: number): string => {
 };
 
 interface StatsGridProps {
+  readonly country?: string;
   readonly filterData?: TransformedFilterData | null;
   readonly selectedCategory?: string | null;
 }
 
-export const StatsGrid = ({ filterData, selectedCategory }: StatsGridProps) => {
+export const StatsGrid = ({ filterData, selectedCategory, country }: StatsGridProps) => {
   const { t } = useTranslation('db');
   const { formatNumber, formatPrice, getCurrencyInfo } = useFormat();
 
@@ -37,7 +38,7 @@ export const StatsGrid = ({ filterData, selectedCategory }: StatsGridProps) => {
     }
     
     if (type === 'price') {
-      const currency = getCurrencyInfo('EU');
+      const currency = getCurrencyInfo(country);
       return formatPrice(value as number, currency);
     }
     
@@ -78,7 +79,6 @@ export const StatsGrid = ({ filterData, selectedCategory }: StatsGridProps) => {
   const categoriesToRender = useMemo(() => {
     if (!filterData) return [];
     const allCats = Object.keys(filterData)
-      .filter(k => k !== 'general')
       .map(key => filterData[key])
       .filter((cat): cat is TransformedCategory => Boolean(cat && typeof cat === 'object' && 'fields' in cat));
     
@@ -101,7 +101,7 @@ export const StatsGrid = ({ filterData, selectedCategory }: StatsGridProps) => {
                 {Object.values(category.fields).map((fieldData: TransformedFieldData) => {
                   if (fieldData.value === null || fieldData.value === undefined) return null;
                   return (
-                    <div key={fieldData.key} className="flex justify-between py-2.5 border-b border-dashed border-borderClient text-[0.9rem] items-center last:border-b-0">
+                    <div key={fieldData.key} className="flex justify-between py-1.5 sm:py-2.5 border-b border-dashed border-borderClient text-xs sm:text-[0.9rem] items-center last:border-b-0">
                       <span className="text-textSecondary">
                         {t(`common.fields.${fieldData.key}`, { defaultValue: t(fieldData.key) })}
                       </span>

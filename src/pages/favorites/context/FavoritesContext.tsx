@@ -1,14 +1,14 @@
+/* eslint-disable react-refresh/only-export-components */
 import React, { createContext, useContext, useMemo } from "react";
 import type { ReactNode } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { favoritesApi } from '../api/favoritesApi';
 import { transformDistrictsForDisplay } from "@utils/dataTransformers";
 import { useFiltersConfig } from "@hooks/useFiltersConfig";
-import { useSubscription } from "@subscription/contex/SubscriptionContext";
+import { useSubscription } from "@subscription/context/SubscriptionContext";
 import { useAuth } from "@auth/context/AuthContext";
 import type { TransformedDistrict } from "@utils/dataTransformers";
 import type { FavoritesContextType } from "../types";
-import { FavoritesContextSchema } from "../validation";
 
 const FavoritesContext = createContext<FavoritesContextType | null>(null);
 
@@ -44,18 +44,19 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
     },
     onMutate: async (district) => {
       await queryClient.cancelQueries({ queryKey: ["favorites"] });
-      const previousFavorites = queryClient.getQueryData<TransformedDistrict[]>(["favorites"]);
+      const queryKey = ["favorites", isFree, isRealtor];
+      const previousFavorites = queryClient.getQueryData<TransformedDistrict[]>(queryKey);
       const isFav = previousFavorites?.some((f) => f.id === district.id);
       
-      queryClient.setQueryData<TransformedDistrict[]>(["favorites"], (old = []) => {
+      queryClient.setQueryData<TransformedDistrict[]>(queryKey, (old = []) => {
         if (isFav) return old.filter((f) => f.id !== district.id);
         return [...old, { ...district, addedAt: new Date().toISOString() } as TransformedDistrict];
       });
-      return { previousFavorites };
+      return { previousFavorites, queryKey };
     },
     onError: (_err, _newDistrict, context) => {
-      if (context?.previousFavorites) {
-        queryClient.setQueryData(["favorites"], context.previousFavorites);
+      if (context?.previousFavorites && context?.queryKey) {
+        queryClient.setQueryData(context.queryKey, context.previousFavorites);
       }
     },
     onSettled: () => {
@@ -63,20 +64,20 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
     },
   });
 
-  const toggleFavorite = async (district: Partial<TransformedDistrict> & { id: string | number }) => {
+  const toggleFavorite = React.useCallback(async (district: Partial<TransformedDistrict> & { id: string | number }) => {
     await toggleMutation.mutateAsync(district);
-  };
+  }, [toggleMutation]);
 
-  const isFavorite = (id: string | number) => {
+  const isFavorite = React.useCallback((id: string | number) => {
     return favorites.some((f) => f.id === id || (f as Record<string, unknown>).district_id === id);
-  };
+  }, [favorites]);
 
   const value = useMemo<FavoritesContextType>(() => ({
     favorites,
     isLoading,
     toggleFavorite,
     isFavorite,
-  }), [favorites, isLoading]);
+  }), [favorites, isLoading, toggleFavorite, isFavorite]);
 
   return (
     <FavoritesContext.Provider value={value}>
@@ -87,5 +88,8 @@ export const FavoritesProvider: React.FC<FavoritesProviderProps> = ({ children }
 
 export const useFavorites = (): FavoritesContextType => {
   const ctx = useContext(FavoritesContext);
-  return FavoritesContextSchema.parse(ctx);
+  if (!ctx) {
+    throw new Error('useFavorites must be used within a FavoritesProvider');
+  }
+  return ctx;
 };

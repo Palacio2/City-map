@@ -1,15 +1,13 @@
 export interface PaymentRequest {
+  action: 'checkout';
   planKey: string;
-  promoCode?: string | null;
+  promoCode?: string;
 }
-
 export interface PaymentResponse {
-  clientSecret: string;
-  amount: number;
-  mode: 'payment' | 'setup';
+  sessionId: string;
+  completed: boolean;
+  url: string | null;
 }
-
 export interface PaymentLocationState {
   planKey?: string;
-  amount?: number;
 }

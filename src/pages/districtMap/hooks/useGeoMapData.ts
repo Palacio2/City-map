@@ -1,6 +1,6 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { useSubscription } from '@subscription/contex/SubscriptionContext';
+import { useSubscription } from '@subscription/context/SubscriptionContext';
 import { useFiltersConfig } from '@hooks/useFiltersConfig';
 import { processPoiNormalization } from '../utils/poiParser';
 import { geoApi } from '../api/geoApi';
@@ -8,9 +8,8 @@ import type { PoiData, ProcessedGeoData } from '../types/geo';
 import type { DynamicDistrictConfig } from '@config/districtFields';
 
 const getFilteredPois = (pois: PoiData[], isRealtor: boolean, isFree: boolean, config: DynamicDistrictConfig | null): PoiData[] => {
-  if (!config) return pois;
+  if (!config) return [];
   return pois.filter(poi => {
-    if (isRealtor) return true;
     let isPremiumPoi = false;
     let isRealtorPoi = false;
     let found = false;
@@ -23,7 +22,8 @@ const getFilteredPois = (pois: PoiData[], isRealtor: boolean, isFree: boolean, c
         break;
       }
     }
-    if (!found) isPremiumPoi = true;
+    if (!found) return false;
+    if (isRealtor) return true;
     return isFree ? (!isPremiumPoi && !isRealtorPoi) : !isRealtorPoi;
   });
 };
@@ -31,14 +31,14 @@ const getFilteredPois = (pois: PoiData[], isRealtor: boolean, isFree: boolean, c
 export const useGeoMapData = (districtId: string | number | undefined, isOpen: boolean) => {
   const { isFree, isRealtor } = useSubscription();
   const { config } = useFiltersConfig();
-  const [activeFilters, setActiveFilters] = useState<string[]>([]);
+  const [selection, setSelection] = useState<{ key: string; values: string[] } | null>(null);
   const [isMobileFilterOpen, setIsMobileFilterOpen] = useState<boolean>(false);
 
-  const { data: geoData, isLoading } = useQuery<ProcessedGeoData | null>({
+  const { data: rawGeoData, isLoading } = useQuery<ProcessedGeoData | null>({
     queryKey: ['geoData', districtId, isFree, isRealtor],
-    queryFn: async () => {
+    queryFn: async ({ signal }) => {
       if (!districtId) return null;
-      const data = await geoApi.getDistrictGeoData(String(districtId));
+      const data = await geoApi.getDistrictGeoData(String(districtId), signal);
       let rawPois = data?.poi_data || [];
       if (typeof rawPois === 'string') {
         try {
@@ -50,18 +50,22 @@ export const useGeoMapData = (districtId: string | number | undefined, isOpen: b
       const normalized = (Array.isArray(rawPois) ? rawPois : [])
         .map(processPoiNormalization)
         .filter((p): p is PoiData => p !== null);
-      const allowed = getFilteredPois(normalized, isRealtor, isFree, config);
-      const types = [...new Set(allowed.map(p => p.type))].sort((a, b) => a.localeCompare(b));
-      setActiveFilters(types);
-      return { geojson: data?.geojson, poi_data: allowed };
+      return { geojson: data?.geojson, poi_data: normalized };
     },
     enabled: isOpen && !!districtId && !!config,
     staleTime: 10 * 60 * 1000,
   });
 
+  const geoData = useMemo(() => rawGeoData ? {
+    ...rawGeoData, poi_data: getFilteredPois(rawGeoData.poi_data, isRealtor, isFree, config),
+  } : null, [rawGeoData, isRealtor, isFree, config]);
+
   const availableTypes = useMemo(() => {
     return [...new Set(geoData?.poi_data?.map(p => p.type) || [])].sort((a, b) => a.localeCompare(b));
   }, [geoData]);
+
+  const selectionKey = JSON.stringify([districtId, isFree, isRealtor, availableTypes]);
+  const activeFilters = selection?.key === selectionKey ? selection.values : availableTypes;
 
   const filteredPois = useMemo(() => {
     if (!geoData?.poi_data || activeFilters.length === 0) return [];
@@ -70,12 +74,19 @@ export const useGeoMapData = (districtId: string | number | undefined, isOpen: b
   }, [geoData, activeFilters]);
 
   const toggleFilter = useCallback((type: string) => {
-    setActiveFilters(prev => prev.includes(type) ? prev.filter(t => t !== type) : [...prev, type]);
-  }, []);
+    if (!availableTypes.includes(type)) return;
+    setSelection(previous => {
+      const values = previous?.key === selectionKey ? previous.values : availableTypes;
+      return { key: selectionKey, values: values.includes(type) ? values.filter(t => t !== type) : [...values, type] };
+    });
+  }, [selectionKey, availableTypes]);
 
   const toggleAll = useCallback(() => {
-    setActiveFilters(prev => prev.length === availableTypes.length ? [] : availableTypes);
-  }, [availableTypes]);
+    setSelection(previous => {
+      const values = previous?.key === selectionKey ? previous.values : availableTypes;
+      return { key: selectionKey, values: values.length === availableTypes.length ? [] : availableTypes };
+    });
+  }, [selectionKey, availableTypes]);
 
   return {
     geoData,
